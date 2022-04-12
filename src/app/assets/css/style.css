@@ -92,11 +92,17 @@ accordionTopHr::before {
   margin: auto;
 }
 
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 html {
   height: 100%;
 }
 body {
-  background-color: #D0D0D0;
+  background-color: #e7ebf0;
   color: #08209e;
   font-family: "Poppins", sans-serif;
   font-size: 0.9375rem;
@@ -109,7 +115,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: #08209e;
+  color: #5300e8;
   font-weight: 500;
 }
 .h1,
@@ -1747,7 +1753,7 @@ button.bg-danger:hover {
   /* position: relative; */
   position: fixed;
   height: 90px;
-  padding: 0 40px;
+  /* padding: 0 40px; */
   margin-bottom: 0;
   z-index: 20;
 }
@@ -2332,14 +2338,14 @@ html.menu-opened body {
 
 .section-search {
   background: #f9f9f9 ;
-  min-height: 900px;
+  /* min-height: 900px; */
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   /* background-attachment: fixed; */
   /* position: relative; */
   background-blend-mode: Darken;
-  padding: 150px 0;
+  /* padding: 150px 0; */
 }
 .login-screen {
   background: #f9f9f9 /*url('../img/login-like.png') no-repeat fixed center*/;

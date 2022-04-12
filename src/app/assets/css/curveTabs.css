@@ -1,0 +1,58 @@
+.MuiTabs-scroller .MuiTabs-flexContainer {
+  border: 1px solid #9c9c9c;
+  padding: 1.5rem 0;
+}
+.MuiTabs-scroller .MuiTabs-flexContainer button {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-right: 2.5rem;
+  }
+  .MuiTabs-scroller .MuiTabs-flexContainer button.Mui-selected {
+    background-color: #5300e8;
+    color: white;
+    transition: linear 0.5s;
+    /* border-radius: 5px; */
+    /* font-weight: bold; */
+  }
+  
+  .MuiTabs-scroller .MuiTabs-flexContainer .MuiTab-root {
+    color: #9c9c9c;
+  }
+
+  .container-fluid .MuiBox-root 
+  {
+    background-color: #fff;
+    padding-bottom: 0;
+    margin-bottom: 2rem;
+  }
+  
+  .MuiTabs-scroller .MuiTabs-flexContainer button:hover {
+    color: #333;
+    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    transform: translate(-3px, -3px);
+    transition: linear 0.3s;
+  }
+
+  .MuiTabs-scroller .MuiTabs-flexContainer button.Mui-selected {
+    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    transform: translate(-3px, -3px);
+    transition: linear 0.5s;
+  }
+  
+  .MuiTabs-scroller .MuiTabs-flexContainer button.Mui-selected:hover {
+    color: white;
+    /* transition: linear 0.5s; */
+  }
+  
+  .MuiTabs-scroller .MuiTabs-indicator {
+    display: none;
+    background-color: #5300e8;
+  }
+  
+  .buttonsWrapper {
+    width: 100%;
+    background-color: aliceblue;
+    padding: 20px 40px;
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+  }

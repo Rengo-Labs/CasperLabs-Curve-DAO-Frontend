@@ -216,15 +216,14 @@ function HeaderHome(props) {
   }
 
   const selectedStyling = {
-    border: "2px solid 'rgba(52,101,164)'",
-    padding: "10px 20px",
-    borderRadius: "5px",
+    border: "2px solid '#5300e8'",
+    padding: "0.625rem 1.25rem",
+    // borderRadius: "5px",
     color: "#FFF",
-    backgroundColor: "rgba(52,101,164)",
+    backgroundColor: "#5300e8",
   };
   const defaultStyling = {
-    padding: "10px 20px",
-    borderRadius: "5px",
+    padding: "0.625rem 1.25rem",
   };
   const selectedNavStyle = {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
@@ -249,21 +248,32 @@ function HeaderHome(props) {
 
   return (
     <header className={`header ${menuOpenedClass}`}>
-      <nav className="navbar navbar-expand-lg header-nav" style={{ width: "100%" }}>
+      <nav
+        className="navbar navbar-expand-lg header-nav"
+        style={{ width: "100%", padding: "0.5rem 1.85rem" }}
+      >
         <div className="navbar-header">
-          <a id="mobile_btn" href="/" style={{ color: "rgba(52,101,164)" }} onClick={(e) => { e.preventDefault(); setMenuOpenedClass("menu-opened"); }}>
+          <a
+            id="mobile_btn"
+            href="/"
+            style={{ color: "#5300e8" }}
+            onClick={(e) => {
+              e.preventDefault();
+              setMenuOpenedClass("menu-opened");
+            }}
+          >
             <span className="bar-icon">
               <span></span>
               <span></span>
               <span></span>
             </span>
           </a>
-          <Link style={{ color: "rgba(52,101,164)" }} to="/" className="navbar-brand logo">
-            <img
-              src={Logo}
-              alt="Logo"
-              width="50"
-            />
+          <Link
+            style={{ color: "#5300e8" }}
+            to="/"
+            className="navbar-brand logo"
+          >
+            <img src={Logo} alt="Logo" width="50" />
           </Link>
         </div>
 
@@ -272,7 +282,7 @@ function HeaderHome(props) {
             <a
               id="menu_close"
               className="menu-close"
-              style={{ color: "rgba(52,101,164)" }}
+              style={{ color: "#5300e8" }}
               href="/"
               onClick={(e) => {
                 e.preventDefault();
@@ -310,7 +320,7 @@ function HeaderHome(props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className=" align-items-center justify-content-center text-center"
-                  style={{ color: "rgba(52,101,164)" }}
+                  style={{ color: "#5300e8" }}
                 >
                   <span style={{ cursor: "pointer" }}>
                     {localStorage.getItem("Address").slice(0, 10)}. . .
@@ -329,7 +339,7 @@ function HeaderHome(props) {
                 <a
                   href="#"
                   className=" align-items-center justify-content-center text-center"
-                  style={{ color: "rgba(52,101,164)" }}
+                  style={{ color: "#5300e8" }}
                 >
                   Connect to Wallet
                 </a>
@@ -346,7 +356,7 @@ function HeaderHome(props) {
                 <a
                   href="#"
                   className=" align-items-center justify-content-center text-center"
-                  style={{ color: "rgba(52,101,164)" }}
+                  style={{ color: "#5300e8" }}
                 >
                   Connect to Wallet
                 </a>
@@ -369,12 +379,12 @@ function HeaderHome(props) {
               className="login-link "
             >
               {localStorage.getItem("Address") &&
-                localStorage.getItem("Address") !== null &&
-                localStorage.getItem("Address") !== "null" ? (
+              localStorage.getItem("Address") !== null &&
+              localStorage.getItem("Address") !== "null" ? (
                 <a
                   href="#"
                   className=" align-items-center justify-content-center text-center"
-                  style={{ color: "rgba(52,101,164)" }}
+                  style={{ color: "#5300e8" }}
                 >
                   <span style={{ cursor: "pointer" }}>Disconnect</span>
                 </a>
@@ -384,7 +394,7 @@ function HeaderHome(props) {
               <Link
                 to="/"
                 className=" align-items-center justify-content-center text-center"
-                style={{ color: "rgba(52,101,164)" }}
+                style={{ color: "#5300e8" }}
               >
                 <span style={selectedNavStyle.Home}>Home</span>
               </Link>
@@ -413,7 +423,7 @@ function HeaderHome(props) {
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "rgba(52,101,164)" }}
+                style={{ color: "#5300e8" }}
               >
                 <span style={{ cursor: "pointer" }}>
                   {localStorage.getItem("Address").substr(0, 10)}. . .
@@ -422,7 +432,11 @@ function HeaderHome(props) {
             ) : signerLocked && signerConnected ? (
               <>
                 <Button
-                  style={{ borderRadius: "8px", backgroundColor: 'rgba(52,101,164)', borderColor: 'rgba(52,101,164)' }}
+                  style={{
+                    borderRadius: "8px",
+                    backgroundColor: "#5300e8",
+                    borderColor: "#5300e8",
+                  }}
                   variant="primary"
                   className="fade-in-text"
                   onClick={
@@ -440,7 +454,11 @@ function HeaderHome(props) {
             ) : (
               <>
                 <Button
-                  style={{ borderRadius: "8px", backgroundColor: 'rgba(52,101,164)', borderColor: 'rgba(52,101,164)' }}
+                  style={{
+                    borderRadius: "8px",
+                    backgroundColor: "#5300e8",
+                    borderColor: "#5300e8",
+                  }}
                   variant="primary"
                   className="fade-in-text"
                   onClick={() => {
@@ -456,10 +474,10 @@ function HeaderHome(props) {
           </li>
           <li>
             {localStorage.getItem("Address") &&
-              localStorage.getItem("Address") !== null &&
-              localStorage.getItem("Address") !== "null" ? (
+            localStorage.getItem("Address") !== null &&
+            localStorage.getItem("Address") !== "null" ? (
               <span
-                style={{ cursor: "pointer", color: "rgba(52,101,164)" }}
+                style={{ cursor: "pointer", color: "#5300e8" }}
                 onClick={() => {
                   if (
                     localStorage.getItem("selectedWallet") &&
