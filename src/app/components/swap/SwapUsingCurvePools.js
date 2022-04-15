@@ -3,6 +3,7 @@ import React, { useState } from "react";
 // CUSTOM STYLING
 import "../../assets/css/SwapUsingCurvePools.css";
 import "../../assets/css/curveButton.css";
+import "../../assets/css/common.css";
 //BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 //COMPONENTS
@@ -92,11 +93,11 @@ const SwapUsingCurvePools = () => {
 
   return (
     <>
-      <div className="swap-container">
+      <div className="curve-container">
         <fieldset>
           <legend>Swap using all Curve pools</legend>
           <div className="row no-gutters justify-content-center">
-            <div className="form-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper col-12 col-lg-6">
               <div className="row no-gutters justify-content-center">
                 <div className="col-12 col-md-8 col-lg-6 mt-3 mt-lg-0">
                   <FormControl>
@@ -187,7 +188,7 @@ const SwapUsingCurvePools = () => {
             </div>
           </div>
           <div className="row no-gutters justify-content-center">
-            <div className="form-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper col-12 col-lg-6">
               <div className="row no-gutters justify-content-center">
                 <div className="col-12 col-md-8 col-lg-6 mt-3 mt-lg-0">
                   <FormControl>
@@ -269,7 +270,7 @@ const SwapUsingCurvePools = () => {
             </div>
           </div>
           <div className="row no-gutters justify-content-end">
-            <div className="form-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper col-12 col-lg-6">
               <div className="col-12 col-md-8 col-lg-6">
                 <div className="text-right pr-md-3">
                   <h4 className="text-body">

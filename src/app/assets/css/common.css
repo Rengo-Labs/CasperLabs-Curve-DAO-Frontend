@@ -1,0 +1,54 @@
+.curve-container {
+    padding-bottom: 1.3rem;
+    /* border: 1px solid red; */
+}
+
+.curve-container fieldset {
+    border: 1px solid #9e9e9e;
+    padding-bottom: 2rem;
+   
+}
+
+.curve-container fieldset legend {
+    color: #9C9C9C;
+    font-size: 1.25rem;
+    width: auto;
+    margin: 0 0.625rem;
+    padding: 0 .625rem;
+}
+
+.curve-container .curve-content-wrapper {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.curve-content-banks {
+    background-color: white;
+    padding: 1.25rem;
+    /* margin-bottom: 2rem; */
+}
+
+/* Pagination */
+.MuiTablePagination {
+    padding: 15px !important;
+    text-align: center;
+    border-top: 1px solid rgba(7, 9, 25, 0.125);
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    background-color: #f8f9ff;
+  }
+  
+  .MuiTablePagination .MuiTablePagination-selectLabel,
+  .MuiTablePagination .MuiTablePagination-displayedRows {
+    margin-bottom: 0;
+  }
+  
+  .MuiTablePagination .MuiTablePagination-spacer {
+    display: none;
+  }
+  
+  .MuiTablePagination .MuiTablePagination-toolbar {
+    justify-content: center;
+  }

@@ -1,0 +1,62 @@
+input.tableSearch {
+    border:1px solid #9E9E9E;
+    font-size: 1rem;
+    padding: 0.625rem 1rem;
+    margin: 1.25rem 0;
+}
+
+input.tableSearch:focus {
+    outline: none;
+    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.6);
+    transform: translate(-3px, -5px);
+    transition: linear 0.2s;
+}
+
+.sortTableBtns button {
+    border:1px solid #9E9E9E;
+    background-color:white;
+    color: #444;
+    padding: 0.625rem 1.25rem;
+}
+
+.sortTableBtns button:hover {
+    /* border: 1px solid rgb(69, 131, 211);
+    background-color:rgb(69, 131, 211); */
+    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    transform: translate(-3px, -3px);
+    transition: linear 0.2s;
+}
+
+button.tableSortBtnActive {
+    border: 1px solid #5300e8;
+    background-color:#5300e8;
+    color: white;
+    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    transform: translate(-3px, -3px);
+    transition: linear 0.2s;
+}
+
+
+
+.tablePoolImgProps {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-size: 100% auto;
+}
+
+.tablePoolTitle {
+    font-size: 1rem;
+}
+
+.tablePoolRef {
+    background-color: #9E9E9E;
+    color: white;
+    padding: 3px;
+    font-size: 0.625rem;
+    margin-left: 0.5rem;
+}
+
+.MuiTableContainer-root {
+    padding: 1.5rem 0;
+}

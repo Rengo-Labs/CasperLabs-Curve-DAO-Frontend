@@ -227,6 +227,8 @@ function HeaderHome(props) {
   };
   const selectedNavStyle = {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
+    Pools: props.selectedNav === "Pools" ? selectedStyling : defaultStyling,
+    Factory: props.selectedNav === "Factory" ? selectedStyling : defaultStyling,
   };
 
   let Disconnect = (e) => {
@@ -250,7 +252,11 @@ function HeaderHome(props) {
     <header className={`header ${menuOpenedClass}`}>
       <nav
         className="navbar navbar-expand-lg header-nav"
-        style={{ width: "100%", padding: "0.5rem 1.85rem" }}
+        style={{
+          width: "100%",
+          padding: "0.5rem 1.85rem",
+          backgroundColor: "#e7ebf0",
+        }}
       >
         <div className="navbar-header">
           <a
@@ -397,6 +403,24 @@ function HeaderHome(props) {
                 style={{ color: "#5300e8" }}
               >
                 <span style={selectedNavStyle.Home}>Home</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/pools"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Pools}>Pools</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/factory"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Factory}>Factory</span>
               </Link>
             </li>
           </ul>

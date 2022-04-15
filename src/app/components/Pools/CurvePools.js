@@ -1,8 +1,8 @@
 // REACT
 import React, { useState } from "react";
 // CUSTOM STYLING
-import "../../assets/css/SwapUsingCurvePools.css";
 import "../../assets/css/curveButton.css";
+import "../../assets/css/common.css";
 // MATERIAL UI
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -37,11 +37,11 @@ const CurvePools = () => {
 
   return (
     <>
-      <div className="swap-container">
+      <div className="curve-container">
         <fieldset>
           <legend>Curve Pools</legend>
           <div className="row no-gutters justify-content-center">
-            <div className="form-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper col-12 col-lg-6">
               <Box
                 sx={{
                   width: "100%",

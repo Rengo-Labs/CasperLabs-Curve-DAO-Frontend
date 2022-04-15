@@ -1,8 +1,8 @@
 // REACT
 import React, { useState } from "react";
 //CUSTOM STYLING
-import "../../assets/css/SwapUsingCurvePools.css";
 import "../../assets/css/curveButton.css";
+import "../../assets/css/common.css";
 
 // COMPONENT FUNCTION
 const CRVStats = () => {
@@ -24,11 +24,11 @@ const CRVStats = () => {
 
   return (
     <>
-      <div className="swap-container">
+      <div className="curve-container">
         <fieldset>
           <legend>veCRV stats</legend>
           <div className="row no-gutters justify-content-center">
-            <div className="form-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper col-12 col-lg-6">
               <p>veCRV holder/LP ratio (based on fees): {holderLpRatio}</p>
               <section>
                 <p>
@@ -59,11 +59,11 @@ const CRVStats = () => {
           </div>
         </fieldset>
       </div>
-      <div className="swap-container">
+      <div className="curve-container">
         <fieldset>
           <legend>Total pool deposits and daily volume</legend>
           <div className="row no-gutters justify-content-center">
-            <div className="form-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper col-12 col-lg-6">
               <section>
                 <p>Deposits: {dailyDeposits}</p>
                 <p>Daily Volume: {dailyVolume}</p>
@@ -72,11 +72,11 @@ const CRVStats = () => {
           </div>
         </fieldset>
       </div>
-      <div className="swap-container">
+      <div className="curve-container">
         <fieldset>
           {/* <legend></legend> */}
           <div className="row no-gutters justify-content-center">
-            <div className="form-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper col-12 col-lg-6">
               <section>
                 <p>
                   veCRV 3pool LP claim:{" "}

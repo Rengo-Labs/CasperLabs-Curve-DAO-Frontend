@@ -61,15 +61,12 @@ const CurveTabs = () => {
 
   return (
     <>
-      <div style={{ paddingBttom: "2rem", backgroundColor: "white" }}>
+      <div>
         <Box>
           <Box
             sx={{
               padding: "20px",
               borderColor: "divider",
-              borderTopRightRadius: "8px",
-              borderTopLeftRadius: "8px",
-              backgroundColor: "#fff",
               boxShadow: 0,
             }}
           >

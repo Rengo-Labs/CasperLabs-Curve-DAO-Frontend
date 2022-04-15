@@ -1,62 +1,34 @@
-.swap-container {
-    padding-bottom: 1.3rem;
-}
-.swap-container fieldset {
-    border: 1px solid #9e9e9e;
-    padding-bottom: 2rem;
-   
-}
-
-.swap-container fieldset legend {
-    color: #9C9C9C;
-    font-size: 1.25rem;
-    width: auto;
-    margin: 0 0.625rem;
-    padding: 0 .625rem;
-}
-
-.swap-container .form-wrapper {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
-
-/* .form-wrapper {
-    width: 350px;
-} */
-
-.form-wrapper .MuiFormControl-root {
+.curve-content-wrapper .MuiFormControl-root {
     margin: 0;
     width:calc(100% - 10px)
 }
 
-.form-wrapper .MuiFormControl-root legend {
+.curve-content-wrapper .MuiFormControl-root legend {
     padding: 0;
     display: none;
 }
 
-.form-wrapper .MuiFormLabel-root {
+.curve-content-wrapper .MuiFormLabel-root {
     /* left: 1rem;
     padding: 0 .125rem; */
 }
 
-.form-wrapper .MuiFormLabel-root.Mui-focused {
+.curve-content-wrapper .MuiFormLabel-root.Mui-focused {
     color: #5300E8;
 }
 
-.form-wrapper .MuiOutlinedInput-root {
+.curve-content-wrapper .MuiOutlinedInput-root {
     border-radius: 0;
 }
 
-.form-wrapper .MuiOutlinedInput-root.Mui-focused {
+.curve-content-wrapper .MuiOutlinedInput-root.Mui-focused {
     box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
     transform: translate(-3px, -3px);
     transition: linear 0.2s;
     border-color: rgb(158, 158, 158);
 }
 
-.form-wrapper .MuiInputBase-colorPrimary.Mui-focused {
+.curve-content-wrapper .MuiInputBase-colorPrimary.Mui-focused {
     border-color: rgb(158, 158, 158);
 }
 
