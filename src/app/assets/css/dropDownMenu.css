@@ -64,5 +64,5 @@ ul li.openItem-3{
 ul li.openItem-1:hover, ul li.openItem-2:hover, ul li.openItem-3:hover {
     background-color: rgb(83, 0, 232);
     color: white !important;
-    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.6);
+    /* box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.6); */
 }

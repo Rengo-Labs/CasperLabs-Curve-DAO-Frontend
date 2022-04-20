@@ -9,6 +9,7 @@
   }
   .MuiTabs-scroller .MuiTabs-flexContainer button.Mui-selected {
     background-color: #5300e8;
+    border: 1px solid #5300e8;
     color: white;
     transition: linear 0.5s;
     /* border-radius: 5px; */
@@ -23,21 +24,21 @@
   {
     background-color: #fff;
     padding-bottom: 0;
-    margin-bottom: 2rem;
+    /* margin-bottom: 2rem; */
   }
   
   .MuiTabs-scroller .MuiTabs-flexContainer button:hover {
     color: #333;
-    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
     transform: translate(-3px, -3px);
-    transition: linear 0.3s;
-    border: 1px solid  #9E9E9E;
+    transition: linear 0.3s; */
+    /* border: 1px solid  #9E9E9E; */
   }
 
   .MuiTabs-scroller .MuiTabs-flexContainer button.Mui-selected {
-    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
     transform: translate(-3px, -3px);
-    transition: linear 0.5s;
+    transition: linear 0.5s; */
   }
   
   .MuiTabs-scroller .MuiTabs-flexContainer button.Mui-selected:hover {

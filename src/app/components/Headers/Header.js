@@ -223,7 +223,6 @@ function HeaderHome(props) {
     // borderRadius: "5px",
     color: "#FFF",
     backgroundColor: "#5300e8",
-    boxShadow: "3px 3px 0 #555",
   };
   const defaultStyling = {
     padding: "0.625rem 1.25rem",

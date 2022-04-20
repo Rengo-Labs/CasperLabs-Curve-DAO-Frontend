@@ -7,9 +7,9 @@ input.tableSearch {
 
 input.tableSearch:focus {
     outline: none;
-    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.6);
+    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.6);
     transform: translate(-3px, -5px);
-    transition: linear 0.2s;
+    transition: linear 0.2s; */
 }
 
 .sortTableBtns button {
@@ -22,18 +22,18 @@ input.tableSearch:focus {
 .sortTableBtns button:hover {
     /* border: 1px solid rgb(69, 131, 211);
     background-color:rgb(69, 131, 211); */
-    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
     transform: translate(-3px, -3px);
-    transition: linear 0.2s;
+    transition: linear 0.2s; */
 }
 
 button.tableSortBtnActive {
     border: 1px solid #5300e8;
     background-color:#5300e8;
     color: white;
-    box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
     transform: translate(-3px, -3px);
-    transition: linear 0.2s;
+    transition: linear 0.2s; */
 }
 
 
