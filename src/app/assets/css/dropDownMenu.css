@@ -1,0 +1,68 @@
+.subMenu-wrapper {
+    position: relative;
+    margin: 1.5em 0;
+}
+
+.menu-item {
+    padding: 0.625rem 0;
+    color: rgb(83, 0, 232);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    /* position: absolute;
+    top: 0; */
+    transition: linear 0.2s;
+    height: auto;
+    z-index: 9;
+}
+
+ /* .menu-item:hover {
+    background-color: rgb(83, 0, 232);
+    color: white;
+} */
+
+
+/*
+.menu-item:active {
+    background-color: rgb(83, 0, 232);
+    color: white;
+} */
+
+ul li.menuSubitem {
+    /* margin-left: 0.625rem; */
+    
+    cursor: pointer;
+    color: rgb(83, 0, 232);
+    font-size: 15px;
+    font-weight: 500;
+    display: none;
+    /* margin-top: 5px; */
+    position: relative;
+    z-index: 10;
+    transition: linear 0.2s;
+}
+
+li.menuSubitem a {
+    padding: 0.625rem 1.25rem;
+    color: unset;
+}
+
+ul li.openItem-1{
+    margin-top: 20px;
+    width: 12rem;
+    display: flex;
+}
+ul li.openItem-2{
+    width: 12rem;
+    display: flex;
+}
+ul li.openItem-3{
+    width: 12rem;
+    display: flex;
+}
+
+ul li.openItem-1:hover, ul li.openItem-2:hover, ul li.openItem-3:hover {
+    background-color: rgb(83, 0, 232);
+    color: white !important;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.6);
+}

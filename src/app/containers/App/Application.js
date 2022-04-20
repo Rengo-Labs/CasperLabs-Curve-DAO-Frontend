@@ -3,7 +3,9 @@ import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import HomeScreen from "../Pages/Users/HomeScreen";
 import Pools from "../Pages/Users/Pools";
-import Factory from "../Pages/Users/Factory";
+import FactoryCreatePool from "../Pages/Users/FactoryCreatePool";
+import FactoryCreateGauge from "../Pages/Users/FactoryCreateGauge";
+import FactoryCreateGaugeVote from "../Pages/Users/FactoryCreateGaugeVote";
 
 function App() {
   const LoginRegisterRedirectCheck = ({ path, ...rest }) => {
@@ -11,8 +13,12 @@ function App() {
       return <Route component={HomeScreen} />;
     } else if (path === "/pools") {
       return <Route component={Pools} />;
-    } else if (path === "/factory") {
-      return <Route component={Factory} />;
+    } else if (path === "/factory/create-pool") {
+      return <Route component={FactoryCreatePool} />;
+    } else if (path === "/factory/create-gauge") {
+      return <Route component={FactoryCreateGauge} />;
+    } else if (path === "/factory/create-gauge-vote") {
+      return <Route component={FactoryCreateGaugeVote} />;
     } else {
       return <Route component={HomeScreen} />;
     }
@@ -24,7 +30,9 @@ function App() {
         <Switch>
           <LoginRegisterRedirectCheck exact path="/" />
           <LoginRegisterRedirectCheck exact path="/pools" />
-          <LoginRegisterRedirectCheck exact path="/factory" />
+          <LoginRegisterRedirectCheck exact path="/factory/create-pool" />
+          <LoginRegisterRedirectCheck exact path="/factory/create-gauge" />
+          <LoginRegisterRedirectCheck exact path="/factory/create-gauge-vote" />
         </Switch>
       </BrowserRouter>
     </SnackbarProvider>

@@ -9,7 +9,7 @@ import HeaderHome from "../../../components/Headers/Header";
 import HomeBanner from "./Home/HomeBanner";
 
 //COMPONENT FUNCTION
-const Factory = () => {
+const FactoryCreateGaugeVote = () => {
   // States
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
@@ -37,11 +37,11 @@ const Factory = () => {
           <HomeBanner />
         </div>
         <div className="container-fluid">
-          <h1>This is Factory!</h1>
+          <h1>This is Factory create gauge vote!</h1>
         </div>
       </div>
     </>
   );
 };
 
-export default Factory;
+export default FactoryCreateGaugeVote;

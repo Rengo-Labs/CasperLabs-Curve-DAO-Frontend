@@ -7,6 +7,7 @@ import { Button, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "../../assets/css/bootstrap.min.css";
 import "../../assets/css/style.css";
+import "../../assets/css/dropDownMenu.css";
 import Logo from "../../assets/img/Logo.png";
 import "../../assets/plugins/fontawesome/css/all.min.css";
 import "../../assets/plugins/fontawesome/css/fontawesome.min.css";
@@ -51,6 +52,7 @@ function HeaderHome(props) {
   let [isLoading, setIsLoading] = useState(false);
   let [, setAccount] = useState("");
 
+  const [openMenu, setOpenMenu] = useState(false);
   const [openWalletModal, setOpenWalletModal] = useState(false);
   const handleCloseWalletModal = () => {
     setOpenWalletModal(false);
@@ -221,6 +223,7 @@ function HeaderHome(props) {
     // borderRadius: "5px",
     color: "#FFF",
     backgroundColor: "#5300e8",
+    boxShadow: "3px 3px 0 #555",
   };
   const defaultStyling = {
     padding: "0.625rem 1.25rem",
@@ -246,6 +249,12 @@ function HeaderHome(props) {
     }
 
     window.location.reload();
+  };
+
+  const setClassNames = (num) => {
+    const classArr = ["menuSubitem"];
+    if (openMenu) classArr.push(` openItem-${num}`);
+    return classArr.join("");
   };
 
   return (
@@ -414,14 +423,52 @@ function HeaderHome(props) {
                 <span style={selectedNavStyle.Pools}>Pools</span>
               </Link>
             </li>
-            <li>
-              <Link
-                to="/factory"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.Factory}>Factory</span>
-              </Link>
+            <li
+              onMouseEnter={() => setOpenMenu(true)}
+              onMouseLeave={() => setOpenMenu(false)}
+            >
+              <div className="subMenu-wrapper">
+                <div className="menu-item">
+                  <span style={selectedNavStyle.Factory}>Factory</span>
+                </div>
+                <ul
+                  style={{
+                    position: "absolute",
+                    top: "1.8rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: "rgb(231, 235, 240)",
+                    }}
+                  >
+                    <li className={setClassNames(1)}>
+                      <Link
+                        to="/factory/create-pool"
+                        className=" align-items-center justify-content-center text-center"
+                      >
+                        <span>Create Pool</span>
+                      </Link>
+                    </li>
+                    <li className={setClassNames(2)}>
+                      <Link
+                        to="/factory/create-gauge"
+                        className=" align-items-center justify-content-center text-center"
+                      >
+                        <span>Create Gauge</span>
+                      </Link>
+                    </li>
+                    <li className={setClassNames(3)}>
+                      <Link
+                        to="/factory/create-gauge-vote"
+                        className=" align-items-center justify-content-center text-center"
+                      >
+                        <span>Create Gauge Vote</span>
+                      </Link>
+                    </li>
+                  </div>
+                </ul>
+              </div>
             </li>
           </ul>
         </div>
