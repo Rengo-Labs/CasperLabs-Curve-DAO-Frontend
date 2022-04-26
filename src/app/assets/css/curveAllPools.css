@@ -7,9 +7,6 @@ input.tableSearch {
 
 input.tableSearch:focus {
     outline: none;
-    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.6);
-    transform: translate(-3px, -5px);
-    transition: linear 0.2s; */
 }
 
 .sortTableBtns button {
@@ -59,4 +56,9 @@ button.tableSortBtnActive {
 
 .MuiTableContainer-root {
     padding: 1.5rem 0;
+}
+
+.tableCellLink {
+text-decoration: none;
+color: #000;
 }

@@ -1,45 +1,31 @@
-.curve-content-wrapper .MuiFormControl-root {
-    margin: 0;
-    width:calc(100% - 10px)
-}
-
-.curve-content-wrapper .MuiFormControl-root legend {
+.mui-wrapper .MuiFormControl-root legend {
     padding: 0;
     display: none;
 }
 
-.curve-content-wrapper .MuiFormLabel-root {
-    /* left: 1rem;
-    padding: 0 .125rem; */
+.mui-wrapper .MuiFormLabel-root {
+    left: 1rem;
+    /* padding: 0 .125rem; */
 }
 
-.curve-content-wrapper .MuiFormLabel-root.Mui-focused {
+.mui-wrapper .MuiFormLabel-root.Mui-focused {
     color: #5300E8;
+    appearance: none;
 }
 
-.curve-content-wrapper .MuiOutlinedInput-root {
-    border-radius: 0;
+.mui-wrapper .MuiOutlinedInput-root {
+    /* border-radius: 0; */
 }
 
-.curve-content-wrapper .MuiOutlinedInput-root.Mui-focused {
+.mui-wrapper .MuiOutlinedInput-root.Mui-focused {
     /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
     transform: translate(-3px, -3px);
     transition: linear 0.2s;
     border-color: rgb(158, 158, 158); */
 }
 
-.curve-content-wrapper .MuiInputBase-colorPrimary.Mui-focused {
+.mui-wrapper .MuiInputBase-colorPrimary.Mui-focused {
     /* border-color: rgb(158, 158, 158); */
-}
-
-.swapIconWrapper .tokenSwapIcon {
-    color: white;
-    background-color: #5300E8;
-    padding: 8px;
-    font-size: 3.5rem;
-    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
-    transform: translate(-3px, -3px);
-    margin: 1.25rem auto; */
 }
 
 .iconsHanlde {

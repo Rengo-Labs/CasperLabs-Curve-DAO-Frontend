@@ -7,12 +7,14 @@ import "../../assets/css/common.css";
 //BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 //COMPONENTS
+import AdvancedOptions from "../Modals/AdvancedOptions";
 // MATERIAL UI
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import { makeStyles } from "@material-ui/core/styles";
 import FormLabel from "@mui/material/FormLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -32,6 +34,14 @@ import usdtIcon from "../../assets/img/usdt.png";
 import wbtcIcon from "../../assets/img/wbtc.png";
 
 // CONTENT
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+      width: "25ch",
+    },
+  },
+}));
 
 // COMPONENT FUNCTION
 const SwapUsingCurvePools = () => {
@@ -46,6 +56,9 @@ const SwapUsingCurvePools = () => {
   const [tradeRoute, setTradeRoute] = useState("tusd");
   const [caretRotate, setCaretRotate] = useState(true);
   const [slippageValue, setSlippageValue] = useState(true);
+  const [openAdvancedOptions, setOpenAdvancedOptions] = useState(false);
+
+  const classes = useStyles();
 
   //   Event Handlers
   const handleChangetokenA = (event) => {
@@ -80,16 +93,8 @@ const SwapUsingCurvePools = () => {
     setTokenBQuantity(e.target.value);
   };
 
-  const handleAdvancedOptions = () => {
-    caretRotate ? setCaretRotate(false) : setCaretRotate(true);
-    document
-      .getElementById("advOptions")
-      .classList.toggle("advancedOptionsHeight");
-  };
-
-  const handleChangeSlippage = (event) => {
-    setSlippageValue(event.target.value);
-  };
+  const handleOpenAdvancedOptions = () => setOpenAdvancedOptions(true);
+  const handleCloseAdvancedOptions = () => setOpenAdvancedOptions(false);
 
   return (
     <>
@@ -97,7 +102,7 @@ const SwapUsingCurvePools = () => {
         <fieldset>
           <legend>Swap using all Curve pools</legend>
           <div className="row no-gutters justify-content-center">
-            <div className="curve-content-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper mui-wrapper mui-form-width col-12 col-lg-6">
               <div className="row no-gutters justify-content-center">
                 <div className="col-12 col-md-8 col-lg-6 mt-3 mt-lg-0">
                   <FormControl>
@@ -158,19 +163,13 @@ const SwapUsingCurvePools = () => {
                   </FormControl>
                 </div>
                 <div className="col-12 col-md-8 col-lg-6 mt-3 mt-lg-0">
-                  <Box
-                    component="form"
-                    sx={{
-                      "& > :not(style)": { m: 1, width: "25ch" },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                  >
+                  <Box className={classes.root} noValidate autoComplete="off">
                     <TextField
                       id="tokenQuantityA"
                       placeholder="0.00"
                       variant="outlined"
                       value={tokenAQuantity}
+                      // label="Outlined"
                       onChange={handleTokenAQuantity}
                     />
                   </Box>
@@ -188,7 +187,7 @@ const SwapUsingCurvePools = () => {
             </div>
           </div>
           <div className="row no-gutters justify-content-center">
-            <div className="curve-content-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper mui-wrapper mui-form-width col-12 col-lg-6">
               <div className="row no-gutters justify-content-center">
                 <div className="col-12 col-md-8 col-lg-6 mt-3 mt-lg-0">
                   <FormControl>
@@ -270,7 +269,7 @@ const SwapUsingCurvePools = () => {
             </div>
           </div>
           <div className="row no-gutters justify-content-end">
-            <div className="curve-content-wrapper col-12 col-lg-6">
+            <div className="curve-content-wrapper mui-wrapper mui-form-width col-12 col-lg-6">
               <div className="col-12 col-md-8 col-lg-6">
                 <div className="text-right pr-md-3">
                   <h4 className="text-body">
@@ -289,51 +288,17 @@ const SwapUsingCurvePools = () => {
               </div>
             </div>
           </div>
-          <div className="row no-gutters justify-content-center">
-            <div className="col-12 col-lg-6">
-              <div className="col-12 col-md-8 col-lg-6">
-                <div className="btnWrapper">
-                  <button onClick={handleAdvancedOptions}>
-                    Advanced Options
-                    {caretRotate ? (
-                      <ArrowRightIcon style={{ marginLeft: "5px" }} />
-                    ) : (
-                      <ArrowDropDownIcon style={{ marginLeft: "5px" }} />
-                    )}
-                  </button>
-                </div>
+          <div className="row no-gutters px-4 px-xl-3 pb-4 pb-xl-3 justify-content-center">
+            <div className="col-12 col-md-6 text-center text-md-left">
+              <div className="btnWrapper">
+                <button onClick={handleOpenAdvancedOptions}>
+                  Advanced Options
+                </button>
               </div>
-              {/* {showAdvanced ? ( */}
-              <div
-                className="col-12 col-md-8 col-lg-6 advancedOptions advancedOptionsHeight"
-                id="advOptions"
-              >
-                <section>
-                  <h4>Advanced Options:</h4>
-                  <FormControl>
-                    <FormLabel id="advancedOptions">Max slippage: </FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="advancedOptions"
-                      name="advanced-options-for-swaping-from-curve-pools"
-                      value={slippageValue}
-                      onChange={handleChangeSlippage}
-                    >
-                      <FormControlLabel
-                        value="0.5%"
-                        control={<Radio />}
-                        label="0.5%"
-                      />
-                      <FormControlLabel
-                        value="1%"
-                        control={<Radio />}
-                        label="1%"
-                      />
-                      <TextField id="advancedOptionsInput" label="ttt" />
-                    </RadioGroup>
-                  </FormControl>
-                </section>
-              </div>
+              <AdvancedOptions
+                show={openAdvancedOptions}
+                close={handleCloseAdvancedOptions}
+              />
             </div>
           </div>
         </fieldset>

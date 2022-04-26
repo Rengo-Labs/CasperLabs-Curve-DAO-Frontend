@@ -30,6 +30,36 @@
     /* margin-bottom: 2rem; */
 }
 
+.createPoolform{
+  margin-bottom: 3rem;
+  }
+  
+  .createPoolform label {
+      margin: 0;
+      font-size: 0.75rem;
+      color: #9c9c9c
+  }
+  
+  .createPoolform label span {
+      font-weight: bold;
+  }
+  
+  .createPoolform input {
+      padding: 16.5px 14px;
+      border: 1px solid rgb(133, 133, 133);
+      width: 100%;
+  
+  }
+  
+  .createPoolform input:focus {
+      outline: none;
+  }
+  
+  .createPoolContent h3 {
+      color: rgba(0, 0, 0, 0.87);
+      margin-bottom: 1.25rem;
+  }
+
 /* Pagination */
 .MuiTablePagination {
     padding: 15px !important;
@@ -52,3 +82,18 @@
   .MuiTablePagination .MuiTablePagination-toolbar {
     justify-content: center;
   }
+
+  .swapIconWrapper .tokenSwapIcon {
+    color: white;
+    background-color: #5300E8;
+    padding: 8px;
+    font-size: 3.5rem;
+    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    transform: translate(-3px, -3px);
+    margin: 1.25rem auto; */
+}
+
+.mui-form-width .MuiFormControl-root {
+  margin: 0;
+  width:calc(100% - 10px)
+}

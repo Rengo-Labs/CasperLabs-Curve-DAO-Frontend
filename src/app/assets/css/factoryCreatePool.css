@@ -1,33 +1,3 @@
-.createPoolform{
-margin-bottom: 3rem;
-}
-
-.createPoolform label {
-    margin: 0;
-    font-size: 0.75rem;
-    color: #9c9c9c
-}
-
-.createPoolform label span {
-    font-weight: bold;
-}
-
-.createPoolform input {
-    padding: 16.5px 14px;
-    border: 1px solid rgb(133, 133, 133);
-    width: 100%;
-
-}
-
-.createPoolform input:focus {
-    outline: none;
-}
-
-.createPoolContent h3 {
-    color: rgba(0, 0, 0, 0.87);
-    margin-bottom: 1.25rem;
-}
-
 .MuiFormGroup-root .MuiFormControlLabel-root .MuiIconButton-root.Mui-checked {
     color: #000;
 }
