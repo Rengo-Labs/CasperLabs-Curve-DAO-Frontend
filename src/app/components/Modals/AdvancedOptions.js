@@ -48,7 +48,7 @@ const AdvancedOptions = (props) => {
         aria-labelledby="advancedOptions"
         aria-describedby="advancedOptions-options"
         open={props.show}
-        onClose={props.close}
+        onClose={props.handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -67,7 +67,7 @@ const AdvancedOptions = (props) => {
                   padding: "5px",
                   cursor: "pointer",
                 }}
-                onClick={props.close}
+                onClick={props.handleClose}
               >
                 <CloseIcon />
               </div>
@@ -216,7 +216,7 @@ const AdvancedOptions = (props) => {
               </section>
             </Typography>
             <div className="row no-gutters justify-content-center btnWrapper">
-              <button onClick={props.close}>Close</button>
+              <button onClick={props.handleClose}>Close</button>
             </div>
           </Box>
         </Fade>

@@ -233,6 +233,11 @@ function HeaderHome(props) {
     Factory: props.selectedNav === "Factory" ? selectedStyling : defaultStyling,
     BuyAndSell:
       props.selectedNav === "BuyAndSell" ? selectedStyling : defaultStyling,
+    Deposit: props.selectedNav === "Deposit" ? selectedStyling : defaultStyling,
+    Withdraw:
+      props.selectedNav === "Withdraw" ? selectedStyling : defaultStyling,
+    UseCrv: props.selectedNav === "UseCrv" ? selectedStyling : defaultStyling,
+    Risks: props.selectedNav === "Risks" ? selectedStyling : defaultStyling,
   };
 
   let Disconnect = (e) => {
@@ -478,6 +483,42 @@ function HeaderHome(props) {
                 style={{ color: "#5300e8" }}
               >
                 <span style={selectedNavStyle.BuyAndSell}>Buy And Sell</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/deposit"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Deposit}>Deposit</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/withdraw"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Withdraw}>Withdraw</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/use-crv"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.UseCrv}>Use CRV</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/risks"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Risks}>Risks</span>
               </Link>
             </li>
           </ul>

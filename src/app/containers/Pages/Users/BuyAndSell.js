@@ -185,7 +185,6 @@ const BuyAndSell = () => {
                                     </RadioGroup>
                                   </FormControl>
                                 </div>
-                                {/* </fieldset> */}
                               </div>
                               <div className="col-2 text-center swapIconWrapper d-md-block d-none">
                                 <SwapHorizIcon className="tokenSwapIcon" />
@@ -319,7 +318,7 @@ const BuyAndSell = () => {
                                 </Box>
                               </div>
                               <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2">
-                                <div className="col-12 col-md-auto mx-4 mx-xl-3 mb-3 mx-xl-2 text-center text-md-left">
+                                <div className="col-12 col-md-auto mx-4 mx-xl-2 mb-3 mb-xl-2 text-center text-md-left">
                                   <FormGroup>
                                     <FormControlLabel
                                       control={<Checkbox />}
@@ -342,7 +341,7 @@ const BuyAndSell = () => {
                                   </div>
                                   <AdvancedOptions
                                     show={open}
-                                    close={handleClose}
+                                    handleClose={handleClose}
                                   />
                                 </div>
                               </div>

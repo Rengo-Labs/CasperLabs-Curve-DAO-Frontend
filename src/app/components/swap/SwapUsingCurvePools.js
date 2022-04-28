@@ -297,7 +297,7 @@ const SwapUsingCurvePools = () => {
               </div>
               <AdvancedOptions
                 show={openAdvancedOptions}
-                close={handleCloseAdvancedOptions}
+                handleClose={handleCloseAdvancedOptions}
               />
             </div>
           </div>
