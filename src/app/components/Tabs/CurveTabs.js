@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 // CUSTOM CSS
 import "../../assets/css/curveTabs.css";
+// BOOTSTRAP
+import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
 import SwapUsingCurvePools from "../swap/SwapUsingCurvePools";
 import CRVStats from "../Stats/CRVStats";
@@ -78,9 +80,21 @@ const CurveTabs = () => {
                 centered
                 className="tabBtn"
               >
-                <Tab label="Swap Using Curve Pools" {...a11yProps(0)} />
-                <Tab label="Curve Pools" {...a11yProps(1)} />
-                <Tab label="Stats" {...a11yProps(2)} />
+                <Tab
+                  label="Swap Using Curve Pools"
+                  {...a11yProps(0)}
+                  className="mr-md-3 mr-lg-5"
+                />
+                <Tab
+                  label="Curve Pools"
+                  {...a11yProps(1)}
+                  className="mr-md-3 mr-lg-5"
+                />
+                <Tab
+                  label="Stats"
+                  {...a11yProps(2)}
+                  className="mr-md-3 mr-lg-5"
+                />
               </Tabs>
             </StyledEngineProvider>
           </Box>

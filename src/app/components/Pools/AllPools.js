@@ -6,7 +6,10 @@ import "../../assets/css/common.css";
 import "../../assets/css/curveAllPools.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
+// COMPONENTS
+import PoolsTabs from "../Tabs/PoolsTabs";
 // MATERIAL UI
+import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,7 +17,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import { TablePagination } from "@mui/material";
 import { StyledEngineProvider } from "@mui/styled-engine";
 import { Link } from "react-router-dom";
@@ -52,7 +54,7 @@ const AllPools = () => {
   };
 
   const searchTable = (term) => {
-    let filter = term.target.value.toUpperCase();
+    let filter = term.target.value.toUpperCase(); /// "USD", "BTC" --> term.target.text.trim()
     let TableBody = document.getElementById("curveTableBody");
     let tableRow = TableBody.getElementsByTagName("tr");
     for (var i = 0; i < tableRow.length; i++) {
@@ -81,14 +83,6 @@ const AllPools = () => {
     }
   };
 
-  const handleTableSorting = () => {
-    console.log("Header Clicked");
-  };
-
-  const handleSortBtnClick = () => {
-    let parent = document.getElementById("sortBtnWrapper");
-  };
-
   return (
     <>
       <div className="curve-container">
@@ -96,39 +90,38 @@ const AllPools = () => {
           <fieldset>
             <legend>Curve Pools</legend>
             <div className="row no-gutters justify-content-center">
-              <div className="curve-content-wrapper col-12 col-lg-6">
+              <div className="curve-content-wrapper col-12 col-xl-6">
                 <div className="row no-gutters align-items-center">
-                  <div className="col-12 col-lg-3 pr-0 pr-lg-2">
-                    <input
-                      type={"text"}
-                      name={""}
-                      id="tableSearch"
-                      placeholder={"Search"}
-                      onKeyUp={searchTable}
-                      className="tableSearch w-100"
-                    />
-                  </div>
-                  <div className="col-12 col-lg-9 pl-0 pl-lg-2">
-                    <div
-                      className="row no-gutters justify-content-end align-items-center sortTableBtns"
-                      id="sortBtnWrapper"
-                    >
-                      <button
-                        className="tableSortBtnActive"
-                        onClick={handleSortBtnClick}
-                      >
-                        All
-                      </button>
-                      <button onClick={handleSortBtnClick}>USD</button>
-                      <button onClick={handleSortBtnClick}>BTC</button>
-                      <button onClick={handleSortBtnClick}>ETH</button>
-                      <button onClick={handleSortBtnClick}>Crypto</button>
-                      <button onClick={handleSortBtnClick}>Others</button>
-                      <button onClick={handleSortBtnClick}>My Dashboard</button>
-                    </div>
-                  </div>
+                  <Box
+                    sx={{
+                      width: "100%",
+                    }}
+                  >
+                    <Paper elevation={4}>
+                      <div className="col-12 col-md-6 col-lg-4 pr-0 pr-lg-2">
+                        <input
+                          type={"text"}
+                          name={""}
+                          id="tableSearch"
+                          placeholder={"Search"}
+                          onKeyUp={searchTable}
+                          className="tableSearch w-100"
+                        />
+                      </div>
+                      <div className="col-12 px-0">
+                        <div
+                          className="row no-gutters justify-content-center align-items-center"
+                          id="sortBtnWrapper"
+                        >
+                          <div className="container-fluid px-0">
+                            <PoolsTabs />
+                          </div>
+                        </div>
+                      </div>
+                    </Paper>
+                  </Box>
                 </div>
-                <Box
+                {/* <Box
                   sx={{
                     width: "100%",
                     borderTop: 0,
@@ -236,7 +229,7 @@ const AllPools = () => {
                       </StyledEngineProvider>
                     </Paper>
                   </StyledEngineProvider>
-                </Box>
+                </Box> */}
               </div>
             </div>
           </fieldset>

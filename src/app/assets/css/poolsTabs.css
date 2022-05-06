@@ -1,0 +1,10 @@
+.MuiTabs-scroller .MuiTabs-flexContainer {
+    border: none;
+    padding: 1.5rem;
+    /* justify-content: center; */
+    /* overflow: scroll; */
+  }
+
+  .MuiTabs-scrollButtons.Mui-disabled {
+    opacity: 0.3;
+  }

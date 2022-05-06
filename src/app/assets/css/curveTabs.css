@@ -5,7 +5,7 @@
 .MuiTabs-scroller .MuiTabs-flexContainer button {
     font-size: 1rem;
     font-weight: bold;
-    margin-right: 2.5rem;
+    /* margin-right: 2.5rem; */
   }
   .MuiTabs-scroller .MuiTabs-flexContainer button.Mui-selected {
     background-color: #5300e8;

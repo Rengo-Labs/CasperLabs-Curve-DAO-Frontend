@@ -97,3 +97,7 @@
   margin: 0;
   width:calc(100% - 10px)
 }
+
+.hidden {
+  display: none !important;
+}
