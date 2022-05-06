@@ -32,6 +32,7 @@ import tusdIcon from "../../assets/img/tusd.png";
 import usdcIcon from "../../assets/img/usdc.png";
 import usdtIcon from "../../assets/img/usdt.png";
 import wbtcIcon from "../../assets/img/wbtc.png";
+import WalletModal from "../Modals/WalletModal";
 
 // CONTENT
 const useStyles = makeStyles((theme) => ({
@@ -295,15 +296,21 @@ const SwapUsingCurvePools = () => {
                   Advanced Options
                 </button>
               </div>
-              <AdvancedOptions
-                show={openAdvancedOptions}
-                handleClose={handleCloseAdvancedOptions}
-              />
+
             </div>
           </div>
         </fieldset>
       </div>
+
       <footer style={{ height: "10rem" }}></footer>
+      <AdvancedOptions
+        show={openAdvancedOptions}
+        handleClose={handleCloseAdvancedOptions}
+      />
+      {/* <WalletModal
+        show={openAdvancedOptions}
+        handleClose={handleCloseAdvancedOptions}
+      /> */}
     </>
   );
 };

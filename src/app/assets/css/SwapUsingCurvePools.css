@@ -39,7 +39,7 @@
     margin-right: 1rem;
 }
 
-.advancedOptions {
+/* .advancedOptions {
     height: 100px;
     visibility: visible;
     transition: all linear 150ms;
@@ -47,7 +47,7 @@
 .advancedOptionsHeight {
     height: 0 !important;
     visibility:collapse;
-}
+} */
 
 .MuiFormControl-root .Mui-focused {
     appearance: none;
