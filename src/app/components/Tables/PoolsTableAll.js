@@ -19,6 +19,7 @@ import { TablePagination, Typography } from "@mui/material";
 import { StyledEngineProvider } from "@mui/styled-engine";
 import { Link } from "react-router-dom";
 import logoAddress from "../../assets/img/usdc.png";
+import { Avatar, CardHeader } from "@material-ui/core";
 
 // CONTENT
 const cells = ["Pool", "Base vAPY", "Rewards tAPR", "Volume", "TVL"];
@@ -27,10 +28,11 @@ const sampleData =
 var poolsContent = []; // = JSON.parse(s);
 try {
   poolsContent = JSON.parse(sampleData);
-} catch (expecption) {}
+} catch (expecption) { }
 
 // COMPONENT FUNCTION
 const PoolsTableAll = (props) => {
+  console.log("props.tab", props.tab.toUpperCase());
   // States
   // Handlers
   const sortTable = () => {
@@ -95,7 +97,7 @@ const PoolsTableAll = (props) => {
           borderTop: 0,
         }}
         id="tableBox"
-        // onLoad={sortTable}
+      // onLoad={sortTable}
       >
         <StyledEngineProvider injectFirst>
           <TableContainer sx={{ p: 3 }}>
@@ -124,46 +126,54 @@ const PoolsTableAll = (props) => {
               <StyledEngineProvider injectFirst>
                 <TableBody id={"curveTableBody"}>
                   {poolsContent.map((item) => {
-                    props.tab == "all" || item.reference == props.tab ? (
-                      <TableRow>
-                        <TableCell key={item.index}>
-                          <Link
-                            to={`/buy-and-sell/${item.id}`}
-                            className="tableCellLink"
-                          >
-                            {/* <span className="tablePoolImgProps">
+                    return (
+                      (props.tab === "all" || item.pool.reference === props.tab.toUpperCase()) ?
+                        <TableRow>
+                          <TableCell key={item.index}>
+                            <Link
+                              to={`/pool/buy-and-sell/${item.id}`}
+                              className="tableCellLink"
+                            >
+                              <CardHeader
+                                avatar={<Avatar src={logoAddress} aria-label="Artist" />}
+                                title={item.pool.title}
+                                subheader={item.pool.reference}
+                              />
+                              {/* <span className="tablePoolImgProps">
                               <img src={logoAddress} alt="logo" />
                             </span> */}
-                            <span className="tablePoolTitle">
-                              {item.pool.title}
-                            </span>
-                            <span className="tablePoolRef">
-                              {item.pool.reference}
-                            </span>
-                          </Link>
-                        </TableCell>
-                        <TableCell key={item.index}>
-                          <Link to="/buy-and-sell" className="tableCellLink">
-                            {item.base}
-                          </Link>
-                        </TableCell>
-                        <TableCell key={item.index}>
-                          <Link to="/buy-and-sell" className="tableCellLink">
-                            {item.rewards}
-                          </Link>
-                        </TableCell>
-                        <TableCell key={item.index}>
-                          <Link to="/buy-and-sell" className="tableCellLink">
-                            {item.volume}
-                          </Link>
-                        </TableCell>
-                        <TableCell key={item.index}>
-                          <Link to="/buy-and-sell" className="tableCellLink">
-                            {item.tvl}
-                          </Link>
-                        </TableCell>
-                      </TableRow>
-                    ) : null;
+                              {/* <span className="tablePoolTitle">
+                                {item.pool.title}
+                              </span>
+                              <span className="tablePoolRef">
+                                {item.pool.reference}
+                              </span> */}
+                            </Link>
+                          </TableCell>
+                          <TableCell key={item.index}>
+                            <Link to="/pool/buy-and-sell" className="tableCellLink">
+                              {item.base}
+                            </Link>
+                          </TableCell>
+                          <TableCell key={item.index}>
+                            <Link to="/pool/buy-and-sell" className="tableCellLink">
+                              {item.rewards}
+                            </Link>
+                          </TableCell>
+                          <TableCell key={item.index}>
+                            <Link to="/pool/buy-and-sell" className="tableCellLink">
+                              {item.volume}
+                            </Link>
+                          </TableCell>
+                          <TableCell key={item.index}>
+                            <Link to="/pool/buy-and-sell" className="tableCellLink">
+                              {item.tvl}
+                            </Link>
+                          </TableCell>
+                        </TableRow>
+                        : null
+                    )
+
                   })}
                 </TableBody>
               </StyledEngineProvider>

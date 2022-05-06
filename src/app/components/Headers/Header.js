@@ -231,8 +231,6 @@ function HeaderHome(props) {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
     Pools: props.selectedNav === "Pools" ? selectedStyling : defaultStyling,
     Factory: props.selectedNav === "Factory" ? selectedStyling : defaultStyling,
-    BuyAndSell:
-      props.selectedNav === "BuyAndSell" ? selectedStyling : defaultStyling,
     Deposit: props.selectedNav === "Deposit" ? selectedStyling : defaultStyling,
     Withdraw:
       props.selectedNav === "Withdraw" ? selectedStyling : defaultStyling,
@@ -475,15 +473,6 @@ function HeaderHome(props) {
                   </div>
                 </ul>
               </div>
-            </li>
-            <li>
-              <Link
-                to="/buy-and-sell"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.BuyAndSell}>Buy And Sell</span>
-              </Link>
             </li>
             <li>
               <Link

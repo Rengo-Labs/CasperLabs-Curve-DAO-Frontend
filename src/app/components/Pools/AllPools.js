@@ -162,7 +162,7 @@ const AllPools = () => {
                                   <TableRow>
                                     <TableCell key={item.index}>
                                       <Link
-                                        to={`/buy-and-sell/${item.id}`}
+                                        to={`/pool/buy-and-sell/${item.id}`}
                                         className="tableCellLink"
                                       >
                                         <span className="tablePoolImgProps">
@@ -178,7 +178,7 @@ const AllPools = () => {
                                     </TableCell>
                                     <TableCell key={item.index}>
                                       <Link
-                                        to="/buy-and-sell"
+                                        to="/pool/buy-and-sell"
                                         className="tableCellLink"
                                       >
                                         {item.base}
@@ -186,7 +186,7 @@ const AllPools = () => {
                                     </TableCell>
                                     <TableCell key={item.index}>
                                       <Link
-                                        to="/buy-and-sell"
+                                        to="/pool/buy-and-sell"
                                         className="tableCellLink"
                                       >
                                         {item.rewards}
@@ -194,7 +194,7 @@ const AllPools = () => {
                                     </TableCell>
                                     <TableCell key={item.index}>
                                       <Link
-                                        to="/buy-and-sell"
+                                        to="/pool/buy-and-sell"
                                         className="tableCellLink"
                                       >
                                         {item.volume}
@@ -202,7 +202,7 @@ const AllPools = () => {
                                     </TableCell>
                                     <TableCell key={item.index}>
                                       <Link
-                                        to="/buy-and-sell"
+                                        to="/pool/buy-and-sell"
                                         className="tableCellLink"
                                       >
                                         {item.tvl}

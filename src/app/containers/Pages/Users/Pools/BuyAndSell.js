@@ -1,16 +1,16 @@
 //REACT
 import React, { useState } from "react";
 // CUSTOME STYLING
-import "../../../assets/css/style.css";
-import "../../../assets/css/curveButton.css";
-import "../../../assets/css/common.css";
-import "../../../assets/css/BuyAndSell.css";
+import "../../../../assets/css/style.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/common.css";
+import "../../../../assets/css/BuyAndSell.css";
 // BOOTSTRAP
-import "../../../assets/css/bootstrap.min.css";
+import "../../../../assets/css/bootstrap.min.css";
 //COMPONENTS
-import HeaderHome from "../../../components/Headers/Header";
-import HomeBanner from "./Home/HomeBanner";
-import AdvancedOptions from "../../../components/Modals/AdvancedOptions";
+import HeaderHome from "../../../../components/Headers/Header";
+import HomeBanner from "../Home/HomeBanner";
+import AdvancedOptions from "../../../../components/Modals/AdvancedOptions";
 //MATERIAL UI ICONS
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
@@ -91,7 +91,7 @@ const BuyAndSell = () => {
           setSelectedWallet={setSelectedWallet}
           selectedWallet={selectedWallet}
           setTorus={setTorus}
-          selectedNav={"BuyAndSell"}
+          selectedNav={"Pools"}
         />
         <div
           className="content"

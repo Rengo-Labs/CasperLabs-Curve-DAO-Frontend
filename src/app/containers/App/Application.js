@@ -6,7 +6,7 @@ import Pools from "../Pages/Users/Pools";
 import FactoryCreatePool from "../Pages/Users/FactoryCreatePool";
 import FactoryCreateGauge from "../Pages/Users/FactoryCreateGauge";
 import FactoryCreateGaugeVote from "../Pages/Users/FactoryCreateGaugeVote";
-import BuyAndSell from "../Pages/Users/BuyAndSell";
+import BuyAndSell from "../Pages/Users/Pools/BuyAndSell";
 import Deposit from "../Pages/Users/Deposit";
 import Withdraw from "../Pages/Users/Withdraw";
 import UseCrv from "../Pages/Users/UseCrv";
@@ -24,7 +24,7 @@ function App() {
       return <Route component={FactoryCreateGauge} />;
     } else if (path === "/factory/create-gauge-vote") {
       return <Route component={FactoryCreateGaugeVote} />;
-    } else if (path === "/buy-and-sell/:itemId") {
+    } else if (path === "/pool/buy-and-sell/:itemId") {
       return <Route component={BuyAndSell} />;
     } else if (path === "/deposit") {
       return <Route component={Deposit} />;
@@ -48,7 +48,7 @@ function App() {
           <LoginRegisterRedirectCheck exact path="/factory/create-pool" />
           <LoginRegisterRedirectCheck exact path="/factory/create-gauge" />
           <LoginRegisterRedirectCheck exact path="/factory/create-gauge-vote" />
-          <LoginRegisterRedirectCheck exact path="/buy-and-sell/:itemId" />
+          <LoginRegisterRedirectCheck exact path="/pool/buy-and-sell/:itemId" />
           <LoginRegisterRedirectCheck exact path="/deposit" />
           <LoginRegisterRedirectCheck exact path="/withdraw" />
           <LoginRegisterRedirectCheck exact path="/use-crv" />

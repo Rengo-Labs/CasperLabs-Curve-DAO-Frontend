@@ -60,7 +60,7 @@ const FactoryCreateGauge = () => {
                   <div className="row no-gutters justify-content-center">
                     <div className="curve-content-wrapper col-12 col-lg-6 ">
                       <Alert
-                        variant="filled"
+                        // variant="filled"
                         severity="warning"
                         sx={{ marginBottom: "2rem" }}
                       >
@@ -68,7 +68,7 @@ const FactoryCreateGauge = () => {
                         currently have a gauge. Your gauge will not receive CRV
                         until you submit it for a{" "}
                         <span style={{ fontWeight: "bold" }}>
-                          <Link to="/factory/create-gauge-vote">new vote</Link>
+                          <Link style={{ color: '#000' }} to="/factory/create-gauge-vote">new vote</Link>
                         </span>
                         .
                       </Alert>

@@ -40,7 +40,10 @@ import {
   Radio,
   RadioGroup,
   FormGroup,
+  CardHeader,
+  Avatar,
 } from "@material-ui/core";
+import USDT from '../../../assets/img/usdt.png';
 import { StyledEngineProvider } from "@mui/styled-engine";
 import { AlertTitle } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -308,30 +311,42 @@ const Withdraw = () => {
                                       defaultValue="withdraw-percentage-token"
                                       name="withdraw-percentage-token-radio-group"
                                     >
+
                                       <FormControlLabel
                                         value="usdt"
                                         control={<Radio />}
                                         label={
-                                          <span>
-                                            <img
-                                              src="../../../assets/img/usdt.png"
-                                              // alt="usdt token"
-                                            />{" "}
-                                            USDT{" "}
-                                          </span>
+                                          <CardHeader
+                                            avatar={<Avatar src={USDT} aria-label="Artist" />}
+                                            title={"USD Token"}
+                                            subheader={"USDT"}
+                                          />
                                         }
                                       />
                                       <Divider />
                                       <FormControlLabel
                                         value="wbtc"
                                         control={<Radio />}
-                                        label="wBTC"
+                                        label={
+                                          <CardHeader
+                                            avatar={<Avatar src={USDT} aria-label="Artist" />}
+                                            title={"Wrapper BTC"}
+                                            subheader={"wBTC"}
+                                          />
+                                        }
                                       />
                                       <Divider />
                                       <FormControlLabel
                                         value="cspr"
                                         control={<Radio />}
-                                        label="CSPR"
+                                        label=
+                                        {
+                                          <CardHeader
+                                            avatar={<Avatar src={USDT} aria-label="Artist" />}
+                                            title={"Casper"}
+                                            subheader={"CSPR"}
+                                          />
+                                        }
                                       />
                                       <Divider />
                                     </RadioGroup>
