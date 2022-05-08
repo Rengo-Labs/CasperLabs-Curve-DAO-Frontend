@@ -11,50 +11,19 @@ import PoolsTabs from "../Tabs/PoolsTabs";
 // MATERIAL UI
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import { TablePagination } from "@mui/material";
+import TextField from "@mui/material/TextField";
 import { StyledEngineProvider } from "@mui/styled-engine";
-import { Link } from "react-router-dom";
-import logoAddress from "../../assets/img/usdc.png";
-
-// let logoAddress = "../../assets/img";
 
 // Content
-const cells = ["Pool", "Base vAPY", "Rewards tAPR", "Volume", "TVL"];
-const sampleData =
-  '[{"pool":{"logo": "../../assets/img/usdc.png", "title": "tricrypto2", "reference": "CRYPTO"},"base":"0.73%","rewards":"+3.09%","volume":"$62.7m","tvl":"$868.7m", "id": "123"},{"pool":{"logo": "/busd.png", "title": "sUSD", "reference": "USD"},"base":"2.09%","rewards":"+0.32%","volume":"$24.5m","tvl":"$96.2m"},{"pool":{"logo": "./busd.png", "title": "steth", "reference": "ETH"},"base":"2.09%","rewards":"+0.32%","volume":"$76.2m","tvl":"$121.1m"},{"pool":{"logo": "./busd.png", "title": "reth", "reference": "ETH"},"base":"1.89%","rewards":"+1.63%","volume":"$96.5m","tvl":"$415.23m"},{"pool":{"logo": "./busd.png", "title": "mim", "reference": "USD"},"base":"2.94%","rewards":"+4.28%","volume":"$17.73m","tvl":"$53.112m"},{"pool":{"logo": "./busd.png", "title": "link", "reference": "LINK"},"base":"0.00%","rewards":"+0.22%","volume":"$796m","tvl":"$10.9m"},{"pool":{"logo": "./busd.png", "title": "eurt", "reference": "EUR"},"base":"0.0%","rewards":"+0%","volume":"$0","tvl":"$386.6m"},{"pool":{"logo": "./busd.png", "title": "eurs", "reference": "EUR"},"base":"0.09%","rewards":"+1.71%","volume":"$1589m","tvl":"$35.5m"},{"pool":{"logo": "./busd.png", "title": "3pool", "reference": "USD"},"base":"0.43%","rewards":"+1.07%","volume":"$74.79m","tvl":"$105.3m"},{"pool":{"logo": "./busd.png", "title": "ankreth", "reference": "ETH"},"base":"1.17%","rewards":"+1.25%","volume":"98.92m","tvl":"$215.4m"},{"pool":{"logo": "./busd.png", "title": "cvxweth", "reference": "ETH"},"base":"2.01%","rewards":"+0.21%","volume":"$63.5m","tvl":"$179.1m"}]';
-var poolsContent = []; // = JSON.parse(s);
-try {
-  poolsContent = JSON.parse(sampleData);
-} catch (expecption) {}
-
-console.log(Object.keys(poolsContent).length);
-console.log("old school", poolsContent.length);
 
 // COMPONENT FUNCTION
 const AllPools = () => {
   //States
-  const [stakes, setStakes] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  //   Event Handlers
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  //Event Handlers
 
   const searchTable = (term) => {
-    let filter = term.target.value.toUpperCase(); /// "USD", "BTC" --> term.target.text.trim()
+    let filter = term.target.value.toUpperCase();
     let TableBody = document.getElementById("curveTableBody");
     let tableRow = TableBody.getElementsByTagName("tr");
     for (var i = 0; i < tableRow.length; i++) {
@@ -98,16 +67,20 @@ const AllPools = () => {
                     }}
                   >
                     <Paper elevation={4}>
+                      {/* SEARCH */}
                       <div className="col-12 col-md-6 col-lg-4 pr-0 pr-lg-2">
-                        <input
-                          type={"text"}
-                          name={""}
-                          id="tableSearch"
-                          placeholder={"Search"}
-                          onKeyUp={searchTable}
-                          className="tableSearch w-100"
-                        />
+                        <StyledEngineProvider injectFirst>
+                          <TextField
+                            id="tableSearch"
+                            label="Search"
+                            variant="filled"
+                            className="w-100"
+                            sx={{ margin: "1.25rem 0" }}
+                            onKeyUp={searchTable}
+                          />
+                        </StyledEngineProvider>
                       </div>
+                      {/* TABS AND TABLE */}
                       <div className="col-12 px-0">
                         <div
                           className="row no-gutters justify-content-center align-items-center"
@@ -121,115 +94,6 @@ const AllPools = () => {
                     </Paper>
                   </Box>
                 </div>
-                {/* <Box
-                  sx={{
-                    width: "100%",
-                    borderTop: 0,
-                  }}
-                >
-                  <StyledEngineProvider injectFirst>
-                    <Paper sx={{ width: "100%", mb: 2 }} className="MuiPaper">
-                      <TableContainer sx={{ p: 3 }}>
-                        <Table aria-label="Wise Staking">
-                          <TableHead
-                            sx={{
-                              backgroundColor: "#e7ebf0",
-                              paddingLeft: "0.25rem",
-                            }}
-                          >
-                            <TableRow
-                              id="curvePoolsTableSort"
-                              onClick={handleTableSorting}
-                            >
-                              {cells.map((cell) => (
-                                <TableCell
-                                  sx={{
-                                    border: 0,
-                                    fontWeight: "bold",
-                                    fontSize: "1.25rem",
-                                  }}
-                                >
-                                  {cell}
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          </TableHead>
-                          <StyledEngineProvider injectFirst>
-                            <TableBody id={"curveTableBody"}>
-                              {poolsContent.map((item) => {
-                                let logo = `${logoAddress}`;
-                                return (
-                                  <TableRow>
-                                    <TableCell key={item.index}>
-                                      <Link
-                                        to={`/pool/buy-and-sell/${item.id}`}
-                                        className="tableCellLink"
-                                      >
-                                        <span className="tablePoolImgProps">
-                                          <img src={logoAddress} alt="logo" />
-                                        </span>
-                                        <span className="tablePoolTitle">
-                                          {item.pool.title}
-                                        </span>
-                                        <span className="tablePoolRef">
-                                          {item.pool.reference}
-                                        </span>
-                                      </Link>
-                                    </TableCell>
-                                    <TableCell key={item.index}>
-                                      <Link
-                                        to="/pool/buy-and-sell"
-                                        className="tableCellLink"
-                                      >
-                                        {item.base}
-                                      </Link>
-                                    </TableCell>
-                                    <TableCell key={item.index}>
-                                      <Link
-                                        to="/pool/buy-and-sell"
-                                        className="tableCellLink"
-                                      >
-                                        {item.rewards}
-                                      </Link>
-                                    </TableCell>
-                                    <TableCell key={item.index}>
-                                      <Link
-                                        to="/pool/buy-and-sell"
-                                        className="tableCellLink"
-                                      >
-                                        {item.volume}
-                                      </Link>
-                                    </TableCell>
-                                    <TableCell key={item.index}>
-                                      <Link
-                                        to="/pool/buy-and-sell"
-                                        className="tableCellLink"
-                                      >
-                                        {item.tvl}
-                                      </Link>
-                                    </TableCell>
-                                  </TableRow>
-                                );
-                              })}
-                            </TableBody>
-                          </StyledEngineProvider>
-                        </Table>
-                      </TableContainer>
-                      <StyledEngineProvider injectFirst>
-                        <TablePagination
-                          rowsPerPageOptions={[5, 10, 25]}
-                          component="div"
-                          count={cells.length}
-                          rowsPerPage={rowsPerPage}
-                          page={page}
-                          onPageChange={handleChangePage}
-                          onRowsPerPageChange={handleChangeRowsPerPage}
-                          className="MuiTablePagination"
-                        />
-                      </StyledEngineProvider>
-                    </Paper>
-                  </StyledEngineProvider>
-                </Box> */}
               </div>
             </div>
           </fieldset>

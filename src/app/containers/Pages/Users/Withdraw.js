@@ -43,7 +43,7 @@ import {
   CardHeader,
   Avatar,
 } from "@material-ui/core";
-import USDT from '../../../assets/img/usdt.png';
+import USDT from "../../../assets/img/usdt.png";
 import { StyledEngineProvider } from "@mui/styled-engine";
 import { AlertTitle } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -311,13 +311,17 @@ const Withdraw = () => {
                                       defaultValue="withdraw-percentage-token"
                                       name="withdraw-percentage-token-radio-group"
                                     >
-
                                       <FormControlLabel
                                         value="usdt"
                                         control={<Radio />}
                                         label={
                                           <CardHeader
-                                            avatar={<Avatar src={USDT} aria-label="Artist" />}
+                                            avatar={
+                                              <Avatar
+                                                src={USDT}
+                                                aria-label="Artist"
+                                              />
+                                            }
                                             title={"USD Token"}
                                             subheader={"USDT"}
                                           />
@@ -329,7 +333,12 @@ const Withdraw = () => {
                                         control={<Radio />}
                                         label={
                                           <CardHeader
-                                            avatar={<Avatar src={USDT} aria-label="Artist" />}
+                                            avatar={
+                                              <Avatar
+                                                src={USDT}
+                                                aria-label="Artist"
+                                              />
+                                            }
                                             title={"Wrapper BTC"}
                                             subheader={"wBTC"}
                                           />
@@ -339,10 +348,14 @@ const Withdraw = () => {
                                       <FormControlLabel
                                         value="cspr"
                                         control={<Radio />}
-                                        label=
-                                        {
+                                        label={
                                           <CardHeader
-                                            avatar={<Avatar src={USDT} aria-label="Artist" />}
+                                            avatar={
+                                              <Avatar
+                                                src={USDT}
+                                                aria-label="Artist"
+                                              />
+                                            }
                                             title={"Casper"}
                                             subheader={"CSPR"}
                                           />
@@ -404,8 +417,10 @@ const Withdraw = () => {
                                               />
                                             </div>
                                             <div className="col-6">
-                                              <input
-                                                type="text"
+                                              <TextField
+                                                id="filled-basic"
+                                                label=""
+                                                variant="filled"
                                                 name="gas-fee-radio-group"
                                               />
                                             </div>

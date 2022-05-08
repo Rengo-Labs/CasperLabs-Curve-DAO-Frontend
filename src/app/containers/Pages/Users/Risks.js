@@ -71,292 +71,296 @@ const Risks = () => {
                         }}
                       >
                         <Paper elevation={4}>
-                          <div className="p-4 p-xl-3">
-                            <div className="row no-gutters">
-                              {/* Main Heading */}
-                              <div className="col-12">
-                                <Typography
-                                  variant="h4"
-                                  gutterBottom
-                                  component="div"
-                                  fontWeight={900}
-                                >
-                                  <span className="d-flex">
-                                    <span style={{ marginRight: "10px" }}>
-                                      Risks of using
-                                    </span>
-                                    <Avatar
-                                      src={tokenAvatar}
-                                      aria-label="curve-token-avatar"
-                                    />
-                                    <span style={{ marginLeft: "10px" }}>
-                                      Curve Finance
-                                    </span>
-                                  </span>
-                                </Typography>
-                              </div>
-                              <div className="col-12 mb-3 mb-md-4">
-                                <Stack sx={{ width: "100%" }} spacing={2}>
-                                  <Alert
-                                    severity="info"
-                                    sx={{ fontSize: "1rem" }}
-                                    icon={false}
-                                  >
-                                    Providing liquidity on Curve doesn't come
-                                    without risks. Before making a deposit, it
-                                    is best to research and understand the risks
-                                    involved.
-                                  </Alert>
-                                </Stack>
-                              </div>
-                              {/* Links to PDFs */}
-                              <div className="col-12 col-md-auto">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <a
-                                        href="https://curve.fi/files/stableswap-paper.pdf"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                          textDecoration: "none",
-                                          color: "#5300E8",
-                                        }}
-                                      >
-                                        Whitepaper
-                                      </a>
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <a
-                                        href="https://curve.fi/files/crypto-pools-paper.pdf"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                          textDecoration: "none",
-                                          color: "#5300E8",
-                                        }}
-                                      >
-                                        Crypto Pools Whitepaper
-                                      </a>
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
-                              </div>
-                            </div>
-                            <div className="w-100 my-4">
-                              <Divider />
-                            </div>
-                            {/* Audits */}
-                            <div className="row no-gutters">
-                              <div className="col-12">
-                                <Typography
-                                  variant="h5"
-                                  gutterBottom
-                                  component="div"
-                                  fontWeight={900}
-                                >
-                                  Audits
-                                </Typography>
-                                <div className="row no-gutters mb-md-2 mt-4">
+                          <div className="py-5 px-4">
+                            <div className="p-4 p-xl-3">
+                              <div className="row no-gutters">
+                                {/* Main Heading */}
+                                <div className="col-12">
                                   <Typography
-                                    variant="body1"
+                                    variant="h4"
                                     gutterBottom
-                                    color={"#000"}
+                                    component="div"
+                                    fontWeight={900}
                                   >
-                                    Curve smart contracts were{" "}
-                                    <Link to={"/"}>
-                                      <span className="text-body font-weight-bold">
-                                        Audited
+                                    <span className="d-flex">
+                                      <span style={{ marginRight: "10px" }}>
+                                        Risks of using
                                       </span>
-                                    </Link>{" "}
-                                    by Trail of Bits.
-                                  </Typography>
-                                </div>
-                                <div className="row no-gutters mb-md-2">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    color={"#000"}
-                                  >
-                                    However, security audits don't eliminate
-                                    risks completely. Please don’t supply your
-                                    life savings, or assets you can’t afford to
-                                    lose, to Curve, especially as a liquidity
-                                    provider.
-                                  </Typography>
-                                </div>
-                                <div className="row no-gutters mb-md-2">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    color={"#000"}
-                                  >
-                                    Using Curve as an exchange user should be
-                                    significantly less risky, but this is not
-                                    advice.
-                                  </Typography>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="w-100 my-4">
-                              <Divider />
-                            </div>
-                            {/* Admin Keys */}
-                            <div className="row no-gutters">
-                              <div className="col-12">
-                                <Typography
-                                  variant="h5"
-                                  gutterBottom
-                                  component="div"
-                                  fontWeight={900}
-                                >
-                                  Admin Keys
-                                </Typography>
-                                <div className="row no-gutters mb-md-2 mt-4">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    color={"#000"}
-                                  >
-                                    Curve is fully decentralized with the launch
-                                    of Curve DAO. There's an{" "}
-                                    <Link to={"/"}>
-                                      <span className="text-body font-weight-bold">
-                                        Emergency DAO
+                                      <Avatar
+                                        src={tokenAvatar}
+                                        aria-label="curve-token-avatar"
+                                      />
+                                      <span style={{ marginLeft: "10px" }}>
+                                        Curve Finance
                                       </span>
-                                    </Link>{" "}
-                                    which is able to pause the pools during
-                                    first 2 months in existence and Curve DAO
-                                    can unpause them at any time.
+                                    </span>
                                   </Typography>
                                 </div>
-                                <div className="row no-gutters mb-md-2">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    color={"#000"}
-                                  >
-                                    Curve Emergency DAO has 9 members and
-                                    59.999% support and 51% quorum Curve
-                                    Emergency DAO can act when there's a danger
-                                    of loss of funds and call the kill_me
-                                    function of Curve Pool contracts which
-                                    disables all functionality except for
-                                    withdrawals. Curve pools can be reenabled
-                                    back by either Emergency DAO or Curve DAO
-                                    The Emergency DAO is controlled by Curve DAO
-                                    which can add or remove Emergency members
-                                  </Typography>
+                                <div className="col-12 mb-3 mb-md-4">
+                                  <Stack sx={{ width: "100%" }} spacing={2}>
+                                    <Alert
+                                      severity="info"
+                                      sx={{ fontSize: "1rem" }}
+                                      icon={false}
+                                    >
+                                      Providing liquidity on Curve doesn't come
+                                      without risks. Before making a deposit, it
+                                      is best to research and understand the
+                                      risks involved.
+                                    </Alert>
+                                  </Stack>
                                 </div>
-                                <div className="row no-gutters mb-md-2">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    color={"#000"}
-                                  >
-                                    Smart contracts{" "}
-                                    <span className="font-weight-bold">
-                                      CANNOT
-                                    </span>{" "}
-                                    be upgraded. This limits actions in a case
-                                    of emergency, but leaves users fully in
-                                    control of their funds.
-                                  </Typography>
-                                </div>
-                                <div className="row no-gutters mb-md-2">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    color={"#000"}
-                                  >
-                                    Using Curve as an exchange user should be
-                                    significantly less risky, but this is not
-                                    advice.
-                                  </Typography>
+                                {/* Links to PDFs */}
+                                <div className="col-12 col-md-auto">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <a
+                                          href="https://curve.fi/files/stableswap-paper.pdf"
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          style={{
+                                            textDecoration: "none",
+                                            color: "#5300E8",
+                                          }}
+                                        >
+                                          Whitepaper
+                                        </a>
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <a
+                                          href="https://curve.fi/files/crypto-pools-paper.pdf"
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          style={{
+                                            textDecoration: "none",
+                                            color: "#5300E8",
+                                          }}
+                                        >
+                                          Crypto Pools Whitepaper
+                                        </a>
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
                                 </div>
                               </div>
-                            </div>
-                            <div className="w-100 my-4">
-                              <Divider />
-                            </div>
-                            {/* Permanent Loss */}
-                            <div className="row no-gutters">
-                              <div className="col-12">
-                                <Typography
-                                  variant="h5"
-                                  gutterBottom
-                                  component="div"
-                                  fontWeight={900}
-                                >
-                                  Permanent loss of a peg
-                                </Typography>
+                              <div className="w-100 my-4">
+                                <Divider />
                               </div>
-                              <div className="row no-gutters mb-md-2 mt-4">
-                                <Typography
-                                  variant="body1"
-                                  gutterBottom
-                                  color={"#000"}
-                                >
-                                  If one of the stablecoins in the pool goes
-                                  significantly down below the peg of 1.0 and
-                                  never returns to the peg, it'll effectively
-                                  mean that pool liquidity providers hold almost
-                                  all their liquidity in that currency.
-                                </Typography>
+                              {/* Audits */}
+                              <div className="row no-gutters">
+                                <div className="col-12">
+                                  <Typography
+                                    variant="h5"
+                                    gutterBottom
+                                    component="div"
+                                    fontWeight={900}
+                                  >
+                                    Audits
+                                  </Typography>
+                                  <div className="row no-gutters mb-md-2 mt-4">
+                                    <Typography
+                                      variant="body1"
+                                      gutterBottom
+                                      color={"#000"}
+                                    >
+                                      Curve smart contracts were{" "}
+                                      <Link to={"/"}>
+                                        <span className="text-body font-weight-bold">
+                                          Audited
+                                        </span>
+                                      </Link>{" "}
+                                      by Trail of Bits.
+                                    </Typography>
+                                  </div>
+                                  <div className="row no-gutters mb-md-2">
+                                    <Typography
+                                      variant="body1"
+                                      gutterBottom
+                                      color={"#000"}
+                                    >
+                                      However, security audits don't eliminate
+                                      risks completely. Please don’t supply your
+                                      life savings, or assets you can’t afford
+                                      to lose, to Curve, especially as a
+                                      liquidity provider.
+                                    </Typography>
+                                  </div>
+                                  <div className="row no-gutters mb-md-2">
+                                    <Typography
+                                      variant="body1"
+                                      gutterBottom
+                                      color={"#000"}
+                                    >
+                                      Using Curve as an exchange user should be
+                                      significantly less risky, but this is not
+                                      advice.
+                                    </Typography>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                            <div className="w-100 my-4">
-                              <Divider />
-                            </div>
-                            {/* Staking Risks */}
-                            <div className="row no-gutters">
-                              <div className="col-12">
-                                <Typography
-                                  variant="h5"
-                                  gutterBottom
-                                  component="div"
-                                  fontWeight={900}
-                                >
-                                  Staking Risks
-                                </Typography>
+                              <div className="w-100 my-4">
+                                <Divider />
+                              </div>
+                              {/* Admin Keys */}
+                              <div className="row no-gutters">
+                                <div className="col-12">
+                                  <Typography
+                                    variant="h5"
+                                    gutterBottom
+                                    component="div"
+                                    fontWeight={900}
+                                  >
+                                    Admin Keys
+                                  </Typography>
+                                  <div className="row no-gutters mb-md-2 mt-4">
+                                    <Typography
+                                      variant="body1"
+                                      gutterBottom
+                                      color={"#000"}
+                                    >
+                                      Curve is fully decentralized with the
+                                      launch of Curve DAO. There's an{" "}
+                                      <Link to={"/"}>
+                                        <span className="text-body font-weight-bold">
+                                          Emergency DAO
+                                        </span>
+                                      </Link>{" "}
+                                      which is able to pause the pools during
+                                      first 2 months in existence and Curve DAO
+                                      can unpause them at any time.
+                                    </Typography>
+                                  </div>
+                                  <div className="row no-gutters mb-md-2">
+                                    <Typography
+                                      variant="body1"
+                                      gutterBottom
+                                      color={"#000"}
+                                    >
+                                      Curve Emergency DAO has 9 members and
+                                      59.999% support and 51% quorum Curve
+                                      Emergency DAO can act when there's a
+                                      danger of loss of funds and call the
+                                      kill_me function of Curve Pool contracts
+                                      which disables all functionality except
+                                      for withdrawals. Curve pools can be
+                                      reenabled back by either Emergency DAO or
+                                      Curve DAO The Emergency DAO is controlled
+                                      by Curve DAO which can add or remove
+                                      Emergency members
+                                    </Typography>
+                                  </div>
+                                  <div className="row no-gutters mb-md-2">
+                                    <Typography
+                                      variant="body1"
+                                      gutterBottom
+                                      color={"#000"}
+                                    >
+                                      Smart contracts{" "}
+                                      <span className="font-weight-bold">
+                                        CANNOT
+                                      </span>{" "}
+                                      be upgraded. This limits actions in a case
+                                      of emergency, but leaves users fully in
+                                      control of their funds.
+                                    </Typography>
+                                  </div>
+                                  <div className="row no-gutters mb-md-2">
+                                    <Typography
+                                      variant="body1"
+                                      gutterBottom
+                                      color={"#000"}
+                                    >
+                                      Using Curve as an exchange user should be
+                                      significantly less risky, but this is not
+                                      advice.
+                                    </Typography>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="w-100 my-4">
+                                <Divider />
+                              </div>
+                              {/* Permanent Loss */}
+                              <div className="row no-gutters">
+                                <div className="col-12">
+                                  <Typography
+                                    variant="h5"
+                                    gutterBottom
+                                    component="div"
+                                    fontWeight={900}
+                                  >
+                                    Permanent loss of a peg
+                                  </Typography>
+                                </div>
                                 <div className="row no-gutters mb-md-2 mt-4">
                                   <Typography
                                     variant="body1"
                                     gutterBottom
                                     color={"#000"}
                                   >
-                                    When staking you use multiple smart contract
-                                    products each of which has its own risks
+                                    If one of the stablecoins in the pool goes
+                                    significantly down below the peg of 1.0 and
+                                    never returns to the peg, it'll effectively
+                                    mean that pool liquidity providers hold
+                                    almost all their liquidity in that currency.
                                   </Typography>
                                 </div>
                               </div>
-                            </div>
-                            <div className="w-100 my-4">
-                              <Divider />
-                            </div>
-                            {/* Learn More */}
-                            <div className="row no-gutters">
-                              <div className="col-12">
-                                <Typography
-                                  variant="h5"
-                                  gutterBottom
-                                  component="div"
-                                  fontWeight={900}
-                                >
-                                  <a
-                                    href="https://resources.curve.fi/lp/understanding-curve-pools"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{
-                                      textDecoration: "none",
-                                      color: "#5300E8",
-                                    }}
+                              <div className="w-100 my-4">
+                                <Divider />
+                              </div>
+                              {/* Staking Risks */}
+                              <div className="row no-gutters">
+                                <div className="col-12">
+                                  <Typography
+                                    variant="h5"
+                                    gutterBottom
+                                    component="div"
+                                    fontWeight={900}
                                   >
-                                    Learn more about each pool's risks
-                                  </a>
-                                </Typography>
+                                    Staking Risks
+                                  </Typography>
+                                  <div className="row no-gutters mb-md-2 mt-4">
+                                    <Typography
+                                      variant="body1"
+                                      gutterBottom
+                                      color={"#000"}
+                                    >
+                                      When staking you use multiple smart
+                                      contract products each of which has its
+                                      own risks
+                                    </Typography>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="w-100 my-4">
+                                <Divider />
+                              </div>
+                              {/* Learn More */}
+                              <div className="row no-gutters">
+                                <div className="col-12">
+                                  <Typography
+                                    variant="h5"
+                                    gutterBottom
+                                    component="div"
+                                    fontWeight={900}
+                                  >
+                                    <a
+                                      href="https://resources.curve.fi/lp/understanding-curve-pools"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "#5300E8",
+                                      }}
+                                    >
+                                      Learn more about each pool's risks
+                                    </a>
+                                  </Typography>
+                                </div>
                               </div>
                             </div>
                           </div>

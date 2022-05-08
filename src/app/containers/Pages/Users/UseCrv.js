@@ -81,285 +81,287 @@ const UseCrv = () => {
                         }}
                       >
                         <Paper elevation={4}>
-                          <div className="py-3 py-md-4">
-                            {/* Top Lists */}
-                            <div className="px-4 px-xl-3 pb-3 pb-xl-2">
-                              <div className="row no-gutters justify-content-center bg-primary">
-                                <div className="col-12 col-lg-6 text-white text-center">
-                                  <List>
-                                    <ListItem disablePadding>
-                                      <ListItemText
-                                        sx={{ textAlign: "center" }}
-                                      >
-                                        1&nbsp;
-                                        <img
-                                          src={crvLogo}
-                                          alt="logo"
-                                          style={{
-                                            width: "25px",
-                                            height: "25px",
-                                          }}
-                                        />{" "}
-                                        CRV locked for 4 years = 1veCRV
-                                      </ListItemText>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                      <ListItemText
-                                        sx={{ textAlign: "center" }}
-                                      >
-                                        1&nbsp;
-                                        <img
-                                          src={crvLogo}
-                                          alt="logo"
-                                          style={{
-                                            width: "25px",
-                                            height: "25px",
-                                          }}
-                                        />{" "}
-                                        CRV locked for 3 years = 0.75veCRV
-                                      </ListItemText>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                      <ListItemText
-                                        sx={{ textAlign: "center" }}
-                                      >
-                                        1&nbsp;
-                                        <img
-                                          src={crvLogo}
-                                          alt="logo"
-                                          style={{
-                                            width: "25px",
-                                            height: "25px",
-                                          }}
-                                        />{" "}
-                                        CRV locked for 2 years = 0.50veCRV
-                                      </ListItemText>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                      <ListItemText
-                                        sx={{ textAlign: "center" }}
-                                      >
-                                        1&nbsp;
-                                        <img
-                                          src={crvLogo}
-                                          alt="logo"
-                                          style={{
-                                            width: "25px",
-                                            height: "25px",
-                                          }}
-                                        />{" "}
-                                        CRV locked for 1 year = 0.25veCRV
-                                      </ListItemText>
-                                    </ListItem>
-                                  </List>
-                                  <Typography
-                                    variant="h6"
-                                    gutterBottom
-                                    component="div"
-                                    fontWeight={900}
-                                  >
-                                    <a
-                                      href="https://resources.curve.fi/governance/vote-locking-boost#what-are-vecrv"
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-decoration-none text-white pl-1"
+                          <div className="py-3 px-4">
+                            <div className="py-3 py-md-4">
+                              {/* Top Lists */}
+                              <div className="px-4 px-xl-3 pb-3 pb-xl-2">
+                                <div className="row no-gutters justify-content-center bg-primary">
+                                  <div className="col-12 col-lg-6 text-white text-center">
+                                    <List>
+                                      <ListItem disablePadding>
+                                        <ListItemText
+                                          sx={{ textAlign: "center" }}
+                                        >
+                                          1&nbsp;
+                                          <img
+                                            src={crvLogo}
+                                            alt="logo"
+                                            style={{
+                                              width: "25px",
+                                              height: "25px",
+                                            }}
+                                          />{" "}
+                                          CRV locked for 4 years = 1veCRV
+                                        </ListItemText>
+                                      </ListItem>
+                                      <ListItem disablePadding>
+                                        <ListItemText
+                                          sx={{ textAlign: "center" }}
+                                        >
+                                          1&nbsp;
+                                          <img
+                                            src={crvLogo}
+                                            alt="logo"
+                                            style={{
+                                              width: "25px",
+                                              height: "25px",
+                                            }}
+                                          />{" "}
+                                          CRV locked for 3 years = 0.75veCRV
+                                        </ListItemText>
+                                      </ListItem>
+                                      <ListItem disablePadding>
+                                        <ListItemText
+                                          sx={{ textAlign: "center" }}
+                                        >
+                                          1&nbsp;
+                                          <img
+                                            src={crvLogo}
+                                            alt="logo"
+                                            style={{
+                                              width: "25px",
+                                              height: "25px",
+                                            }}
+                                          />{" "}
+                                          CRV locked for 2 years = 0.50veCRV
+                                        </ListItemText>
+                                      </ListItem>
+                                      <ListItem disablePadding>
+                                        <ListItemText
+                                          sx={{ textAlign: "center" }}
+                                        >
+                                          1&nbsp;
+                                          <img
+                                            src={crvLogo}
+                                            alt="logo"
+                                            style={{
+                                              width: "25px",
+                                              height: "25px",
+                                            }}
+                                          />{" "}
+                                          CRV locked for 1 year = 0.25veCRV
+                                        </ListItemText>
+                                      </ListItem>
+                                    </List>
+                                    <Typography
+                                      variant="h6"
+                                      gutterBottom
+                                      component="div"
+                                      fontWeight={900}
                                     >
-                                      veCRV guide
-                                    </a>
+                                      <a
+                                        href="https://resources.curve.fi/governance/vote-locking-boost#what-are-vecrv"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-decoration-none text-white pl-1"
+                                      >
+                                        veCRV guide
+                                      </a>
+                                    </Typography>
+                                  </div>
+                                </div>
+                              </div>
+                              {/* /Top Lists */}
+                              <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
+                                <div className="col-12">
+                                  <Typography
+                                    variant="body1"
+                                    gutterBottom
+                                    color={"#000"}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    veCRV holder/LP ratio:
+                                    <span
+                                      style={{
+                                        color: "#00cc52",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      &nbsp;15.51
+                                    </span>
                                   </Typography>
                                 </div>
                               </div>
-                            </div>
-                            {/* /Top Lists */}
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
-                              <div className="col-12">
-                                <Typography
-                                  variant="body1"
-                                  gutterBottom
-                                  color={"#000"}
-                                  sx={{ textAlign: "center" }}
-                                >
-                                  veCRV holder/LP ratio:
-                                  <span
-                                    style={{
-                                      color: "#00cc52",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    &nbsp;15.51
-                                  </span>
-                                </Typography>
+                              {/* Info Alert */}
+                              <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
+                                <div className="col-12">
+                                  <Stack sx={{ width: "100%" }} spacing={2}>
+                                    <Alert
+                                      severity="info"
+                                      sx={{
+                                        justifyContent: "center",
+                                      }}
+                                    >
+                                      Having locked $1 in CRV for 4 years is
+                                      equal to having provided $15.51 as an LP
+                                    </Alert>
+                                  </Stack>
+                                </div>
                               </div>
-                            </div>
-                            {/* Info Alert */}
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
-                              <div className="col-12">
-                                <Stack sx={{ width: "100%" }} spacing={2}>
-                                  <Alert
-                                    severity="info"
-                                    sx={{
-                                      justifyContent: "center",
-                                    }}
-                                  >
-                                    Having locked $1 in CRV for 4 years is equal
-                                    to having provided $15.51 as an LP
-                                  </Alert>
-                                </Stack>
+                              {/* Info Lists */}
+                              <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
+                                <div className="col-12 col-md-6">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          veCRV holder APY:&nbsp;
+                                        </span>
+                                        0.28$
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Yearly fee earnings per 1 veCRV:&nbsp;
+                                        </span>
+                                        11.33%
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
+                                </div>
                               </div>
-                            </div>
-                            {/* Info Lists */}
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        veCRV holder APY:&nbsp;
-                                      </span>
-                                      0.28$
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Yearly fee earnings per 1 veCRV:&nbsp;
-                                      </span>
-                                      11.33%
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
+                              <Divider />
+                              <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
+                                <div className="col-12 col-md-6">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          veCRV balance:&nbsp;
+                                        </span>
+                                        0&nbsp;
+                                        <span>
+                                          <Link
+                                            to="/"
+                                            style={{
+                                              color: "inherit",
+                                              fontWeight: "bold",
+                                              color: "#9C9C9C",
+                                            }}
+                                          >
+                                            Stake CRV
+                                          </Link>
+                                        </span>
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
+                                </div>
                               </div>
-                            </div>
-                            <Divider />
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        veCRV balance:&nbsp;
-                                      </span>
-                                      0&nbsp;
-                                      <span>
-                                        <Link
-                                          to="/"
-                                          style={{
-                                            color: "inherit",
-                                            fontWeight: "bold",
-                                            color: "#9C9C9C",
-                                          }}
-                                        >
-                                          Stake CRV
-                                        </Link>
-                                      </span>
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
+                              <Divider />
+                              <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
+                                <div className="col-12 col-md-6">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Average Daily Earnings:&nbsp;
+                                        </span>
+                                        $329,104.43
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Last Weekly Earnings:&nbsp;
+                                        </span>
+                                        $2,303,731.00
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
+                                </div>
                               </div>
-                            </div>
-                            <Divider />
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Average Daily Earnings:&nbsp;
-                                      </span>
-                                      $329,104.43
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Last Weekly Earnings:&nbsp;
-                                      </span>
-                                      $2,303,731.00
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
+                              <Divider />
+                              <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
+                                <div className="col-12 col-md-6">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Total CRV Locked:&nbsp;
+                                        </span>
+                                        473,743,113.09
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Total veCRV:&nbsp;
+                                        </span>
+                                        424,591,808.18
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
+                                </div>
                               </div>
-                            </div>
-                            <Divider />
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Total CRV Locked:&nbsp;
-                                      </span>
-                                      473,743,113.09
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Total veCRV:&nbsp;
-                                      </span>
-                                      424,591,808.18
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
+                              <Divider />
+                              <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
+                                <div className="col-12 col-md-6">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Next Distribution:&nbsp;
+                                        </span>
+                                        Wed, 27 Apr 2022 12:09:54 GMT
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
+                                </div>
                               </div>
-                            </div>
-                            <Divider />
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Next Distribution:&nbsp;
-                                      </span>
-                                      Wed, 27 Apr 2022 12:09:54 GMT
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
+                              <Divider />
+                              <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
+                                <div className="col-12 col-md-6">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span>
+                                          <Link
+                                            to="/"
+                                            style={{
+                                              color: "inherit",
+                                              fontWeight: "bold",
+                                              color: "#9C9C9C",
+                                            }}
+                                          >
+                                            Stake Your CRV
+                                          </Link>
+                                        </span>
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span>
+                                          <a
+                                            href="https://resources.curve.fi/crv-token/staking-your-crv"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                              textDecoration: "none",
+                                              color: "#9c9c9c",
+                                              fontWeight: "bold",
+                                            }}
+                                          >
+                                            Guide to staking CRV
+                                          </a>
+                                        </span>
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
+                                </div>
                               </div>
+                              <Divider />
                             </div>
-                            <Divider />
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 py-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span>
-                                        <Link
-                                          to="/"
-                                          style={{
-                                            color: "inherit",
-                                            fontWeight: "bold",
-                                            color: "#9C9C9C",
-                                          }}
-                                        >
-                                          Stake Your CRV
-                                        </Link>
-                                      </span>
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span>
-                                        <a
-                                          href="https://resources.curve.fi/crv-token/staking-your-crv"
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          style={{
-                                            textDecoration: "none",
-                                            color: "#9c9c9c",
-                                            fontWeight: "bold",
-                                          }}
-                                        >
-                                          Guide to staking CRV
-                                        </a>
-                                      </span>
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
-                              </div>
-                            </div>
-                            <Divider />
                           </div>
                         </Paper>
                       </Box>

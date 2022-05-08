@@ -1,14 +1,3 @@
-input.tableSearch {
-    border:1px solid #9E9E9E;
-    font-size: 1rem;
-    padding: 0.625rem 1rem;
-    margin: 1.25rem 0;
-}
-
-input.tableSearch:focus {
-    outline: none;
-}
-
 .sortTableBtns button {
     border:1px solid #9E9E9E;
     background-color:white;
@@ -16,24 +5,11 @@ input.tableSearch:focus {
     padding: 0.625rem 1.25rem;
 }
 
-.sortTableBtns button:hover {
-    /* border: 1px solid rgb(69, 131, 211);
-    background-color:rgb(69, 131, 211); */
-    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
-    transform: translate(-3px, -3px);
-    transition: linear 0.2s; */
-}
-
 button.tableSortBtnActive {
     border: 1px solid #5300e8;
     background-color:#5300e8;
     color: white;
-    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
-    transform: translate(-3px, -3px);
-    transition: linear 0.2s; */
 }
-
-
 
 .tablePoolImgProps {
     display: inline-block;

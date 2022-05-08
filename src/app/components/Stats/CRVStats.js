@@ -3,6 +3,8 @@ import React, { useState } from "react";
 //CUSTOM STYLING
 import "../../assets/css/curveButton.css";
 import "../../assets/css/common.css";
+// MATERIAL UI
+import Paper from "@mui/material/Paper";
 
 // COMPONENT FUNCTION
 const CRVStats = () => {
@@ -24,67 +26,83 @@ const CRVStats = () => {
 
   return (
     <>
+      {/* veCRV STATS */}
       <div className="curve-container">
         <fieldset>
           <legend>veCRV stats</legend>
           <div className="row no-gutters justify-content-center">
             <div className="curve-content-wrapper col-12 col-lg-6">
-              <p>veCRV holder/LP ratio (based on fees): {holderLpRatio}</p>
-              <section>
-                <p>
-                  Having locked $1 in CRV for 4 years is equal to having
-                  provided $0 as an LP
-                </p>
-              </section>
-              <section>
-                <p>
-                  veCRV holder APY: {holderAPY} (4 weeks average: {fourWeekAvg})
-                </p>
-                <p>Yearly fee earnings per 1 veCRV: {yearlyFeeEarning}</p>
-                <p>
-                  My veCRV balance: {veCRVBalance} <b>Stake CRV</b>
-                </p>
-              </section>
-              <section>
-                <p>Averaged daily earnings: {dailyEarnings}</p>
-                <p>Weekly earnings: {weeklyEarnings}</p>
-                <p>
-                  Weekly volume (including deposits/withdrawals): {weeklyVolume}
-                </p>
-              </section>
-              <section>
-                <p>Next Distribution: {nextDistrDate}</p>
-              </section>
+              <Paper elevation={4}>
+                <div className="py-5 px-4">
+                  <p>veCRV holder/LP ratio (based on fees): {holderLpRatio}</p>
+                  <section>
+                    <p>
+                      Having locked $1 in CRV for 4 years is equal to having
+                      provided $0 as an LP
+                    </p>
+                  </section>
+                  <section>
+                    <p>
+                      veCRV holder APY: {holderAPY} (4 weeks average:{" "}
+                      {fourWeekAvg})
+                    </p>
+                    <p>Yearly fee earnings per 1 veCRV: {yearlyFeeEarning}</p>
+                    <p>
+                      My veCRV balance: {veCRVBalance} <b>Stake CRV</b>
+                    </p>
+                  </section>
+                  <section>
+                    <p>Averaged daily earnings: {dailyEarnings}</p>
+                    <p>Weekly earnings: {weeklyEarnings}</p>
+                    <p>
+                      Weekly volume (including deposits/withdrawals):{" "}
+                      {weeklyVolume}
+                    </p>
+                  </section>
+                  <section>
+                    <p>Next Distribution: {nextDistrDate}</p>
+                  </section>
+                </div>
+              </Paper>
             </div>
           </div>
         </fieldset>
       </div>
+      {/* Total pool deposits and daily volume */}
       <div className="curve-container">
         <fieldset>
           <legend>Total pool deposits and daily volume</legend>
           <div className="row no-gutters justify-content-center">
             <div className="curve-content-wrapper col-12 col-lg-6">
-              <section>
-                <p>Deposits: {dailyDeposits}</p>
-                <p>Daily Volume: {dailyVolume}</p>
-              </section>
+              <Paper elevation={4}>
+                <div className="py-5 px-4">
+                  <section>
+                    <p>Deposits: {dailyDeposits}</p>
+                    <p>Daily Volume: {dailyVolume}</p>
+                  </section>
+                </div>
+              </Paper>
             </div>
           </div>
         </fieldset>
       </div>
       <div className="curve-container">
+        {/* CLAIN BUTTON */}
         <fieldset>
-          {/* <legend></legend> */}
           <div className="row no-gutters justify-content-center">
             <div className="curve-content-wrapper col-12 col-lg-6">
-              <section>
-                <p>
-                  veCRV 3pool LP claim:{" "}
-                  <span className="btnWrapper mr-3">
-                    <button>Claim {LPClaim}</button>
-                  </span>
-                </p>
-              </section>
+              <Paper elevation={4}>
+                <div className="py-5 px-4">
+                  <section>
+                    <p>
+                      veCRV 3pool LP claim:{" "}
+                      <span className="btnWrapper mr-3">
+                        <button>Claim {LPClaim}</button>
+                      </span>
+                    </p>
+                  </section>
+                </div>
+              </Paper>
             </div>
           </div>
         </fieldset>
