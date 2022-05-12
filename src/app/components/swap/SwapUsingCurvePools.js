@@ -16,15 +16,10 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import FormLabel from "@mui/material/FormLabel";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import Divider from "@mui/material/Divider";
 import { StyledEngineProvider } from "@mui/styled-engine";
 //MATERIAL UI ICONS
 import SwapVertIcon from "@mui/icons-material/SwapVert";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 //ICONS
 import daiIcon from "../../assets/img/dai.png";
 import busdIcon from "../../assets/img/busd.png";
@@ -299,6 +294,9 @@ const SwapUsingCurvePools = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="w-100 my-4">
+                    <Divider />
+                  </div>
                   {/* MODAL BUTTON */}
                   <div className="row no-gutters px-4 px-xl-3 pb-4 pb-xl-3 justify-content-center">
                     <div className="col-12 text-center text-md-left">
@@ -307,6 +305,12 @@ const SwapUsingCurvePools = () => {
                           Advanced Options
                         </button>
                       </div>
+                    </div>
+                  </div>
+                  {/* SELL BUTTON */}
+                  <div className="row no-gutters justify-content-center">
+                    <div className="btnWrapper">
+                      <button>Sell</button>
                     </div>
                   </div>
                 </div>
@@ -321,10 +325,6 @@ const SwapUsingCurvePools = () => {
         show={openAdvancedOptions}
         handleClose={handleCloseAdvancedOptions}
       />
-      {/* <WalletModal
-        show={openAdvancedOptions}
-        handleClose={handleCloseAdvancedOptions}
-      /> */}
     </>
   );
 };

@@ -231,11 +231,9 @@ function HeaderHome(props) {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
     Pools: props.selectedNav === "Pools" ? selectedStyling : defaultStyling,
     Factory: props.selectedNav === "Factory" ? selectedStyling : defaultStyling,
-    Deposit: props.selectedNav === "Deposit" ? selectedStyling : defaultStyling,
-    Withdraw:
-      props.selectedNav === "Withdraw" ? selectedStyling : defaultStyling,
     UseCrv: props.selectedNav === "UseCrv" ? selectedStyling : defaultStyling,
     Risks: props.selectedNav === "Risks" ? selectedStyling : defaultStyling,
+    Trade: props.selectedNav === "Trade" ? selectedStyling : defaultStyling,
   };
 
   let Disconnect = (e) => {
@@ -258,7 +256,13 @@ function HeaderHome(props) {
   const setClassNames = (num) => {
     const classArr = ["menuSubitem"];
     if (openMenu) classArr.push(` openItem-${num}`);
+    console.log(classArr.join(""));
     return classArr.join("");
+  };
+
+  const setDisplay = () => {
+    let subMenu = document.getElementById("factorySubMenuMd");
+    subMenu.classList.toggle("subMenuDisplay");
   };
 
   return (
@@ -427,12 +431,13 @@ function HeaderHome(props) {
                 <span style={selectedNavStyle.Pools}>Pools</span>
               </Link>
             </li>
-            <li
-              onMouseEnter={() => setOpenMenu(true)}
-              onMouseLeave={() => setOpenMenu(false)}
-            >
-              <div className="subMenu-wrapper">
-                <div className="menu-item">
+            <li>
+              <div
+                className="subMenu-wrapper d-none d-lg-block"
+                onMouseEnter={() => setOpenMenu(true)}
+                onMouseLeave={() => setOpenMenu(false)}
+              >
+                <div className="menu-item text-center">
                   <span style={selectedNavStyle.Factory}>Factory</span>
                 </div>
                 <ul
@@ -473,24 +478,44 @@ function HeaderHome(props) {
                   </div>
                 </ul>
               </div>
-            </li>
-            <li>
-              <Link
-                to="/deposit"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.Deposit}>Deposit</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/withdraw"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.Withdraw}>Withdraw</span>
-              </Link>
+              <div className="position-relative d-block d-lg-none">
+                <div className="menu-item text-center">
+                  <span
+                    style={selectedNavStyle.Factory}
+                    onClick={() => setDisplay()}
+                  >
+                    Factory
+                  </span>
+                </div>
+                <div
+                  id="factorySubMenuMd"
+                  style={{
+                    backgroundColor: "rgb(231, 235, 240)",
+                    color: "#5300E8",
+                    marginTop: "5px",
+                    display: "none",
+                  }}
+                >
+                  <Link
+                    to="/factory/create-pool"
+                    className=" align-items-center justify-content-center text-center subMenu-factory"
+                  >
+                    Create Pool
+                  </Link>
+                  <Link
+                    to="/factory/create-gauge"
+                    className=" align-items-center justify-content-center text-center subMenu-factory"
+                  >
+                    Create Gauge
+                  </Link>
+                  <Link
+                    to="/factory/create-gauge-vote"
+                    className=" align-items-center justify-content-center text-center subMenu-factory"
+                  >
+                    Create Gauge Vote
+                  </Link>
+                </div>
+              </div>
             </li>
             <li>
               <Link
@@ -508,6 +533,15 @@ function HeaderHome(props) {
                 style={{ color: "#5300e8" }}
               >
                 <span style={selectedNavStyle.Risks}>Risks</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/trade"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Trade}>Trade</span>
               </Link>
             </li>
           </ul>

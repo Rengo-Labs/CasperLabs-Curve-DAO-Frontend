@@ -9,8 +9,6 @@
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
-    /* position: absolute;
-    top: 0; */
     transition: linear 0.2s;
     height: auto;
     z-index: 9;
@@ -29,14 +27,12 @@
 } */
 
 ul li.menuSubitem {
-    /* margin-left: 0.625rem; */
     
     cursor: pointer;
     color: rgb(83, 0, 232);
     font-size: 15px;
     font-weight: 500;
     display: none;
-    /* margin-top: 5px; */
     position: relative;
     z-index: 10;
     transition: linear 0.2s;
@@ -64,5 +60,19 @@ ul li.openItem-3{
 ul li.openItem-1:hover, ul li.openItem-2:hover, ul li.openItem-3:hover {
     background-color: rgb(83, 0, 232);
     color: white !important;
-    /* box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.6); */
+}
+
+.subMenuDisplay {
+    display: block !important;
+    transition: all linear 0.5s;
+}
+
+#factorySubMenuMd .subMenu-factory {
+    color: #5300E8;
+    padding: 1rem;
+}
+
+#factorySubMenuMd .subMenu-factory:hover {
+    color: white;
+    background-color: #5300E8;
 }

@@ -75,25 +75,38 @@ const Risks = () => {
                             <div className="p-4 p-xl-3">
                               <div className="row no-gutters">
                                 {/* Main Heading */}
-                                <div className="col-12">
+                                <div className="col-12 d-none d-md-block">
                                   <Typography
-                                    variant="h4"
+                                    variant="h5"
                                     gutterBottom
                                     component="div"
                                     fontWeight={900}
                                   >
-                                    <span className="d-flex">
-                                      <span style={{ marginRight: "10px" }}>
-                                        Risks of using
-                                      </span>
+                                    <div className="row no-gutters">
+                                      <span>Risks of using&nbsp;</span>
                                       <Avatar
                                         src={tokenAvatar}
                                         aria-label="curve-token-avatar"
                                       />
-                                      <span style={{ marginLeft: "10px" }}>
-                                        Curve Finance
-                                      </span>
-                                    </span>
+                                      <span>&nbsp;Curve Finance</span>
+                                    </div>
+                                  </Typography>
+                                </div>
+                                <div className="col-12 d-block d-md-none">
+                                  <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    component="div"
+                                    fontWeight={900}
+                                  >
+                                    <div className="row no-gutters">
+                                      <span>Risks of using&nbsp;</span>
+                                      <Avatar
+                                        src={tokenAvatar}
+                                        aria-label="curve-token-avatar"
+                                      />
+                                      <span>&nbsp;Curve Finance</span>
+                                    </div>
                                   </Typography>
                                 </div>
                                 <div className="col-12 mb-3 mb-md-4">
@@ -153,7 +166,7 @@ const Risks = () => {
                               <div className="row no-gutters">
                                 <div className="col-12">
                                   <Typography
-                                    variant="h5"
+                                    variant="h6"
                                     gutterBottom
                                     component="div"
                                     fontWeight={900}
@@ -208,7 +221,7 @@ const Risks = () => {
                               <div className="row no-gutters">
                                 <div className="col-12">
                                   <Typography
-                                    variant="h5"
+                                    variant="h6"
                                     gutterBottom
                                     component="div"
                                     fontWeight={900}
@@ -287,7 +300,7 @@ const Risks = () => {
                               <div className="row no-gutters">
                                 <div className="col-12">
                                   <Typography
-                                    variant="h5"
+                                    variant="h6"
                                     gutterBottom
                                     component="div"
                                     fontWeight={900}
@@ -316,7 +329,7 @@ const Risks = () => {
                               <div className="row no-gutters">
                                 <div className="col-12">
                                   <Typography
-                                    variant="h5"
+                                    variant="h6"
                                     gutterBottom
                                     component="div"
                                     fontWeight={900}
@@ -343,7 +356,7 @@ const Risks = () => {
                               <div className="row no-gutters">
                                 <div className="col-12">
                                   <Typography
-                                    variant="h5"
+                                    variant="h6"
                                     gutterBottom
                                     component="div"
                                     fontWeight={900}

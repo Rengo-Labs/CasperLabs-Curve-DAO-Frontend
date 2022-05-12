@@ -16,18 +16,3 @@
     padding: 0 2.5rem;
     font-size: 1rem;
 }
-
-.poolRequirements {
-    background-color: #E7EBF0;
-    padding: 2.5rem;
-    font-size: 1rem;
-}
-
-.poolRequirements h5 {
-    color: #000;
-}
-
-.poolRequirements ul li {
-    list-style-type:disc;
-    margin-left: 2.5rem;
-}
