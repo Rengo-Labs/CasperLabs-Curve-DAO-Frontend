@@ -44,7 +44,7 @@ export const SUPPORTED_NETWORKS = {
 let torus = null;
 console.log("torus", torus);
 
-function HeaderHome(props) {
+function HeaderDAO(props) {
   const { enqueueSnackbar } = useSnackbar();
   let [menuOpenedClass, setMenuOpenedClass] = useState();
   let [signerLocked, setSignerLocked] = useState();
@@ -229,12 +229,6 @@ function HeaderHome(props) {
   };
   const selectedNavStyle = {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
-    Pools: props.selectedNav === "Pools" ? selectedStyling : defaultStyling,
-    Factory: props.selectedNav === "Factory" ? selectedStyling : defaultStyling,
-    UseCrv: props.selectedNav === "UseCrv" ? selectedStyling : defaultStyling,
-    Risks: props.selectedNav === "Risks" ? selectedStyling : defaultStyling,
-    Trade: props.selectedNav === "Trade" ? selectedStyling : defaultStyling,
-    DAO: props.selectedNav === "DAO" ? selectedStyling : defaultStyling,
   };
 
   let Disconnect = (e) => {
@@ -414,144 +408,14 @@ function HeaderHome(props) {
                 </a>
               ) : null}
             </li>
-            <li>
-              <Link
-                to="/"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.Home}>Home</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/pools"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.Pools}>Pools</span>
-              </Link>
-            </li>
-            <li>
-              <div
-                className="subMenu-wrapper d-none d-lg-block"
-                onMouseEnter={() => setOpenMenu(true)}
-                onMouseLeave={() => setOpenMenu(false)}
-              >
-                <div className="menu-item text-center">
-                  <span style={selectedNavStyle.Factory}>Factory</span>
-                </div>
-                <ul
-                  style={{
-                    position: "absolute",
-                    top: "1.8rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      backgroundColor: "rgb(231, 235, 240)",
-                    }}
-                  >
-                    <li className={setClassNames(1)}>
-                      <Link
-                        to="/factory/create-pool"
-                        className=" align-items-center justify-content-center text-center"
-                      >
-                        <span>Create Pool</span>
-                      </Link>
-                    </li>
-                    <li className={setClassNames(2)}>
-                      <Link
-                        to="/factory/create-gauge"
-                        className=" align-items-center justify-content-center text-center"
-                      >
-                        <span>Create Gauge</span>
-                      </Link>
-                    </li>
-                    <li className={setClassNames(3)}>
-                      <Link
-                        to="/factory/create-gauge-vote"
-                        className=" align-items-center justify-content-center text-center"
-                      >
-                        <span>Create Gauge Vote</span>
-                      </Link>
-                    </li>
-                  </div>
-                </ul>
-              </div>
-              <div className="position-relative d-block d-lg-none">
-                <div className="menu-item text-center">
-                  <span
-                    style={selectedNavStyle.Factory}
-                    onClick={() => setDisplay()}
-                  >
-                    Factory
-                  </span>
-                </div>
-                <div
-                  id="factorySubMenuMd"
-                  style={{
-                    backgroundColor: "rgb(231, 235, 240)",
-                    color: "#5300E8",
-                    marginTop: "5px",
-                    display: "none",
-                  }}
-                >
-                  <Link
-                    to="/factory/create-pool"
-                    className=" align-items-center justify-content-center text-center subMenu-factory"
-                  >
-                    Create Pool
-                  </Link>
-                  <Link
-                    to="/factory/create-gauge"
-                    className=" align-items-center justify-content-center text-center subMenu-factory"
-                  >
-                    Create Gauge
-                  </Link>
-                  <Link
-                    to="/factory/create-gauge-vote"
-                    className=" align-items-center justify-content-center text-center subMenu-factory"
-                  >
-                    Create Gauge Vote
-                  </Link>
-                </div>
-              </div>
-            </li>
-            <li>
-              <Link
-                to="/use-crv"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.UseCrv}>Use CRV</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/risks"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.Risks}>Risks</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/trade"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.Trade}>Trade</span>
-              </Link>
-            </li>
+            {/* Menu */}
             <li>
               <Link
                 to="/dao-home"
                 className=" align-items-center justify-content-center text-center"
                 style={{ color: "#5300e8" }}
               >
-                <span style={selectedNavStyle.DAO}>DAO</span>
+                <span style={selectedNavStyle.Home}>Home</span>
               </Link>
             </li>
           </ul>
@@ -663,4 +527,4 @@ function HeaderHome(props) {
   );
 }
 
-export default HeaderHome;
+export default HeaderDAO;

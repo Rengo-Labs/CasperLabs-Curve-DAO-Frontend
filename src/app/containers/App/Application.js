@@ -10,6 +10,7 @@ import BuyAndSell from "../Pages/Users/Pools/BuyAndSell";
 import UseCrv from "../Pages/Users/UseCrv";
 import Risks from "../Pages/Users/Risks";
 import Trade from "../Pages/Users/Trade";
+import DaoHome from "../Pages/Users/DAO/DaoHome";
 
 function App() {
   const LoginRegisterRedirectCheck = ({ path, ...rest }) => {
@@ -31,6 +32,8 @@ function App() {
       return <Route component={Risks} />;
     } else if (path === "/trade") {
       return <Route component={Trade} />;
+    } else if (path === "/dao-home") {
+      return <Route component={DaoHome} />;
     } else {
       return <Route component={HomeScreen} />;
     }
@@ -49,6 +52,7 @@ function App() {
           <LoginRegisterRedirectCheck exact path="/use-crv" />
           <LoginRegisterRedirectCheck exact path="/risks" />
           <LoginRegisterRedirectCheck exact path="/trade" />
+          <LoginRegisterRedirectCheck exact path="/dao-home" />
         </Switch>
       </BrowserRouter>
     </SnackbarProvider>

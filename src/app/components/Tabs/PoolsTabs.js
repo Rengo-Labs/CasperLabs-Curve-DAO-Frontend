@@ -96,7 +96,7 @@ const PoolsTabs = () => {
             <Tab label="ETH" />
             <Tab label="Crypto" />
             <Tab label="Others" />
-            <Tab label="My Dashboard" />
+            <Tab label="My Dashboard" id="crvDashboard" />
           </Tabs>
           {/* </Box> */}
           <TabPanel value={value} index={0} className="MuiBox-root">

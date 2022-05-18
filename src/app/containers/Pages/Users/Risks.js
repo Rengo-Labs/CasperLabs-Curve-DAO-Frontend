@@ -1,6 +1,6 @@
 //REACT
 import React, { useState } from "react";
-//CUSTOME STYLING
+//CUSTOM STYLING
 import "../../../assets/css/style.css";
 import "../../../assets/css/curveButton.css";
 import "../../../assets/css/common.css";

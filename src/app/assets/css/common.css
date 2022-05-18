@@ -94,6 +94,10 @@
   width:calc(100% - 10px)
 }
 
+.dao-form-width .MuiFormControl-root {
+  width: 100%;
+}
+
 .hidden {
   display: none !important;
 }

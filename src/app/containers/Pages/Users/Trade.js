@@ -284,7 +284,7 @@ const Trade = () => {
                         <div className="col-12 mt-4">
                           <Paper elevation={4}>
                             <div className="py-5 px-4">
-                              {/* Main Heading */}
+                              {/* Heading */}
                               <div className="col-12">
                                 <Typography
                                   variant="h5"
