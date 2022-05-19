@@ -229,6 +229,8 @@ function HeaderDAO(props) {
   };
   const selectedNavStyle = {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
+    Dao: props.selectedNav === "DAO" ? selectedStyling : defaultStyling,
+    Minter: props.selectedNav === "Minter" ? selectedStyling : defaultStyling,
   };
 
   let Disconnect = (e) => {
@@ -416,6 +418,24 @@ function HeaderDAO(props) {
                 style={{ color: "#5300e8" }}
               >
                 <span style={selectedNavStyle.Home}>Home</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dao"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Dao}>DAO</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/minter"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Minter}>Minter</span>
               </Link>
             </li>
           </ul>
