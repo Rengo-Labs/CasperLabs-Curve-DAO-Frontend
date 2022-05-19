@@ -1,0 +1,34 @@
+.btnWrapper button {
+    border: 1px solid #5300e8;
+    background-color:#5300e8;
+    color: white;
+    padding: 0.625rem 1.25rem;
+}
+
+.btnWrapper button:hover {
+    /* border: 1px solid rgb(69, 131, 211);
+    background-color:rgb(69, 131, 211); */
+    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    transform: translate(-3px, -3px);
+    transition: linear 0.2s; */
+}
+
+
+/*
+
+ --- COLORS ---
+Primary: #5300E8
+Secondary: #714CFE
+Error: #B71C1C
+Warning: #EF6C00
+Background-Color: #E7EBF0
+Text-Selected: #FFF
+Text-Faded: #9C9C9C
+Text-Hover: #333
+Text: #000
+Text-Green: #00cc52
+Box-Shadow: rgb(0 0 0 / 0.5)
+Border: #9E9E9E
+Border-Active: #5300E8
+
+*/

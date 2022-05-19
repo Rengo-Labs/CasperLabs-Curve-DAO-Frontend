@@ -1,0 +1,23 @@
+.gaugeVoteRequirements {
+    padding: 2.5rem;
+    font-size: 1rem;
+}
+
+.gaugeVoteRequirements h5 {
+    color: #000;
+}
+
+.gaugeVoteRequirements ol li {
+    margin-left: 2.5rem;
+}
+
+.gaugeVoteRequirements span a {
+    color: #08209e;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.createPoolform.gaugeVoteSectionWrapper {
+    margin-bottom: 0;
+}

@@ -1,0 +1,32 @@
+.MuiFormControlLabel-root .MuiFormControlLabel-label {
+    color: #000;
+    font-weight: normal;
+    font-size: 1rem;
+}
+
+/* .MuiFormControlLabel-root .MuiTypography-root.MuiFormControlLabel-label::before {
+    background-image: url('../img/usdt.png');
+background-position: center;
+background-repeat: no-repeat;
+background-size: contain;
+} */
+
+.radioIcon::before {
+    /* background-image: '../img/usdt.png'; */
+    /* background: image('../img/usdt.png'); */
+    /* background-color: #000; */
+}
+
+.estimatedCost {
+    border: 1px solid black;
+    padding: 15px;
+    background-color: #E7EBF0;
+    transition: linear 0.3s;
+    width: 300px;
+    text-align: center;
+}
+
+.container-fluid .tabPanel-wrapper .MuiBox-root {
+    padding-left: 0;
+    padding-right: 0;
+}

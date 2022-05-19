@@ -1,0 +1,40 @@
+.sortTableBtns button {
+    border:1px solid #9E9E9E;
+    background-color:white;
+    color: #444;
+    padding: 0.625rem 1.25rem;
+}
+
+button.tableSortBtnActive {
+    border: 1px solid #5300e8;
+    background-color:#5300e8;
+    color: white;
+}
+
+.tablePoolImgProps {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-size: 100% auto;
+}
+
+.tablePoolTitle {
+    font-size: 1rem;
+}
+
+.tablePoolRef {
+    background-color: #9E9E9E;
+    color: white;
+    padding: 3px;
+    font-size: 0.625rem;
+    margin-left: 0.5rem;
+}
+
+.MuiTableContainer-root {
+    padding: 1.5rem 0;
+}
+
+.tableCellLink {
+text-decoration: none;
+color: #000;
+}

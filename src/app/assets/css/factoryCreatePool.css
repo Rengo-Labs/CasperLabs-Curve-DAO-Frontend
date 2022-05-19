@@ -1,0 +1,18 @@
+.MuiFormGroup-root .MuiFormControlLabel-root .MuiIconButton-root.Mui-checked {
+    color: #000;
+}
+
+.MuiFormControlLabel-root {
+    margin-bottom: 0;
+}
+
+.MuiFormControlLabel-root .MuiFormControlLabel-label {
+    color: #5300E8;
+    font-weight: bold;
+}
+
+.assetsTypeDescription {
+    color: #000;
+    padding: 0 2.5rem;
+    font-size: 1rem;
+}

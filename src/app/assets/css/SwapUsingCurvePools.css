@@ -1,0 +1,64 @@
+.mui-wrapper .MuiFormControl-root legend {
+    padding: 0;
+    display: none;
+}
+
+.mui-wrapper .MuiFormLabel-root {
+    left: 1rem;
+    /* padding: 0 .125rem; */
+}
+
+.mui-wrapper .MuiFormLabel-root.Mui-focused {
+    color: #5300E8;
+    appearance: none;
+}
+
+.mui-wrapper .MuiOutlinedInput-root {
+    /* border-radius: 0; */
+}
+
+.mui-wrapper .MuiOutlinedInput-root.Mui-focused {
+    /* box-shadow: 3px 3px 0 rgb(0 0 0 / 0.5);
+    transform: translate(-3px, -3px);
+    transition: linear 0.2s;
+    border-color: rgb(158, 158, 158); */
+}
+
+.mui-wrapper .MuiInputBase-colorPrimary.Mui-focused {
+    /* border-color: rgb(158, 158, 158); */
+}
+
+.iconsHanlde {
+    /* padding: 5px 0; */
+    font-size: 1rem;
+}
+
+.iconsHanlde img {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 1rem;
+}
+
+/* .advancedOptions {
+    height: 100px;
+    visibility: visible;
+    transition: all linear 150ms;
+}
+.advancedOptionsHeight {
+    height: 0 !important;
+    visibility:collapse;
+} */
+
+.MuiFormControl-root .Mui-focused {
+    appearance: none;
+    border:0;
+}
+
+.MuiOutlinedInput-root .MuiOutlinedInput-input {
+    appearance: none;
+}
+
+.MuiFormControl-root .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    border-color: #9e9e9e;
+    appearance: none;
+}
