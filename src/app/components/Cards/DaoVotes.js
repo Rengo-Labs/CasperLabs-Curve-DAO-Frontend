@@ -31,7 +31,7 @@ const DaoVotes = (props) => {
 
   return (
     <>
-      <Card sx={{ width: 250 }}>
+      <Card sx={{ width: 250, backgroundColor: "rgb(231, 235, 240)" }}>
         <CardContent>
           {/* Legend */}
           <div className="row no-gutters justify-content-center w-100 mb-0">
@@ -73,7 +73,7 @@ const DaoVotes = (props) => {
               <a
                 style={{
                   textDecoration: "none",
-                  color: "#9C9C9C",
+                  color: "#212529",
                 }}
                 href="#"
                 rel="noopener noreferrer nofollow"

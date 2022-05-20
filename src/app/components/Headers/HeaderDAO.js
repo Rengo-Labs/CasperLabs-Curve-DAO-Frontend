@@ -230,6 +230,7 @@ function HeaderDAO(props) {
   const selectedNavStyle = {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
     Dao: props.selectedNav === "DAO" ? selectedStyling : defaultStyling,
+    Calc: props.selectedNav === "Calc" ? selectedStyling : defaultStyling,
     Locker: props.selectedNav === "Locker" ? selectedStyling : defaultStyling,
     Minter: props.selectedNav === "Minter" ? selectedStyling : defaultStyling,
     Vesting: props.selectedNav === "Vesting" ? selectedStyling : defaultStyling,
@@ -429,6 +430,15 @@ function HeaderDAO(props) {
                 style={{ color: "#5300e8" }}
               >
                 <span style={selectedNavStyle.Dao}>DAO</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/calc"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Calc}>Calc</span>
               </Link>
             </li>
             <li>

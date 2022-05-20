@@ -15,6 +15,7 @@ import Dao from "../Pages/Users/DAO/Dao";
 import Minter from "../Pages/Users/DAO/Minter";
 import Vesting from "../Pages/Users/DAO/Vesting";
 import Locker from "../Pages/Users/DAO/Locker";
+import Calc from "../Pages/Users/DAO/Calc";
 
 function App() {
   const LoginRegisterRedirectCheck = ({ path, ...rest }) => {
@@ -46,6 +47,8 @@ function App() {
       return <Route component={Vesting} />;
     } else if (path === "/locker") {
       return <Route component={Locker} />;
+    } else if (path === "/calc") {
+      return <Route component={Calc} />;
     } else {
       return <Route component={HomeScreen} />;
     }
@@ -69,6 +72,7 @@ function App() {
           <LoginRegisterRedirectCheck exact path="/minter" />
           <LoginRegisterRedirectCheck exact path="/vesting" />
           <LoginRegisterRedirectCheck exact path="/locker" />
+          <LoginRegisterRedirectCheck exact path="/calc" />
         </Switch>
       </BrowserRouter>
     </SnackbarProvider>
