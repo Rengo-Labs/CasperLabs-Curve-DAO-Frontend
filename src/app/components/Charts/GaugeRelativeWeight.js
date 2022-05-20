@@ -11,6 +11,16 @@ const GaugeRelativeWeight = () => {
 
   // Content
   const options = {
+    chart: {
+      type: "donut",
+      toolbar: {
+        autoSelected: "pan",
+        show: true,
+      },
+      zoom: {
+        enabled: true,
+      },
+    },
     series: [
       5, 4, 5, 2, 1, 6, 3, 4, 2, 1, 3, 5, 6, 1, 2, 4, 1, 3, 5, 1, 1, 2, 1, 3, 2,
       1, 4, 2, 1, 5,

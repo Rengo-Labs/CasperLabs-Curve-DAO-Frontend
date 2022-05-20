@@ -45,7 +45,7 @@ const VotingPowerDAO = () => {
                       component="div"
                       fontWeight={900}
                     >
-                      <div className="row no-gutters">
+                      <div className="row no-gutters font-weight-bold">
                         <span>Total&nbsp;</span>
                         <Avatar
                           src={curveLogo}
@@ -114,7 +114,7 @@ const VotingPowerDAO = () => {
                       component="div"
                       fontWeight={900}
                     >
-                      <div className="row no-gutters">
+                      <div className="row no-gutters font-weight-bold">
                         <Avatar
                           src={curveLogo}
                           aria-label="curve-logo-avatar"
@@ -137,7 +137,7 @@ const VotingPowerDAO = () => {
                       component="div"
                       fontWeight={900}
                     >
-                      <div className="row no-gutters">
+                      <div className="row no-gutters font-weight-bold">
                         <Avatar
                           src={curveLogo}
                           aria-label="curve-logo-avatar"

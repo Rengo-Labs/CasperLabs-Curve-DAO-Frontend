@@ -175,6 +175,13 @@ var optionsDataBar = {
         color: "#0D47A1",
       },
     },
+    // toolbar: {
+    //   autoSelected: "pan",
+    //   show: true,
+    // },
+    // zoom: {
+    //   enabled: true,
+    // },
   },
   series: [
     {
