@@ -234,6 +234,8 @@ function HeaderDAO(props) {
     Locker: props.selectedNav === "Locker" ? selectedStyling : defaultStyling,
     Minter: props.selectedNav === "Minter" ? selectedStyling : defaultStyling,
     Vesting: props.selectedNav === "Vesting" ? selectedStyling : defaultStyling,
+    GaugeWeightVote:
+      props.selectedNav === "GWVote" ? selectedStyling : defaultStyling,
   };
 
   let Disconnect = (e) => {
@@ -430,6 +432,17 @@ function HeaderDAO(props) {
                 style={{ color: "#5300e8" }}
               >
                 <span style={selectedNavStyle.Dao}>DAO</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/gw-vote"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.GaugeWeightVote}>
+                  Gauge Weight Vote
+                </span>
               </Link>
             </li>
             <li>

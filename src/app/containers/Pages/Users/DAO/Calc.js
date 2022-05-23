@@ -251,7 +251,7 @@ const Calc = () => {
                                             onChange={handleGaugeLockChange}
                                           >
                                             <MenuItem value={1 + " Week"}>
-                                              <em>1 Week</em>
+                                              1 Week
                                             </MenuItem>
                                             <MenuItem value={1 + " Month"}>
                                               1 Month

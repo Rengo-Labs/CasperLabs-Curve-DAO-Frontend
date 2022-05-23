@@ -16,6 +16,7 @@ import Minter from "../Pages/Users/DAO/Minter";
 import Vesting from "../Pages/Users/DAO/Vesting";
 import Locker from "../Pages/Users/DAO/Locker";
 import Calc from "../Pages/Users/DAO/Calc";
+import GaugeWeightVote from "../Pages/Users/DAO/GaugeWeightVote";
 
 function App() {
   const LoginRegisterRedirectCheck = ({ path, ...rest }) => {
@@ -49,6 +50,8 @@ function App() {
       return <Route component={Locker} />;
     } else if (path === "/calc") {
       return <Route component={Calc} />;
+    } else if (path === "/gw-vote") {
+      return <Route component={GaugeWeightVote} />;
     } else {
       return <Route component={HomeScreen} />;
     }
@@ -73,6 +76,7 @@ function App() {
           <LoginRegisterRedirectCheck exact path="/vesting" />
           <LoginRegisterRedirectCheck exact path="/locker" />
           <LoginRegisterRedirectCheck exact path="/calc" />
+          <LoginRegisterRedirectCheck exact path="/gw-vote" />
         </Switch>
       </BrowserRouter>
     </SnackbarProvider>
