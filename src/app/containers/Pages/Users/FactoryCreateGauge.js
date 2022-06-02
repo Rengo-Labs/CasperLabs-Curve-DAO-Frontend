@@ -9,6 +9,8 @@ import "../../../assets/css/bootstrap.min.css";
 //COMPONENTS
 import HeaderHome from "../../../components/Headers/Header";
 import HomeBanner from "./Home/HomeBanner";
+import FormikRadioGroup from "../../../components/FormsUI/FormikRadioGroup";
+import TextInput from "../../../components/FormsUI/TextInput";
 //REACT ROUTER
 import { Link } from "react-router-dom";
 //MATERIAL UI
@@ -24,6 +26,10 @@ import {
   Radio,
   RadioGroup,
 } from "@material-ui/core";
+// FORMIK
+import { Formik, Field, Form } from "formik";
+// YUP
+import * as Yup from "yup";
 
 //COMPONENT FUNCTION
 const FactoryCreateGauge = () => {
@@ -35,6 +41,47 @@ const FactoryCreateGauge = () => {
     localStorage.getItem("selectedWallet")
   );
   let [torus, setTorus] = useState();
+
+  // Content
+  const initialValues = {
+    Platform: "",
+    PoolType: "",
+    GaugePoolAddress: "",
+  };
+
+  const validationSchema = Yup.object().shape({
+    Platform: Yup.string().required("You must select a value."),
+    PoolType: Yup.string().required("You must select a value."),
+    GaugePoolAddress: Yup.number().required("Required"),
+  });
+
+  const platformOptions = [
+    "Casper",
+    "Fantom",
+    "Polygon",
+    "xDai",
+    "Arbitrum",
+    "Avalanche",
+    "Optimism",
+  ];
+
+  const PoolTypeOptions = [
+    {
+      value: "Stable Pool (Pegged Assets)",
+      description:
+        "A pool made of assets which are expected to always have rate cloase to 1:1 (e.g. a pool made of usd stablecoins",
+    },
+    {
+      value: "Crypto Pool (Non-Pegged Assets)",
+      description:
+        "A pool made of any token, with no price stability expectation.",
+    },
+  ];
+
+  // Handlers
+  const onCreateGaugeSubmit = (values) => {
+    console.log("create Gauge: ", values);
+  };
 
   return (
     <>
@@ -80,106 +127,85 @@ const FactoryCreateGauge = () => {
                             </span>
                             .
                           </Alert>
-                          <section className="createPoolContent createPoolform">
-                            <h3>1. Platform</h3>
-                            <div className="row no-gutters justify-content-between px-0 px-md-3">
-                              <FormControl>
-                                <RadioGroup
-                                  aria-labelledby="platform-radio-buttons-group-label"
-                                  defaultValue="platform"
-                                  name="platform-radio-group"
-                                >
-                                  <FormControlLabel
-                                    value="casper"
-                                    control={<Radio />}
-                                    label="Casper"
-                                  />
-                                  <FormControlLabel
-                                    value="fantom"
-                                    control={<Radio />}
-                                    label="Fantom"
-                                  />
-                                  <FormControlLabel
-                                    value="polygon"
-                                    control={<Radio />}
-                                    label="Polygon"
-                                  />
-                                  <FormControlLabel
-                                    value="xdai"
-                                    control={<Radio />}
-                                    label="xDai"
-                                  />
-                                  <FormControlLabel
-                                    value="arbitrum"
-                                    control={<Radio />}
-                                    label="Arbitrum"
-                                  />
-                                  <FormControlLabel
-                                    value="avalanche"
-                                    control={<Radio />}
-                                    label="Avalanche"
-                                  />
-                                  <FormControlLabel
-                                    value="optimism"
-                                    control={<Radio />}
-                                    label="Optimism"
-                                  />
-                                </RadioGroup>
-                              </FormControl>
-                            </div>
-                          </section>
-                          <Divider />
-                          <section className="createPoolContent createPoolform mt-3">
-                            <h3>2. Pool Type</h3>
-                            <div className="row no-gutters justify-content-between px-0 px-md-3">
-                              <FormControl>
-                                <RadioGroup
-                                  aria-labelledby="pool-type-radio-buttons-group-label"
-                                  defaultValue="pool-type"
-                                  name="pool-type-radio-group"
-                                >
-                                  <FormControlLabel
-                                    value="stable pool (pegged assets)"
-                                    control={<Radio />}
-                                    label="Stable Pool (Pegged Assets)"
-                                  />
-                                  <p className="assetsTypeDescription">
-                                    A pool made of assets which are expected to
-                                    always have a rate close to 1:1 (e.g. a pool
-                                    made of usd stablecoins)
-                                  </p>
-                                  <FormControlLabel
-                                    value="crypto pool (non-pegged assets)"
-                                    control={<Radio />}
-                                    label="Crypto Pool (Non-Pegged Assets)"
-                                  />
-                                  <p className="assetsTypeDescription">
-                                    A pool made of any token, with no price
-                                    stability expectation
-                                  </p>
-                                </RadioGroup>
-                              </FormControl>
-                            </div>
-                          </section>
-                          <Divider />
-                          <section className="createPoolContent createPoolform mt-3">
-                            <h3>3. Pool Address</h3>
-                            <div className="row no-gutters justify-content-between px-0 px-md-3">
-                              <div className="col-12">
-                                <TextField
-                                  id="poolAddress"
-                                  label="Pool Address"
-                                  variant="filled"
-                                  sx={{ width: "100%" }}
-                                />
+                          <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={onCreateGaugeSubmit}
+                          >
+                            <Form>
+                              <section className="createPoolContent createPoolform">
+                                <h3>1. Platform</h3>
+                                <div className="row no-gutters justify-content-between px-0 px-md-3">
+                                  <div className="col-12">
+                                    <Field
+                                      name="Platform"
+                                      options={platformOptions}
+                                      component={FormikRadioGroup}
+                                    />
+                                  </div>
+                                </div>
+                              </section>
+                              <Divider />
+                              <section className="createPoolContent createPoolform mt-3">
+                                <h3>2. Pool Type</h3>
+                                <div className="row no-gutters justify-content-between px-0 px-md-3">
+                                  <div className="col-12">
+                                    <Field name="PoolType">
+                                      {({ field, form, meta }) => {
+                                        return (
+                                          <FormikRadioGroup
+                                            form={form}
+                                            field={field}
+                                          >
+                                            {PoolTypeOptions.map(
+                                              (item, index) => {
+                                                return (
+                                                  <>
+                                                    <FormControlLabel
+                                                      value={item.value}
+                                                      key={index}
+                                                      control={<Radio />}
+                                                      label={item.value}
+                                                    />
+                                                    <p className="assetsTypeDescription">
+                                                      {item.description}
+                                                    </p>
+                                                  </>
+                                                );
+                                              }
+                                            )}
+                                          </FormikRadioGroup>
+                                        );
+                                      }}
+                                    </Field>
+                                  </div>
+                                </div>
+                              </section>
+                              <Divider />
+                              {/* Pool Address */}
+                              <section className="createPoolContent createPoolform mt-3">
+                                <h3>3. Pool Address</h3>
+                                <div className="row no-gutters justify-content-between px-0 px-md-3">
+                                  <div className="col-12">
+                                    <TextInput
+                                      id="gaugePoolAddress"
+                                      label="Pool Address"
+                                      variant="filled"
+                                      name="GaugePoolAddress"
+                                      sx={{ width: "100%" }}
+                                    />
+                                  </div>
+                                </div>
+                              </section>
+                              <Divider />
+                              <div className="btnWrapper row no-gutters justify-content-center mt-3">
+                                <button type="submit">Deploy Gauge</button>
                               </div>
-                            </div>
-                          </section>
-                          <Divider />
-                          <div className="btnWrapper row no-gutters justify-content-center mt-3">
-                            <button>Deploy Gauge</button>
-                          </div>
-                          <hr />
+                              <hr />
+                            </Form>
+                          </Formik>
+
+                          {/* Gas Priority Fee */}
                           <section className="createPoolContent createPoolform">
                             <div className="row no-gutters justify-content-between px-0 px-md-3">
                               <FormControl>

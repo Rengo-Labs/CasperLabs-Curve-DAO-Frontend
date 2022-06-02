@@ -11,11 +11,9 @@ import "../../../../assets/css/bootstrap.min.css";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
 import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
-import clock from "../../../../assets/img/clock.png";
 import GasPriorityFee from "../../../../components/Gas/GasPriorityFee";
-import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
-import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
-import DaoInfoMessage from "../../../../components/DAO/DaoInfoMessage";
+import SelectInput from "../../../../components/FormsUI/SelectInput";
+import TextInput from "../../../../components/FormsUI/TextInput";
 // MATERIAL UI
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -42,8 +40,32 @@ import Divider from "@mui/material/Divider";
 import { Avatar } from "@material-ui/core";
 // MATERIA UI ICONS
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+// ICONS
+import clock from "../../../../assets/img/clock.png";
+import cspr from "../../../../assets/img/cspr.png";
+import wbtc from "../../../../assets/img/wbtc.png";
+import usdt from "../../../../assets/img/usdt.png";
+// FORMIK AND YUP
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
 // CONTENT
+
+const selectGaugeOptions = [
+  {
+    name: "CSPR",
+    icon: cspr,
+  },
+  {
+    name: "wBTC",
+    icon: wbtc,
+  },
+  {
+    name: "USDT",
+    icon: usdt,
+  },
+];
+
 const cells = ["", "Pool", "Current CRV APY", "Future CRV APY"];
 const sampleTableData =
   '[{"indexNo":"0","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"1","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"2","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"3","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"4","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"5","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"6","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"7","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"8","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"9","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"10","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"11","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"12","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"13","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"14","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"15","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"16","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"17","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"18","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"19","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"20","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"21","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"22","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"},{"indexNo":"23","pool":"compound (0x7ca5…7575)", "currentCrv": "0.36% to 0.90%", "futureCrv": "0.36% to 0.90%"}]';
@@ -93,6 +115,16 @@ const GaugeWeightVote = () => {
   const [votingPowerPercentage, setVotingPowerPercentage] = useState("1%");
   const [votingPowerNumber, setVotingPowerNumber] = useState("0.00");
 
+  // Content
+  const initialValues = {
+    SelectGaugeToken: "",
+    GaugeVotePower: "",
+  };
+  const validationSchema = Yup.object().shape({
+    SelectGaugeToken: Yup.string().required("Required"),
+    GaugeVotePower: Yup.string().required("Required"),
+  });
+
   // Handlers
   const handleGaugeChange = (event) => {
     setBoostGauge(event.target.value);
@@ -100,6 +132,10 @@ const GaugeWeightVote = () => {
 
   const handleChangeAllocation = () => {
     hideAllocation ? setHideAllocation(false) : setHideAllocation(true);
+  };
+
+  const onSubmitGaugeWeightVote = (values, props) => {
+    console.log("Gauge Weight Vote: ", values);
   };
 
   return (
@@ -344,146 +380,157 @@ const GaugeWeightVote = () => {
                               </div>
                             </div>
                             {/* Select gauge and Vote Weight % */}
-                            <div className="row no-gutters justify-content-center">
-                              <div className="col-12 col-md-6">
-                                <FormControl
-                                  variant="filled"
-                                  sx={{ m: 1, minWidth: 120 }}
-                                >
-                                  <InputLabel id="select-gauge-label">
-                                    Select a Gauge
-                                  </InputLabel>
-                                  <Select
-                                    labelId="select-gauge-label"
-                                    id="gauge-select"
-                                    value={boostGauge}
-                                    onChange={handleGaugeChange}
-                                  >
-                                    <MenuItem value="Select a Gauge">
-                                      <em>Select a Gauge</em>
-                                    </MenuItem>
-                                    <MenuItem value={"USDT"}>USDT</MenuItem>
-                                    <MenuItem value={"BTC"}>BTC</MenuItem>
-                                    <MenuItem value={"CSPR"}>CSPR</MenuItem>
-                                  </Select>
-                                </FormControl>
-                              </div>
-                              <div className="col-12 col-md-6 mt-2 mt-md-0">
-                                <List>
-                                  <ListItem
-                                    disablePadding
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Vote Weight % used:&nbsp;
-                                      </span>
-                                      {voteWeightUsed}
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
-                              </div>
-                            </div>
-                            {/* Hide allocation button */}
-                            <div className="row no-gutters mt-3">
-                              <div className="col-12">
-                                <div className="btnWrapper">
-                                  <button onClick={handleChangeAllocation}>
-                                    Hide My Allocation&nbsp;
-                                    <span className="ml-4">
-                                      <Tooltip title="Your vote allocation from previous votes is remembered. If you want to change it and you have votes allocated to a gauge, you can set its new allocation to 0">
-                                        <HelpOutlineIcon />
-                                      </Tooltip>
-                                    </span>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                            {/* Gauge Weight Reset */}
-                            {hideAllocation ? null : (
-                              <div className="row no-gutters mt-3">
-                                <div className="col-12">
-                                  <List>
-                                    <ListItem disablePadding>
-                                      <ListItemText>
-                                        <span className="font-weight-bold">
-                                          Gauge
-                                        </span>
-                                      </ListItemText>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                      <ListItemText>
-                                        <span className="font-weight-bold">
-                                          Weight
-                                        </span>
-                                      </ListItemText>
-                                    </ListItem>
-                                    <ListItem disablePadding>
-                                      <ListItemText>
-                                        <span className="font-weight-bold">
-                                          Reset
-                                        </span>
-                                      </ListItemText>
-                                    </ListItem>
-                                  </List>
-                                </div>
-                              </div>
-                            )}
-                            {/* Vote Weight */}
-                            <div className="row no-gutters mt-3">
-                              <div className="col-12">
-                                <div className="row no-gutters align-items-center">
-                                  <Typography variant="h6" component={"h6"}>
-                                    <span
-                                      style={{
-                                        fontWeight: "bold",
-                                        color: "#000",
-                                      }}
-                                    >
-                                      Vote Weight:&nbsp;
-                                    </span>
-                                  </Typography>
 
-                                  <Box
-                                    component="form"
-                                    noValidate
-                                    autoComplete="off"
-                                  >
-                                    <TextField
-                                      id="votingPower"
-                                      variant="filled"
-                                      value={votingPowerPercentage}
+                            <Formik
+                              initialValues={initialValues}
+                              validationSchema={validationSchema}
+                              onSubmit={onSubmitGaugeWeightVote}
+                            >
+                              <Form>
+                                <div className="row no-gutters justify-content-center">
+                                  <div className="col-12 col-md-6">
+                                    <SelectInput
+                                      name="SelectGaugeToken"
+                                      label="Select a Token"
+                                      options={selectGaugeOptions}
                                     />
-                                  </Box>
-                                  <Typography variant="body1" component={"div"}>
-                                    <span>% (of your voting power)</span>
-                                  </Typography>
+                                    {/* <SelectInput
+                                      name="SelectGaugeToken"
+                                      label="Select a Gauge"
+                                      options={selectGaugeOptions}
+                                    /> */}
+                                  </div>
+                                  <div className="col-12 col-md-6 mt-2 mt-md-0">
+                                    <List>
+                                      <ListItem
+                                        disablePadding
+                                        sx={{ textAlign: "center" }}
+                                      >
+                                        <ListItemText>
+                                          <span className="font-weight-bold">
+                                            Vote Weight % used:&nbsp;
+                                          </span>
+                                          {voteWeightUsed}
+                                        </ListItemText>
+                                      </ListItem>
+                                    </List>
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="col-12">
-                                <Typography variant="body1" component={"div"}>
-                                  <span>
-                                    {votingPowerNumber} ({votingPowerPercentage}
-                                    ) of your voting power will be allocated to
-                                    this gauge.
-                                  </span>
-                                </Typography>
-                              </div>
-                            </div>
-                            {/* Gas Priority Fee */}
-                            <div className="row no-gutters mt-3">
-                              <div className="col-12">
-                                <GasPriorityFee />
-                              </div>
-                            </div>
-                            {/* Submit Button */}
-                            <div className="row no-gutters mt-3 justify-content-center">
-                              <div className="col-12">
-                                <div className="btnWrapper text-center">
-                                  <button>Submit</button>
+                                {/* Hide allocation button */}
+                                <div className="row no-gutters mt-3">
+                                  <div className="col-12">
+                                    <div className="btnWrapper">
+                                      <button onClick={handleChangeAllocation}>
+                                        Hide My Allocation&nbsp;
+                                        <span className="ml-4">
+                                          <Tooltip title="Your vote allocation from previous votes is remembered. If you want to change it and you have votes allocated to a gauge, you can set its new allocation to 0">
+                                            <HelpOutlineIcon />
+                                          </Tooltip>
+                                        </span>
+                                      </button>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
+                                {/* Gauge Weight Reset */}
+                                {hideAllocation ? null : (
+                                  <div className="row no-gutters mt-3">
+                                    <div className="col-12">
+                                      <List>
+                                        <ListItem disablePadding>
+                                          <ListItemText>
+                                            <span className="font-weight-bold">
+                                              Gauge
+                                            </span>
+                                          </ListItemText>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                          <ListItemText>
+                                            <span className="font-weight-bold">
+                                              Weight
+                                            </span>
+                                          </ListItemText>
+                                        </ListItem>
+                                        <ListItem disablePadding>
+                                          <ListItemText>
+                                            <span className="font-weight-bold">
+                                              Reset
+                                            </span>
+                                          </ListItemText>
+                                        </ListItem>
+                                      </List>
+                                    </div>
+                                  </div>
+                                )}
+                                {/* Vote Weight */}
+                                <div className="row no-gutters mt-3">
+                                  <div className="col-12">
+                                    <div className="row no-gutters align-items-center">
+                                      <Typography variant="h6" component={"h6"}>
+                                        <span
+                                          style={{
+                                            fontWeight: "bold",
+                                            color: "#000",
+                                          }}
+                                        >
+                                          Vote Weight:&nbsp;
+                                        </span>
+                                      </Typography>
+                                      <Box
+                                        component="form"
+                                        noValidate
+                                        autoComplete="off"
+                                      >
+                                        <TextInput
+                                          id="gaugeVotingPower"
+                                          label="Vote Weight Percentage"
+                                          variant="filled"
+                                          name="GaugeVotePower"
+                                        />
+                                        {/* <TextInput
+                                        id="votingPower"
+                                        label="Vote Weight Percentage"
+                                        variant="filled"
+                                        name="VoteWeightPercentage"
+                                        // value={votingPowerPercentage}
+                                      /> */}
+                                      </Box>
+                                      <Typography
+                                        variant="body1"
+                                        component={"div"}
+                                      >
+                                        <span>% (of your voting power)</span>
+                                      </Typography>
+                                    </div>
+                                  </div>
+                                  <div className="col-12">
+                                    <Typography
+                                      variant="body1"
+                                      component={"div"}
+                                    >
+                                      <span>
+                                        {votingPowerNumber} (
+                                        {votingPowerPercentage}) of your voting
+                                        power will be allocated to this gauge.
+                                      </span>
+                                    </Typography>
+                                  </div>
+                                </div>
+                                {/* Gas Priority Fee */}
+                                <div className="row no-gutters mt-3">
+                                  <div className="col-12">
+                                    <GasPriorityFee />
+                                  </div>
+                                </div>
+                                {/* Submit Button */}
+                                <div className="row no-gutters mt-3 justify-content-center">
+                                  <div className="col-12">
+                                    <div className="btnWrapper text-center">
+                                      <button type="submit">Submit</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </Form>
+                            </Formik>
                           </div>
                         </Paper>
                       </Box>

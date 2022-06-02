@@ -219,13 +219,13 @@ function HeaderDAO(props) {
 
   const selectedStyling = {
     border: "2px solid '#5300e8'",
-    padding: "0.625rem 1.25rem",
+    padding: "0.625rem 1rem",
     // borderRadius: "5px",
     color: "#FFF",
     backgroundColor: "#5300e8",
   };
   const defaultStyling = {
-    padding: "0.625rem 1.25rem",
+    padding: "0.625rem 1rem",
   };
   const selectedNavStyle = {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
@@ -270,10 +270,10 @@ function HeaderDAO(props) {
   return (
     <header className={`header ${menuOpenedClass}`}>
       <nav
-        className="navbar navbar-expand-lg header-nav"
+        className="navbar navbar-expand-xl header-nav"
         style={{
           width: "100%",
-          padding: "0.5rem 1.85rem",
+          padding: "0.5rem 1rem",
           backgroundColor: "#e7ebf0",
         }}
       >

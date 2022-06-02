@@ -13,10 +13,7 @@ import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
 import GasPriorityFee from "../../../../components/Gas/GasPriorityFee";
 import VestingTokens from "../../../../components/Charts/VestingTokens";
-import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
-import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
-import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
-import DaoInfoMessage from "../../../../components/DAO/DaoInfoMessage";
+import TextInput from "../../../../components/FormsUI/TextInput";
 // MATERIAL UI
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -26,6 +23,9 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
+// FORMIK AND YUP
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
 // CONTENT
 
@@ -50,7 +50,18 @@ const Vesting = () => {
   const [availableTokens, setAvailableTokens] = useState("0.00");
   const [lockedTokens, setLockedTokens] = useState("0.00");
 
+  // Content
+  const initialValues = {
+    CheckVestingAddress: "",
+  };
+  const validationSchema = Yup.object().shape({
+    CheckVestingAddress: Yup.number().required("Required"),
+  });
+
   // Handlers
+  const onSubmitVestingAddress = (values, props) => {
+    console.log("Vesting Address Checking", values);
+  };
 
   return (
     <>
@@ -99,22 +110,30 @@ const Vesting = () => {
                               </div>
                             </div>
                             {/* Address */}
-                            <div className="row no-gutters justify-content-center align-items-center">
-                              <div className="col-12 col-lg-10 w-100">
-                                <TextField
-                                  id="vesting-address"
-                                  label="Address"
-                                  variant="filled"
-                                  value={vestingAddress}
-                                  sx={{ width: "100%" }}
-                                />
-                              </div>
-                              <div className="col-12 col-lg-2 text-center mt-3 mt-lg-0">
-                                <div className="btnWrapper">
-                                  <button>Check</button>
+                            <Formik
+                              initialValues={initialValues}
+                              validationSchema={validationSchema}
+                              onSubmit={onSubmitVestingAddress}
+                            >
+                              <Form>
+                                <div className="row no-gutters justify-content-center align-items-center">
+                                  <div className="col-12 col-lg-10 w-100">
+                                    <TextInput
+                                      id="vesting-address"
+                                      label="Address"
+                                      variant="filled"
+                                      name="CheckVestingAddress"
+                                      sx={{ width: "100%" }}
+                                    />
+                                  </div>
+                                  <div className="col-12 col-lg-2 text-center mt-3 mt-lg-0">
+                                    <div className="btnWrapper">
+                                      <button>Check</button>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
+                              </Form>
+                            </Formik>
                             <div className="w-100 my-4 pt-4">
                               <Divider />
                             </div>

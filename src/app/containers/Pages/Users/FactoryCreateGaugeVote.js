@@ -10,6 +10,7 @@ import "../../../assets/css/bootstrap.min.css";
 //COMPONENTS
 import HeaderHome from "../../../components/Headers/Header";
 import HomeBanner from "./Home/HomeBanner";
+import TextInput from "../../../components/FormsUI/TextInput";
 //MATERIAL UI
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -23,6 +24,10 @@ import {
   RadioGroup,
 } from "@material-ui/core";
 import { StyledEngineProvider } from "@mui/styled-engine";
+// FORMIK
+import { Formik, Form } from "formik";
+// YUP
+import * as Yup from "yup";
 
 //COMPONENT FUNCTION
 const FactoryCreateGaugeVote = () => {
@@ -34,6 +39,23 @@ const FactoryCreateGaugeVote = () => {
     localStorage.getItem("selectedWallet")
   );
   let [torus, setTorus] = useState();
+
+  // Content
+  const initialValues = {
+    GaugeAddressForCreateGaugeVote: "",
+    GaugeVoteDescription: "",
+  };
+
+  const validationSchema = Yup.object().shape({
+    GaugeAddressForCreateGaugeVote: Yup.number().required("Required"),
+    GaugeVoteDescription: Yup.string().required("Required"),
+  });
+
+  // Handlers
+  // Handlers
+  const onCreateGaugeVoteSubmit = (values) => {
+    console.log("create Gauge: ", values);
+  };
 
   return (
     <>
@@ -62,8 +84,10 @@ const FactoryCreateGaugeVote = () => {
                     <div className="curve-content-wrapper col-12 col-lg-6 ">
                       <Paper elevation={4}>
                         <div className="py-5 px-4">
+                          {/* Main Heading */}
                           <section className="createPoolContent createPoolform gaugeVoteSectionWrapper">
                             <h3>Create a Gauge Vote</h3>
+                            {/* Requirements */}
                             <div className="gaugeVoteRequirements">
                               <h5>Requirements:</h5>
                               <ol>
@@ -90,44 +114,60 @@ const FactoryCreateGaugeVote = () => {
                               </ol>
                             </div>
                           </section>
-                          <section className="createPoolContent createPoolform gaugeVoteSectionWrapper">
-                            <div className="row no-gutters justify-content-center align-items-center px-0 px-md-3">
-                              <div className="col-12">
-                                <form className="my-4 px-0 px-md-3">
-                                  <TextField
-                                    id="gaugeAddress"
-                                    label="Gauge Address"
-                                    variant="filled"
-                                    sx={{ width: "100%" }}
-                                  />
-                                  <label>
-                                    <span>Gauge Address</span>
-                                  </label>
-                                </form>
+                          {/* Formik Validations */}
+                          <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={onCreateGaugeVoteSubmit}
+                          >
+                            <Form>
+                              {/* Gauge Address */}
+                              <section className="createPoolContent createPoolform gaugeVoteSectionWrapper">
+                                <div className="row no-gutters justify-content-center align-items-center px-0 px-md-3">
+                                  <div className="col-12">
+                                    <form className="my-4 px-0 px-md-3">
+                                      <TextInput
+                                        id="gaugeAddress"
+                                        label="Gauge Address"
+                                        variant="filled"
+                                        name="GaugeAddressForCreateGaugeVote"
+                                        sx={{ width: "100%" }}
+                                      />
+                                      <label>
+                                        <span>Gauge Address</span>
+                                      </label>
+                                    </form>
+                                  </div>
+                                </div>
+                              </section>
+                              {/* Gauge Vote Description */}
+                              <section className="createPoolContent createPoolform gaugeVoteSectionWrapper">
+                                <div className="row no-gutters justify-content-center align-items-center px-0 px-md-3">
+                                  <div className="col-12">
+                                    <form className="my-4 px-0 px-md-3">
+                                      <TextInput
+                                        id="gaugeVoteDescription"
+                                        label="What this Gauge is for?"
+                                        variant="filled"
+                                        name="GaugeVoteDescription"
+                                        sx={{ width: "100%" }}
+                                      />
+                                      <label>
+                                        <span>Gauge Vote Description</span>
+                                      </label>
+                                    </form>
+                                  </div>
+                                </div>
+                              </section>
+                              {/* Button */}
+                              <div className="btnWrapper row no-gutters justify-content-center mb-3">
+                                <button type="submit">Create Vote</button>
                               </div>
-                            </div>
-                          </section>
-                          <section className="createPoolContent createPoolform gaugeVoteSectionWrapper">
-                            <div className="row no-gutters justify-content-center align-items-center px-0 px-md-3">
-                              <div className="col-12">
-                                <form className="my-4 px-0 px-md-3">
-                                  <TextField
-                                    id="gaugeVoteDescription"
-                                    label="What this Gauge is for?"
-                                    variant="filled"
-                                    sx={{ width: "100%" }}
-                                  />
-                                  <label>
-                                    <span>Gauge Vote Description</span>
-                                  </label>
-                                </form>
-                              </div>
-                            </div>
-                          </section>
-                          <div className="btnWrapper row no-gutters justify-content-center mb-3">
-                            <button>Create Vote</button>
-                          </div>
+                            </Form>
+                          </Formik>
                           <Divider />
+
+                          {/* Gas Priority Fee */}
                           <section className="createPoolContent createPoolform">
                             <div className="row no-gutters justify-content-between px-0 px-md-3">
                               <FormControl>

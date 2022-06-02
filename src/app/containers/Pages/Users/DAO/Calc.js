@@ -9,6 +9,8 @@ import "../../../../assets/css/bootstrap.min.css";
 // COMPONENTS
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
+import SelectInput from "../../../../components/FormsUI/SelectInput";
+import TextInput from "../../../../components/FormsUI/TextInput";
 // MATERIAL UI
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -29,8 +31,50 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CircularProgress from "@mui/material/CircularProgress";
+// ICONS
+import cspr from "../../../../assets/img/cspr.png";
+import wbtc from "../../../../assets/img/wbtc.png";
+import usdt from "../../../../assets/img/usdt.png";
+// FORMIK AND YUP
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
 
 // CONTENT
+const selectGaugeOptions = [
+  {
+    name: "CSPR",
+    icon: cspr,
+  },
+  {
+    name: "wBTC",
+    icon: wbtc,
+  },
+  {
+    name: "USDT",
+    icon: usdt,
+  },
+];
+
+const lockTimeOptions = [
+  {
+    name: "1 Week",
+  },
+  {
+    name: "1 Month",
+  },
+  {
+    name: "3 Months",
+  },
+  {
+    name: "6 Months",
+  },
+  {
+    name: "1 Year",
+  },
+  {
+    name: "4 Years",
+  },
+];
 
 // COMPONENT FUNCTION
 const Calc = () => {
@@ -60,6 +104,23 @@ const Calc = () => {
   // Content
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
+  const initialValues = {
+    SelectGaugeCalc: "",
+    CalcDeposits: "",
+    PoolLiquidityCalc: "",
+    MyCRVCalc: "",
+    GaugeLockPeriodCalc: "",
+    TotalveCRVCalc: "",
+  };
+  const validationSchema = Yup.object().shape({
+    SelectGaugeCalc: Yup.string().required("Required"),
+    CalcDeposits: Yup.number().required("Required"),
+    PoolLiquidityCalc: Yup.number().required("Required"),
+    MyCRVCalc: Yup.number().required("Required"),
+    // GaugeLockPeriodCalc: Yup.string().required("Required"),
+    TotalveCRVCalc: Yup.number().required("Required"),
+  });
+
   // Handlers
   const handleGaugeChange = (event) => {
     setBoostGauge(event.target.value);
@@ -75,6 +136,10 @@ const Calc = () => {
 
   const handleGaugeLockChange = (event) => {
     setGaugeLock(event.target.value);
+  };
+
+  const onSubmitCalc = (values, props) => {
+    console.log("Form data from Select Token", values);
   };
 
   return (
@@ -125,208 +190,174 @@ const Calc = () => {
                                 </Typography>
                               </div>
                             </div>
-                            {/* Gauge Selector & Deposit */}
-                            <div className="row no-gutters">
-                              {/* Gauge Selector */}
-                              <div className="col-12 col-md-6">
-                                <FormControl
-                                  variant="filled"
-                                  sx={{ m: 1, minWidth: 120 }}
-                                >
-                                  <InputLabel id="select-gauge-label">
-                                    Select a Gauge
-                                  </InputLabel>
-                                  <Select
-                                    labelId="select-gauge-label"
-                                    id="gauge-select"
-                                    value={boostGauge}
-                                    onChange={handleGaugeChange}
-                                  >
-                                    <MenuItem value="Select a Gauge">
-                                      <em>Select a Gauge</em>
-                                    </MenuItem>
-                                    <MenuItem value={"USDT"}>USDT</MenuItem>
-                                    <MenuItem value={"BTC"}>BTC</MenuItem>
-                                    <MenuItem value={"CSPR"}>CSPR</MenuItem>
-                                  </Select>
-                                </FormControl>
-                              </div>
-                              {/* Deposit */}
-                              <div className="col-12 col-md-6 mt-3 mt-md-0">
-                                <Box
-                                  component="form"
-                                  noValidate
-                                  autoComplete="off"
-                                >
-                                  <TextField
-                                    id="calc-deposits"
-                                    label="Deposit:"
-                                    variant="filled"
-                                    value={gaugeDeposits}
-                                  />
-                                </Box>
+                            {/* Formik */}
+                            <Formik
+                              initialValues={initialValues}
+                              validationSchema={validationSchema}
+                              onSubmit={onSubmitCalc}
+                            >
+                              <Form>
+                                {/* Gauge Selector & Deposit */}
                                 <div className="row no-gutters">
-                                  <div className="col-12">
-                                    <FormGroup>
-                                      <FormControlLabel
-                                        control={<Checkbox />}
-                                        label="Use Existing Deposit"
-                                      />
-                                    </FormGroup>
+                                  {/* Gauge Selector */}
+                                  <div className="col-12 col-md-6">
+                                    <SelectInput
+                                      name="SelectGaugeCalc"
+                                      label="Select a Gauge"
+                                      options={selectGaugeOptions}
+                                    />
                                   </div>
-                                </div>
-                              </div>
-                            </div>
-                            {/* Pool Liquidity & CRV */}
-                            <div className="row no-gutters mt-3">
-                              {/* Pool Liquidity */}
-                              <div className="col-12 col-md-6">
-                                <Box
-                                  component="form"
-                                  noValidate
-                                  autoComplete="off"
-                                >
-                                  <TextField
-                                    id="pool-liquidity"
-                                    label="Pool Liquidity:"
-                                    variant="filled"
-                                    value={poolLiquidity}
-                                  />
-                                </Box>
-                              </div>
-                              {/* CRV */}
-                              <div className="col-12 col-md-6 mt-3 mt-md-0">
-                                <Box
-                                  component="form"
-                                  noValidate
-                                  autoComplete="off"
-                                >
-                                  <TextField
-                                    id="my-crv"
-                                    label="My CRV:"
-                                    variant="filled"
-                                    value={gaugeCRV}
-                                  />
-                                </Box>
-                                <div className="col-12">
-                                  <FormControl>
-                                    {/* <FormLabel id="gauge-crv-radio">Gender</FormLabel> */}
-                                    <RadioGroup
-                                      row
-                                      aria-labelledby="gauge-crv-radio"
-                                      name="crv-vecrv"
+                                  {/* Deposit */}
+                                  <div className="col-12 col-md-6 mt-3 mt-md-0">
+                                    <Box
+                                      component="form"
+                                      noValidate
+                                      autoComplete="off"
                                     >
-                                      <FormControlLabel
-                                        value="crv"
-                                        control={<Radio />}
-                                        label="CRV"
-                                        onChange={handleCRVSelect}
+                                      <TextInput
+                                        id="calc-deposits"
+                                        label="Deposit:"
+                                        variant="filled"
+                                        name="CalcDeposits"
                                       />
-                                      <FormControlLabel
-                                        value="cecrv"
-                                        control={<Radio />}
-                                        label="veCRV"
-                                        onChange={handleVeCRVSelect}
-                                      />
-                                    </RadioGroup>
-                                  </FormControl>
-                                </div>
-                              </div>
-                              {gaugeVeCRV ? (
-                                <div className="row no-gutters mt-2 w-100">
-                                  <div className="col-12">
-                                    <div className="row no-gutters justify-content-md-end">
-                                      <div className="col-12 col-md-6">
-                                        <FormControl
-                                          variant="filled"
-                                          sx={{ m: 1, minWidth: 120 }}
-                                        >
-                                          <InputLabel id="gauge-lock-period">
-                                            Select a Gauge
-                                          </InputLabel>
-                                          <Select
-                                            labelId="gauge-lock-period"
-                                            id="lock-period"
-                                            value={gaugeLock}
-                                            onChange={handleGaugeLockChange}
-                                          >
-                                            <MenuItem value={1 + " Week"}>
-                                              1 Week
-                                            </MenuItem>
-                                            <MenuItem value={1 + " Month"}>
-                                              1 Month
-                                            </MenuItem>
-                                            <MenuItem value={6 + " Months"}>
-                                              6 Months
-                                            </MenuItem>
-                                            <MenuItem value={1 + " Year"}>
-                                              1 Year
-                                            </MenuItem>
-                                            <MenuItem value={2 + " Years"}>
-                                              2 Years
-                                            </MenuItem>
-                                            <MenuItem value={3 + " Years"}>
-                                              3 Years
-                                            </MenuItem>
-                                            <MenuItem value={4 + " Years"}>
-                                              4 Years
-                                            </MenuItem>
-                                          </Select>
-                                        </FormControl>
+                                    </Box>
+                                    <div className="row no-gutters">
+                                      <div className="col-12">
+                                        <FormGroup>
+                                          <FormControlLabel
+                                            control={<Checkbox />}
+                                            label="Use Existing Deposit"
+                                          />
+                                        </FormGroup>
                                       </div>
                                     </div>
-                                    <div className="row no-gutters justify-content-end">
-                                      <div className="col-12 col-md-6 text-right align-self-center p-2 py-3">
+                                  </div>
+                                </div>
+                                {/* Pool Liquidity & CRV */}
+                                <div className="row no-gutters mt-3">
+                                  {/* Pool Liquidity */}
+                                  <div className="col-12 col-md-6">
+                                    <Box
+                                      component="form"
+                                      noValidate
+                                      autoComplete="off"
+                                    >
+                                      <TextInput
+                                        id="pool-liquidity"
+                                        label="Pool Liquidity:"
+                                        variant="filled"
+                                        name="PoolLiquidityCalc"
+                                      />
+                                    </Box>
+                                  </div>
+                                  {/* CRV */}
+                                  <div className="col-12 col-md-6 mt-3 mt-md-0">
+                                    <Box
+                                      component="form"
+                                      noValidate
+                                      autoComplete="off"
+                                    >
+                                      <TextInput
+                                        id="my-crv"
+                                        label="My CRV:"
+                                        variant="filled"
+                                        name="MyCRVCalc"
+                                      />
+                                    </Box>
+                                    <div className="col-12">
+                                      <FormControl>
+                                        {/* <FormLabel id="gauge-crv-radio">Gender</FormLabel> */}
+                                        <RadioGroup
+                                          row
+                                          aria-labelledby="gauge-crv-radio"
+                                          name="crv-vecrv"
+                                          defaultValue="crv"
+                                        >
+                                          <FormControlLabel
+                                            value="crv"
+                                            control={<Radio />}
+                                            label="CRV"
+                                            onChange={handleCRVSelect}
+                                          />
+                                          <FormControlLabel
+                                            value="cecrv"
+                                            control={<Radio />}
+                                            label="veCRV"
+                                            onChange={handleVeCRVSelect}
+                                          />
+                                        </RadioGroup>
+                                      </FormControl>
+                                    </div>
+                                  </div>
+                                  {gaugeVeCRV ? (
+                                    <div className="row no-gutters mt-2 w-100">
+                                      <div className="col-12">
+                                        <div className="row no-gutters justify-content-md-end">
+                                          <div className="col-12 col-md-6">
+                                            <SelectInput
+                                              name="GaugeLockPeriodCalc"
+                                              label="Select Lock Period"
+                                              options={lockTimeOptions}
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="row no-gutters justify-content-end">
+                                          <div className="col-12 col-md-6 text-right align-self-center p-2 py-3">
+                                            <Typography
+                                              variant="body1"
+                                              component={"div"}
+                                            >
+                                              <span className="font-weight-bold">
+                                                {lockedVeCRV}&nbsp;
+                                              </span>
+                                              veCRV
+                                            </Typography>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ) : null}
+                                </div>
+                                {/* Total veCRV */}
+                                <div className="row no-gutters mt-3 align-items-center">
+                                  <div className="col-12 col-md-6">
+                                    <Box
+                                      component="form"
+                                      noValidate
+                                      autoComplete="off"
+                                    >
+                                      <TextInput
+                                        id="total-vecrv"
+                                        label="Total veCRV:"
+                                        variant="filled"
+                                        name="TotalveCRVCalc"
+                                      />
+                                    </Box>
+                                    <div className="row no-gutters">
+                                      <div className="col-12 text-right p-2 py-3">
                                         <Typography
                                           variant="body1"
                                           component={"div"}
                                         >
                                           <span className="font-weight-bold">
-                                            {lockedVeCRV}&nbsp;
+                                            Boost:&nbsp;
                                           </span>
-                                          veCRV
+                                          {crvBoost}x
                                         </Typography>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                              ) : null}
-                            </div>
-                            {/* Total veCRV */}
-                            <div className="row no-gutters mt-3 align-items-center">
-                              <div className="col-12 col-md-6">
-                                <Box
-                                  component="form"
-                                  noValidate
-                                  autoComplete="off"
-                                >
-                                  <TextField
-                                    id="total-vecrv"
-                                    label="Total veCRV:"
-                                    variant="filled"
-                                    value={totalVeCRV}
-                                  />
-                                </Box>
-                                <div className="row no-gutters">
-                                  <div className="col-12 text-right p-2 py-3">
-                                    <Typography
-                                      variant="body1"
-                                      component={"div"}
-                                    >
-                                      <span className="font-weight-bold">
-                                        Boost:&nbsp;
-                                      </span>
-                                      {crvBoost}x
-                                    </Typography>
+                                {/* Button */}
+                                <div className="row no-gutters justify-content-center">
+                                  <div className="col-12 col-md-6 text-center my-3">
+                                    <div className="btnWrapper">
+                                      <button type="submit">Calculate</button>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                              <div className="col-12 col-md-6 text-center text-md-left mt-2 align-self-start">
-                                <div className="btnWrapper">
-                                  <button>Calculate</button>
-                                </div>
-                              </div>
-                            </div>
+                              </Form>
+                            </Formik>
                             {/* Boost Requirements */}
                             <div className="row no-gutters mt-3">
                               <div className="col-12 col-md-6">
