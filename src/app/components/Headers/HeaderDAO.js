@@ -219,18 +219,23 @@ function HeaderDAO(props) {
 
   const selectedStyling = {
     border: "2px solid '#5300e8'",
-    padding: "0.625rem 1.25rem",
+    padding: "0.625rem 1rem",
     // borderRadius: "5px",
     color: "#FFF",
     backgroundColor: "#5300e8",
   };
   const defaultStyling = {
-    padding: "0.625rem 1.25rem",
+    padding: "0.625rem 1rem",
   };
   const selectedNavStyle = {
     Home: props.selectedNav === "Home" ? selectedStyling : defaultStyling,
     Dao: props.selectedNav === "DAO" ? selectedStyling : defaultStyling,
+    Calc: props.selectedNav === "Calc" ? selectedStyling : defaultStyling,
+    Locker: props.selectedNav === "Locker" ? selectedStyling : defaultStyling,
     Minter: props.selectedNav === "Minter" ? selectedStyling : defaultStyling,
+    Vesting: props.selectedNav === "Vesting" ? selectedStyling : defaultStyling,
+    GaugeWeightVote:
+      props.selectedNav === "GWVote" ? selectedStyling : defaultStyling,
   };
 
   let Disconnect = (e) => {
@@ -265,10 +270,10 @@ function HeaderDAO(props) {
   return (
     <header className={`header ${menuOpenedClass}`}>
       <nav
-        className="navbar navbar-expand-lg header-nav"
+        className="navbar navbar-expand-xl header-nav"
         style={{
           width: "100%",
-          padding: "0.5rem 1.85rem",
+          padding: "0.5rem 1rem",
           backgroundColor: "#e7ebf0",
         }}
       >
@@ -431,11 +436,49 @@ function HeaderDAO(props) {
             </li>
             <li>
               <Link
+                to="/gw-vote"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.GaugeWeightVote}>
+                  Gauge Weight Vote
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/calc"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Calc}>Calc</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/locker"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Locker}>Locker</span>
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/minter"
                 className=" align-items-center justify-content-center text-center"
                 style={{ color: "#5300e8" }}
               >
                 <span style={selectedNavStyle.Minter}>Minter</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/vesting"
+                className=" align-items-center justify-content-center text-center"
+                style={{ color: "#5300e8" }}
+              >
+                <span style={selectedNavStyle.Vesting}>Vesting</span>
               </Link>
             </li>
           </ul>

@@ -35,8 +35,8 @@
   }
   
   .createPoolform label {
-      margin: 0;
-      font-size: 0.75rem;
+      /* margin: 0; */
+      /* font-size: 1rem; */
       color: #9c9c9c
   }
   
@@ -45,7 +45,7 @@
   }
   
   .createPoolform input {
-      padding: 16.5px 14px;
+      /* padding: 16.5px 14px; */
       width: 100%;
   
   }

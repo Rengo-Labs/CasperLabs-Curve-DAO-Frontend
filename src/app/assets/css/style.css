@@ -6575,7 +6575,7 @@ html.menu-opened body {
 }
 @media (min-width: 992px) {
   .main-nav > li {
-    margin-right: 30px;
+    margin-right: 10px;
     padding: 5px;
   }
   .main-nav > li:last-child {

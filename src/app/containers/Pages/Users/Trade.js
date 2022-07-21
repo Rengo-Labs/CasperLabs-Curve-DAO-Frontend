@@ -12,6 +12,7 @@ import HomeBanner from "./Home/HomeBanner";
 import TradeCandleSticks from "../../../components/Charts/TradeCandleSticks";
 import SplineArea from "../../../components/Charts/SplineArea";
 import AdvancedOptions from "../../../components/Modals/AdvancedOptions";
+import SelectInput from "../../../components/FormsUI/SelectInput";
 // MATERIAL UI
 import Paper from "@mui/material/Paper";
 import PropTypes from "prop-types";
@@ -28,17 +29,45 @@ import { makeStyles } from "@material-ui/core/styles";
 import { StyledEngineProvider } from "@mui/styled-engine";
 //MATERIAL UI ICONS
 import SwapVertIcon from "@mui/icons-material/SwapVert";
-// ICONS
+// FORMIK AND YUP
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
+//ICONS
 import daiIcon from "../../../assets/img/dai.png";
 import busdIcon from "../../../assets/img/busd.png";
 import sbtcIcon from "../../../assets/img/sbtc.png";
 import tusdIcon from "../../../assets/img/tusd.png";
 import usdcIcon from "../../../assets/img/usdc.png";
-import usdtIcon from "../../../assets/img/usdt.png";
 import wbtcIcon from "../../../assets/img/wbtc.png";
-import { Token } from "@mui/icons-material";
 
 // CONTENT
+
+const tokens = [
+  {
+    name: "DAI",
+    icon: daiIcon, // can also use a link
+  },
+  {
+    name: "BUSD",
+    icon: busdIcon, // can also use a link
+  },
+  {
+    name: "sBTC",
+    icon: sbtcIcon, // can also use a link
+  },
+  {
+    name: "TUSD",
+    icon: tusdIcon, // can also use a link
+  },
+  {
+    name: "USDC",
+    icon: usdcIcon, // can also use a link
+  },
+  {
+    name: "wBTC",
+    icon: wbtcIcon, // can also use a link
+  },
+];
 
 // --Mui Theme
 const useStyles = makeStyles((theme) => ({
@@ -108,6 +137,14 @@ const Trade = () => {
 
   const classes = useStyles();
 
+  // Content
+  const initialValues = {
+    selectTokenForChart: "",
+  };
+  const validationSchema = Yup.object().shape({
+    selectTokenForChart: Yup.string().required("Required"),
+  });
+
   // Handlers
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -149,6 +186,10 @@ const Trade = () => {
     setTokenBQuantity(e.target.value);
   };
 
+  const onSubmitSelectToken = (values, props) => {
+    console.log("Form data from Select Token", values);
+  };
+
   const handleOpenAdvancedOptions = () => setOpenAdvancedOptions(true);
   const handleCloseAdvancedOptions = () => setOpenAdvancedOptions(false);
 
@@ -182,92 +223,23 @@ const Trade = () => {
                         <div className="col-12">
                           <Paper elevation={4}>
                             <div className="py-5 px-4">
-                              <div className="row no-gutters">
-                                <div className="col-12 col-md-8 col-lg-6 mt-3">
-                                  <FormControl
-                                    variant="filled"
-                                    sx={{ m: 1, width: "100%" }}
-                                  >
-                                    <InputLabel id="trade-token-selector">
-                                      Token
-                                    </InputLabel>
-                                    <Select
-                                      labelId="trade-token-selector"
-                                      id="trade-token-select"
-                                      value={token}
-                                      onChange={handleTokenChange}
-                                      sx={{ marginTop: "5px" }}
-                                    >
-                                      <MenuItem value="">
-                                        <em>None</em>
-                                      </MenuItem>
-                                      <MenuItem value={"DAI"}>
-                                        <div className="iconsHanlde row no-gutters align-items-center">
-                                          <img
-                                            src={daiIcon}
-                                            alt="DAI token icon"
-                                          />
-                                          <span>DAI</span>
-                                        </div>
-                                      </MenuItem>
-                                      <MenuItem value={"USDC"}>
-                                        <span className="iconsHanlde">
-                                          <img
-                                            src={usdcIcon}
-                                            alt="USDC token icon"
-                                          />
-                                          <span>USDC</span>
-                                        </span>
-                                      </MenuItem>
-                                      <MenuItem value={"USDT"}>
-                                        <span className="iconsHanlde">
-                                          <img
-                                            src={usdtIcon}
-                                            alt="USDT token icon"
-                                          />
-                                          <span>USDT</span>
-                                        </span>
-                                      </MenuItem>
-                                      <MenuItem value={"TUSD"}>
-                                        <span className="iconsHanlde">
-                                          <img
-                                            src={tusdIcon}
-                                            alt="TUSD token icon"
-                                          />
-                                          <span>TUSD</span>
-                                        </span>
-                                      </MenuItem>
-                                      <MenuItem value={"BUSD"}>
-                                        <span className="iconsHanlde">
-                                          <img
-                                            src={busdIcon}
-                                            alt="BUSD token icon"
-                                          />
-                                          <span>BUSD</span>
-                                        </span>
-                                      </MenuItem>
-                                      <MenuItem value={"wBTC"}>
-                                        <span className="iconsHanlde">
-                                          <img
-                                            src={wbtcIcon}
-                                            alt="wBTC token icon"
-                                          />
-                                          <span>wBTC</span>
-                                        </span>
-                                      </MenuItem>
-                                      <MenuItem value={"sBTC"}>
-                                        <span className="iconsHanlde">
-                                          <img
-                                            src={sbtcIcon}
-                                            alt="sBTC token icon"
-                                          />
-                                          <span>sBTC</span>
-                                        </span>
-                                      </MenuItem>
-                                    </Select>
-                                  </FormControl>
-                                </div>
-                              </div>
+                              <Formik
+                                initialValues={initialValues}
+                                validationSchema={validationSchema}
+                                onChange={onSubmitSelectToken}
+                              >
+                                <Form>
+                                  <div className="row no-gutters">
+                                    <div className="col-12 col-md-8 col-lg-6 mt-3">
+                                      <SelectInput
+                                        name="selectTokenForChart"
+                                        label="Select Token for Chart"
+                                        options={tokens}
+                                      />
+                                    </div>
+                                  </div>
+                                </Form>
+                              </Formik>
                               <TradeCandleSticks token={token} />
                             </div>
                           </Paper>
@@ -332,7 +304,7 @@ const Trade = () => {
                                           <MenuItem value={"USDT"}>
                                             <span className="iconsHanlde">
                                               <img
-                                                src={usdtIcon}
+                                                src={usdcIcon}
                                                 alt="USDT token icon"
                                               />
                                               <span>USDT</span>
@@ -442,7 +414,7 @@ const Trade = () => {
                                           <MenuItem value={"USDT"}>
                                             <span className="iconsHanlde">
                                               <img
-                                                src={usdtIcon}
+                                                src={usdcIcon}
                                                 alt="USDT token icon"
                                               />
                                               <span>USDT</span>

@@ -9,6 +9,9 @@ import "../../assets/css/curveButton.css";
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
 import GasPriorityFee from "../Gas/GasPriorityFee";
+import SelectInput from "../FormsUI/SelectInput";
+import TextInput from "../FormsUI/TextInput";
+import DateTimePicker from "../FormsUI/DateTimePicker";
 // MATERIAL UI ICONS
 // MATERIAL UI
 import Typography from "@mui/material/Typography";
@@ -32,8 +35,32 @@ import {
   Radio,
   RadioGroup,
 } from "@material-ui/core";
+// FORMIK AND YUP
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
 
 // CONTENT
+
+const lockTimeOptions = [
+  {
+    name: "1 Week",
+  },
+  {
+    name: "1 Month",
+  },
+  {
+    name: "3 Months",
+  },
+  {
+    name: "6 Months",
+  },
+  {
+    name: "1 Year",
+  },
+  {
+    name: "4 Years",
+  },
+];
 
 // COMPONENT FUNCTION
 const VotingPowerActionables = () => {
@@ -43,6 +70,19 @@ const VotingPowerActionables = () => {
   const [lockTime, setLockTime] = useState("");
   const [openA, setOpenA] = useState(false);
   const [startingVPower, setStartingVPower] = useState(0.0);
+
+  // Content
+  const initialValues = {
+    LockAmount: "",
+    LockTimeSelect: "",
+    LockTimePicker: "",
+  };
+  const validationSchema = Yup.object().shape({
+    LockAmount: Yup.number().required("Required"),
+    LockTimeSelect: Yup.string().required("Required"),
+    LockTimePicker: Yup.date().required("Required"),
+    // tokenBQuantity: Yup.number().required("Required"),
+  });
 
   // Handlers
   const handleCloseA = () => {
@@ -57,93 +97,83 @@ const VotingPowerActionables = () => {
     setLockTime(event.target.value);
   };
 
+  const onSubmitVotingPowerActionables = (values, props) => {
+    console.log("Voting Power Actionables", values);
+  };
+
   return (
     <>
-      <div className="row no-gutters align-items-center">
-        {/* Set Amount */}
-        <div className="col-12 col-lg-6">
-          <TextField
-            id="daoAmount"
-            label="Amount"
-            variant="filled"
-            sx={{ width: "100%" }}
-          />
-        </div>
-        {/* Max Button */}
-        <div className="col-12 col-lg-6 mt-3 mt-lg-0">
-          <div className="row no-gutters align-items-center">
-            <div className="col-12 col-lg-10 text-center text-lg-right">
-              <div className="btnWrapper">
-                <button className="px-5">Max</button>
-              </div>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={onSubmitVotingPowerActionables}
+      >
+        <Form>
+          {/* Set Amount */}
+          <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
+            <div className="col-12 col-lg-5">
+              <TextInput
+                id="daoAmount"
+                label="Lock Amount"
+                variant="filled"
+                name="LockAmount"
+                sx={{ width: "100%" }}
+              />
             </div>
-            <div className="col-12 col-lg-2 text-center">
-              <Typography
-                variant="body1"
-                gutterBottom
-                component="span"
-                fontWeight={900}
-                sx={{ padding: "10px", fontSize: "1.5rem" }}
-              >
-                {maxAmount}
-              </Typography>
+            {/* Max Button */}
+            <div className="col-12 col-lg-5 mt-3 mt-lg-0">
+              <div className="row no-gutters align-items-center">
+                <div className="col-12 col-lg-8">
+                  <div className="btnWrapper">
+                    <button className="px-5">Max</button>
+                  </div>
+                </div>
+                <div className="col-12 col-lg-4">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    component="span"
+                    fontWeight={900}
+                    sx={{ padding: "10px", fontSize: "1.5rem" }}
+                  >
+                    {maxAmount}
+                  </Typography>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      {/* Lock Time */}
-      <div className="row no-gutters mt-4 align-items-center">
-        <div className="col-12">
-          <form action="#">
-            <div className="row no-gutters">
-              <div className="col-12 px-0">
-                <label for="lockTime">Choose Lock Time:&nbsp;</label>
+          {/* Lock Time */}
+          <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
+            <div className="col-12 col-lg-5 px-0">
+              <DateTimePicker
+                name="LockTimePicker"
+                label="Choose Lock Time"
+                sx={{ width: "100%" }}
+              />
+            </div>
+            {/* Lock Time Dropdown */}
+            <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
+              <SelectInput
+                name="LockTimeSelect"
+                label="Select Lock Time"
+                options={lockTimeOptions}
+              />
+            </div>
+          </div>
+          {/* </form>
+            </div> */}
+          {/* </div> */}
+          <div className="row no-gutters justify-content-center">
+            <div className="col-12 col-md-4">
+              <div className="btnWrapper my-4 text-center">
+                <button className="px-5" type="submit">
+                  Lock Time
+                </button>
               </div>
             </div>
-            <div className="row no-gutters justify-content-center justify-content-lg-between">
-              <div className="col-12 col-lg-5 px-0">
-                <input
-                  type="date"
-                  id="lockTime"
-                  name="lockTime"
-                  style={{
-                    height: "58px",
-                    padding: "12px",
-                    backgroundColor: "#f1f1f1",
-                    border: "none",
-                    borderBottom: "1px solid #777",
-                    fontSize: "1rem",
-                  }}
-                  className="w-100"
-                />
-              </div>
-              {/* Lock Time Dropdown */}
-              <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
-                <FormControl variant="filled">
-                  <Select
-                    labelId="lock-time-selector"
-                    id="lock-time-dao"
-                    open={openA}
-                    onClose={handleCloseA}
-                    onOpen={handleOpenA}
-                    value={lockTime}
-                    onChange={handleChangetokenA}
-                    label="Lock Time"
-                    sx={{ textAlign: "left" }}
-                  >
-                    <MenuItem value={"1 Week"}>1 Week</MenuItem>
-                    <MenuItem value={"1 Month"}>1 Month</MenuItem>
-                    <MenuItem value={"3 Months"}>3 Months</MenuItem>
-                    <MenuItem value={"6 Months"}>6 Months</MenuItem>
-                    <MenuItem value={"1 Year"}>1 Year</MenuItem>
-                    <MenuItem value={"4 Years"}>4 Years</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+          </div>
+        </Form>
+      </Formik>
       {/* Starting Voting Power */}
       <div className="row no-gutters mt-4 justify-content-center">
         <div className="col-12">

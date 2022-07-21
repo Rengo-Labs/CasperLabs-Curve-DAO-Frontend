@@ -42,13 +42,13 @@ var optionsData = {
     type: "area",
     height: 350,
     id: "chart-area",
-    // toolbar: {
-    //   autoSelected: "pan",
-    //   show: true,
-    // },
-    // zoom: {
-    //   enabled: true,
-    // },
+    toolbar: {
+      autoSelected: "pan",
+      show: true,
+    },
+    zoom: {
+      enabled: true,
+    },
   },
   dataLabels: {
     enabled: false,
