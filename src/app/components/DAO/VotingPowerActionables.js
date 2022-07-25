@@ -2,42 +2,23 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 // CUSTOM STYLES
-import "../../assets/css/style.css";
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
+import "../../assets/css/style.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import GasPriorityFee from "../Gas/GasPriorityFee";
+import DateTimePicker from "../FormsUI/DateTimePicker";
 import SelectInput from "../FormsUI/SelectInput";
 import TextInput from "../FormsUI/TextInput";
-import DateTimePicker from "../FormsUI/DateTimePicker";
 // MATERIAL UI ICONS
 // MATERIAL UI
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import { Button } from "@material-ui/core";
 import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
-import TextField from "@mui/material/TextField";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import { Avatar } from "@material-ui/core";
-import Stack from "@mui/material/Stack";
-import {
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from "@material-ui/core";
+import Typography from "@mui/material/Typography";
 // FORMIK AND YUP
-import { Formik, Field, Form } from "formik";
-import * as Yup from "yup";
+import { Alert } from "@material-ui/lab";
+import { Form, Formik } from "formik";
 
 // CONTENT
 
@@ -63,11 +44,13 @@ const lockTimeOptions = [
 ];
 
 // COMPONENT FUNCTION
-const VotingPowerActionables = () => {
+const VotingPowerActionables = (props) => {
   // States
-  const [maxAmount, setMaxAmount] = useState(0.0);
-  const [date, setDate] = useState(new Date());
+  const [userCRVBalance, setUserCRVBalance] = useState(0.00);
+  const [dateDisplay, setDateDisplay] = useState();
+  const [date, setDate] = useState();
   const [lockTime, setLockTime] = useState("");
+  const [lockAmount, setLockAmount] = useState(0);
   const [openA, setOpenA] = useState(false);
   const [startingVPower, setStartingVPower] = useState(0.0);
 
@@ -77,25 +60,25 @@ const VotingPowerActionables = () => {
     LockTimeSelect: "",
     LockTimePicker: "",
   };
-  const validationSchema = Yup.object().shape({
-    LockAmount: Yup.number().required("Required"),
-    LockTimeSelect: Yup.string().required("Required"),
-    LockTimePicker: Yup.date().required("Required"),
-    // tokenBQuantity: Yup.number().required("Required"),
-  });
+  // const validationSchema = Yup.object().shape({
+  //   LockAmount: Yup.number().required("Required"),
+  //   LockTimeSelect: Yup.string().required("Required"),
+  //   LockTimePicker: Yup.date().required("Required"),
+  //   // tokenBQuantity: Yup.number().required("Required"),
+  // });
 
   // Handlers
-  const handleCloseA = () => {
-    setOpenA(false);
-  };
+  // const handleCloseA = () => {
+  //   setOpenA(false);
+  // };
 
-  const handleOpenA = () => {
-    setOpenA(true);
-  };
+  // const handleOpenA = () => {
+  //   setOpenA(true);
+  // };
 
-  const handleChangetokenA = (event) => {
-    setLockTime(event.target.value);
-  };
+  // const handleChangetokenA = (event) => {
+  //   setLockTime(event.target.value);
+  // };
 
   const onSubmitVotingPowerActionables = (values, props) => {
     console.log("Voting Power Actionables", values);
@@ -105,7 +88,7 @@ const VotingPowerActionables = () => {
     <>
       <Formik
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         onSubmit={onSubmitVotingPowerActionables}
       >
         <Form>
@@ -115,6 +98,16 @@ const VotingPowerActionables = () => {
               <TextInput
                 id="daoAmount"
                 label="Lock Amount"
+                onChange={(e) => {
+                  console.log("e", e.target.value);
+                  if (userCRVBalance >= e.target.value)
+                    setLockAmount(e.target.value);
+                  else {
+                    setLockAmount(userCRVBalance);
+                  }
+
+                }}
+                value={lockAmount}
                 variant="filled"
                 name="LockAmount"
                 sx={{ width: "100%" }}
@@ -124,9 +117,14 @@ const VotingPowerActionables = () => {
             <div className="col-12 col-lg-5 mt-3 mt-lg-0">
               <div className="row no-gutters align-items-center">
                 <div className="col-12 col-lg-8">
-                  <div className="btnWrapper">
-                    <button className="px-5">Max</button>
-                  </div>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    style={{ backgroundColor: "#5300e8", color: "white" }}
+                    onClick={() => { setLockAmount(userCRVBalance) }}
+                  >
+                    Max
+                  </Button>
                 </div>
                 <div className="col-12 col-lg-4">
                   <Typography
@@ -136,7 +134,7 @@ const VotingPowerActionables = () => {
                     fontWeight={900}
                     sx={{ padding: "10px", fontSize: "1.5rem" }}
                   >
-                    {maxAmount}
+                    {userCRVBalance}
                   </Typography>
                 </div>
               </div>
@@ -146,6 +144,12 @@ const VotingPowerActionables = () => {
           <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
             <div className="col-12 col-lg-5 px-0">
               <DateTimePicker
+                onChange={(e) => {
+                  console.log("e.value", e.target.value);
+                  setDate(e.target.value);
+                  setDateDisplay(e.target.value);
+                }}
+                value={dateDisplay}
                 name="LockTimePicker"
                 label="Choose Lock Time"
                 sx={{ width: "100%" }}
@@ -154,60 +158,64 @@ const VotingPowerActionables = () => {
             {/* Lock Time Dropdown */}
             <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
               <SelectInput
+                setDate={setDate}
+                setDateDisplay={setDateDisplay}
                 name="LockTimeSelect"
                 label="Select Lock Time"
                 options={lockTimeOptions}
               />
             </div>
           </div>
-          {/* </form>
-            </div> */}
-          {/* </div> */}
           <div className="row no-gutters justify-content-center">
             <div className="col-12 col-md-4">
+
               <div className="btnWrapper my-4 text-center">
-                <button className="px-5" type="submit">
-                  Lock Time
-                </button>
+                <Button
+                  variant="contained"
+                  size="large"
+                  style={{ backgroundColor: "#5300e8", color: "white" }}
+                  onClick={() => {
+                    props.createLockMakeDeploy(lockAmount, date);
+                  }}
+                >
+                  LOCK TIME
+                </Button>
+
+
               </div>
             </div>
           </div>
         </Form>
       </Formik>
       {/* Starting Voting Power */}
-      <div className="row no-gutters mt-4 justify-content-center">
+      <div className="row no-gutters mt-4 justify-content-center align-items-center">
         <div className="col-12">
-          <Typography variant="body1" gutterBottom component="div">
-            &nbsp;Your starting voting power will be:&nbsp;
-            <span className="p-3 bg-warning">
-              <span className="font-weight-bold">{startingVPower}</span>
-              &nbsp;veCRV
-            </span>
-          </Typography>
+          <Paper elevation={10} style={{ padding: "20px" }}>
+            Your starting voting power will be: &nbsp;
+            <strong>{startingVPower} veCRV</strong>
+          </Paper>
         </div>
       </div>
       {/* DAO Proposal Requirements */}
-      <div className="row no-gutters mt-4 justify-content-center align-items-center">
-        <div className="col-12 bg-primary text-white p-3">
-          <Typography variant="body1" gutterBottom component="div">
-            &nbsp;You need at least 2500 veCRV to be able to create a&nbsp;
-            <span
-              className="font-weight-bold"
-              style={{ borderBottom: "1px dashed white" }}
-            >
-              <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-                Curve DAO proposal
-              </Link>
-            </span>
-          </Typography>
-        </div>
+      <div className="no-gutters mt-4 justify-content-center align-items-center">
+        <Alert severity="info">
+          You need at least 2500 veCRV to be able to create a &nbsp;
+          <span
+            className="font-weight-bold"
+            style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+          >
+            <Link to="/" style={{ textDecoration: "none", color: "#5300e8" }}>
+              Curve DAO proposal
+            </Link>
+          </span>
+        </Alert>
       </div>
       {/* Gas Priority Fee */}
-      <div className="row no-gutters mt-4">
+      {/* <div className="row no-gutters mt-4">
         <div className="col-12">
           <GasPriorityFee />
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
