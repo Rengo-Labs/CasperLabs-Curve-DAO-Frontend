@@ -2,34 +2,34 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 // CUSTOM STYLING
-import "../../../../assets/css/style.css";
-import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/common.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/style.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import HeaderDAO from "../../../../components/Headers/HeaderDAO";
-import HomeBanner from "../Home/HomeBanner";
-import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
-import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
-import DaoInfoMessage from "../../../../components/DAO/DaoInfoMessage";
-import GasPriorityFee from "../../../../components/Gas/GasPriorityFee";
 import DaoVotes from "../../../../components/Cards/DaoVotes";
+import HeaderDAO from "../../../../components/Headers/HeaderDAO";
+import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
+import HomeBanner from "../Home/HomeBanner";
 // MATERIAL UI
+import { Button } from "@material-ui/core";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
+import Paper from "@mui/material/Paper";
 import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
+import { useHistory } from "react-router-dom";
 
 // CONTENT
 
 // COMPONENT FUNCTION
 const Dao = () => {
   // States
+  const history = useHistory();
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
@@ -108,62 +108,88 @@ const Dao = () => {
                 <div className="row no-gutters justify-content-center">
                   <div className="curve-content-wrapper col-12 col-lg-6 ">
                     <div className="row no-gutters justify-content-center">
+
                       <Box
                         sx={{
                           width: "100%",
                         }}
                       >
+
                         <Paper elevation={4}>
                           <div className="py-5 px-4">
                             {/* INFO */}
-                            <div className="row no-gutters justify-content-center">
-                              <section className="bg-primary p-3 text-white">
+                            {/* <fieldset> */}
+                            <legend>Voting power in DAO</legend>
+                            <div style={{ padding: "20px" }}>
+                              <div className=" no-gutters justify-content-center">
+                                <section className="bg-primary p-3 text-white">
+                                  <Typography
+                                    variant="body1"
+                                    gutterBottom
+                                    component="div"
+                                  >
+                                    You have to have at least 2500veCRV(the
+                                    equivalent of 10000CRV locked for a year) to
+                                    be able to create a new vote
+                                  </Typography>
+                                </section>
+                                <div className="w-100 my-4">
+                                  <Divider />
+                                </div>
+                              </div>
+                              {/* VOTING POWER */}
+                              <div className=" no-gutters">
+                                <VotingPowerDAO />
+                                {/* <div className="w-100 my-4">
+                                    <Divider />
+
+                                  </div> */}
+                              </div>
+                              <br></br>
+                              <div className=" row justify-content-center no-gutters">
                                 <Typography
-                                  variant="body1"
+                                  variant="h6"
                                   gutterBottom
-                                  component="div"
+                                  component={"div"}
                                 >
-                                  You have to have at least 2500veCRV(the
-                                  equivalent of 10000CRV locked for a year) to
-                                  be able to create a new vote
+                                  <span
+                                    className="font-weight-bold"
+                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                  >
+                                    <Button
+                                      variant="contained"
+                                      size="large"
+                                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                                      onClick={() => { history.push("/locker") }}
+                                    >
+                                      Manage locking in Locker
+                                    </Button>
+                                    <Link to="/locker" style={{ textDecoration: "none", color: "#5300e8" }}>
+                                      {/* <Link to={"/locker"} style={{ color: "#333" }}> */}
+
+                                    </Link>
+                                  </span>
                                 </Typography>
-                              </section>
-                              <div className="w-100 my-4">
-                                <Divider />
+                                {/* <div className="w-100 my-4">
+                                  <Divider />
+                                </div> */}
                               </div>
                             </div>
-                            {/* VOTING POWER */}
-                            <div className="row no-gutters">
-                              <VotingPowerDAO />
-                              <div className="w-100 my-4">
-                                <Divider />
-                              </div>
-                            </div>
-                            <div className="row no-gutters">
+
+                            {/* </fieldset> */}
+
+                            {/* <div className=" no-gutters">
                               <div className="col-12">
                                 <GasPriorityFee />
                               </div>
                               <div className="w-100 my-4">
                                 <Divider />
                               </div>
-                            </div>
-                            <div className="row no-gutters">
-                              <Typography
-                                variant="h6"
-                                gutterBottom
-                                component={"div"}
-                              >
-                                <Link to={"/"} style={{ color: "#333" }}>
-                                  Manage locking in Locker
-                                </Link>
-                              </Typography>
-                              <div className="w-100 my-4">
-                                <Divider />
-                              </div>
-                            </div>
+                            </div> */}
+
                             {/* FILTER */}
                             <div className="row no-gutters">
-                              <div className="row no-gutters w-100 justify-content-center">
+                              {/* <div className="row no-gutters w-100 justify-content-center">
                                 <Typography
                                   variant="h5"
                                   gutterBottom
@@ -178,148 +204,151 @@ const Dao = () => {
                                     Filter
                                   </span>
                                 </Typography>
-                              </div>
-                              <div className="row no-gutters w-100 justify-content-center">
-                                {/* Status */}
-                                <div className="col-12 col-md-4 pr-md-2">
-                                  <FormControl fullWidth variant="filled">
-                                    <InputLabel id="filter-status-label">
-                                      Status
-                                    </InputLabel>
-                                    <Select
-                                      labelId="filter-status-label"
-                                      id="filter-status"
-                                      value={filterStatus}
-                                      label="Status"
-                                      onChange={handleFilterStatusChange}
-                                    >
-                                      <MenuItem value={"All"}>All</MenuItem>
-                                      <MenuItem value={"Open"}>Open</MenuItem>
-                                      <MenuItem value={"Closed"}>
-                                        Closed
-                                      </MenuItem>
-                                    </Select>
-                                  </FormControl>
-                                </div>
-                                {/* Outcome */}
-                                <div className="col-12 col-md-4 pr-md-2">
-                                  <FormControl fullWidth variant="filled">
-                                    <InputLabel id="filter-outcome-label">
-                                      Outcome
-                                    </InputLabel>
-                                    <Select
-                                      labelId="filter-outcome-label"
-                                      id="filter-outcome"
-                                      value={filterOutcome}
-                                      label="Outcome"
-                                      onChange={handleFilterOutcomeChange}
-                                    >
-                                      <MenuItem value={"All"}>All</MenuItem>
-                                      <MenuItem value={"Passed"}>
-                                        Passed
-                                      </MenuItem>
-                                      <MenuItem value={"Rejected"}>
-                                        Rejected
-                                      </MenuItem>
-                                      <MenuItem value={"Enacted"}>
-                                        Enacted
-                                      </MenuItem>
-                                      <MenuItem value={"Pending"}>
-                                        Pending
-                                      </MenuItem>
-                                    </Select>
-                                  </FormControl>
-                                </div>
-                                {/* App */}
-                                <div className="col-12 col-md-4">
-                                  <FormControl fullWidth variant="filled">
-                                    <InputLabel id="filter-app-label">
-                                      App
-                                    </InputLabel>
-                                    <Select
-                                      labelId="filter-app-label"
-                                      id="filter-app"
-                                      value={filterApp}
-                                      label="App"
-                                      onChange={handleFilterAppChange}
-                                    >
-                                      <MenuItem value={"All"}>All</MenuItem>
-                                      <MenuItem value={"Voting"}>
-                                        Voting
-                                      </MenuItem>
-                                      <MenuItem value={"Parameter"}>
-                                        Parameter
-                                      </MenuItem>
-                                    </Select>
-                                  </FormControl>
-                                </div>
-                              </div>
-                              <div className="w-100 my-4">
-                                <Divider />
-                              </div>
-                            </div>
-                            {/* VOTES */}
-                            <div className="row no-gutters">
-                              <div className="col-4">
-                                <div className="row no-gutters justify-content-center">
-                                  <div className="col-11">
-                                    <DaoVotes
-                                      legend={daoLegend}
-                                      legendStatus={daoLegendStatus}
-                                      title={daoTitle}
-                                      description={daoDescription}
-                                      open={voteOpen}
-                                      yes={voteYes}
-                                      no={voteNo}
-                                      voteCreated={voteCreatedOn}
-                                      enaction={enactedVote}
-                                      support={voteSupport}
-                                      quorum={voteQuorum}
-                                      supportVolume={voteSupportVolume}
-                                      quorumVolume={voteQuorumVolume}
-                                    />
+                              </div> */}
+                              <legend>Filter</legend>
+                              <div className="container">
+                                <div className="row no-gutters w-100 justify-content-center">
+                                  {/* Status */}
+                                  <div className="col-12 col-md-4 pr-md-2">
+                                    <FormControl fullWidth variant="filled">
+                                      <InputLabel id="filter-status-label">
+                                        Status
+                                      </InputLabel>
+                                      <Select
+                                        labelId="filter-status-label"
+                                        id="filter-status"
+                                        value={filterStatus}
+                                        label="Status"
+                                        onChange={handleFilterStatusChange}
+                                      >
+                                        <MenuItem value={"All"}>All</MenuItem>
+                                        <MenuItem value={"Open"}>Open</MenuItem>
+                                        <MenuItem value={"Closed"}>
+                                          Closed
+                                        </MenuItem>
+                                      </Select>
+                                    </FormControl>
+                                  </div>
+                                  {/* Outcome */}
+                                  <div className="col-12 col-md-4 pr-md-2">
+                                    <FormControl fullWidth variant="filled">
+                                      <InputLabel id="filter-outcome-label">
+                                        Outcome
+                                      </InputLabel>
+                                      <Select
+                                        labelId="filter-outcome-label"
+                                        id="filter-outcome"
+                                        value={filterOutcome}
+                                        label="Outcome"
+                                        onChange={handleFilterOutcomeChange}
+                                      >
+                                        <MenuItem value={"All"}>All</MenuItem>
+                                        <MenuItem value={"Passed"}>
+                                          Passed
+                                        </MenuItem>
+                                        <MenuItem value={"Rejected"}>
+                                          Rejected
+                                        </MenuItem>
+                                        <MenuItem value={"Enacted"}>
+                                          Enacted
+                                        </MenuItem>
+                                        <MenuItem value={"Pending"}>
+                                          Pending
+                                        </MenuItem>
+                                      </Select>
+                                    </FormControl>
+                                  </div>
+                                  {/* App */}
+                                  <div className="col-12 col-md-4">
+                                    <FormControl fullWidth variant="filled">
+                                      <InputLabel id="filter-app-label">
+                                        App
+                                      </InputLabel>
+                                      <Select
+                                        labelId="filter-app-label"
+                                        id="filter-app"
+                                        value={filterApp}
+                                        label="App"
+                                        onChange={handleFilterAppChange}
+                                      >
+                                        <MenuItem value={"All"}>All</MenuItem>
+                                        <MenuItem value={"Voting"}>
+                                          Voting
+                                        </MenuItem>
+                                        <MenuItem value={"Parameter"}>
+                                          Parameter
+                                        </MenuItem>
+                                      </Select>
+                                    </FormControl>
                                   </div>
                                 </div>
-                              </div>
-                              <div className="col-4">
-                                <div className="row no-gutters justify-content-center">
-                                  <div className="col-11">
-                                    <DaoVotes
-                                      legend={daoLegend}
-                                      legendStatus="75% / 18%"
-                                      title="#216"
-                                      description="There is a white car inside that garadge. It was parked there in 1963 and hasn't been started ever since."
-                                      open={true}
-                                      yes={38}
-                                      no={19}
-                                      voteCreated={voteCreatedOn}
-                                      enaction={false}
-                                      support={voteSupport}
-                                      quorum={false}
-                                      supportVolume="81.83"
-                                      quorumVolume="36.66"
-                                    />
-                                  </div>
+                                <div className="w-100 my-4">
+                                  <Divider />
                                 </div>
                               </div>
-                              <div className="col-4">
-                                <div className="row no-gutters justify-content-center">
-                                  <div className="col-11">
-                                    <DaoVotes
-                                      legend={daoLegend}
-                                      legendStatus="88% / 12%"
-                                      title="#215"
-                                      description={daoDescription}
-                                      open={voteOpen}
-                                      yes={64}
-                                      no={22}
-                                      voteCreated={voteCreatedOn}
-                                      enaction={enactedVote}
-                                      support={voteSupport}
-                                      quorum={voteQuorum}
-                                      supportVolume="73.25"
-                                      quorumVolume="41.02"
-                                    />
+                              {/* VOTES */}
+                              <div className="row no-gutters">
+                                <div className="col-4">
+                                  <div className="row no-gutters justify-content-center">
+                                    <div className="col-11">
+                                      <DaoVotes
+                                        legend={daoLegend}
+                                        legendStatus={daoLegendStatus}
+                                        title={daoTitle}
+                                        description={daoDescription}
+                                        open={voteOpen}
+                                        yes={voteYes}
+                                        no={voteNo}
+                                        voteCreated={voteCreatedOn}
+                                        enaction={enactedVote}
+                                        support={voteSupport}
+                                        quorum={voteQuorum}
+                                        supportVolume={voteSupportVolume}
+                                        quorumVolume={voteQuorumVolume}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-4">
+                                  <div className="row no-gutters justify-content-center">
+                                    <div className="col-11">
+                                      <DaoVotes
+                                        legend={daoLegend}
+                                        legendStatus="75% / 18%"
+                                        title="#216"
+                                        description="There is a white car inside that garadge. It was parked there in 1963 and hasn't been started ever since."
+                                        open={true}
+                                        yes={38}
+                                        no={19}
+                                        voteCreated={voteCreatedOn}
+                                        enaction={false}
+                                        support={voteSupport}
+                                        quorum={false}
+                                        supportVolume="81.83"
+                                        quorumVolume="36.66"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="col-4">
+                                  <div className="row no-gutters justify-content-center">
+                                    <div className="col-11">
+                                      <DaoVotes
+                                        legend={daoLegend}
+                                        legendStatus="88% / 12%"
+                                        title="#215"
+                                        description={daoDescription}
+                                        open={voteOpen}
+                                        yes={64}
+                                        no={22}
+                                        voteCreated={voteCreatedOn}
+                                        enaction={enactedVote}
+                                        support={voteSupport}
+                                        quorum={voteQuorum}
+                                        supportVolume="73.25"
+                                        quorumVolume="41.02"
+                                      />
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -334,7 +363,7 @@ const Dao = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 };
