@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography } from "@material-ui/core";
+import { Box, Button, Card, CardContent, Paper, Typography } from "@material-ui/core";
 import React from "react";
 import { Modal, Spinner } from "react-bootstrap";
 import { Alert } from "reactstrap";
@@ -8,18 +8,20 @@ import "../../assets/plugins/fontawesome/css/all.min.css";
 import "../../assets/plugins/fontawesome/css/fontawesome.min.css";
 import Exit from "../../assets/img/exit.svg"
 import TokenContent from "./TokenContent";
+import FutureAPYTable from "../Tables/FutureAPYTable";
+import GaugeRelativeWeight from "../Charts/GaugeRelativeWeight";
 
-function TokenAModal(props) {
-  console.log("props", props);
+function VoteForGaugeWeightModal(props) {
+  console.log("props.cells", props.cells);
   return (
-    <Modal centered show={props.show} onHide={props.handleClose}>
+    <Modal size="lg" centered show={props.show} onHide={props.handleClose}>
       <Modal.Body style={{
         color: '#000027',
         fontWeight: '600'
       }}>
         <Typography style={{ fontSize: '20px' }} gutterBottom >
           <strong>
-            Select Token
+            Calculated outcome of your weight
           </strong>
           <span
             onClick={props.handleClose}
@@ -35,7 +37,34 @@ function TokenAModal(props) {
             />
           </span>
         </Typography>
-        {!props.isTokenList &&
+        <FutureAPYTable cells={props.cells} gaugeWeightVoteData={props.gaugeWeightVoteData} />
+        <div className="row no-gutters justify-content-center mt-4">
+          <Box
+            sx={{
+              width: "100%",
+            }}
+          >
+            <Paper elevation={4}>
+              <div className="py-5 px-4">
+                <div className="row no-gutters justify-content-center">
+                  <div className="col-12 text-center py-3">
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      component="div"
+                    >
+                      <span className="font-weight-bold">
+                        Calculated outcome of your weight
+                      </span>
+                    </Typography>
+                  </div>
+                  <GaugeRelativeWeight />
+                </div>
+              </div>
+            </Paper>
+          </Box>
+        </div>
+        {/* {!props.isTokenList &&
           props.activePublicKey !== "null" &&
           props.activePublicKey !== null &&
           props.activePublicKey !== undefined ? (
@@ -93,10 +122,32 @@ function TokenAModal(props) {
             </Card>
           )
 
-        )}
+        )} */}
       </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="contained"
+          size="large"
+          style={{ backgroundColor: "#5300e8", color: "white", margin: '10px' }}
+          onClick={() => props.voteForGaugeWeightsMakeDeploy(props.gauge, props.votingPowerPercentage)}
+        >
+          Submit
+        </Button>
+
+        <Button
+          variant="contained"
+          size="large"
+          style={{ backgroundColor: "#5300e8", color: "white", margin: '10px' }}
+          onClick={() => {
+            // props.setSlippage(0.5);
+            props.handleClose();
+          }}
+        >
+          Hide
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 }
 
-export default TokenAModal;
+export default VoteForGaugeWeightModal;

@@ -23,6 +23,7 @@ import Paper from "@mui/material/Paper";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import { useHistory } from "react-router-dom";
+import { Alert } from "@material-ui/lab";
 
 // CONTENT
 
@@ -118,21 +119,14 @@ const Dao = () => {
                         <Paper elevation={4}>
                           <div className="py-5 px-4">
                             {/* INFO */}
-                            {/* <fieldset> */}
                             <legend>Voting power in DAO</legend>
                             <div style={{ padding: "20px" }}>
                               <div className=" no-gutters justify-content-center">
-                                <section className="bg-primary p-3 text-white">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    component="div"
-                                  >
-                                    You have to have at least 2500veCRV(the
-                                    equivalent of 10000CRV locked for a year) to
-                                    be able to create a new vote
-                                  </Typography>
-                                </section>
+                                <Alert severity="info">
+                                  You have to have at least 2500veCRV(the
+                                  equivalent of 10000CRV locked for a year) to
+                                  be able to create a new vote
+                                </Alert>
                                 <div className="w-100 my-4">
                                   <Divider />
                                 </div>
@@ -140,10 +134,6 @@ const Dao = () => {
                               {/* VOTING POWER */}
                               <div className=" no-gutters">
                                 <VotingPowerDAO />
-                                {/* <div className="w-100 my-4">
-                                    <Divider />
-
-                                  </div> */}
                               </div>
                               <br></br>
                               <div className=" row justify-content-center no-gutters">
@@ -164,47 +154,14 @@ const Dao = () => {
                                     >
                                       Manage locking in Locker
                                     </Button>
-                                    <Link to="/locker" style={{ textDecoration: "none", color: "#5300e8" }}>
-                                      {/* <Link to={"/locker"} style={{ color: "#333" }}> */}
-
-                                    </Link>
                                   </span>
                                 </Typography>
-                                {/* <div className="w-100 my-4">
-                                  <Divider />
-                                </div> */}
                               </div>
                             </div>
 
-                            {/* </fieldset> */}
-
-                            {/* <div className=" no-gutters">
-                              <div className="col-12">
-                                <GasPriorityFee />
-                              </div>
-                              <div className="w-100 my-4">
-                                <Divider />
-                              </div>
-                            </div> */}
 
                             {/* FILTER */}
                             <div className="row no-gutters">
-                              {/* <div className="row no-gutters w-100 justify-content-center">
-                                <Typography
-                                  variant="h5"
-                                  gutterBottom
-                                  component={"div"}
-                                >
-                                  <span
-                                    style={{
-                                      fontWeight: "bold",
-                                      color: "#333",
-                                    }}
-                                  >
-                                    Filter
-                                  </span>
-                                </Typography>
-                              </div> */}
                               <legend>Filter</legend>
                               <div className="container">
                                 <div className="row no-gutters w-100 justify-content-center">
