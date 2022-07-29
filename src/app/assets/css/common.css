@@ -60,7 +60,7 @@
   }
 
 /* Pagination */
-.MuiTablePagination {
+/* .MuiTablePagination {
     padding: 15px !important;
     text-align: center;
     border-top: 1px solid rgba(7, 9, 25, 0.125);
@@ -69,17 +69,17 @@
     background-color: #f8f9ff;
   }
   
-  .MuiTablePagination .MuiTablePagination-selectLabel,
-  .MuiTablePagination .MuiTablePagination-displayedRows {
-    margin-bottom: 0;
-  }
-  
   .MuiTablePagination .MuiTablePagination-spacer {
     display: none;
   }
   
   .MuiTablePagination .MuiTablePagination-toolbar {
     justify-content: center;
+  } */
+
+  .MuiTablePagination-toolbar .MuiTablePagination-selectLabel,
+  .MuiTablePagination-toolbar .MuiTablePagination-displayedRows {
+    margin-bottom: 0;
   }
 
   .swapIconWrapper .tokenSwapIcon {

@@ -31,6 +31,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CircularProgress from "@mui/material/CircularProgress";
+import { Button } from "@material-ui/core";
 // ICONS
 import cspr from "../../../../assets/img/cspr.png";
 import wbtc from "../../../../assets/img/wbtc.png";
@@ -40,41 +41,29 @@ import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 
 // CONTENT
-const selectGaugeOptions = [
-  {
-    name: "CSPR",
-    icon: cspr,
-  },
-  {
-    name: "wBTC",
-    icon: wbtc,
-  },
-  {
-    name: "USDT",
-    icon: usdt,
-  },
-];
+const selectGaugeOptionsJSON =
+  '[{"name": "CSPR","icon": "https://cryptologos.cc/logos/casper-cspr-logo.svg?v=023"},{"name": "wBTC","icon": "https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.svg?v=023"},{"name": "USDT","icon": "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=023"}]';
 
-const lockTimeOptions = [
-  {
-    name: "1 Week",
-  },
-  {
-    name: "1 Month",
-  },
-  {
-    name: "3 Months",
-  },
-  {
-    name: "6 Months",
-  },
-  {
-    name: "1 Year",
-  },
-  {
-    name: "4 Years",
-  },
-];
+let selectGaugeOptions = [];
+try {
+  selectGaugeOptions = JSON.parse(selectGaugeOptionsJSON);
+} catch (expecption) {
+  console.log("an exception has occured!", expecption);
+}
+
+console.log(
+  "mapping icons in main",
+  selectGaugeOptions.map((item) => item.icon)
+);
+
+const lockTimeOptionsJSON =
+  '[{"name": "1 Week"},{"name": "1 Month"},{"name": "3 Months"},{"name": "6 Months"},{"name": "1 Year"},{"name": "4 Years"}]';
+let lockTimeOptions = [];
+try {
+  lockTimeOptions = JSON.parse(lockTimeOptionsJSON);
+} catch (exception) {
+  console.log("an exception has occured!", exception);
+}
 
 // COMPONENT FUNCTION
 const Calc = () => {
@@ -90,6 +79,8 @@ const Calc = () => {
   const [gaugeDeposits, setGaugeDeposits] = useState(0);
   // always provide gaugeDeposits as a number or convert it into a number
   const [poolLiquidity, setPoolLiquidity] = useState(0);
+  const [date, setDate] = useState();
+  const [dateDisplay, setDateDisplay] = useState();
   const [gaugeCRV, setGaugeCRV] = useState("0.00");
   const [gaugeVeCRV, setGaugeVeCRV] = useState(false);
   const [gaugeLock, setGaugeLock] = useState(1 + " Year");
@@ -204,7 +195,15 @@ const Calc = () => {
                                     <SelectInput
                                       name="SelectGaugeCalc"
                                       label="Select a Gauge"
-                                      options={selectGaugeOptions}
+                                      icon={selectGaugeOptions.map((item) => {
+                                        return item.icon;
+                                      })}
+                                      options={selectGaugeOptions.map(
+                                        (item) => {
+                                          // return [item.name, item.icon];
+                                          return item.name;
+                                        }
+                                      )}
                                     />
                                   </div>
                                   {/* Deposit */}
@@ -295,9 +294,13 @@ const Calc = () => {
                                         <div className="row no-gutters justify-content-md-end">
                                           <div className="col-12 col-md-6">
                                             <SelectInput
+                                              setDate={setDate}
+                                              setDateDisplay={setDateDisplay}
                                               name="GaugeLockPeriodCalc"
                                               label="Select Lock Period"
-                                              options={lockTimeOptions}
+                                              options={lockTimeOptions.map(
+                                                (item) => item.name
+                                              )}
                                             />
                                           </div>
                                         </div>
@@ -352,7 +355,20 @@ const Calc = () => {
                                 <div className="row no-gutters justify-content-center">
                                   <div className="col-12 col-md-6 text-center my-3">
                                     <div className="btnWrapper">
-                                      <button type="submit">Calculate</button>
+                                      <Button
+                                        variant="contained"
+                                        size="large"
+                                        style={{
+                                          backgroundColor: "#5300e8",
+                                          color: "white",
+                                        }}
+                                        type="submit"
+                                        onClick={() =>
+                                          console.log("Calc Submitted")
+                                        }
+                                      >
+                                        Calculate
+                                      </Button>
                                     </div>
                                   </div>
                                 </div>
