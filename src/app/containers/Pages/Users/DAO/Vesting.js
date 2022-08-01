@@ -23,6 +23,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
+import { Button } from "@material-ui/core";
 // FORMIK AND YUP
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -128,7 +129,16 @@ const Vesting = () => {
                                   </div>
                                   <div className="col-12 col-lg-2 text-center mt-3 mt-lg-0">
                                     <div className="btnWrapper">
-                                      <button>Check</button>
+                                      <Button
+                                        variant="contained"
+                                        size="large"
+                                        style={{
+                                          backgroundColor: "#5300e8",
+                                          color: "white",
+                                        }}
+                                      >
+                                        Check
+                                      </Button>
                                     </div>
                                   </div>
                                 </div>

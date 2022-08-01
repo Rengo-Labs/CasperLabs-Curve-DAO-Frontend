@@ -22,37 +22,28 @@ import { Form, Formik } from "formik";
 
 // CONTENT
 
-const lockTimeOptions = [
-  {
-    name: "1 Week",
-  },
-  {
-    name: "1 Month",
-  },
-  {
-    name: "3 Months",
-  },
-  {
-    name: "6 Months",
-  },
-  {
-    name: "1 Year",
-  },
-  {
-    name: "4 Years",
-  },
-];
+const lockTimeOptionsJSON =
+  '[{"name": "1 Week"},{"name": "1 Month"},{"name": "3 Months"},{"name": "6 Months"},{"name": "1 Year"},{"name": "4 Years"}]';
+
+let lockTimeOptions = [];
+try {
+  lockTimeOptions = JSON.parse(lockTimeOptionsJSON);
+} catch (expecption) {
+  console.log("an exception has occured!", expecption);
+}
 
 // COMPONENT FUNCTION
 const VotingPowerActionables = (props) => {
   // States
-  const [userCRVBalance, setUserCRVBalance] = useState(0.00);
+  const [userCRVBalance, setUserCRVBalance] = useState(0.0);
   const [dateDisplay, setDateDisplay] = useState();
   const [date, setDate] = useState();
   const [lockTime, setLockTime] = useState("");
   const [lockAmount, setLockAmount] = useState(0);
   const [openA, setOpenA] = useState(false);
   const [startingVPower, setStartingVPower] = useState(0.0);
+
+  console.log("props for actionables: ", props);
 
   // Content
   const initialValues = {
@@ -105,7 +96,6 @@ const VotingPowerActionables = (props) => {
                   else {
                     setLockAmount(userCRVBalance);
                   }
-
                 }}
                 value={lockAmount}
                 variant="filled"
@@ -121,7 +111,9 @@ const VotingPowerActionables = (props) => {
                     variant="contained"
                     size="large"
                     style={{ backgroundColor: "#5300e8", color: "white" }}
-                    onClick={() => { setLockAmount(userCRVBalance) }}
+                    onClick={() => {
+                      setLockAmount(userCRVBalance);
+                    }}
                   >
                     Max
                   </Button>
@@ -162,26 +154,24 @@ const VotingPowerActionables = (props) => {
                 setDateDisplay={setDateDisplay}
                 name="LockTimeSelect"
                 label="Select Lock Time"
-                options={lockTimeOptions}
+                options={lockTimeOptions.map((item) => item.name)}
               />
             </div>
           </div>
           <div className="row no-gutters justify-content-center">
             <div className="col-12 col-md-4">
-
               <div className="btnWrapper my-4 text-center">
                 <Button
                   variant="contained"
                   size="large"
                   style={{ backgroundColor: "#5300e8", color: "white" }}
                   onClick={() => {
-                    props.createLockMakeDeploy(lockAmount, date);
+                    console.log("Action Taken");
+                    // props.createLockMakeDeploy(lockAmount, date);
                   }}
                 >
                   LOCK TIME
                 </Button>
-
-
               </div>
             </div>
           </div>
