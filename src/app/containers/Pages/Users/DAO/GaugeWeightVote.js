@@ -3,56 +3,61 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 // CUSTOM STYLING
-import "../../../../assets/css/style.css";
-import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/common.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/style.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import HeaderDAO from "../../../../components/Headers/HeaderDAO";
-import HomeBanner from "../Home/HomeBanner";
 import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
-import GasPriorityFee from "../../../../components/Gas/GasPriorityFee";
 import SelectInput from "../../../../components/FormsUI/SelectInput";
 import TextInput from "../../../../components/FormsUI/TextInput";
-import TablePaginationActions from "../../../../components/pagination/TablePaginationActions";
+import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
+import HomeBanner from "../Home/HomeBanner";
 // MATERIAL UI
+import { Avatar, Button } from "@material-ui/core";
 import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import Select from "@mui/material/Select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TableFooter from "@mui/material/TableFooter";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
-import Divider from "@mui/material/Divider";
-import { Avatar } from "@material-ui/core";
-import TablePagination from "@mui/material/TablePagination";
-import { Button } from "@material-ui/core";
+import Typography from "@mui/material/Typography";
+import { useSnackbar } from 'notistack';
 // MATERIA UI ICONS
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 // ICONS
 import clock from "../../../../assets/img/clock.png";
 import cspr from "../../../../assets/img/cspr.png";
-import wbtc from "../../../../assets/img/wbtc.png";
 import usdt from "../../../../assets/img/usdt.png";
+import wbtc from "../../../../assets/img/wbtc.png";
 // FORMIK AND YUP
-import { Formik, Form } from "formik";
+import { Alert } from "@material-ui/lab";
+import Torus from "@toruslabs/casper-embed";
+import { CasperServiceByJsonRPC, CLByteArray, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
+import { GAUGE_CONTROLLER_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
+import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
+import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
+import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
+import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
+import { createRecipientAddress } from "../../../../components/blockchain/RecipientAddress/RecipientAddress";
+import { signdeploywithcaspersigner } from "../../../../components/blockchain/SignDeploy/SignDeploy";
+import SigningModal from "../../../../components/Modals/SigningModal";
+import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeWeightModal";
+import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 
 // CONTENT
 
@@ -85,7 +90,7 @@ const sampleTableData =
 var gaugeWeightVoteData = [];
 try {
   gaugeWeightVoteData = JSON.parse(sampleTableData);
-} catch (expecption) {}
+} catch (expecption) { }
 
 const votingHistoryCells = [
   "Time",
@@ -124,11 +129,26 @@ const GaugeWeightVote = () => {
   const [boostGauge, setBoostGauge] = useState();
   const [voteWeightUsed, setVoteWeightUsed] = useState("0%");
   const [hideAllocation, setHideAllocation] = useState(false);
-  const [votingPowerPercentage, setVotingPowerPercentage] = useState("1%");
+  const [votingPowerPercentage, setVotingPowerPercentage] = useState(1);
   const [votingPowerNumber, setVotingPowerNumber] = useState("0.00");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [gauge, setGauge] = useState("493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a");
+  const { enqueueSnackbar } = useSnackbar();
+  // States
+  const [openSigning, setOpenSigning] = useState(false);
+  const handleCloseSigning = () => {
+    setOpenSigning(false);
+  };
+  const handleShowSigning = () => {
+    setOpenSigning(true);
+  };
 
+  const [openVoteForGaugeWeightModal, setVoteForGaugeWeightModal] = useState(false);
+  const handleCloseVoteForGaugeWeightModal = () => {
+    setVoteForGaugeWeightModal(false);
+  };
+  const handleShowVoteForGaugeWeightModal = () => {
+    setVoteForGaugeWeightModal(true);
+  };
   // Content
   const initialValues = {
     SelectGaugeToken: "",
@@ -156,15 +176,105 @@ const GaugeWeightVote = () => {
   const onSubmitGaugeWeightVote = (values, props) => {
     console.log("Gauge Weight Vote: ", values);
   };
+  async function voteForGaugeWeightsMakeDeploy(gauge, votingPowerPercentage) {
+    if (votingPowerPercentage == 0) {
+      let variant = "Error";
+      enqueueSnackbar("Voting Power Percentage cannot be Zero", { variant })
+      return
+    }
+    if (gauge == undefined) {
+      let variant = "Error";
+      enqueueSnackbar("Please select Gauge", { variant })
+      return
+    }
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const paymentAmount = 5000000000;
+      const gaugeByteArray = new CLByteArray(
+        Uint8Array.from(Buffer.from(gauge, "hex"))
+      );
+      try {
+        const runtimeArgs = RuntimeArgs.fromMap({
+          gauge_addr: createRecipientAddress(gaugeByteArray),
+          user_weight: CLValueBuilder.u256(votingPowerPercentage),
+        });
+        let contractHashAsByteArray = Uint8Array.from(
+          Buffer.from(GAUGE_CONTROLLER_CONTRACT_HASH, "hex")
+        );
+        let entryPoint = "vote_for_gauge_weights";
+        // Set contract installation deploy (unsigned).
+        let deploy = await makeDeploy(
+          publicKey,
+          contractHashAsByteArray,
+          entryPoint,
+          runtimeArgs,
+          paymentAmount
+        );
+        console.log("make deploy: ", deploy);
+        try {
+          if (selectedWallet === "Casper") {
+            let signedDeploy = await signdeploywithcaspersigner(
+              deploy,
+              publicKeyHex
+            );
+            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            console.log("result", result);
+          } else {
+            // let Torus = new Torus();
+            torus = new Torus();
+            console.log("torus", torus);
+            await torus.init({
+              buildEnv: "testing",
+              showTorusButton: true,
+              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+            });
+            console.log("Torus123", torus);
+            console.log("torus", torus.provider);
+            const casperService = new CasperServiceByJsonRPC(torus?.provider);
+            const deployRes = await casperService.deploy(deploy);
+            console.log("deployRes", deployRes.deploy_hash);
+            console.log(
+              `... Contract installation deployHash: ${deployRes.deploy_hash}`
+            );
+            let result = await getDeploy(
+              NODE_ADDRESS,
+              deployRes.deploy_hash,
+              enqueueSnackbar
+            );
+            console.log(
+              `... Contract installed successfully.`,
+              JSON.parse(JSON.stringify(result))
+            );
+            console.log("result", result);
+          }
+          handleCloseSigning();
+          let variant = "success";
+          enqueueSnackbar("Voted For Gauge Weights Successfully", { variant })
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+        } catch {
+          handleCloseSigning();
+          let variant = "Error";
+          enqueueSnackbar("Unable to Vote For Gauge Weights", { variant })
+        }
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        enqueueSnackbar("Something Went Wrong", { variant });
+      }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+  }
+
 
   return (
     <>
@@ -188,6 +298,7 @@ const GaugeWeightVote = () => {
           <div className="curve-container">
             <div className="curve-content-banks">
               <fieldset>
+                <legend>Gauge Weight Voting</legend>
                 <div className="row no-gutters justify-content-center">
                   <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-6">
                     <div className="row no-gutters justify-content-center">
@@ -201,7 +312,23 @@ const GaugeWeightVote = () => {
                           <div className="py-5 px-4">
                             <div className="row no-gutters">
                               <div className="col-12">
-                                <div className="bg-primary text-white p-3 row no-gutters">
+                                <div className=" my-2">
+                                  <Alert severity="info">
+                                    You can vote for gauge weight with your
+                                    veCRV tokens (locked CRV tokens in&nbsp;
+                                    <span
+                                      className="font-weight-bold"
+                                      style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    >
+                                      <Link to="/" style={{ textDecoration: "none", color: "#5300e8" }}>
+                                        Locker
+                                      </Link>
+                                    </span>
+                                    ). Gauge weights are used to determine how
+                                    much CRV does each pool get
+                                  </Alert>
+                                </div>
+                                {/* <div className="bg-primary text-white p-3 row no-gutters">
                                   <Typography
                                     variant="body1"
                                     gutterBottom
@@ -223,8 +350,22 @@ const GaugeWeightVote = () => {
                                     ). Gauge weights are used to determine how
                                     much CRV does each pool get
                                   </Typography>
+                                </div> */}
+                                <div className=" my-2">
+                                  <Alert severity="info">
+                                    Your lock expires soon. You need to lock at
+                                    least for a week in&nbsp;
+                                    <span
+                                      className="font-weight-bold"
+                                      style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    >
+                                      <Link to="/" style={{ textDecoration: "none", color: "#5300e8" }}>
+                                        Locker
+                                      </Link>
+                                    </span>
+                                  </Alert>
                                 </div>
-                                <div className="bg-primary text-white p-3 row no-gutters my-2">
+                                {/* <div className="bg-primary text-white p-3 row no-gutters my-2">
                                   <Typography
                                     variant="body1"
                                     gutterBottom
@@ -244,8 +385,22 @@ const GaugeWeightVote = () => {
                                       </Link>
                                     </span>
                                   </Typography>
+                                </div> */}
+                                <div className=" my-2">
+                                  <Alert severity="info">
+                                    You need to have CRV locked in&nbsp;
+                                    <span
+                                      className="font-weight-bold"
+                                      style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    >
+                                      <Link to="/" style={{ textDecoration: "none", color: "#5300e8" }}>
+                                        Locker
+                                      </Link>
+                                    </span>
+                                    &nbsp;in order to vote for gauge weights
+                                  </Alert>
                                 </div>
-                                <div className="bg-primary text-white p-3 row no-gutters my-2">
+                                {/* <div className="bg-primary text-white p-3 row no-gutters my-2">
                                   <Typography
                                     variant="body1"
                                     gutterBottom
@@ -265,7 +420,7 @@ const GaugeWeightVote = () => {
                                     </span>
                                     &nbsp;in order to vote for gauge weights
                                   </Typography>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>
@@ -324,7 +479,8 @@ const GaugeWeightVote = () => {
                               </div>
                             </div>
                             <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 justify-content-center">
-                              <TableContainer sx={{ p: 3 }} component={Paper}>
+                              <FutureAPYTable cells={cells} gaugeWeightVoteData={gaugeWeightVoteData} ></FutureAPYTable>
+                              {/* <TableContainer sx={{ p: 3 }}>
                                 <Table aria-label="Gauge Weight Vote">
                                   <TableHead
                                     sx={{
@@ -445,7 +601,7 @@ const GaugeWeightVote = () => {
                                     </TableRow>
                                   </TableFooter>
                                 </Table>
-                              </TableContainer>
+                              </TableContainer> */}
                             </div>
                             <div className="row no-gutters">
                               <div className="w-100 my-3">
@@ -464,10 +620,11 @@ const GaugeWeightVote = () => {
                                   <div className="col-12 col-md-6">
                                     <SelectInput
                                       name="SelectGaugeToken"
-                                      label="Select a Token"
-                                      options={gaugeWeightVoteData.map(
-                                        (item) => item.pool
-                                      )}
+                                      label="Select a Gauge"
+                                      options={selectGaugeOptions}
+                                      onChange={() => {
+                                        setGauge("493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a");
+                                      }}
                                     />
                                     {console.log(
                                       "button at the weight",
@@ -574,14 +731,13 @@ const GaugeWeightVote = () => {
                                           label="Vote Weight Percentage"
                                           variant="filled"
                                           name="GaugeVotePower"
+                                          type="number"
+                                          value={votingPowerPercentage}
+                                          onChange={(e) => {
+                                            if (e.target.value <= 100 && e.target.value >= 0)
+                                              setVotingPowerPercentage(e.target.value)
+                                          }}
                                         />
-                                        {/* <TextInput
-                                        id="votingPower"
-                                        label="Vote Weight Percentage"
-                                        variant="filled"
-                                        name="VoteWeightPercentage"
-                                        // value={votingPowerPercentage}
-                                      /> */}
                                       </Box>
                                       <Typography
                                         variant="body1"
@@ -605,11 +761,11 @@ const GaugeWeightVote = () => {
                                   </div>
                                 </div>
                                 {/* Gas Priority Fee */}
-                                <div className="row no-gutters mt-3">
+                                {/* <div className="row no-gutters mt-3">
                                   <div className="col-12">
                                     <GasPriorityFee />
                                   </div>
-                                </div>
+                                </div> */}
                                 {/* Submit Button */}
                                 <div className="row no-gutters mt-3 justify-content-center">
                                   <div className="col-12">
@@ -617,14 +773,12 @@ const GaugeWeightVote = () => {
                                       <Button
                                         variant="contained"
                                         size="large"
-                                        style={{
-                                          backgroundColor: "#5300e8",
-                                          color: "white",
-                                        }}
-                                        type="submit"
+                                        style={{ backgroundColor: "#5300e8", color: "white" }}
+                                        onClick={() => { handleShowVoteForGaugeWeightModal() }}
                                       >
                                         Submit
                                       </Button>
+                                      {/* <button type="submit">Submit</button> */}
                                     </div>
                                   </div>
                                 </div>
@@ -917,6 +1071,9 @@ const GaugeWeightVote = () => {
             </div>
           </div>
         </div>
+        <SigningModal show={openSigning} />
+        <VoteForGaugeWeightModal show={openVoteForGaugeWeightModal} handleClose={handleCloseVoteForGaugeWeightModal} cells={cells} gaugeWeightVoteData={gaugeWeightVoteData} voteForGaugeWeightsMakeDeploy={voteForGaugeWeightsMakeDeploy} gauge={gauge} votingPowerPercentage={votingPowerPercentage} />
+
       </div>
     </>
   );

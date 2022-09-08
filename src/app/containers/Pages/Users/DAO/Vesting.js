@@ -9,7 +9,7 @@ import "../../../../assets/css/common.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import HeaderDAO from "../../../../components/Headers/HeaderDAO";
+import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
 import GasPriorityFee from "../../../../components/Gas/GasPriorityFee";
 import VestingTokens from "../../../../components/Charts/VestingTokens";
@@ -27,6 +27,17 @@ import { Button } from "@material-ui/core";
 // FORMIK AND YUP
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { Button } from "@material-ui/core";
+import { VESTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
+import { CasperServiceByJsonRPC, CLByteArray, CLKey, CLOption, CLPublicKey, RuntimeArgs } from "casper-js-sdk";
+import { useSnackbar } from "notistack";
+import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
+import { signdeploywithcaspersigner } from "../../../../components/blockchain/SignDeploy/SignDeploy";
+import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
+import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
+import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
+import Torus from "@toruslabs/casper-embed";
+import { None, Some } from "ts-results";
 
 // CONTENT
 
@@ -41,7 +52,7 @@ const Vesting = () => {
   );
   let [torus, setTorus] = useState();
   const [vestingAddress, setVestingAddress] = useState(
-    "0x793b5c08B4861Af052dF77FEf4aB1EEc4B494e33"
+    // "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"
   );
   const [initialLock, setInitialLock] = useState("0.00");
   const [startLockTime, setStartLockTime] = useState("13/08/2021 22:17:28");
@@ -50,6 +61,15 @@ const Vesting = () => {
   const [claimAvailTokens, setClaimAvailTokens] = useState("0.00");
   const [availableTokens, setAvailableTokens] = useState("0.00");
   const [lockedTokens, setLockedTokens] = useState("0.00");
+  const { enqueueSnackbar } = useSnackbar();
+  // States
+  const [openSigning, setOpenSigning] = useState(false);
+  const handleCloseSigning = () => {
+    setOpenSigning(false);
+  };
+  const handleShowSigning = () => {
+    setOpenSigning(true);
+  };
 
   // Content
   const initialValues = {
@@ -63,6 +83,95 @@ const Vesting = () => {
   const onSubmitVestingAddress = (values, props) => {
     console.log("Vesting Address Checking", values);
   };
+
+  async function claimMakeDeploy(gauge) {
+
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const paymentAmount = 5000000000;
+      const addrByteArray = gauge ? new CLByteArray(
+        Uint8Array.from(Buffer.from(gauge, "hex"))
+      ) : "";
+      // try {
+      const runtimeArgs = addrByteArray != "" ? RuntimeArgs.fromMap({
+        addr: new CLOption(Some(new CLKey(addrByteArray))),
+      }) : new CLOption(None);
+      let contractHashAsByteArray = Uint8Array.from(
+        Buffer.from(VESTING_ESCROW_CONTRACT_HASH, "hex")
+      );
+      let entryPoint = "claim";
+      // Set contract installation deploy (unsigned).
+      let deploy = await makeDeploy(
+        publicKey,
+        contractHashAsByteArray,
+        entryPoint,
+        runtimeArgs,
+        paymentAmount
+      );
+      console.log("make deploy: ", deploy);
+      try {
+        if (selectedWallet === "Casper") {
+          let signedDeploy = await signdeploywithcaspersigner(
+            deploy,
+            publicKeyHex
+          );
+          let result = await putdeploy(signedDeploy, enqueueSnackbar);
+          console.log("result", result);
+        } else {
+          // let Torus = new Torus();
+          torus = new Torus();
+          console.log("torus", torus);
+          await torus.init({
+            buildEnv: "testing",
+            showTorusButton: true,
+            network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+          });
+          console.log("Torus123", torus);
+          console.log("torus", torus.provider);
+          const casperService = new CasperServiceByJsonRPC(torus?.provider);
+          const deployRes = await casperService.deploy(deploy);
+          console.log("deployRes", deployRes.deploy_hash);
+          console.log(
+            `... Contract installation deployHash: ${deployRes.deploy_hash}`
+          );
+          let result = await getDeploy(
+            NODE_ADDRESS,
+            deployRes.deploy_hash,
+            enqueueSnackbar
+          );
+          console.log(
+            `... Contract installed successfully.`,
+            JSON.parse(JSON.stringify(result))
+          );
+          console.log("result", result);
+        }
+        handleCloseSigning();
+        let variant = "success";
+        enqueueSnackbar("Claimed Successfully", { variant })
+
+
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        enqueueSnackbar("Unable to Claim", { variant })
+      }
+      // } catch {
+      //   handleCloseSigning();
+      //   let variant = "Error";
+      //   enqueueSnackbar("Something Went Wrong", { variant });
+      // }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+  }
 
   return (
     <>
@@ -125,6 +234,7 @@ const Vesting = () => {
                                       variant="filled"
                                       name="CheckVestingAddress"
                                       sx={{ width: "100%" }}
+                                      value={vestingAddress}
                                     />
                                   </div>
                                   <div className="col-12 col-lg-2 text-center mt-3 mt-lg-0">
@@ -132,10 +242,8 @@ const Vesting = () => {
                                       <Button
                                         variant="contained"
                                         size="large"
-                                        style={{
-                                          backgroundColor: "#5300e8",
-                                          color: "white",
-                                        }}
+                                        style={{ backgroundColor: "#5300e8", color: "white" }}
+                                        onClick={() => { }}
                                       >
                                         Check
                                       </Button>
@@ -241,6 +349,20 @@ const Vesting = () => {
                                 <GasPriorityFee />
                               </div>
                             </div>
+
+                            <div className="row no-gutters justify-content-center">
+                              {/* <div className="col-12"> */}
+                              <Button
+                                variant="contained"
+                                size="large"
+                                style={{ backgroundColor: "#5300e8", color: "white" }}
+                                onClick={() => { claimMakeDeploy(vestingAddress) }}
+                              >
+                                Claim
+                              </Button>
+                              {/* </div> */}
+                            </div>
+
                           </div>
                         </Paper>
                       </Box>
