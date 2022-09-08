@@ -1,6 +1,7 @@
 // REACT
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 // CUSTOM STYLING
 import "../../../../assets/css/common.css";
 import "../../../../assets/css/curveButton.css";
@@ -59,6 +60,13 @@ import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeW
 import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 
 // CONTENT
+
+TablePaginationActions.propTypes = {
+  count: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+};
 
 const selectGaugeOptions = [
   {
@@ -150,6 +158,11 @@ const GaugeWeightVote = () => {
     SelectGaugeToken: Yup.string().required("Required"),
     GaugeVotePower: Yup.string().required("Required"),
   });
+  // Avoid a layout jump when reaching the last page with empty rows.
+  const emptyRows =
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - gaugeWeightVoteData.length)
+      : 0;
 
   // Handlers
   const handleGaugeChange = (event) => {
@@ -491,19 +504,25 @@ const GaugeWeightVote = () => {
                                     </TableRow>
                                   </TableHead>
                                   <TableBody id={"GWVoteTableBody"}>
-                                    {gaugeWeightVoteData.map((item) => {
+                                    {(rowsPerPage > 0
+                                      ? gaugeWeightVoteData.slice(
+                                          page * rowsPerPage,
+                                          page * rowsPerPage + rowsPerPage
+                                        )
+                                      : gaugeWeightVoteData
+                                    ).map((item) => {
                                       return (
                                         <TableRow>
                                           <TableCell
                                             key={item.index}
                                             sx={{ textAlign: "center" }}
                                           >
-                                            <Link
+                                            {/* <Link
                                               to="/pool/buy-and-sell"
                                               className="tableCellLink"
-                                            >
-                                              {item.indexNo}
-                                            </Link>
+                                            > */}
+                                            {item.indexNo}
+                                            {/* </Link> */}
                                           </TableCell>
                                           <TableCell
                                             key={item.index}
@@ -541,7 +560,46 @@ const GaugeWeightVote = () => {
                                         </TableRow>
                                       );
                                     })}
+                                    {emptyRows > 0 && (
+                                      <TableRow
+                                        style={{ height: 53 * emptyRows }}
+                                      >
+                                        <TableCell colSpan={6} />
+                                      </TableRow>
+                                    )}
                                   </TableBody>
+                                  <TableFooter>
+                                    <TableRow>
+                                      <TablePagination
+                                        rowsPerPageOptions={[
+                                          5,
+                                          10,
+                                          25,
+                                          { label: "All", value: -1 },
+                                        ]}
+                                        colSpan={12}
+                                        count={gaugeWeightVoteData.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        SelectProps={{
+                                          inputProps: {
+                                            "aria-label": "rows per page",
+                                          },
+                                          native: true,
+                                        }}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={
+                                          handleChangeRowsPerPage
+                                        }
+                                        ActionsComponent={
+                                          TablePaginationActions
+                                        }
+                                        sx={{
+                                          backgroundColor: "#e7ebf0",
+                                        }}
+                                      />
+                                    </TableRow>
+                                  </TableFooter>
                                 </Table>
                               </TableContainer> */}
                             </div>
@@ -568,6 +626,12 @@ const GaugeWeightVote = () => {
                                         setGauge("493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a");
                                       }}
                                     />
+                                    {console.log(
+                                      "button at the weight",
+                                      gaugeWeightVoteData.map((item) => {
+                                        return item.pool;
+                                      })
+                                    )}
                                     {/* <SelectInput
                                       name="SelectGaugeToken"
                                       label="Select a Gauge"
@@ -594,14 +658,22 @@ const GaugeWeightVote = () => {
                                 <div className="row no-gutters mt-3">
                                   <div className="col-12">
                                     <div className="btnWrapper">
-                                      <button onClick={handleChangeAllocation}>
+                                      <Button
+                                        variant="contained"
+                                        size="large"
+                                        style={{
+                                          backgroundColor: "#5300e8",
+                                          color: "white",
+                                        }}
+                                        onClick={handleChangeAllocation}
+                                      >
                                         Hide My Allocation&nbsp;
                                         <span className="ml-4">
                                           <Tooltip title="Your vote allocation from previous votes is remembered. If you want to change it and you have votes allocated to a gauge, you can set its new allocation to 0">
                                             <HelpOutlineIcon />
                                           </Tooltip>
                                         </span>
-                                      </button>
+                                      </Button>
                                     </div>
                                   </div>
                                 </div>
@@ -775,16 +847,32 @@ const GaugeWeightVote = () => {
                                 <div className="row no-gutters w-100">
                                   <div className="col-12 col-md-6 col-lg-7 text-center w-100 px-2">
                                     <div className="btnWrapper">
-                                      <button className="w-100">
+                                      <Button
+                                        variant="contained"
+                                        size="large"
+                                        style={{
+                                          backgroundColor: "#5300e8",
+                                          color: "white",
+                                          width: "100%",
+                                        }}
+                                      >
                                         Show Last Week Votes
-                                      </button>
+                                      </Button>
                                     </div>
                                   </div>
                                   <div className="col-12 col-md-6 col-lg-5 mt-2 mt-md-0 text-center w-100 px-2">
                                     <div className="btnWrapper">
-                                      <button className="w-100">
+                                      <Button
+                                        variant="contained"
+                                        size="large"
+                                        style={{
+                                          backgroundColor: "#5300e8",
+                                          color: "white",
+                                          width: "100%",
+                                        }}
+                                      >
                                         Show My Votes
-                                      </button>
+                                      </Button>
                                     </div>
                                   </div>
                                 </div>
@@ -834,7 +922,9 @@ const GaugeWeightVote = () => {
                             <div className="row no-gutters mt-3">
                               <div className="col-12">
                                 <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 justify-content-center">
-                                  <TableContainer sx={{ p: 3 }}>
+                                  <TableContainer
+                                    sx={{ p: 3, overflow: "hidden" }}
+                                  >
                                     <Table aria-label="Gauge Weight Vote History">
                                       <TableHead
                                         sx={{
@@ -858,7 +948,13 @@ const GaugeWeightVote = () => {
                                         </TableRow>
                                       </TableHead>
                                       <TableBody id={"GWVoteHistoryTableBody"}>
-                                        {votingHistoryData.map((item) => {
+                                        {(rowsPerPage > 0
+                                          ? votingHistoryData.slice(
+                                              page * rowsPerPage,
+                                              page * rowsPerPage + rowsPerPage
+                                            )
+                                          : votingHistoryData
+                                        ).map((item) => {
                                           console.log("this runs!");
                                           return (
                                             <TableRow>
@@ -928,6 +1024,38 @@ const GaugeWeightVote = () => {
                                           );
                                         })}
                                       </TableBody>
+                                      <TableFooter>
+                                        <TableRow>
+                                          <TablePagination
+                                            rowsPerPageOptions={[
+                                              5,
+                                              10,
+                                              25,
+                                              { label: "All", value: -1 },
+                                            ]}
+                                            colSpan={12}
+                                            count={gaugeWeightVoteData.length}
+                                            rowsPerPage={rowsPerPage}
+                                            page={page}
+                                            SelectProps={{
+                                              inputProps: {
+                                                "aria-label": "rows per page",
+                                              },
+                                              native: true,
+                                            }}
+                                            onPageChange={handleChangePage}
+                                            onRowsPerPageChange={
+                                              handleChangeRowsPerPage
+                                            }
+                                            ActionsComponent={
+                                              TablePaginationActions
+                                            }
+                                            sx={{
+                                              backgroundColor: "#e7ebf0",
+                                            }}
+                                          />
+                                        </TableRow>
+                                      </TableFooter>
                                     </Table>
                                   </TableContainer>
                                 </div>
