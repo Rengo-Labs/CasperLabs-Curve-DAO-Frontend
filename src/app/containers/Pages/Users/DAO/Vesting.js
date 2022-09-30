@@ -1,43 +1,40 @@
 // REACT
 import React, { useState } from "react";
 // CHARTS
-import apexChart from "react-apexcharts";
 // CUSTOM STYLING
-import "../../../../assets/css/style.css";
-import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/common.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/style.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
-import HomeBanner from "../Home/HomeBanner";
-import GasPriorityFee from "../../../../components/Gas/GasPriorityFee";
 import VestingTokens from "../../../../components/Charts/VestingTokens";
 import TextInput from "../../../../components/FormsUI/TextInput";
+import GasPriorityFee from "../../../../components/Gas/GasPriorityFee";
+import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
+import HomeBanner from "../Home/HomeBanner";
 // MATERIAL UI
+import { Button } from "@material-ui/core";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
+import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
-import { Button } from "@material-ui/core";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 // FORMIK AND YUP
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { Button } from "@material-ui/core";
-import { VESTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
-import { CasperServiceByJsonRPC, CLByteArray, CLKey, CLOption, CLPublicKey, RuntimeArgs } from "casper-js-sdk";
-import { useSnackbar } from "notistack";
-import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
-import { signdeploywithcaspersigner } from "../../../../components/blockchain/SignDeploy/SignDeploy";
-import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
-import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
-import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
 import Torus from "@toruslabs/casper-embed";
+import { CasperServiceByJsonRPC, CLByteArray, CLKey, CLOption, CLPublicKey, RuntimeArgs } from "casper-js-sdk";
+import { Form, Formik } from "formik";
+import { useSnackbar } from "notistack";
 import { None, Some } from "ts-results";
+import * as Yup from "yup";
+import { VESTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
+import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
+import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
+import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
+import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
+import { signdeploywithcaspersigner } from "../../../../components/blockchain/SignDeploy/SignDeploy";
 
 // CONTENT
 

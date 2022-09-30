@@ -15,7 +15,7 @@ import TextInput from "../../../../components/FormsUI/TextInput";
 import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
 // MATERIAL UI
-import { Avatar, Button } from "@material-ui/core";
+import { Avatar, Button, TableFooter, TablePagination } from "@material-ui/core";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
@@ -58,15 +58,10 @@ import { signdeploywithcaspersigner } from "../../../../components/blockchain/Si
 import SigningModal from "../../../../components/Modals/SigningModal";
 import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeWeightModal";
 import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
+import TablePaginationActions from "../../../../components/pagination/TablePaginationActions";
 
 // CONTENT
 
-TablePaginationActions.propTypes = {
-  count: PropTypes.number.isRequired,
-  onPageChange: PropTypes.func.isRequired,
-  page: PropTypes.number.isRequired,
-  rowsPerPage: PropTypes.number.isRequired,
-};
 
 const selectGaugeOptions = [
   {
@@ -122,6 +117,9 @@ const GaugeWeightVote = () => {
     localStorage.getItem("selectedWallet")
   );
   let [torus, setTorus] = useState();
+  const [stakes, setStakes] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [effectiveDate, setEffectiveDate] = useState("26/05/2022");
   const [votedThisWeek, setVotedThisWeek] = useState("2,770,259.15");
   const [totalVeCRV, setTotalVeCRV] = useState("451,949,979.95");
@@ -148,6 +146,16 @@ const GaugeWeightVote = () => {
   };
   const handleShowVoteForGaugeWeightModal = () => {
     setVoteForGaugeWeightModal(true);
+  };
+
+  //   Event Handlers
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
   // Content
   const initialValues = {
@@ -517,12 +525,7 @@ const GaugeWeightVote = () => {
                                             key={item.index}
                                             sx={{ textAlign: "center" }}
                                           >
-                                            {/* <Link
-                                              to="/pool/buy-and-sell"
-                                              className="tableCellLink"
-                                            > */}
                                             {item.indexNo}
-                                            {/* </Link> */}
                                           </TableCell>
                                           <TableCell
                                             key={item.index}
@@ -950,9 +953,9 @@ const GaugeWeightVote = () => {
                                       <TableBody id={"GWVoteHistoryTableBody"}>
                                         {(rowsPerPage > 0
                                           ? votingHistoryData.slice(
-                                              page * rowsPerPage,
-                                              page * rowsPerPage + rowsPerPage
-                                            )
+                                            page * rowsPerPage,
+                                            page * rowsPerPage + rowsPerPage
+                                          )
                                           : votingHistoryData
                                         ).map((item) => {
                                           console.log("this runs!");
