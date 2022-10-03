@@ -5,7 +5,7 @@ import "../../assets/css/curveTabs.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
-
+import GaugeVote from "../Gauge/GaugeVote";
 // MATERIAL UI
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
@@ -115,6 +115,7 @@ const CreateVoteTabs = () => {
           <TabPanel value={value} index={0} className="MuiBox-root">
           </TabPanel>
           <TabPanel value={value} index={1} className="MuiBox-root">
+            <GaugeVote/>
           </TabPanel>
           <TabPanel value={value} index={2} className="MuiBox-root">
           </TabPanel>
