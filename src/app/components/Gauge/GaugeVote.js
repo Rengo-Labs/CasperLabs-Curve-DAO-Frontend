@@ -7,21 +7,26 @@ import "../../assets/css/common.css";
 //BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 //COMPONENTS
-
+import CreateVoteModal from "../Modals/CreateVoteModal";
 // MATERIAL UI
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 // COMPONENT FUNCTION
 const GaugeVote = () => {
   // States
   const [commitOpen, setCommitOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+  const [gaugeOpen, setGaugeOpen] = useState(false);
+  const [typeOpen, setTypeOpen] = useState(false);
+  const [changeOpen, setChangeOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
 
   //   Event Handlers
@@ -29,21 +34,16 @@ const GaugeVote = () => {
   const handleCommitClose = () => setCommitOpen(false);
   const handleAddOpen = () => setAddOpen(true);
   const handleAddClose = () => setAddOpen(false);
+  const handleGaugeOpen = () => setGaugeOpen(true);
+  const handleGaugeClose = () => setGaugeOpen(false);
+  const handleTypeOpen = () => setTypeOpen(true);
+  const handleTypeClose = () => setTypeOpen(false);
+  const handleChangeOpen = () => setChangeOpen(true);
+  const handleChangeClose = () => setChangeOpen(false);
   const handleApplyOpen = () => setApplyOpen(true);
   const handleApplyClose = () => setApplyOpen(false);
 
   //STYLES
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '1px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
 
   return (
     <>
@@ -52,10 +52,10 @@ const GaugeVote = () => {
           <legend>Vote on Gauge</legend>
           <div className="row no-gutters justify-content-center">
             <div className="curve-content-wrapper mui-form-width col-lg-4">
-                <Card sx={{ minWidth: 275, textAlign:"center" }}>
+                <Card sx={{ minWidth: 275, textAlign:"center",':hover': {boxShadow: 20} }}  elevation={4}>
                     <CardContent>
                         <Typography sx={{ fontSize: 22, fontWeight:"bold" }} gutterBottom>
-                            Commit Transfer Ownership
+                            commit_transfer_ownership
                         </Typography>
                         <TextField
                             required
@@ -83,56 +83,19 @@ const GaugeVote = () => {
                                 </span>
                             </Typography>
                         </div>
-                        <Modal
-                            open={commitOpen}
-                            onClose={handleCommitClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                            >
-                            <Box sx={style}>
-                                <Typography id="modal-modal-title" variant="h6" component="h2">
-                                    Commit Transfer Ownership
-                                </Typography>
-                                <TextField
-                                    required
-                                    label="Description"
-                                    variant="standard"
-                                />
-                                <div className="mt-4">
-                                    <Typography
-                                        variant="h6"
-                                        gutterBottom
-                                        component={"div"}
-                                        >
-                                        <span
-                                            className="font-weight-bold"
-                                            style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
-                                            >
-                                            <Button
-                                                variant="contained"
-                                                size="large"
-                                                style={{ backgroundColor: "#5300e8", color: "white" }}
-                                                onClick={handleCommitClose}
-                                                >
-                                                Submit
-                                            </Button>
-                                        </span>
-                                    </Typography>
-                                </div>
-                            </Box>
-                        </Modal>
+                        <CreateVoteModal open={commitOpen} close={handleCommitClose} click={handleCommitClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
             <div className="curve-content-wrapper mui-form-width col-lg-4">
-                <Card sx={{ minWidth: 275, textAlign:"center" }}>
+                <Card sx={{ minWidth: 275, textAlign:"center",':hover': {boxShadow: 20,} }} elevation={4}>
                     <CardContent>
                         <Typography sx={{ fontSize: 22, fontWeight:"bold" }} gutterBottom>
-                            Add Type
+                            add_type
                         </Typography>
                         <TextField
                             required
-                            label="name"
+                            label="_name"
                             variant="standard"
                         />
                          <TextField
@@ -161,52 +124,160 @@ const GaugeVote = () => {
                                 </span>
                             </Typography>
                         </div>
-                        <Modal
-                            open={addOpen}
-                            onClose={handleAddClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                            >
-                            <Box sx={style}>
-                                <Typography id="modal-modal-title" variant="h6" component="h2">
-                                    Add Type
-                                </Typography>
-                                <TextField
-                                    required
-                                    label="Description"
-                                    variant="standard"
-                                />
-                                <div className="mt-4">
-                                    <Typography
-                                        variant="h6"
-                                        gutterBottom
-                                        component={"div"}
-                                        >
-                                        <span
-                                            className="font-weight-bold"
-                                            style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
-                                            >
-                                            <Button
-                                                variant="contained"
-                                                size="large"
-                                                style={{ backgroundColor: "#5300e8", color: "white" }}
-                                                onClick={handleAddClose}
-                                                >
-                                                Submit
-                                            </Button>
-                                        </span>
-                                    </Typography>
-                                </div>
-                            </Box>
-                        </Modal>
+                        <CreateVoteModal open={addOpen} close={handleAddClose} click={handleAddClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
             <div className="curve-content-wrapper mui-form-width col-lg-4">
-                <Card sx={{ minWidth: 275, textAlign:"center" }}>
+                <Card sx={{ minWidth: 275, textAlign:"center",':hover': {boxShadow: 20,} }} elevation={4}>
                     <CardContent>
                         <Typography sx={{ fontSize: 22, fontWeight:"bold" }} gutterBottom>
-                            Apply Transfer Ownership
+                            add_gauge
+                        </Typography>
+                        <TextField
+                            required
+                            label="addr"
+                            variant="standard"
+                        />
+                        <FormControl variant="standard">
+                            <InputLabel>gauge_type</InputLabel>
+                                <Select
+                                    label="gauge_type"
+                                    >
+                                    <MenuItem value={10}>Liquidity</MenuItem>
+                                    <MenuItem value={20}>Liquidity-2</MenuItem>
+                                    <MenuItem value={30}>Liquidity-3</MenuItem>
+                                </Select>
+                        </FormControl>
+                         <TextField
+                            required
+                            label="gauge_weight"
+                            variant="standard"
+                        />
+                        <div className="mt-4">
+                            <Typography
+                                variant="h6"
+                                gutterBottom
+                                component={"div"}
+                                >
+                                <span
+                                    className="font-weight-bold"
+                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    >
+                                    <Button
+                                      variant="contained"
+                                      size="large"
+                                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                                      onClick={handleGaugeOpen}
+                                    >
+                                      Submit
+                                    </Button>
+                                </span>
+                            </Typography>
+                        </div>
+                        <CreateVoteModal open={gaugeOpen} close={handleGaugeClose} click={handleGaugeClose} title='Add Description'/>
+                    </CardContent>
+                </Card>
+            </div>
+          </div>
+          <div className="row no-gutters justify-content-center">
+            <div className="curve-content-wrapper mui-form-width col-lg-4">
+                <Card sx={{ minWidth: 275, textAlign:"center",':hover': {boxShadow: 20} }}  elevation={4}>
+                    <CardContent>
+                        <Typography sx={{ fontSize: 22, fontWeight:"bold" }} gutterBottom>
+                            change_type_weight
+                        </Typography>
+                        <FormControl variant="standard">
+                            <InputLabel>type_id</InputLabel>
+                                <Select
+                                    label="type_id"
+                                    >
+                                    <MenuItem value={10}>Liquidity</MenuItem>
+                                    <MenuItem value={20}>Liquidity-2</MenuItem>
+                                    <MenuItem value={30}>Liquidity-3</MenuItem>
+                                </Select>
+                        </FormControl>
+                        <TextField
+                            required
+                            label="gauge_weight"
+                            variant="standard"
+                        />
+                        <div className="mt-4">
+                            <Typography
+                                variant="h6"
+                                gutterBottom
+                                component={"div"}
+                                >
+                                <span
+                                    className="font-weight-bold"
+                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    >
+                                    <Button
+                                      variant="contained"
+                                      size="large"
+                                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                                      onClick={handleTypeOpen}
+                                    >
+                                      Submit
+                                    </Button>
+                                </span>
+                            </Typography>
+                        </div>
+                        <CreateVoteModal open={typeOpen} close={handleTypeClose} click={handleTypeClose} title='Add Description'/>
+                    </CardContent>
+                </Card>
+            </div>
+            <div className="curve-content-wrapper mui-form-width col-lg-4">
+                <Card sx={{ minWidth: 275, textAlign:"center",':hover': {boxShadow: 20,} }} elevation={4}>
+                    <CardContent>
+                        <Typography sx={{ fontSize: 22, fontWeight:"bold" }} gutterBottom>
+                            change_gauge_weight
+                        </Typography>
+                        <FormControl variant="standard">
+                            <InputLabel>addr</InputLabel>
+                                <Select
+                                    label="addr"
+                                    >
+                                    <MenuItem value={10}>DAI</MenuItem>
+                                    <MenuItem value={20}>USDC</MenuItem>
+                                    <MenuItem value={30}>ETH</MenuItem>
+                                </Select>
+                        </FormControl>
+                         <TextField
+                            required
+                            label="gauge_weight"
+                            variant="standard"
+                        />
+                        <div className="mt-4">
+                            <Typography
+                                variant="h6"
+                                gutterBottom
+                                component={"div"}
+                                >
+                                <span
+                                    className="font-weight-bold"
+                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    >
+                                    <Button
+                                      variant="contained"
+                                      size="large"
+                                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                                      onClick={handleChangeOpen}
+                                    >
+                                      Submit
+                                    </Button>
+                                </span>
+                            </Typography>
+                        </div>
+                        <CreateVoteModal open={changeOpen} close={handleChangeClose} click={handleChangeClose} title='Add Description'/>
+                    </CardContent>
+                </Card>
+            </div>
+            <div className="curve-content-wrapper mui-form-width col-lg-4">
+                <Card sx={{ minWidth: 275, textAlign:"center",':hover': {boxShadow: 20,} }} elevation={4}>
+                    <CardContent>
+                        <Typography sx={{ fontSize: 22, fontWeight:"bold" }} gutterBottom>
+                            apply_transfer_ownership
                         </Typography>
                         <div className="mt-4">
                             <Typography
@@ -229,44 +300,7 @@ const GaugeVote = () => {
                                 </span>
                             </Typography>
                         </div>
-                        <Modal
-                            open={applyOpen}
-                            onClose={handleApplyClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                            >
-                            <Box sx={style}>
-                                <Typography id="modal-modal-title" variant="h6" component="h2">
-                                    Apply Transfer Ownership
-                                </Typography>
-                                <TextField
-                                    required
-                                    label="Description"
-                                    variant="standard"
-                                />
-                                <div className="mt-4">
-                                    <Typography
-                                        variant="h6"
-                                        gutterBottom
-                                        component={"div"}
-                                        >
-                                        <span
-                                            className="font-weight-bold"
-                                            style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
-                                            >
-                                            <Button
-                                                variant="contained"
-                                                size="large"
-                                                style={{ backgroundColor: "#5300e8", color: "white" }}
-                                                onClick={handleApplyClose}
-                                                >
-                                                Submit
-                                            </Button>
-                                        </span>
-                                    </Typography>
-                                </div>
-                            </Box>
-                        </Modal>
+                        <CreateVoteModal open={applyOpen} close={handleApplyClose} click={handleApplyClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
