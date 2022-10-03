@@ -12,7 +12,7 @@ import DaoVotes from "../../../../components/Cards/DaoVotes";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
 import HomeBanner from "../Home/HomeBanner";
-// MATERIAL UI
+// MATERIAL UI 
 import { Button } from "@material-ui/core";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -153,6 +153,27 @@ const Dao = () => {
                                       onClick={() => { history.push("/locker") }}
                                     >
                                       Manage locking in Locker
+                                    </Button>
+                                  </span>
+                                </Typography>
+                              </div>
+                              <div className=" row justify-content-center no-gutters">
+                                <Typography
+                                  variant="h6"
+                                  gutterBottom
+                                  component={"div"}
+                                >
+                                  <span
+                                    className="font-weight-bold"
+                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                  >
+                                    <Button
+                                      variant="contained"
+                                      size="large"
+                                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                                      onClick={() => { history.push("/createVote") }}
+                                    >
+                                      Create Vote
                                     </Button>
                                   </span>
                                 </Typography>
