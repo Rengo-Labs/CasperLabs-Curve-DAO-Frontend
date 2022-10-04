@@ -7,6 +7,7 @@ import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
 import GaugeVote from "../Gauge/GaugeVote";
 import EmergencyMember from "../Emergency Member/EmergencyMember";
+import VotingEscrow from "../VotingEscrow/VotingEscrow";
 // MATERIAL UI
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
@@ -122,6 +123,7 @@ const CreateVoteTabs = () => {
             <EmergencyMember/>
           </TabPanel>
           <TabPanel value={value} index={3} className="MuiBox-root">
+            <VotingEscrow/>
           </TabPanel>
           <TabPanel value={value} index={4} className="MuiBox-root">
           </TabPanel>
