@@ -9,6 +9,7 @@ import GaugeVote from "../Gauge/GaugeVote";
 import EmergencyMember from "../Emergency Member/EmergencyMember";
 import VotingEscrow from "../VotingEscrow/VotingEscrow";
 import Vesting from "../Vesting/Vesting";
+import PoolVote from "../Pools/PoolVote";
 // MATERIAL UI
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
@@ -116,6 +117,7 @@ const CreateVoteTabs = () => {
             </StyledEngineProvider>
           </Box>
           <TabPanel value={value} index={0} className="MuiBox-root">
+            <PoolVote/>
           </TabPanel>
           <TabPanel value={value} index={1} className="MuiBox-root">
             <GaugeVote/>
