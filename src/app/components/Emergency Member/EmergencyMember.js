@@ -39,7 +39,7 @@ const EmergencyMember = () => {
       <div className="curve-container">
         <fieldset>
           <legend>Vote on Emergency Members</legend>
-          <div className="row no-gutters justify-content-center">
+          <div className="row no-gutters">
             <div className="curve-content-wrapper mui-form-width col-lg-4">
                 <Card sx={{ minWidth: 275, textAlign:"center",':hover': {boxShadow: 20,}}} elevation={4}>
                     <CardContent>
@@ -62,6 +62,7 @@ const EmergencyMember = () => {
                                     style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
                                     >
                                     <Button
+                                      fullWidth
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
@@ -103,6 +104,7 @@ const EmergencyMember = () => {
                                     style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
                                     >
                                     <Button
+                                      fullWidth
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}

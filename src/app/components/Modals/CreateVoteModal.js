@@ -51,6 +51,7 @@ function CreateVoteModal(props) {
                         style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
                         >
                         <Button
+                            fullWidth
                             variant="contained"
                             size="large"
                             style={{ backgroundColor: "#5300e8", color: "white" }}
