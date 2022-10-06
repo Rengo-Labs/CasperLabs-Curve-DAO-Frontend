@@ -56,7 +56,7 @@ function CreateVoteModal(props) {
                             style={{ backgroundColor: "#5300e8", color: "white" }}
                             onClick={props.click}
                             >
-                            Submit
+                            Create Vote
                         </Button>
                     </span>
                 </Typography>
