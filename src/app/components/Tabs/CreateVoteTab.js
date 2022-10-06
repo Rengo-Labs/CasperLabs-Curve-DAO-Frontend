@@ -90,7 +90,7 @@ const CreateVoteTabs = () => {
                   {...a11yProps(1)}
                 />
                 <Tab
-                  label="Emergency Number"
+                  label="Emergency Member"
                   {...a11yProps(2)}
                 />
                 <Tab
