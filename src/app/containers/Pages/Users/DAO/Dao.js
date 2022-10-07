@@ -12,7 +12,7 @@ import DaoVotes from "../../../../components/Cards/DaoVotes";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
 import HomeBanner from "../Home/HomeBanner";
-// MATERIAL UI 
+// MATERIAL UI
 import { Button } from "@material-ui/core";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -109,13 +109,11 @@ const Dao = () => {
                 <div className="row no-gutters justify-content-center">
                   <div className="curve-content-wrapper col-12 col-lg-6 ">
                     <div className="row no-gutters justify-content-center">
-
                       <Box
                         sx={{
                           width: "100%",
                         }}
                       >
-
                         <Paper elevation={4}>
                           <div className="py-5 px-4">
                             {/* INFO */}
@@ -144,13 +142,21 @@ const Dao = () => {
                                 >
                                   <span
                                     className="font-weight-bold"
-                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    style={{
+                                      borderBottom: "1px dashed white",
+                                      color: "#5300e8",
+                                    }}
                                   >
                                     <Button
                                       variant="contained"
                                       size="large"
-                                      style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={() => { history.push("/locker") }}
+                                      style={{
+                                        backgroundColor: "#5300e8",
+                                        color: "white",
+                                      }}
+                                      onClick={() => {
+                                        history.push("/locker");
+                                      }}
                                     >
                                       Manage locking in Locker
                                     </Button>
@@ -165,13 +171,21 @@ const Dao = () => {
                                 >
                                   <span
                                     className="font-weight-bold"
-                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    style={{
+                                      borderBottom: "1px dashed white",
+                                      color: "#5300e8",
+                                    }}
                                   >
                                     <Button
                                       variant="contained"
                                       size="large"
-                                      style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={() => { history.push("/createVote") }}
+                                      style={{
+                                        backgroundColor: "#5300e8",
+                                        color: "white",
+                                      }}
+                                      onClick={() => {
+                                        history.push("/createVote");
+                                      }}
                                     >
                                       Create Vote
                                     </Button>
@@ -179,7 +193,6 @@ const Dao = () => {
                                 </Typography>
                               </div>
                             </div>
-
 
                             {/* FILTER */}
                             <div className="row no-gutters">
@@ -265,68 +278,62 @@ const Dao = () => {
                                 </div>
                               </div>
                               {/* VOTES */}
-                              <div className="row no-gutters">
-                                <div className="col-4">
-                                  <div className="row no-gutters justify-content-center">
-                                    <div className="col-11">
-                                      <DaoVotes
-                                        legend={daoLegend}
-                                        legendStatus={daoLegendStatus}
-                                        title={daoTitle}
-                                        description={daoDescription}
-                                        open={voteOpen}
-                                        yes={voteYes}
-                                        no={voteNo}
-                                        voteCreated={voteCreatedOn}
-                                        enaction={enactedVote}
-                                        support={voteSupport}
-                                        quorum={voteQuorum}
-                                        supportVolume={voteSupportVolume}
-                                        quorumVolume={voteQuorumVolume}
-                                      />
-                                    </div>
+                              <div className="row no-gutters justify-content-center align-items-center">
+                                <div className="col-12 col-md-6 col-lg-12 col-xl-6">
+                                  <div className="col-12 py-3 px-sm-3 px-lg-0 px-xl-3">
+                                    <DaoVotes
+                                      legend={daoLegend}
+                                      legendStatus={daoLegendStatus}
+                                      title={daoTitle}
+                                      description={daoDescription}
+                                      open={voteOpen}
+                                      yes={voteYes}
+                                      no={voteNo}
+                                      voteCreated={voteCreatedOn}
+                                      enaction={enactedVote}
+                                      support={voteSupport}
+                                      quorum={voteQuorum}
+                                      supportVolume={voteSupportVolume}
+                                      quorumVolume={voteQuorumVolume}
+                                    />
                                   </div>
                                 </div>
-                                <div className="col-4">
-                                  <div className="row no-gutters justify-content-center">
-                                    <div className="col-11">
-                                      <DaoVotes
-                                        legend={daoLegend}
-                                        legendStatus="75% / 18%"
-                                        title="#216"
-                                        description="There is a white car inside that garadge. It was parked there in 1963 and hasn't been started ever since."
-                                        open={true}
-                                        yes={38}
-                                        no={19}
-                                        voteCreated={voteCreatedOn}
-                                        enaction={false}
-                                        support={voteSupport}
-                                        quorum={false}
-                                        supportVolume="81.83"
-                                        quorumVolume="36.66"
-                                      />
-                                    </div>
+                                <div className="col-12 col-md-6 col-lg-12 col-xl-6">
+                                  <div className="col-12 py-3 px-sm-3 px-lg-0 px-xl-3">
+                                    <DaoVotes
+                                      legend={daoLegend}
+                                      legendStatus="75% / 18%"
+                                      title="#216"
+                                      description="There is a white car inside that garadge. It was parked there in 1963 and hasn't been started ever since."
+                                      open={true}
+                                      yes={38}
+                                      no={19}
+                                      voteCreated={voteCreatedOn}
+                                      enaction={false}
+                                      support={voteSupport}
+                                      quorum={false}
+                                      supportVolume="81.83"
+                                      quorumVolume="36.66"
+                                    />
                                   </div>
                                 </div>
-                                <div className="col-4">
-                                  <div className="row no-gutters justify-content-center">
-                                    <div className="col-11">
-                                      <DaoVotes
-                                        legend={daoLegend}
-                                        legendStatus="88% / 12%"
-                                        title="#215"
-                                        description={daoDescription}
-                                        open={voteOpen}
-                                        yes={64}
-                                        no={22}
-                                        voteCreated={voteCreatedOn}
-                                        enaction={enactedVote}
-                                        support={voteSupport}
-                                        quorum={voteQuorum}
-                                        supportVolume="73.25"
-                                        quorumVolume="41.02"
-                                      />
-                                    </div>
+                                <div className="col-12 col-md-6 col-lg-12 col-xl-6">
+                                  <div className="col-12 py-3 px-sm-3 px-lg-0 px-xl-3">
+                                    <DaoVotes
+                                      legend={daoLegend}
+                                      legendStatus="88% / 12%"
+                                      title="#215"
+                                      description={daoDescription}
+                                      open={voteOpen}
+                                      yes={64}
+                                      no={22}
+                                      voteCreated={voteCreatedOn}
+                                      enaction={enactedVote}
+                                      support={voteSupport}
+                                      quorum={voteQuorum}
+                                      supportVolume="73.25"
+                                      quorumVolume="41.02"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -341,7 +348,7 @@ const Dao = () => {
             </div>
           </div>
         </div>
-      </div >
+      </div>
     </>
   );
 };
