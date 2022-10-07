@@ -7,9 +7,12 @@ import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
 import GaugeVote from "../Gauge/GaugeVote";
 import EmergencyMember from "../Emergency Member/EmergencyMember";
+<<<<<<< HEAD
 import VotingEscrow from "../VotingEscrow/VotingEscrow";
 import Vesting from "../Vesting/Vesting";
 import PoolVote from "../Pools/PoolVote";
+=======
+>>>>>>> 644bf5b (sync with main)
 // MATERIAL UI
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
@@ -90,7 +93,11 @@ const CreateVoteTabs = () => {
                   {...a11yProps(1)}
                 />
                 <Tab
+<<<<<<< HEAD
                   label="Emergency Member"
+=======
+                  label="Emergency Number"
+>>>>>>> 644bf5b (sync with main)
                   {...a11yProps(2)}
                 />
                 <Tab
@@ -117,7 +124,10 @@ const CreateVoteTabs = () => {
             </StyledEngineProvider>
           </Box>
           <TabPanel value={value} index={0} className="MuiBox-root">
+<<<<<<< HEAD
             <PoolVote/>
+=======
+>>>>>>> 644bf5b (sync with main)
           </TabPanel>
           <TabPanel value={value} index={1} className="MuiBox-root">
             <GaugeVote/>
@@ -126,14 +136,20 @@ const CreateVoteTabs = () => {
             <EmergencyMember/>
           </TabPanel>
           <TabPanel value={value} index={3} className="MuiBox-root">
+<<<<<<< HEAD
             <VotingEscrow/>
+=======
+>>>>>>> 644bf5b (sync with main)
           </TabPanel>
           <TabPanel value={value} index={4} className="MuiBox-root">
           </TabPanel>
           <TabPanel value={value} index={5} className="MuiBox-root">
           </TabPanel>
           <TabPanel value={value} index={6} className="MuiBox-root">
+<<<<<<< HEAD
             <Vesting/>
+=======
+>>>>>>> 644bf5b (sync with main)
           </TabPanel>
           <TabPanel value={value} index={7} className="MuiBox-root">
           </TabPanel>
