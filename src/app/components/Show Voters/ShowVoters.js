@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // CUSTOM CSS
@@ -17,11 +17,21 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import VoteDistributionModal from "../Modals/VoteDistributionModal";
 // COMPONENTS
 
 
 
 function ShowVoters(props) {
+
+    const [openFor, setOpenFor] = useState(false);
+    const [openAgainst, setOpenAgainst] = useState(false);
+
+    //   Event Handlers
+    const handleOpenFor = () => setOpenFor(true);
+    const handleCloseFor = () => setOpenFor(false);
+    const handleOpenAgainst = () => setOpenAgainst(true);
+    const handleCloseAgainst = () => setOpenAgainst(false);
 
     function createData(Voter, veCRV) {
         return {Voter, veCRV};
@@ -54,10 +64,12 @@ function ShowVoters(props) {
                         variant="contained"
                         size="small"
                         style={{ backgroundColor: "#00E65B", color: "white" }}
+                        onClick={handleOpenFor}
                         >
                             Show Chart
                     </Button>
                 </div>
+                <VoteDistributionModal for={true} open={openFor} close={handleCloseFor} click={handleCloseFor} title="For Vote Distribution"/>
                 <TableContainer component={Paper} elevation={5} className="mt-3">
                     <Table sx={{ minWidth: 100 }} aria-label="simple table">
                         <TableHead>
@@ -81,7 +93,7 @@ function ShowVoters(props) {
                 </TableContainer>
             </div>
             <div className="col-5 ml-sm-0 ml-md-5  mt-sm-3 mt-lg-0">
-            <div className="d-flex justify-content-between" style={{ color: "#FF0100"}}>
+                <div className="d-flex justify-content-between" style={{ color: "#FF0100"}}>
                     <div className="d-flex">
                         <Typography className="pr-2">Against</Typography>
                         <CancelIcon/>
@@ -90,10 +102,12 @@ function ShowVoters(props) {
                         variant="contained"
                         size="small"
                         style={{ backgroundColor: "#FF0100", color: "white" }}
+                        onClick={handleOpenAgainst}
                         >
                             Show Chart
                     </Button>
                 </div>
+                <VoteDistributionModal for={false} open={openAgainst} close={handleCloseAgainst} click={handleCloseAgainst} title="Against Vote Distribution"/>
                 <TableContainer component={Paper} elevation={5} className="mt-3">
                     <Table sx={{ minWidth: 100 }} aria-label="simple table">
                         <TableHead>
