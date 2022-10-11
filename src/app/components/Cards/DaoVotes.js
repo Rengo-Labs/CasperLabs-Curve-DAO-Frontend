@@ -31,7 +31,7 @@ const DaoVotes = (props) => {
 
   return (
     <>
-      <Card sx={{ width: 250, backgroundColor: "rgb(231, 235, 240)" }}>
+      <Card sx={{ minHeight: "585px", backgroundColor: "rgb(231, 235, 240)" }}>
         <CardContent>
           {/* Legend */}
           <div className="row no-gutters justify-content-center w-100 mb-0">
