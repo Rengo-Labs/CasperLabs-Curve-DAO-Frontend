@@ -19,6 +19,7 @@ import Locks from "../Pages/Users/DAO/Locks";
 import Calc from "../Pages/Users/DAO/Calc";
 import GaugeWeightVote from "../Pages/Users/DAO/GaugeWeightVote";
 import CreateVote from "../Pages/Users/DAO/CreateVote";
+import VoteInfo from "../Pages/Users/DAO/VoteInfo";
 
 function App() {
   const LoginRegisterRedirectCheck = ({ path, ...rest }) => {
@@ -58,6 +59,8 @@ function App() {
       return <Route component={CreateVote} />;
     } else if (path === "/locks") {
       return <Route component={Locks} />;
+    } else if (path === "/voteInfo") {
+      return <Route component={VoteInfo} />;
     } else {
       return <Route component={HomeScreen} />;
     }
@@ -85,6 +88,7 @@ function App() {
           <LoginRegisterRedirectCheck exact path="/calc" />
           <LoginRegisterRedirectCheck exact path="/gw-vote" />
           <LoginRegisterRedirectCheck exact path="/createVote" />
+          <LoginRegisterRedirectCheck exact path="/voteInfo" />
         </Switch>
       </BrowserRouter>
     </SnackbarProvider>
