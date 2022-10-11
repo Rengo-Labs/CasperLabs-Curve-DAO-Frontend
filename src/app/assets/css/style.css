@@ -5244,6 +5244,27 @@ html.menu-opened body {
   height: 40px;
 }
 
+.dt-picker .react-datetime-picker {
+  width: 100%;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: rgba(0, 0, 0, 0.09);
+  border-radius: 4px;
+  cursor: text;
+  font-size: 1rem;
+  line-height: 1.1876em;
+  letter-spacing: 0.00938em;
+  align-items: center;
+  display: inline-flex;
+}
+
+.dt-picker .react-datetime-picker__wrapper {
+  padding: 0 12px;
+  height: 3.3rem;
+  flex-shrink: 1;
+  border: 0;
+  border-bottom: 1px solid gray !important;
+}
+
 /*-----------------
 	29. Patient Dashboard
 -----------------------*/
