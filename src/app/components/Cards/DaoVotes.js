@@ -1,5 +1,6 @@
 // REACT
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 // MATERIAL UI
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -12,6 +13,7 @@ import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import VoteInfoProgressBar from "../Progress bar/VoteInfoProgressBar";
 
 // CONTENT
 const bull = (
@@ -26,12 +28,12 @@ const bull = (
 // COMPONENT FUNCTION
 const DaoVotes = (props) => {
   // States
-
+  const history = useHistory();
   // Handlers
 
   return (
     <>
-      <Card sx={{ width: 250, backgroundColor: "rgb(231, 235, 240)" }}>
+      <Card sx={{ minHeight: "585px", backgroundColor: "rgb(231, 235, 240)" }}>
         <CardContent>
           {/* Legend */}
           <div className="row no-gutters justify-content-center w-100 mb-0">
@@ -68,16 +70,17 @@ const DaoVotes = (props) => {
             </Typography>
           </div>
           {/* Description */}
-          <div className="row no-gutters mb-3">
+          <div className="row no-gutters mb-3" role="button">
             <section style={{ width: "220px", fontSize: "0.75rem" }}>
               <a
                 style={{
                   textDecoration: "none",
                   color: "#212529",
                 }}
-                href="#"
-                rel="noopener noreferrer nofollow"
-                target="_blank"
+                onClick={() => { history.push('/voteInfo')}}
+                // rel="noopener noreferrer nofollow"
+                // target="_blank"
+                role="button"
               >
                 {props.description}
               </a>
@@ -102,48 +105,10 @@ const DaoVotes = (props) => {
           )}
           {/* Progress Bars */}
           {/* Yes */}
-          <div className="row no-gutters w-100">
-            <div className="col-12">
-              <div className="row no-gutters justify-content-between">
-                <div className="col-6">Yes</div>
-                <div className="col-6 text-right">{`${props.yes}%`}</div>
-              </div>
-            </div>
-            <div
-              className="progress"
-              style={{ height: "30px", width: "100%", borderRadius: 0 }}
-            >
-              <div
-                className="progress-bar bg-success"
-                role="progressbar"
-                style={{ width: `${props.yes}%` }}
-                aria-valuenow={props.yes}
-                aria-valuemin="0"
-                aria-valuemax="100"
-              ></div>
-            </div>
-          </div>
+          <VoteInfoProgressBar width="w-100" polarQestion="Yes" percent={props.yes} color="bg-success"/>
           {/* No */}
-          <div className="row no-gutters w-100 mb-3">
-            <div className="col-12">
-              <div className="row no-gutters justify-content-between">
-                <div className="col-6">No</div>
-                <div className="col-6 text-right">{`${props.no}%`}</div>
-              </div>
-            </div>
-            <div
-              className="progress"
-              style={{ height: "30px", width: "100%", borderRadius: 0 }}
-            >
-              <div
-                className="progress-bar bg-danger"
-                role="progressbar"
-                style={{ width: `${props.no}%` }}
-                aria-valuenow={props.no}
-                aria-valuemin="0"
-                aria-valuemax="100"
-              ></div>
-            </div>
+          <div className="mb-3">
+            <VoteInfoProgressBar width="w-100" polarQestion="No" percent={props.no} color="bg-danger"/> 
           </div>
           {/* Time and Date vote Created */}
           <div className="row no-gutters w-100 mb-3">
