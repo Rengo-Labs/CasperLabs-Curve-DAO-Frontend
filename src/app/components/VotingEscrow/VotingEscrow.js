@@ -19,47 +19,174 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useSnackbar } from "notistack";
+import {
+  CasperServiceByJsonRPC,
+  CLByteArray,
+  CLPublicKey,
+  CLValueBuilder,
+  RuntimeArgs,
+} from "casper-js-sdk";
+import {
+  CREATE_VOTE_CONTRACT_HASH,
+  GAUGE_CONTROLLER_PACKAGE_HASH,
+} from "../blockchain/AccountHashes/Addresses";
+import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
+import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
+import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
+import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
+import Torus from "@toruslabs/casper-embed";
+import { CHAINS, SUPPORTED_NETWORKS } from "../Headers/HeaderDAO";
+import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
+import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
 
 // COMPONENT FUNCTION
 const VotingEscrow = () => {
   // States
+  let [activePublicKey, setActivePublicKey] = useState(
+    localStorage.getItem("Address")
+  );
+  let [selectedWallet, setSelectedWallet] = useState(
+    localStorage.getItem("selectedWallet")
+  );
+  let [torus, setTorus] = useState();
   const [commitOpen, setCommitOpen] = useState(false);
   const [smartOpen, setSmartOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
-  const [commitTransfer, setCommitTransfer] = useState([]);
-  const [commitSmart, setCommitSmart] = useState([]);
+  const [commitTransfer, setCommitTransfer] = useState("");
+  const [commitSmart, setCommitSmart] = useState("");
   const { enqueueSnackbar } = useSnackbar();
   // const [applyTransfer, setApplyTransfer] = useState();
   // const [applySmart, setApplySmart] = useState();
+  const [openSigning, setOpenSigning] = useState(false);
+  const [entryPoint, setEntryPoint] = useState();
+  const [runTimeArgs, setRunTimeArgs] = useState();
 
   //   Event Handlers
   const handleCommitOpen = () => {
     setCommitOpen(true);
-    // setEntryPoint("commit_transfer_ownership");
-    // setRunTimeArgs([commitTransfer]);
+    setEntryPoint("commit_transfer_ownership");
+    setRunTimeArgs([commitTransfer]);
   };
   const handleCommitClose = () => setCommitOpen(false);
   const handleSmartOpen = () => {
     setSmartOpen(true);
-    // setEntryPoint("commit_smart_Wallet_checker & apply");
-    // setRunTimeArgs([setCommitSmart]);
+    setEntryPoint("commit_smart_Wallet_checker & apply");
+    setRunTimeArgs([setCommitSmart]);
   };
   const handleSmartClose = () => setSmartOpen(false);
   const handleWalletOpen = () => {
     setWalletOpen(true);
-    // setEntryPoint("apply_transfer_ownership");
-    // setRunTimeArgs([]);
+    setEntryPoint("apply_transfer_ownership");
+    setRunTimeArgs([]);
   };
   const handleWalletClose = () => setWalletOpen(false);
   const handleApplyOpen = () => {
     setApplyOpen(true);
-    // setEntryPoint("apply_smart_wallet_checker");
-    // setRunTimeArgs([]);
+    setEntryPoint("apply_smart_wallet_checker");
+    setRunTimeArgs([]);
   };
   const handleApplyClose = () => setApplyOpen(false);
 
-  //STYLES
+  const handleCloseSigning = () => {
+    setOpenSigning(false);
+  };
+  const handleShowSigning = () => {
+    setOpenSigning(true);
+  };
+
+  async function createVoteMakeDeploy(entrypoint, runtimeargs) {
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const paymentAmount = 5000000000;
+      // const addrByteArray = new CLByteArray(
+      //   Uint8Array.from(Buffer.from(addr, "hex"))
+      // );
+      try {
+        let gaugeControllerpackageHash = Uint8Array.from(
+          Buffer.from(GAUGE_CONTROLLER_PACKAGE_HASH, "hex")
+        );
+        const runtimeArgs = RuntimeArgs.fromMap({
+          contractPackageHash: createRecipientAddress(
+            gaugeControllerpackageHash
+          ),
+          entrypoint: entrypoint,
+          runtimeargs: runtimeargs,
+        });
+        let contractHashAsByteArray = Uint8Array.from(
+          Buffer.from(CREATE_VOTE_CONTRACT_HASH, "hex")
+        );
+        let entryPoint = "create_vote";
+        // Set contract installation deploy (unsigned).
+        let deploy = await makeDeploy(
+          publicKey,
+          contractHashAsByteArray,
+          entryPoint,
+          runtimeArgs,
+          paymentAmount
+        );
+        console.log("make deploy: ", deploy);
+        try {
+          if (selectedWallet === "Casper") {
+            let signedDeploy = await signdeploywithcaspersigner(
+              deploy,
+              publicKeyHex
+            );
+            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            console.log("result", result);
+          } else {
+            // let Torus = new Torus();
+            torus = new Torus();
+            console.log("torus", torus);
+            await torus.init({
+              buildEnv: "testing",
+              showTorusButton: true,
+              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+            });
+            console.log("Torus123", torus);
+            console.log("torus", torus.provider);
+            const casperService = new CasperServiceByJsonRPC(torus?.provider);
+            const deployRes = await casperService.deploy(deploy);
+            console.log("deployRes", deployRes.deploy_hash);
+            console.log(
+              `... Contract installation deployHash: ${deployRes.deploy_hash}`
+            );
+            let result = await getDeploy(
+              NODE_ADDRESS,
+              deployRes.deploy_hash,
+              enqueueSnackbar
+            );
+            console.log(
+              `... Contract installed successfully.`,
+              JSON.parse(JSON.stringify(result))
+            );
+            console.log("result", result);
+          }
+          handleCloseSigning();
+          let variant = "success";
+          enqueueSnackbar("Created Vote Successfully", { variant });
+        } catch {
+          handleCloseSigning();
+          let variant = "Error";
+          enqueueSnackbar("Unable to Create Vote", { variant });
+        }
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        enqueueSnackbar("Something Went Wrong", { variant });
+      }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+  }
 
   return (
     <>
@@ -85,6 +212,7 @@ const VotingEscrow = () => {
                   </Typography>
                   <TextField
                     onChange={(e) => setCommitTransfer(e.target.value)}
+                    value={commitTransfer}
                     required
                     label="addr"
                     variant="standard"
