@@ -398,6 +398,15 @@ const VotingEscrow = () => {
                     click={handleWalletClose}
                     title="Add Description"
                   />
+                  <CreateVoteModal
+                    makeDeploy={createVoteMakeDeploy}
+                    entrtpoint={entryPoint}
+                    runtimeargs={runTimeArgs}
+                    open={commitOpen}
+                    close={handleCommitClose}
+                    click={handleCommitClose}
+                    title="Add Description"
+                  />
                 </CardContent>
               </Card>
             </div>
