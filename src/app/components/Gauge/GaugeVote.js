@@ -77,7 +77,7 @@ const GaugeVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleCommitOpen}
+                                      onClick={()=>{commitAddr.length <=0? enqueueSnackbar("Field is empty"): handleCommitOpen()}}
                                     >
                                       Submit
                                     </Button>
@@ -119,7 +119,7 @@ const GaugeVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleAddOpen}
+                                      onClick={()=>{addName.length <=0||addWeight.length <=0? enqueueSnackbar("Fields are empty"): handleAddOpen()}}
                                     >
                                       Submit
                                     </Button>
@@ -171,7 +171,7 @@ const GaugeVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleGaugeOpen}
+                                      onClick={()=>{addGaugeAddr.length <=0||addGaugeWeight.length <=0||addGaugeType.length <=0? enqueueSnackbar("Fields are empty"): handleGaugeOpen()}}
                                     >
                                       Submit
                                     </Button>
@@ -220,7 +220,7 @@ const GaugeVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleTypeOpen}
+                                      onClick={()=>{changeTypeId.length <=0||changeTypeWeight.length <=0? enqueueSnackbar("Fields are empty"): handleTypeOpen()}}
                                     >
                                       Submit
                                     </Button>
@@ -267,7 +267,7 @@ const GaugeVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleChangeOpen}
+                                      onClick={()=>{changeGaugeAddr.length <=0||changeGaugeWeight.length <=0? enqueueSnackbar("Fields are empty"): handleChangeOpen()}}
                                     >
                                       Submit
                                     </Button>
