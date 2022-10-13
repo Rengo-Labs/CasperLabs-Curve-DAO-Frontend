@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
 // CUSTOM CSS
@@ -33,6 +33,8 @@ function VoteInfo(props) {
   let [torus, setTorus] = useState();
 
   let [showVoters, setShowVoters] = useState(false);
+
+  const history = useHistory();
 
   return (
     <>
@@ -89,7 +91,7 @@ function VoteInfo(props) {
                             <Typography className="mb-2">1.187</Typography>
                             <Typography sx={{ fontSize: 18}} >Total Votes: 9</Typography>
                         </div>
-                        <Typography className="px-3 text-dark" sx={{ fontSize: 19, fontWeight:"bold" }}  component={"div"}>
+                        <Typography className="px-3 text-dark" sx={{ fontSize: 19, fontWeight:"bold", cursor:"pointer" }}  component={"div"} onClick={() => { history.push('/locks')}}>
                             Vote distribution at snapshot chart
                         </Typography>
                         <div className="ml-3 my-2">
