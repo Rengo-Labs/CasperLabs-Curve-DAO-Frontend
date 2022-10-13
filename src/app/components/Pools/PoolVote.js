@@ -39,13 +39,13 @@ const PoolVote = () => {
     const { enqueueSnackbar } = useSnackbar();
   // States
   const [commitFeeOpen, setCommitFeeOpen] = useState(false);
-  const [commitNewFee, setCommitNewFee] = useState(false);
-  const [commitAdminFee, setCommitAdminFee] = useState(false);
+  const [commitNewFee, setCommitNewFee] = useState("");
+  const [commitAdminFee, setCommitAdminFee] = useState("");
   const [rampAOpen, setRampAOpen] = useState(false);
-  const [rampFutureA, setRampFutureA] = useState(false);
-  const [rampFutureTime, setRampFutureTime] = useState(false);
+  const [rampFutureA, setRampFutureA] = useState("");
+  const [rampFutureTime, setRampFutureTime] = useState("");
   const [commitOpen, setCommitOpen] = useState(false);
-  const [commitNewOwner, setCommitNewOwner] = useState(false);
+  const [commitNewOwner, setCommitNewOwner] = useState("");
   const [withdrawFeesOpen, setWithdrawFeesOpen] = useState(false);
   const [unkillMeOpen, setUnkillMeOpen] = useState(false);
   const [applyOwnershipOpen, setApplyOwnershipOpen] = useState(false);
@@ -234,7 +234,7 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleCommitFeeOpen}
+                                      onClick={()=>{commitNewFee.length <=0||commitAdminFee.length <=0? enqueueSnackbar("Fields are empty"): handleCommitFeeOpen()}}
                                     >
                                       Submit
                                     </Button>
@@ -278,7 +278,7 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleRampAOpen}
+                                      onClick={()=>{rampFutureA.length <=0||rampFutureTime.length <=0? enqueueSnackbar("Fields are empty"):handleRampAOpen()}}
                                     >
                                       Submit
                                     </Button>
@@ -316,7 +316,7 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleCommitOpen}
+                                      onClick={()=>{commitNewOwner.length <=0? enqueueSnackbar("Fields are empty"): handleCommitOpen()}}
                                     >
                                       Submit
                                     </Button>
