@@ -14,6 +14,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import VoteInfoProgressBar from "../Progress bar/VoteInfoProgressBar";
+import { Paper } from "@mui/material";
 
 // CONTENT
 const bull = (
@@ -33,7 +34,10 @@ const DaoVotes = (props) => {
 
   return (
     <>
-      <Card sx={{ minHeight: "585px", backgroundColor: "rgb(231, 235, 240)" }}>
+      <Paper
+        elevation={4}
+        sx={{ minHeight: "585px", backgroundColor: "rgb(231, 235, 240)" }}
+      >
         <CardContent>
           {/* Legend */}
           <div className="row no-gutters justify-content-center w-100 mb-0">
@@ -43,7 +47,7 @@ const DaoVotes = (props) => {
           </div>
           <div className="row no-gutters justify-content-center w-100 mb-3">
             <Typography
-              variant="bod2"
+              variant="body2"
               gutterBottom
               component={"div"}
               fontSize={"1rem"}
@@ -76,11 +80,13 @@ const DaoVotes = (props) => {
                 style={{
                   textDecoration: "none",
                   color: "#212529",
+                  cursor: "pointer",
                 }}
-                onClick={() => { history.push('/voteInfo')}}
+                onClick={() => {
+                  history.push("/voteInfo");
+                }}
                 // rel="noopener noreferrer nofollow"
                 // target="_blank"
-                role="button"
               >
                 {props.description}
               </a>
@@ -105,10 +111,20 @@ const DaoVotes = (props) => {
           )}
           {/* Progress Bars */}
           {/* Yes */}
-          <VoteInfoProgressBar width="w-100" polarQestion="Yes" percent={props.yes} color="bg-success"/>
+          <VoteInfoProgressBar
+            width="w-100"
+            polarQestion="Yes"
+            percent={props.yes}
+            color="#5300E8"
+          />
           {/* No */}
           <div className="mb-3">
-            <VoteInfoProgressBar width="w-100" polarQestion="No" percent={props.no} color="bg-danger"/> 
+            <VoteInfoProgressBar
+              width="w-100"
+              polarQestion="No"
+              percent={props.no}
+              color="#9fade6"
+            />
           </div>
           {/* Time and Date vote Created */}
           <div className="row no-gutters w-100 mb-3">
@@ -129,7 +145,7 @@ const DaoVotes = (props) => {
           {/* Enaction */}
           {props.enaction ? (
             <div className="row no-gutters w-100 mb-3">
-              <div className="col-12 text-success">
+              <div className="col-12" style={{ color: "#019267" }}>
                 <Typography variant="body1" component={"div"}>
                   <span>
                     <CheckIcon />
@@ -140,7 +156,7 @@ const DaoVotes = (props) => {
             </div>
           ) : (
             <div className="row no-gutters w-100 mb-3">
-              <div className="col-12 text-danger">
+              <div className="col-12" style={{ color: "#de1738" }}>
                 <Typography variant="body1" component={"div"}>
                   <span>
                     <CloseIcon />
@@ -161,7 +177,7 @@ const DaoVotes = (props) => {
                       Support:
                     </Typography>
                   </div>
-                  <div className="col-8 text-success">
+                  <div className="col-8" style={{ color: "#019267" }}>
                     <Typography variant="body1" component={"div"}>
                       <span className="p-2">{`${props.supportVolume}%`}</span>
                       <span>
@@ -177,7 +193,7 @@ const DaoVotes = (props) => {
                       Support:
                     </Typography>
                   </div>
-                  <div className="col-8 text-danger">
+                  <div className="col-8" style={{ color: "#de1738" }}>
                     <Typography variant="body1" component={"div"}>
                       <span className="p-2">{`${props.supportVolume}%`}</span>
                       <span>
@@ -213,7 +229,7 @@ const DaoVotes = (props) => {
                       Quorum:
                     </Typography>
                   </div>
-                  <div className="col-8 text-danger">
+                  <div className="col-8" style={{ color: "#de1738" }}>
                     <Typography variant="body1" component={"div"}>
                       <span className="p-2">{`${props.quorumVolume}%`}</span>
                       <span>
@@ -228,7 +244,7 @@ const DaoVotes = (props) => {
         </CardContent>
         {/* <CardActions>
         </CardActions> */}
-      </Card>
+      </Paper>
     </>
   );
 };

@@ -104,10 +104,10 @@ const CreateVoteTabs = () => {
             </StyledEngineProvider>
           </Box>
           <TabPanel value={value} index={0} className="MuiBox-root">
-            <PoolVote/>
+            <PoolVote />
           </TabPanel>
           <TabPanel value={value} index={1} className="MuiBox-root">
-            <GaugeVote/>
+            <GaugeVote />
           </TabPanel>
           {/* <TabPanel value={value} index={2} className="MuiBox-root">
             <EmergencyMember/>

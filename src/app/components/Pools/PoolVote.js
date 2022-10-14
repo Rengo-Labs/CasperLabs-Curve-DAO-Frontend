@@ -8,6 +8,7 @@ import "../../assets/css/common.css";
 import "../../assets/css/bootstrap.min.css";
 //COMPONENTS
 import CreateVoteModal from "../Modals/CreateVoteModal";
+import { CHAINS, SUPPORTED_NETWORKS } from "../Headers/HeaderDAO";
 // MATERIAL UI
 import TextField from "@mui/material/TextField";
 import Card from '@mui/material/Card';
@@ -19,31 +20,169 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
+//BLOCKCHAIN
+import Torus from "@toruslabs/casper-embed";
+import { CasperServiceByJsonRPC, CLByteArray, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
+import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
+import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
+import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
+import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
+import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
+import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
+import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/AccountHashes/Addresses";
+import { CREATE_VOTE_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
+import { useSnackbar } from 'notistack';
+
 // COMPONENT FUNCTION
 const PoolVote = () => {
+
+    const { enqueueSnackbar } = useSnackbar();
   // States
+  const [commitFeeOpen, setCommitFeeOpen] = useState(false);
+  const [commitNewFee, setCommitNewFee] = useState("");
+  const [commitAdminFee, setCommitAdminFee] = useState("");
+  const [rampAOpen, setRampAOpen] = useState(false);
+  const [rampFutureA, setRampFutureA] = useState("");
+  const [rampFutureTime, setRampFutureTime] = useState("");
   const [commitOpen, setCommitOpen] = useState(false);
-  const [addOpen, setAddOpen] = useState(false);
-  const [gaugeOpen, setGaugeOpen] = useState(false);
-  const [typeOpen, setTypeOpen] = useState(false);
-  const [changeOpen, setChangeOpen] = useState(false);
-  const [applyOpen, setApplyOpen] = useState(false);
+  const [commitNewOwner, setCommitNewOwner] = useState("");
+  const [withdrawFeesOpen, setWithdrawFeesOpen] = useState(false);
+  const [unkillMeOpen, setUnkillMeOpen] = useState(false);
+  const [applyOwnershipOpen, setApplyOwnershipOpen] = useState(false);
+  const [revertOwnershipOpen, setRevertOwnershipOpen] = useState(false);
+  const [applyFeeOpen, setApplyFeeOpen] = useState(false);
+  const [stopRampOpen, setStopRampOpen] = useState(false);
+  const [revertParametersOpen, setRevertParametersOpen] = useState(false);
+  const [openSigning, setOpenSigning] = useState(false);
+  let [activePublicKey, setActivePublicKey] = useState(
+    localStorage.getItem("Address")
+  );
+  let [selectedWallet, setSelectedWallet] = useState(
+    localStorage.getItem("selectedWallet")
+  );
+  let [torus, setTorus] = useState();
+
+  const [entryPoint, setEntryPoint] = useState("");
+  const [runTimeArgs, setRunTimeArgs] = useState([]);
 
   //   Event Handlers
-  const handleCommitOpen = () => setCommitOpen(true);
+  const handleCommitFeeOpen = () => {setCommitFeeOpen(true);setEntryPoint("commit_new_fee");setRunTimeArgs([commitNewFee,commitAdminFee]) }
+  const handleCommitFeeClose = () => setCommitFeeOpen(false);
+  const handleRampAOpen = () => {setRampAOpen(true);setEntryPoint("ramp_A");setRunTimeArgs([rampFutureA,rampFutureTime]) }
+  const handleRampAClose = () => setRampAOpen(false);
+  const handleCommitOpen = () => {setCommitOpen(true); setEntryPoint("commit_transfer_ownership");setRunTimeArgs([commitNewOwner]) }
   const handleCommitClose = () => setCommitOpen(false);
-  const handleAddOpen = () => setAddOpen(true);
-  const handleAddClose = () => setAddOpen(false);
-  const handleGaugeOpen = () => setGaugeOpen(true);
-  const handleGaugeClose = () => setGaugeOpen(false);
-  const handleTypeOpen = () => setTypeOpen(true);
-  const handleTypeClose = () => setTypeOpen(false);
-  const handleChangeOpen = () => setChangeOpen(true);
-  const handleChangeClose = () => setChangeOpen(false);
-  const handleApplyOpen = () => setApplyOpen(true);
-  const handleApplyClose = () => setApplyOpen(false);
+  const handleWithdrawFeesOpen = () => {setWithdrawFeesOpen(true); setEntryPoint("withdraw_admin_fees"); setRunTimeArgs([])}
+  const handleWithdrawFeesClose = () => setWithdrawFeesOpen(false);
+  const handleUnkillMeOpen = () => {setUnkillMeOpen(true); setEntryPoint("unkill_me"); setRunTimeArgs([])}
+  const handleUnkillMeClose = () => setUnkillMeOpen(false);
+  const handleApplyOwnershipOpen = () => {setApplyOwnershipOpen(true); setEntryPoint("apply_transfer_ownership"); setRunTimeArgs([])}
+  const handleApplyOwnershipClose = () => setApplyOwnershipOpen(false);
+  const handleRevertOwnershipOpen = () => {setRevertOwnershipOpen(true); setEntryPoint("revert_transfer_ownership"); setRunTimeArgs([])}
+  const handleRevertOwnershipClose = () => setRevertOwnershipOpen(false);
+  const handleApplyFeeOpen = () => {setApplyFeeOpen(true); setEntryPoint("apply_new_fee"); setRunTimeArgs([])}
+  const handleApplyFeeClose = () => setApplyFeeOpen(false);
+  const handleStopRampOpen = () => {setStopRampOpen(true); setEntryPoint("stop_ramp_A"); setRunTimeArgs([])}
+  const handleStopRampClose = () => setStopRampOpen(false);
+  const handleRevertParametersOpen = () => {setRevertParametersOpen(true); setEntryPoint("revert_new_parameters"); setRunTimeArgs([])}
+  const handleRevertParametersClose = () => setRevertParametersOpen(false);
+  const handleCloseSigning = () => {
+    setOpenSigning(false);
+  };
+  const handleShowSigning = () => {
+    setOpenSigning(true);
+  };
 
-  //STYLES
+  //MAKE DEPLOY
+  async function createVoteMakeDeploy(entrypoint,runtimeargs) {
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const paymentAmount = 5000000000;
+      try {
+        let gaugeControllerpackageHash = Uint8Array.from(
+            Buffer.from(GAUGE_CONTROLLER_PACKAGE_HASH, "hex")
+          );
+        const runtimeArgs = RuntimeArgs.fromMap({
+          contractPackageHash: createRecipientAddress(gaugeControllerpackageHash),
+          entrypoint: entrypoint,
+          runtimeargs: runtimeargs
+        });
+        let contractHashAsByteArray = Uint8Array.from(
+          Buffer.from(CREATE_VOTE_CONTRACT_HASH, "hex")
+        );
+        let entryPoint = "create_vote";
+        // Set contract installation deploy (unsigned).
+        let deploy = await makeDeploy(
+          publicKey,
+          contractHashAsByteArray,
+          entryPoint,
+          runtimeArgs,
+          paymentAmount
+        );
+        console.log("make deploy: ", deploy);
+        try {
+          if (selectedWallet === "Casper") {
+            let signedDeploy = await signdeploywithcaspersigner(
+              deploy,
+              publicKeyHex
+            );
+            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            console.log("result", result);
+          } else {
+            // let Torus = new Torus();
+            torus = new Torus();
+            console.log("torus", torus);
+            await torus.init({
+              buildEnv: "testing",
+              showTorusButton: true,
+              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+            });
+            console.log("Torus123", torus);
+            console.log("torus", torus.provider);
+            const casperService = new CasperServiceByJsonRPC(torus?.provider);
+            const deployRes = await casperService.deploy(deploy);
+            console.log("deployRes", deployRes.deploy_hash);
+            console.log(
+              `... Contract installation deployHash: ${deployRes.deploy_hash}`
+            );
+            let result = await getDeploy(
+              NODE_ADDRESS,
+              deployRes.deploy_hash,
+              enqueueSnackbar
+            );
+            console.log(
+              `... Contract installed successfully.`,
+              JSON.parse(JSON.stringify(result))
+            );
+            console.log("result", result);
+          }
+          handleCloseSigning();
+          let variant = "success";
+          enqueueSnackbar("Created Vote Successfully", { variant })
+
+
+        } catch {
+          handleCloseSigning();
+          let variant = "Error";
+          enqueueSnackbar("Unable to Create Vote", { variant })
+        }
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        enqueueSnackbar("Something Went Wrong", { variant });
+      }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+  }
 
   return (
     <>
@@ -72,11 +211,13 @@ const PoolVote = () => {
                             required
                             label="new_fee %"
                             variant="standard"
+                            onChange={(e)=>setCommitNewFee(e.target.value)}
                         />
                         <TextField
                             required
                             label="new_admin_fee %"
                             variant="standard"
+                            onChange={(e)=>setCommitAdminFee(e.target.value)}
                         />
                         <div className="mt-4">
                             <Typography
@@ -93,14 +234,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleCommitOpen}
+                                      onClick={()=>{commitNewFee.length <=0||commitAdminFee.length <=0? enqueueSnackbar("Fields are empty"): handleCommitFeeOpen()}}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={commitOpen} close={handleCommitClose} click={handleCommitClose} title='Add Description'/>
+                        <CreateVoteModal makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs} open={commitFeeOpen} close={handleCommitFeeClose} click={handleCommitFeeClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -114,11 +255,13 @@ const PoolVote = () => {
                             required
                             label="future_A"
                             variant="standard"
+                            onChange={(e)=>setRampFutureA(e.target.value)}
                         />
                          <TextField
                             required
                             label="future_time"
                             variant="standard"
+                            onChange={(e)=>setRampFutureTime(e.target.value)}
                         />
                         <div className="mt-4">
                             <Typography
@@ -135,14 +278,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleAddOpen}
+                                      onClick={()=>{rampFutureA.length <=0||rampFutureTime.length <=0? enqueueSnackbar("Fields are empty"):handleRampAOpen()}}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={addOpen} close={handleAddClose} click={handleAddClose} title='Add Description'/>
+                        <CreateVoteModal makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs} open={rampAOpen} close={handleRampAClose} click={handleRampAClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -156,6 +299,7 @@ const PoolVote = () => {
                             required
                             label="new_owner"
                             variant="standard"
+                            onChange={(e)=>setCommitNewOwner(e.target.value)}
                         />
                         <div className="mt-4">
                             <Typography
@@ -172,14 +316,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleGaugeOpen}
+                                      onClick={()=>{commitNewOwner.length <=0? enqueueSnackbar("Fields are empty"): handleCommitOpen()}}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={gaugeOpen} close={handleGaugeClose} click={handleGaugeClose} title='Add Description'/>
+                        <CreateVoteModal makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs} open={commitOpen} close={handleCommitClose} click={handleCommitClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -206,14 +350,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleTypeOpen}
+                                      onClick={handleWithdrawFeesOpen}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={typeOpen} close={handleTypeClose} click={handleTypeClose} title='Add Description'/>
+                        <CreateVoteModal makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs}  open={withdrawFeesOpen} close={handleWithdrawFeesClose} click={handleWithdrawFeesClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -238,14 +382,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleChangeOpen}
+                                      onClick={handleUnkillMeOpen}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={changeOpen} close={handleChangeClose} click={handleChangeClose} title='Add Description'/>
+                        <CreateVoteModal makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs} open={unkillMeOpen} close={handleUnkillMeClose} click={handleUnkillMeClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -270,14 +414,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleApplyOpen}
+                                      onClick={handleApplyOwnershipOpen}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={applyOpen} close={handleApplyClose} click={handleApplyClose} title='Add Description'/>
+                        <CreateVoteModal makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs} open={applyOwnershipOpen} close={handleApplyOwnershipClose} click={handleApplyOwnershipClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -304,14 +448,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleTypeOpen}
+                                      onClick={handleRevertOwnershipOpen}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={typeOpen} close={handleTypeClose} click={handleTypeClose} title='Add Description'/>
+                        <CreateVoteModal  makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs} open={revertOwnershipOpen} close={handleRevertOwnershipClose} click={handleRevertOwnershipClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -336,14 +480,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleChangeOpen}
+                                      onClick={handleApplyFeeOpen}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={changeOpen} close={handleChangeClose} click={handleChangeClose} title='Add Description'/>
+                        <CreateVoteModal  makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs}  open={applyFeeOpen} close={handleApplyFeeClose} click={handleApplyFeeClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -368,14 +512,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleApplyOpen}
+                                      onClick={handleStopRampOpen}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={applyOpen} close={handleApplyClose} click={handleApplyClose} title='Add Description'/>
+                        <CreateVoteModal makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs} open={stopRampOpen} close={handleStopRampClose} click={handleStopRampClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
@@ -402,14 +546,14 @@ const PoolVote = () => {
                                       variant="contained"
                                       size="large"
                                       style={{ backgroundColor: "#5300e8", color: "white" }}
-                                      onClick={handleTypeOpen}
+                                      onClick={handleRevertParametersOpen}
                                     >
                                       Submit
                                     </Button>
                                 </span>
                             </Typography>
                         </div>
-                        <CreateVoteModal open={typeOpen} close={handleTypeClose} click={handleTypeClose} title='Add Description'/>
+                        <CreateVoteModal makeDeploy={createVoteMakeDeploy} entrtpoint={entryPoint} runtimeArgs={runTimeArgs} open={revertParametersOpen} close={handleRevertParametersClose} click={handleRevertParametersClose} title='Add Description'/>
                     </CardContent>
                 </Card>
             </div>
