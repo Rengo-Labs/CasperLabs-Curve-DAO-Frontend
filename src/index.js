@@ -4,17 +4,30 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import App from "./app/containers/App/Application";
 import axios from "axios";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 // import 'bootstrap/dist/css/bootstrap.css'; // or include from a CDN
 // import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 
 // axios.defaults.withCredentials = true;
 
+const client = new ApolloClient({
+  uri: "https://curve-dao-test-backend.herokuapp.com/",
+  cache: new InMemoryCache(),
+});
+
 if (process.env.REACT_APP_BACKEND_SERVER_ADDRESS)
   axios.defaults.baseURL = `${process.env.REACT_APP_BACKEND_SERVER_ADDRESS}`;
 // else axios.defaults.baseURL = `http://localhost:3000`;
-else axios.defaults.baseURL = `https://casper-uniswap-v2-graphql.herokuapp.com/`;
+else
+  axios.defaults.baseURL = `https://casper-uniswap-v2-graphql.herokuapp.com/`;
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(
+  <ApolloProvider client={client}>
+    <App />
+  </ApolloProvider>,
+
+  document.getElementById("root")
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

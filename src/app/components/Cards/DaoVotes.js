@@ -15,6 +15,8 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import VoteInfoProgressBar from "../Progress bar/VoteInfoProgressBar";
 import { Paper } from "@mui/material";
+// GRAPHQL
+import { useQuery, gql } from "@apollo/client";
 
 // CONTENT
 const bull = (
@@ -26,10 +28,29 @@ const bull = (
   </Box>
 );
 
+const GET_VOTES_DATA = gql`
+  query {
+    gaugeVotesByTime(
+      orderBy: "gauge"
+      orderDirection: "desc"
+      time_gt: "604800"
+    ) {
+      time
+      user
+    }
+  }
+`;
+
 // COMPONENT FUNCTION
 const DaoVotes = (props) => {
   // States
   const history = useHistory();
+
+  // Queries
+  const votesDataObj = useQuery(GET_VOTES_DATA);
+
+  console.log("this is data of gql: ", votesDataObj);
+
   // Handlers
 
   return (
