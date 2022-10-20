@@ -11,7 +11,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 // axios.defaults.withCredentials = true;
 
 const client = new ApolloClient({
-  uri: "https://curve-dao-test-backend.herokuapp.com/",
+  uri: "https://curve-backend.herokuapp.com/graphql",
   cache: new InMemoryCache(),
 });
 

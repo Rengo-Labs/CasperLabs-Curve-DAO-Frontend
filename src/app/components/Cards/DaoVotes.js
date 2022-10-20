@@ -1,5 +1,5 @@
 // REACT
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 // MATERIAL UI
 import Box from "@mui/material/Box";
@@ -17,6 +17,8 @@ import VoteInfoProgressBar from "../Progress bar/VoteInfoProgressBar";
 import { Paper } from "@mui/material";
 // GRAPHQL
 import { useQuery, gql } from "@apollo/client";
+// UTILS
+import { decorateVotes } from "../../assets/js/voteStore";
 
 // CONTENT
 const bull = (
@@ -28,15 +30,43 @@ const bull = (
   </Box>
 );
 
+let defaultAccount = "Default Account";
+
+const getUserVotes = gql`
+  fragment vote_cast on Votes {
+    casts(where: { voter: "${defaultAccount}" }) {
+      id
+      voteId
+      voteNum
+      voter
+      supports
+      voterStake
+    }
+  }
+`;
+
 const GET_VOTES_DATA = gql`
   query {
-    gaugeVotesByTime(
-      orderBy: "gauge"
-      orderDirection: "desc"
-      time_gt: "604800"
-    ) {
-      time
-      user
+    votes {
+      id
+      appAddress
+      orgAddress
+      creator
+      metadata
+      executed
+      startDate
+      snapshotBlock
+      supportRequiredPct
+      minAcceptQuorum
+      yea
+      nay
+      votingPower
+      script
+      creatorVotingPower
+      transactionHash
+      castCount
+      voteCountSeq
+      # {getUserVotes !== null ? getUserVotes : ''}
     }
   }
 `;
@@ -44,12 +74,35 @@ const GET_VOTES_DATA = gql`
 // COMPONENT FUNCTION
 const DaoVotes = (props) => {
   // States
+  const [votes, setVotes] = useState();
   const history = useHistory();
 
   // Queries
-  const votesDataObj = useQuery(GET_VOTES_DATA);
+  const { error, loading, data } = useQuery(GET_VOTES_DATA);
+  console.log("this is data of gql: ", data);
 
-  console.log("this is data of gql: ", votesDataObj);
+  let loadData = () => {
+    return new Promise((res, rej) => {
+      data ? res(setVotes(data.votes)) : rej(error);
+    });
+  };
+
+  const resolveData = async () => {
+    try {
+      await loadData();
+    } catch (error) {
+      console.log("this is promise error: ", error);
+    }
+  };
+
+  // Side Effects
+  useEffect(() => {
+    resolveData();
+  }, [data]);
+
+  console.log("the votes are: ", typeof votes);
+  // let votesArray = decorateVotes(votes);
+  // console.log("votes after processing: ", votesArray);
 
   // Handlers
 
@@ -74,7 +127,7 @@ const DaoVotes = (props) => {
               fontSize={"1rem"}
               color={"#714CFE"}
             >
-              ({props.legendStatus})
+              {/* ({props.legendStatus}) */}
             </Typography>
           </div>
           {/* Title */}

@@ -41,7 +41,7 @@ const Dao = () => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterOutcome, setFilterOutcome] = useState("All");
   const [filterApp, setFilterApp] = useState("All");
-  const [daoLegend, setDaoLegend] = useState("Parameter");
+  const [daoLegend, setDaoLegend] = useState("Vote");
   const [daoLegendStatus, setDaoLegendStatus] = useState("60% / 15%");
   const [daoTitle, setDaoTitle] = useState("#217");
   const [daoDescription, setDaoDescription] = useState(
