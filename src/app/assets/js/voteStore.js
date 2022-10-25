@@ -1,6 +1,7 @@
 // import { allabis, poolAbis } from "./allabis";
 import BigNumber from "bignumber.js";
 import { gql, useQuery } from "@apollo/client";
+import { truncate } from "./helpers";
 
 export const OWNERSHIP_VOTE_TIME = 604800;
 export const PARAMETER_VOTE_TIME = 604800;
@@ -21,9 +22,11 @@ export const time = 604800;
 // let ALL_POOLS = Object.values(poolAbis).map((pool) =>
 //   pool.swap_address.toLowerCase()
 // );
-
-export function getVoteId(vote) {
-  return +vote.id.split(":")[1];
+let vote = {
+  id: "id:1",
+};
+export function getVoteId() {
+  return vote.id.split(":")[1];
 }
 
 export function getVotingAppName(address) {
@@ -123,34 +126,77 @@ export function hasQuorum(vote) {
   return isValuePct(vote.yea, vote.votingPower, vote.minAcceptQuorum);
 }
 
-export const decorateVotes = (votes) => {
-  return votes.map((vote) => {
-    vote.time = time;
-    vote.timeLeft = time - (new Date().getTime() / 1000 - vote.startDate);
-    vote.totalSupport = +vote.yea + +vote.nay;
-    vote.voteNumber = getVoteId(vote);
-    vote.yeap =
-      vote.totalSupport == 0
-        ? 0
-        : ((+vote.yea / vote.totalSupport) * 100).toFixed(1);
-    vote.nop =
-      vote.totalSupport == 0
-        ? 0
-        : ((+vote.nay / vote.totalSupport) * 100).toFixed(1);
-    vote.callAddress = vote.script.substr(90, 40).toLowerCase();
-    // vote.contractCalled = contractCalled(vote);
-    // vote.contractName = contractName(vote);
-    if (isVoteOpen(vote) && !vote.executed) vote.status = 1;
-    if (!isVoteOpen(vote) || vote.executed) vote.status = 2;
-    if (vote.status == 1) vote.outcome = 4;
-    if (vote.executed) vote.outcome = 3;
-    if (isRejected(vote)) vote.outcome = 2;
-    if (!vote.executed && canExecute(vote)) vote.outcome = 1;
-    if (isRejected(vote)) {
-      vote.rejectedReason = 3;
-      if (!hasSupport(vote)) vote.rejectedReason = 1;
-      else if (!hasQuorum(vote)) vote.rejectedReason = 2;
-    }
-    return vote;
-  });
+export const getVoteCreatedOn = (votes) => {
+  var voteCreatedOn = votes.map((vote) => vote.startDate);
+  return (voteCreatedOn = [
+    "2022-05-01T13:42:00+05:00",
+    "2022-06-01T13:42:00+05:00",
+    "2022-07-01T13:42:00+05:00",
+  ]);
 };
+
+export const formattedMetadata = (votes) => {
+  var metadata = votes.map((vote) => {
+    return truncate(vote.metadata, 100, true);
+  });
+  return metadata;
+};
+
+export const decorateVotes = (votes) => {
+  let decorations = [];
+  decorations.voteNumber = getVoteId();
+  decorations.totalSupport = votes.map((vote) => +vote.yea + +vote.nay);
+  decorations.yeap = votes.map((vote) =>
+    decorations.totalSupport == 0
+      ? 0
+      : ((+vote.yea / (+vote.yea + +vote.nay)) * 100).toFixed(1)
+  );
+  decorations.nop = votes.map((vote) =>
+    decorations.totalSupport == 0
+      ? 0
+      : ((+vote.nay / (+vote.yea + +vote.nay)) * 100).toFixed(1)
+  );
+
+  decorations.createdOn = getVoteCreatedOn(votes);
+  decorations.metadata = formattedMetadata(votes);
+
+  return decorations;
+};
+
+let totalSupport;
+export const getTotalSupport = (votes) => {
+  totalSupport = votes.map((vote) => +vote.yea + +vote.nay);
+  return totalSupport;
+};
+
+// export const decorateVotes = (votes) => {
+//   return votes.map((vote) => {
+//     vote.time = time;
+//     vote.timeLeft = time - (new Date().getTime() / 1000 - vote.startDate);
+//     vote.totalSupport = +vote.yea + +vote.nay;
+//     voteNumber = getVoteId();
+//     vote.yeap =
+//       vote.totalSupport == 0
+//         ? 0
+//         : ((+vote.yea / vote.totalSupport) * 100).toFixed(1);
+//     vote.nop =
+//       vote.totalSupport == 0
+//         ? 0
+//         : ((+vote.nay / vote.totalSupport) * 100).toFixed(1);
+//     vote.callAddress = vote.script.substr(90, 40).toLowerCase();
+//     // vote.contractCalled = contractCalled(vote);
+//     // vote.contractName = contractName(vote);
+//     if (isVoteOpen(vote) && !vote.executed) vote.status = 1;
+//     if (!isVoteOpen(vote) || vote.executed) vote.status = 2;
+//     if (vote.status == 1) vote.outcome = 4;
+//     if (vote.executed) vote.outcome = 3;
+//     if (isRejected(vote)) vote.outcome = 2;
+//     if (!vote.executed && canExecute(vote)) vote.outcome = 1;
+//     if (isRejected(vote)) {
+//       vote.rejectedReason = 3;
+//       if (!hasSupport(vote)) vote.rejectedReason = 1;
+//       else if (!hasQuorum(vote)) vote.rejectedReason = 2;
+//     }
+//     return vote;
+//   });
+// };

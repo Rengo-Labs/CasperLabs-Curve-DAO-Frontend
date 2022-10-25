@@ -19,6 +19,7 @@ import { Paper } from "@mui/material";
 import { useQuery, gql } from "@apollo/client";
 // UTILS
 import { decorateVotes } from "../../assets/js/voteStore";
+import { truncate } from "../../assets/js/helpers";
 
 // CONTENT
 const bull = (
@@ -30,81 +31,122 @@ const bull = (
   </Box>
 );
 
+const CountDownTimer = () => {
+  let year = new Date().getFullYear();
+  const difference = +new Date(`11/30/${year}`) - +new Date();
+
+  let timeLeft = {};
+  if (difference > 0) {
+    timeLeft = {
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
+    };
+  }
+
+  return timeLeft;
+};
+
 let defaultAccount = "Default Account";
 
-const getUserVotes = gql`
-  fragment vote_cast on Votes {
-    casts(where: { voter: "${defaultAccount}" }) {
-      id
-      voteId
-      voteNum
-      voter
-      supports
-      voterStake
-    }
-  }
-`;
+// const getUserVotes = gql`
+//   fragment vote_cast on Votes {
+//     casts(where: { voter: "${defaultAccount}" }) {
+//       id
+//       voteId
+//       voteNum
+//       voter
+//       supports
+//       voterStake
+//     }
+//   }
+// `;
 
-const GET_VOTES_DATA = gql`
-  query {
-    votes {
-      id
-      appAddress
-      orgAddress
-      creator
-      metadata
-      executed
-      startDate
-      snapshotBlock
-      supportRequiredPct
-      minAcceptQuorum
-      yea
-      nay
-      votingPower
-      script
-      creatorVotingPower
-      transactionHash
-      castCount
-      voteCountSeq
-      # {getUserVotes !== null ? getUserVotes : ''}
-    }
-  }
-`;
+// const GET_VOTES_DATA = gql`
+//   query {
+//     votes {
+//       id
+//       appAddress
+//       orgAddress
+//       creator
+//       metadata
+//       executed
+//       startDate
+//       snapshotBlock
+//       supportRequiredPct
+//       minAcceptQuorum
+//       yea
+//       nay
+//       votingPower
+//       script
+//       creatorVotingPower
+//       transactionHash
+//       castCount
+//       voteCountSeq
+//       # {getUserVotes !== null ? getUserVotes : ''}
+//     }
+//   }
+// `;
 
 // COMPONENT FUNCTION
 const DaoVotes = (props) => {
   // States
-  const [votes, setVotes] = useState();
+  // const [votes, setVotes] = useState();
+  const [timeLeft, setTimeLeft] = useState(CountDownTimer());
   const history = useHistory();
 
-  // Queries
-  const { error, loading, data } = useQuery(GET_VOTES_DATA);
-  console.log("this is data of gql: ", data);
+  // // Queries
+  // const { error, loading, data } = useQuery(GET_VOTES_DATA);
+  // console.log("this is data of gql: ", data);
 
-  let loadData = () => {
-    return new Promise((res, rej) => {
-      data ? res(setVotes(data.votes)) : rej(error);
-    });
-  };
+  // let loadData = () => {
+  //   return new Promise((res, rej) => {
+  //     data ? res(setVotes(data.votes)) : rej(error);
+  //   });
+  // };
 
-  const resolveData = async () => {
-    try {
-      await loadData();
-    } catch (error) {
-      console.log("this is promise error: ", error);
-    }
-  };
+  // const resolveData = async () => {
+  //   try {
+  //     await loadData();
+  //   } catch (error) {
+  //     console.log("this is promise error: ", error);
+  //   }
+  // };
 
-  // Side Effects
-  useEffect(() => {
-    resolveData();
-  }, [data]);
+  // // Side Effects
+  // useEffect(() => {
+  //   resolveData();
+  // }, [data]);
 
-  console.log("the votes are: ", typeof votes);
+  // console.log("the votes are: ", votes);
   // let votesArray = decorateVotes(votes);
   // console.log("votes after processing: ", votesArray);
+  // console.log("metadata: ", metadata);
 
   // Handlers
+
+  // Life Cycle
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimeLeft(CountDownTimer());
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  });
+
+  const timerComponents = [];
+  Object.keys(timeLeft).forEach((interval) => {
+    if (!timeLeft[interval]) {
+      return;
+    }
+
+    timerComponents.push(
+      <span>
+        {timeLeft[interval]} {interval}{" "}
+      </span>
+    );
+  });
 
   return (
     <>
@@ -127,7 +169,7 @@ const DaoVotes = (props) => {
               fontSize={"1rem"}
               color={"#714CFE"}
             >
-              {/* ({props.legendStatus}) */}
+              ({props.legendStatus})
             </Typography>
           </div>
           {/* Title */}
@@ -167,19 +209,29 @@ const DaoVotes = (props) => {
             </section>
           </div>
           {/* Time Elapsed - if vote is open */}
-          {props.open ? (
+          {timerComponents.length ? (
+            <>
+              <div className="row no-gutters w-100 mb-3">
+                <Typography variant="body1" component={"div"}>
+                  <span>
+                    <HourglassTopIcon />
+                  </span>
+                  <span className="p-2">vote is open</span>
+                </Typography>
+              </div>
+              <div className="row no-gutters w-100 mb-3">
+                <Typography variant="body1" component={"div"}>
+                  <span>{timerComponents}</span>
+                </Typography>
+              </div>
+            </>
+          ) : (
             <div className="row no-gutters w-100 mb-3">
               <Typography variant="body1" component={"div"}>
                 <span>
                   <HourglassTopIcon />
                 </span>
-                <span className="p-2">vote is open</span>
-              </Typography>
-            </div>
-          ) : (
-            <div className="row no-gutters w-100 mb-3">
-              <Typography variant="body1" component={"div"}>
-                <span className="p-2">&nbsp;</span>
+                <span className="p-2">vote is Closed</span>
               </Typography>
             </div>
           )}

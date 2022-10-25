@@ -1,5 +1,5 @@
 // REACT
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 // CUSTOM STYLING
 import "../../../../assets/css/common.css";
@@ -7,6 +7,7 @@ import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/style.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
+import { Spinner } from "react-bootstrap";
 // COMPONENTS
 import DaoVotes from "../../../../components/Cards/DaoVotes";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
@@ -24,12 +25,59 @@ import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import { useHistory } from "react-router-dom";
 import { Alert } from "@material-ui/lab";
+// GRAPHQL
+import { useQuery, gql } from "@apollo/client";
+// UTILS
+import { decorateVotes } from "../../../../assets/js/voteStore";
+import { width } from "@mui/system";
 
 // CONTENT
+
+let defaultAccount = "Default Account";
+
+const getUserVotes = gql`
+  fragment vote_cast on Votes {
+    casts(where: { voter: "${defaultAccount}" }) {
+      id
+      voteId
+      voteNum
+      voter
+      supports
+      voterStake
+    }
+  }
+`;
+
+const GET_VOTES_DATA = gql`
+  query {
+    votes {
+      id
+      appAddress
+      orgAddress
+      creator
+      metadata
+      executed
+      startDate
+      snapshotBlock
+      supportRequiredPct
+      minAcceptQuorum
+      yea
+      nay
+      votingPower
+      script
+      creatorVotingPower
+      transactionHash
+      castCount
+      voteCountSeq
+      # {getUserVotes !== null ? getUserVotes : ''}
+    }
+  }
+`;
 
 // COMPONENT FUNCTION
 const Dao = () => {
   // States
+  const [votes, setVotes] = useState();
   const history = useHistory();
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
@@ -59,17 +107,25 @@ const Dao = () => {
   const [voteQuorum, setVoteQuorum] = useState(false);
   const [voteQuorumVolume, setVoteQuorumVolume] = useState("51.00");
 
-  // Content
-  const voteCreatedObj = new Date(voteCreateDate);
-  const date = voteCreatedObj.getDate();
-  const month = voteCreatedObj.getMonth() + 1;
-  const year = voteCreatedObj.getFullYear();
-  const hh = voteCreatedObj.getHours();
-  const mm = voteCreatedObj.getMinutes();
-  const ss = voteCreatedObj.getSeconds();
+  // Queries
+  const { error, loading, data } = useQuery(GET_VOTES_DATA);
+  console.log("this is data of gql: ", data);
 
-  const voteCreatedOn = `${date}/${month}/${year} ${hh}:${mm}:${ss}`;
-  console.log(voteCreatedOn);
+  let loadData = () => {
+    return new Promise((res, rej) => {
+      data ? res(setVotes(data.votes)) : rej(error);
+    });
+  };
+
+  const resolveData = async () => {
+    try {
+      await loadData();
+    } catch (error) {
+      console.log("this is promise error: ", error);
+    }
+  };
+
+  // console.log(votes[0].creator);
 
   // Handlers
   const handleFilterStatusChange = (event) => {
@@ -83,6 +139,57 @@ const Dao = () => {
   const handleFilterAppChange = (event) => {
     setFilterStatus(event.target.value);
   };
+
+  const getSupportRequiredPct = (votes) => {
+    if (votes !== undefined) {
+      return votes.map((vote) =>
+        (parseInt(vote.supportRequiredPct) / 1e9).toFixed(2)
+      );
+    }
+  };
+
+  const getMinAcceptQuorum = (votes) => {
+    if (votes !== undefined) {
+      return votes.map((vote) =>
+        (parseInt(vote.minAcceptQuorum) / 1e9).toFixed(2)
+      );
+    }
+  };
+
+  var support = getSupportRequiredPct(votes);
+  var quo = getMinAcceptQuorum(votes);
+
+  // Side Effects
+  useEffect(() => {
+    resolveData();
+  }, [data]);
+
+  let decorations = {};
+  if (votes !== undefined) {
+    decorations = decorateVotes(votes);
+    console.log("total support: ", decorations.totalSupport[0]);
+    console.log("nop: ", decorations.nop[0]);
+    console.log("yeap: ", decorations.yeap[0]);
+    console.log("vote created on: ", decorations.createdOn[0]);
+    console.log("vote metadata on: ", decorations.metadata[0]);
+  }
+  console.log("the vote Number: ", decorations.voteNumber);
+
+  // Content
+  var voteStartDate = {};
+  var voteCreatedObj;
+  // voteCreatedObj = new Date(createdOn[i]);
+  // console.log("voteCreatedObj: ", voteCreatedObj);
+  // voteStartDate.date = voteCreatedObj.getDate();
+  // voteStartDate.month = voteCreatedObj.getMonth() + 1;
+  // voteStartDate.year = voteCreatedObj.getFullYear();
+  // voteStartDate.hh = voteCreatedObj.getHours();
+  // voteStartDate.mm = voteCreatedObj.getMinutes();
+  // voteStartDate.ss = voteCreatedObj.getSeconds();
+  // return voteStartDate;
+  // console.log(voteStartDate);
+  // const voteCreatedOn = `${voteStartDate.date}/${voteStartDate.month}/${voteStartDate.year} ${voteStartDate.hh}:${voteStartDate.mm}:${voteStartDate.ss}`;
+  // console.log(voteCreatedOn);
 
   return (
     <>
@@ -278,64 +385,49 @@ const Dao = () => {
                                 </div>
                               </div>
                               {/* VOTES */}
-                              <div className="row no-gutters justify-content-center align-items-center">
-                                <div className="col-12 col-md-6 col-lg-12 col-xl-6">
-                                  <div className="col-12 py-3 px-sm-3 px-lg-0 px-xl-3">
-                                    <DaoVotes
-                                      legend={daoLegend}
-                                      legendStatus={daoLegendStatus}
-                                      title={daoTitle}
-                                      description={daoDescription}
-                                      open={voteOpen}
-                                      yes={voteYes}
-                                      no={voteNo}
-                                      voteCreated={voteCreatedOn}
-                                      enaction={enactedVote}
-                                      support={voteSupport}
-                                      quorum={voteQuorum}
-                                      supportVolume={voteSupportVolume}
-                                      quorumVolume={voteQuorumVolume}
-                                    />
+                              <div className="row no-gutters justify-content-center align-items-center w-100">
+                                {votes ? (
+                                  votes.map((vote, index) => {
+                                    return (
+                                      <div className="col-12 col-md-6 col-lg-12 col-xl-6">
+                                        <div className="col-12 py-3 px-sm-3 px-lg-0 px-xl-3">
+                                          <DaoVotes
+                                            legend={daoLegend}
+                                            legendStatus={`${support[index]}% / ${quo[index]}%`}
+                                            title={vote.voteCountSeq}
+                                            description={
+                                              decorations.metadata[index]
+                                            }
+                                            voteNumber={1}
+                                            executed={vote.executed}
+                                            open={voteOpen}
+                                            yes={decorations.yeap[index]}
+                                            no={decorations.nop[index]}
+                                            voteCreated={
+                                              decorations.createdOn[index]
+                                            }
+                                            enaction={vote.executed}
+                                            support={voteSupport}
+                                            quorum={voteQuorum}
+                                            supportVolume={voteSupportVolume}
+                                            quorumVolume={voteQuorumVolume}
+                                            key={index}
+                                          />
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                ) : (
+                                  <div className="row no-gutters justify-content-center align-items-center w-100">
+                                    <div className="col-12 text-center">
+                                      <Spinner
+                                        animation="border"
+                                        role="status"
+                                        style={{ color: "rgb(83, 0, 232)" }}
+                                      ></Spinner>
+                                    </div>
                                   </div>
-                                </div>
-                                <div className="col-12 col-md-6 col-lg-12 col-xl-6">
-                                  <div className="col-12 py-3 px-sm-3 px-lg-0 px-xl-3">
-                                    <DaoVotes
-                                      legend={daoLegend}
-                                      legendStatus="75% / 18%"
-                                      title="#216"
-                                      description="There is a white car inside that garadge. It was parked there in 1963 and hasn't been started ever since."
-                                      open={true}
-                                      yes={38}
-                                      no={19}
-                                      voteCreated={voteCreatedOn}
-                                      enaction={false}
-                                      support={voteSupport}
-                                      quorum={false}
-                                      supportVolume="81.83"
-                                      quorumVolume="36.66"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-12 col-md-6 col-lg-12 col-xl-6">
-                                  <div className="col-12 py-3 px-sm-3 px-lg-0 px-xl-3">
-                                    <DaoVotes
-                                      legend={daoLegend}
-                                      legendStatus="88% / 12%"
-                                      title="#215"
-                                      description={daoDescription}
-                                      open={voteOpen}
-                                      yes={64}
-                                      no={22}
-                                      voteCreated={voteCreatedOn}
-                                      enaction={enactedVote}
-                                      support={voteSupport}
-                                      quorum={voteQuorum}
-                                      supportVolume="73.25"
-                                      quorumVolume="41.02"
-                                    />
-                                  </div>
-                                </div>
+                                )}
                               </div>
                             </div>
                           </div>
