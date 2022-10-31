@@ -6,6 +6,7 @@ import "../../assets/css/curveButton.css";
 import "../../assets/css/style.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
+import { Spinner } from "react-bootstrap";
 // COMPONENTS
 // MATERIAL UI ICONS
 // MATERIAL UI
@@ -24,10 +25,15 @@ import curveLogo from "../../assets/img/Logo.png";
 // CONTENT
 
 // COMPONENT FUNCTION
-const VoteLocksStats = () => {
+const VoteLocksStats = (props) => {
   // States
   const theme = useTheme();
   // Handlers
+
+  // Content
+  props
+    ? console.log("props for voteLocksStats: ", props)
+    : console.log("There are no props for voteLocksStats");
 
   return (
     <>
@@ -49,7 +55,19 @@ const VoteLocksStats = () => {
                     }}
                     gutterBottom
                   >
-                    288,283,619.93 (33.47%)
+                    {props.lockedCRV ? (
+                      props.lockedCRV
+                    ) : (
+                      <div className="row no-gutters justify-content-center align-items-center w-100">
+                        <div className="col-12 text-center">
+                          <Spinner
+                            animation="border"
+                            role="status"
+                            style={{ color: "#04d7d5" }}
+                          ></Spinner>
+                        </div>
+                      </div>
+                    )}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -79,7 +97,19 @@ const VoteLocksStats = () => {
                     }}
                     gutterBottom
                   >
-                    151.64%
+                    {props.lockedCRVWithouVE ? (
+                      props.lockedCRVWithouVE
+                    ) : (
+                      <div className="row no-gutters justify-content-center align-items-center w-100">
+                        <div className="col-12 text-center">
+                          <Spinner
+                            animation="border"
+                            role="status"
+                            style={{ color: "#04d7d5" }}
+                          ></Spinner>
+                        </div>
+                      </div>
+                    )}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -108,7 +138,19 @@ const VoteLocksStats = () => {
                     }}
                     gutterBottom
                   >
-                    60.26%
+                    {props.lockedPercentage ? (
+                      `${props.lockedPercentage}%`
+                    ) : (
+                      <div className="row no-gutters justify-content-center align-items-center w-100">
+                        <div className="col-12 text-center">
+                          <Spinner
+                            animation="border"
+                            role="status"
+                            style={{ color: "#04d7d5" }}
+                          ></Spinner>
+                        </div>
+                      </div>
+                    )}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -135,7 +177,19 @@ const VoteLocksStats = () => {
                     }}
                     gutterBottom
                   >
-                    446,108,495.01
+                    {props.totalVeCrv ? (
+                      props.totalVeCrv
+                    ) : (
+                      <div className="row no-gutters justify-content-center align-items-center w-100">
+                        <div className="col-12 text-center">
+                          <Spinner
+                            animation="border"
+                            role="status"
+                            style={{ color: "#04d7d5" }}
+                          ></Spinner>
+                        </div>
+                      </div>
+                    )}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -159,7 +213,19 @@ const VoteLocksStats = () => {
                     }}
                     gutterBottom
                   >
-                    3.64 years
+                    {props.averageLockTime ? (
+                      `${props.averageLockTime} years`
+                    ) : (
+                      <div className="row no-gutters justify-content-center align-items-center w-100">
+                        <div className="col-12 text-center">
+                          <Spinner
+                            animation="border"
+                            role="status"
+                            style={{ color: "#04d7d5" }}
+                          ></Spinner>
+                        </div>
+                      </div>
+                    )}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"

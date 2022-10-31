@@ -1,5 +1,5 @@
 // REACT
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // CUSTOM STYLING
 import "../../../../assets/css/style.css";
@@ -7,6 +7,7 @@ import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/common.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
+import { Spinner } from "react-bootstrap";
 // COMPONENTS
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
@@ -27,6 +28,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -39,17 +41,39 @@ import {
 } from "@material-ui/core";
 // ICONS
 import clock from "../../../../assets/img/clock.png";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { TableFooter, TablePagination } from "@mui/material";
+// GRAPHQL
+import { useQuery, gql } from "@apollo/client";
+// UTILS
+import * as helpers from "../../../../assets/js/helpers";
+
+// QUERIES
+const GET_USER_BALANCES = gql`
+  query {
+    userBalancesByWeight {
+      id
+      startTx
+      user
+      CRVLocked
+      lock_start
+      unlock_time
+      weight
+    }
+    daoPowersByTimestamp {
+      totalPower
+    }
+  }
+`;
 
 // CONTENT
 const votingHistoryCells = [
-  "Time",
-  "Voter",
+  "Lock start",
+  "Address",
+  "CRV Locked",
+  "Unlock time",
   "veCRV",
-  "Total veCRV",
-  "Gauge",
-  "Weight",
-  "Total Weight",
+  "%",
 ];
 
 const sampleVotingHistoryData =
@@ -77,6 +101,33 @@ const Locks = () => {
   const [dateDisplay, setDateDisplay] = useState();
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+  const [userBalance, setUserBalance] = useState();
+  const [daoPower, setDaoPower] = useState();
+  const [voteId, setVoteId] = useState([1, 2, 3]);
+  let [usersLocked, setUsersLocked] = useState([]);
+
+  // Queries
+  const { error, loading, data } = useQuery(GET_USER_BALANCES);
+  console.log("this is data in Locks: ", data);
+
+  let loadData = () => {
+    return new Promise((res, rej) => {
+      data
+        ? res(
+            setUserBalance(data.userBalancesByWeight),
+            setDaoPower(data.daoPowersByTimestamp)
+          )
+        : rej(error);
+    });
+  };
+
+  const resolveData = async () => {
+    try {
+      await loadData();
+    } catch (error) {
+      console.log("this is promise error: ", error);
+    }
+  };
 
   //   Event Handlers
   const handleChangePage = (event, newPage) => {
@@ -87,6 +138,65 @@ const Locks = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  // Computations
+  const CRVLockedFormat = (vId) => {
+    let balance = 200000; //CRVLocked
+    console.log(balance);
+    // return helpers.formatNumber(userBalance[vId].CRVLocked / 1e9);
+    return helpers.formatNumber(balance / 1e9);
+  };
+
+  const CRVLockedPercentage = (vId) => {
+    let supply = 1000000,
+      balance = 200000;
+    // return (userBalance[vId].CRVLocked * 100 / supply).toFixed(2)
+    return ((balance * 100) / supply).toFixed(2);
+  };
+
+  const DAOPowerFormat = () => {
+    return daoPower ? helpers.formatNumber(daoPower[0].totalPower / 1e9) : 0;
+  };
+
+  const averageLock = (vId) => {
+    let crvLocked = 200000;
+    return userBalance && daoPower
+      ? ((4 * daoPower[0].totalPower) / crvLocked).toFixed(2)
+      : 0;
+  };
+
+  let locks = [];
+  if (userBalance) {
+    console.log("these are the user balances: ", userBalance[0]);
+    // userBalance[0].CRVLocked = 200000;
+    // console.log("formated number: ", CRVLockedFormat(0));
+    // setUsersLocked([...usersLocked, ...userBalance]);
+    locks = [...locks, ...userBalance];
+  }
+
+  const veCRV = (lock) => {
+    let CRVLocked = 2000000;
+    return (
+      // lock.CRVLocked
+      (
+        (CRVLocked * ((lock.unlock_time - Date.now() / 1000) | 0)) /
+        (86400 * 365) /
+        4 /
+        1e9
+      ).toFixed(2)
+    );
+  };
+
+  let createVotes = locks.filter((lock) => veCRV(lock) >= 2500);
+
+  if (daoPower) {
+    console.log("this is daoPower: ", daoPower);
+  }
+
+  // Side Effects
+  useEffect(() => {
+    resolveData();
+  }, [data]);
 
   // Return Function
   return (
@@ -140,7 +250,27 @@ const Locks = () => {
                           {/* Voting Power Stats */}
                           <div className="row no-gutters">
                             <div className="col-12">
-                              <VoteLocksStats />
+                              {userBalance ? (
+                                <VoteLocksStats
+                                  lockedCRV={CRVLockedFormat(0)}
+                                  lockedPercentage={CRVLockedPercentage(0)}
+                                  totalVeCrv={DAOPowerFormat()}
+                                  averageLockTime={averageLock(0)}
+                                />
+                              ) : (
+                                <div
+                                  className="row no-gutters justify-content-center align-items-center w-100"
+                                  style={{ height: "400px" }}
+                                >
+                                  <div className="col-12 text-center">
+                                    <Spinner
+                                      animation="border"
+                                      role="status"
+                                      style={{ color: "rgb(83, 0, 232)" }}
+                                    ></Spinner>
+                                  </div>
+                                </div>
+                              )}
                               <div className="w-100 mt-5 mb-3">
                                 <Divider />
                               </div>
@@ -203,7 +333,19 @@ const Locks = () => {
                                             }}
                                             gutterBottom
                                           >
-                                            9993
+                                            {userBalance ? (
+                                              locks.length
+                                            ) : (
+                                              <div className="row no-gutters justify-content-center align-items-center w-100">
+                                                <div className="col-12 text-center">
+                                                  <Spinner
+                                                    animation="border"
+                                                    role="status"
+                                                    style={{ color: "#04d7d5" }}
+                                                  ></Spinner>
+                                                </div>
+                                              </div>
+                                            )}
                                           </Typography>
                                         }
                                         aria-controls="panel1bh-content"
@@ -231,7 +373,19 @@ const Locks = () => {
                                             }}
                                             gutterBottom
                                           >
-                                            1717
+                                            {userBalance ? (
+                                              createVotes.length
+                                            ) : (
+                                              <div className="row no-gutters justify-content-center align-items-center w-100">
+                                                <div className="col-12 text-center">
+                                                  <Spinner
+                                                    animation="border"
+                                                    role="status"
+                                                    style={{ color: "#04d7d5" }}
+                                                  ></Spinner>
+                                                </div>
+                                              </div>
+                                            )}
                                           </Typography>
                                         }
                                         aria-controls="panel1bh-content"
@@ -243,6 +397,11 @@ const Locks = () => {
                                             "# of users who can create new votes:"
                                           }
                                         />
+                                        <Tooltip title="To create a vote you need minimum 2500veCRV">
+                                          <IconButton>
+                                            <HelpOutlineIcon />
+                                          </IconButton>
+                                        </Tooltip>
                                       </AccordionSummary>
                                     </Accordion>
                                   </div>
@@ -282,9 +441,9 @@ const Locks = () => {
                                   <div className="row no-gutters justify-content-center">
                                     <div className="row no-gutters mt-3">
                                       <div className="col-12">
-                                        <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 justify-content-center">
+                                        <div className="row no-gutters px-4 px-xl-2 pb-3 pb-xl-2 justify-content-center">
                                           <TableContainer
-                                            sx={{ p: 3, overflow: "hidden" }}
+                                            sx={{ overflow: "hidden" }}
                                           >
                                             <Table aria-label="Gauge Weight Vote History">
                                               <TableHead
@@ -313,91 +472,113 @@ const Locks = () => {
                                               <TableBody
                                                 id={"GWVoteHistoryTableBody"}
                                               >
-                                                {(rowsPerPage > 0
-                                                  ? votingHistoryData.slice(
-                                                      page * rowsPerPage,
-                                                      page * rowsPerPage +
-                                                        rowsPerPage
-                                                    )
-                                                  : votingHistoryData
-                                                ).map((item) => {
-                                                  console.log("this runs!");
-                                                  return (
-                                                    <TableRow>
-                                                      <TableCell
-                                                        key={item.index}
-                                                        sx={{
-                                                          textAlign: "center",
+                                                {locks.length ? (
+                                                  votingHistoryData.map(
+                                                    (item) => {
+                                                      return (
+                                                        <TableRow>
+                                                          <TableCell
+                                                            key={item.index}
+                                                            sx={{
+                                                              textAlign:
+                                                                "center",
+                                                            }}
+                                                          >
+                                                            07/10/2022 12:49:30
+                                                          </TableCell>
+                                                          <TableCell
+                                                            key={item.index}
+                                                            sx={{
+                                                              textAlign:
+                                                                "center",
+                                                            }}
+                                                          >
+                                                            <Link
+                                                              to="/"
+                                                              className="tableCellLink font-weight-bold"
+                                                            >
+                                                              {item.voter}
+                                                            </Link>
+                                                          </TableCell>
+                                                          <TableCell
+                                                            key={item.index}
+                                                            sx={{
+                                                              textAlign:
+                                                                "center",
+                                                            }}
+                                                          >
+                                                            {item.veCrv}
+                                                          </TableCell>
+                                                          <TableCell
+                                                            key={item.index}
+                                                            sx={{
+                                                              textAlign:
+                                                                "center",
+                                                            }}
+                                                          >
+                                                            {item.totalVeCRV}
+                                                          </TableCell>
+                                                          <TableCell
+                                                            key={item.index}
+                                                            sx={{
+                                                              textAlign:
+                                                                "center",
+                                                            }}
+                                                          >
+                                                            <Link
+                                                              to="/"
+                                                              className="tableCellLink font-weight-bold"
+                                                            >
+                                                              {item.gauge}
+                                                            </Link>
+                                                          </TableCell>
+                                                          <TableCell
+                                                            key={item.index}
+                                                            sx={{
+                                                              textAlign:
+                                                                "center",
+                                                            }}
+                                                          >
+                                                            <Link
+                                                              to="/"
+                                                              className="tableCellLink"
+                                                            >
+                                                              {item.weight}
+                                                            </Link>
+                                                          </TableCell>
+                                                        </TableRow>
+                                                      );
+                                                    }
+                                                  )
+                                                ) : (
+                                                  <TableRow>
+                                                    <TableCell
+                                                      sx={{
+                                                        textAlign: "center",
+                                                        width: "100%",
+                                                      }}
+                                                      colSpan={6}
+                                                    >
+                                                      <div
+                                                        className="row no-gutters justify-content-center align-items-center w-100"
+                                                        style={{
+                                                          height: "400px",
                                                         }}
                                                       >
-                                                        07/10/2022 12:49:30
-                                                      </TableCell>
-                                                      <TableCell
-                                                        key={item.index}
-                                                        sx={{
-                                                          textAlign: "center",
-                                                        }}
-                                                      >
-                                                        <Link
-                                                          to="/"
-                                                          className="tableCellLink font-weight-bold"
-                                                        >
-                                                          {item.voter}
-                                                        </Link>
-                                                      </TableCell>
-                                                      <TableCell
-                                                        key={item.index}
-                                                        sx={{
-                                                          textAlign: "center",
-                                                        }}
-                                                      >
-                                                        {item.veCrv}
-                                                      </TableCell>
-                                                      <TableCell
-                                                        key={item.index}
-                                                        sx={{
-                                                          textAlign: "center",
-                                                        }}
-                                                      >
-                                                        {item.totalVeCRV}
-                                                      </TableCell>
-                                                      <TableCell
-                                                        key={item.index}
-                                                        sx={{
-                                                          textAlign: "center",
-                                                        }}
-                                                      >
-                                                        <Link
-                                                          to="/"
-                                                          className="tableCellLink font-weight-bold"
-                                                        >
-                                                          {item.gauge}
-                                                        </Link>
-                                                      </TableCell>
-                                                      <TableCell
-                                                        key={item.index}
-                                                        sx={{
-                                                          textAlign: "center",
-                                                        }}
-                                                      >
-                                                        <Link
-                                                          to="/"
-                                                          className="tableCellLink"
-                                                        >
-                                                          {item.weight}
-                                                        </Link>
-                                                      </TableCell>
-                                                      <TableCell
-                                                        key={item.index}
-                                                        sx={{
-                                                          textAlign: "center",
-                                                        }}
-                                                      >
-                                                        {item.totalWeight}
-                                                      </TableCell>
-                                                    </TableRow>
-                                                  );
-                                                })}
+                                                        <div className="col-12 text-center">
+                                                          <Spinner
+                                                            animation="border"
+                                                            role="status"
+                                                            style={{
+                                                              color:
+                                                                "rgb(83, 0, 232)",
+                                                            }}
+                                                          ></Spinner>
+                                                        </div>
+                                                      </div>
+                                                    </TableCell>
+                                                  </TableRow>
+                                                )}
                                               </TableBody>
                                               <TableFooter>
                                                 <TableRow>
