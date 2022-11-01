@@ -142,9 +142,25 @@ export const formattedMetadata = (votes) => {
   return metadata;
 };
 
+export const getMinAcceptQuorum = (votes) => {
+  if (votes !== undefined) {
+    return votes.map((vote) =>
+      (parseInt(vote.minAcceptQuorum) / 1e9).toFixed(2)
+    );
+  }
+};
+
+export const getSupportRequiredPct = (votes) => {
+  if (votes !== undefined) {
+    return votes.map((vote) =>
+      (parseInt(vote.supportRequiredPct) / 1e9).toFixed(2)
+    );
+  }
+};
+
 export const decorateVotes = (votes) => {
   let decorations = [];
-  decorations.voteNumber = getVoteId();
+  // decorations.voteNumber = getVoteId();
   decorations.totalSupport = votes.map((vote) => +vote.yea + +vote.nay);
   decorations.yeap = votes.map((vote) =>
     decorations.totalSupport == 0
@@ -168,35 +184,3 @@ export const getTotalSupport = (votes) => {
   totalSupport = votes.map((vote) => +vote.yea + +vote.nay);
   return totalSupport;
 };
-
-// export const decorateVotes = (votes) => {
-//   return votes.map((vote) => {
-//     vote.time = time;
-//     vote.timeLeft = time - (new Date().getTime() / 1000 - vote.startDate);
-//     vote.totalSupport = +vote.yea + +vote.nay;
-//     voteNumber = getVoteId();
-//     vote.yeap =
-//       vote.totalSupport == 0
-//         ? 0
-//         : ((+vote.yea / vote.totalSupport) * 100).toFixed(1);
-//     vote.nop =
-//       vote.totalSupport == 0
-//         ? 0
-//         : ((+vote.nay / vote.totalSupport) * 100).toFixed(1);
-//     vote.callAddress = vote.script.substr(90, 40).toLowerCase();
-//     // vote.contractCalled = contractCalled(vote);
-//     // vote.contractName = contractName(vote);
-//     if (isVoteOpen(vote) && !vote.executed) vote.status = 1;
-//     if (!isVoteOpen(vote) || vote.executed) vote.status = 2;
-//     if (vote.status == 1) vote.outcome = 4;
-//     if (vote.executed) vote.outcome = 3;
-//     if (isRejected(vote)) vote.outcome = 2;
-//     if (!vote.executed && canExecute(vote)) vote.outcome = 1;
-//     if (isRejected(vote)) {
-//       vote.rejectedReason = 3;
-//       if (!hasSupport(vote)) vote.rejectedReason = 1;
-//       else if (!hasQuorum(vote)) vote.rejectedReason = 2;
-//     }
-//     return vote;
-//   });
-// };

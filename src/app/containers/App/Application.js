@@ -59,8 +59,8 @@ function App() {
       return <Route component={CreateVote} />;
     } else if (path === "/locks") {
       return <Route component={Locks} />;
-    } else if (path === "/voteInfo") {
-      return <Route component={VoteInfo} />;
+    } else if (path === "/voteInfo/:id") {
+      return <Route component={VoteInfo} path="/voteInfo/:id" />;
     } else {
       return <Route component={HomeScreen} />;
     }
@@ -88,7 +88,8 @@ function App() {
           <LoginRegisterRedirectCheck exact path="/calc" />
           <LoginRegisterRedirectCheck exact path="/gw-vote" />
           <LoginRegisterRedirectCheck exact path="/createVote" />
-          <LoginRegisterRedirectCheck exact path="/voteInfo" />
+          <LoginRegisterRedirectCheck exact path="/voteInfo/:id" />
+          {/* <Route exact path="/voteInfo/:id" component={VoteInfo} /> */}
         </Switch>
       </BrowserRouter>
     </SnackbarProvider>
