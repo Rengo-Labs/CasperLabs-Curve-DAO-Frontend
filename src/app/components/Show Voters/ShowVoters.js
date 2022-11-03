@@ -22,6 +22,8 @@ import VoteDistributionModal from "../Modals/VoteDistributionModal";
 // GRAPHQL
 import { useQuery, gql } from "@apollo/client";
 import { Spinner } from "react-bootstrap";
+// UTILS
+import { shortenAddress } from "../../assets/js/helpers";
 
 // QUERIES
 const getCasts = gql`
@@ -81,33 +83,40 @@ function ShowVoters(props) {
   // Computations
   let rows = [];
   let rowsAgainst = [];
+  let optionsForLabels = [];
+  let optionsAgainstLabels = [];
+  let optionsAgainstSeries = [];
+  let optionsForSeries = [];
 
   if (casts !== undefined) {
-    rows = casts.map((cast) => {
-      console.log("conditon: ", cast.supports);
-      if (cast.supports)
-        return {
-          ...rows,
-          address: cast.voter.address,
-          stakes: cast.voterStake,
-          id: cast.id,
-        };
-    });
-    rowsAgainst = casts.map((cast) => {
-      if (!cast.supports)
-        return {
+    for (let i = 0; i < casts.length; i++) {
+      if (!casts[i].supports) {
+        rowsAgainst = [
           ...rowsAgainst,
-          address: cast.voter.address,
-          stakes: cast.voterStake,
-          id: cast.id,
-        };
-    });
+          {
+            address: casts[i].voter.address,
+            stakes: casts[i].voterStake,
+            id: casts[i].id,
+            index: i,
+          },
+        ];
+      } else {
+        rows = [
+          ...rows,
+          {
+            address: casts[i].voter.address,
+            stakes: casts[i].voterStake,
+            id: casts[i].id,
+            index: i,
+          },
+        ];
+      }
+    }
+    optionsAgainstLabels = rowsAgainst.map((row) => row.address);
+    optionsAgainstSeries = rowsAgainst.map((row) => row.stakes);
+    optionsForLabels = rows.map((row) => row.address);
+    optionsForSeries = rows.map((row) => row.stakes);
   }
-
-  const shortenAddress = (address) => {
-    if (!address) return "";
-    return address.slice(0, 6) + "..." + address.slice(-6);
-  };
 
   // Side Effects
   useEffect(() => {
@@ -115,8 +124,8 @@ function ShowVoters(props) {
   }, [data]);
 
   if (casts !== undefined) {
-    console.log("Cast in favor: ", rows);
-    console.log("Cast in opposition: ", rowsAgainst);
+    console.log("Cast in favor: ", optionsForLabels);
+    console.log("Cast in opposition: ", optionsAgainstSeries);
   }
 
   return (
@@ -150,6 +159,7 @@ function ShowVoters(props) {
             close={handleCloseFor}
             click={handleCloseFor}
             title="For Vote Distribution"
+            options={rows}
           />
           <TableContainer component={Paper} elevation={5} className="mt-3">
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
@@ -164,44 +174,56 @@ function ShowVoters(props) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.includes(undefined) ? (
-                  <TableRow>
-                    <TableCell
-                      sx={{
-                        textAlign: "center",
-                        width: "100%",
-                      }}
-                      colSpan={2}
-                    >
-                      <div className="row no-gutters justify-content-center align-items-center w-100">
-                        <div className="col-12 text-center">
-                          <Typography variant="p" gutterBottom component="div">
-                            <span>No one has voted yet</span>
-                          </Typography>
-                        </div>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : rows.length ? (
-                  rows.map((row) => (
+                {casts !== undefined ? (
+                  rows.length ? (
+                    rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell align="center">
+                          <a
+                            href="#"
+                            rel="noopener noreferrer"
+                            style={{ color: "rgba(0, 0, 0, 0.87)" }}
+                          >
+                            {shortenAddress(row.address)}
+                          </a>
+                        </TableCell>
+                        <TableCell align="center">
+                          {(row.stakes / 1e9).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
                     <TableRow
-                      key={row.id}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
                     >
-                      <TableCell align="center">
-                        <a
-                          href="#"
-                          rel="noopener noreferrer"
-                          style={{ color: "rgba(0, 0, 0, 0.87)" }}
-                        >
-                          {shortenAddress(row.address)}
-                        </a>
-                      </TableCell>
-                      <TableCell align="center">
-                        {(row.stakes / 1e9).toFixed(2)}
+                      <TableCell
+                        sx={{
+                          textAlign: "center",
+                          width: "100%",
+                        }}
+                        colSpan={2}
+                      >
+                        <div className="row no-gutters justify-content-center align-items-center w-100">
+                          <div className="col-12 text-center">
+                            <Typography
+                              variant="p"
+                              gutterBottom
+                              component="div"
+                            >
+                              <span>No one has voted yet</span>
+                            </Typography>
+                          </div>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))
+                  )
                 ) : (
                   <TableRow>
                     <TableCell
@@ -257,6 +279,7 @@ function ShowVoters(props) {
             close={handleCloseAgainst}
             click={handleCloseAgainst}
             title="Against Vote Distribution"
+            options={rowsAgainst}
           />
           <TableContainer component={Paper} elevation={5} className="mt-3">
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
@@ -271,44 +294,56 @@ function ShowVoters(props) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rowsAgainst.includes(undefined) ? (
-                  <TableRow>
-                    <TableCell
-                      sx={{
-                        textAlign: "center",
-                        width: "100%",
-                      }}
-                      colSpan={2}
-                    >
-                      <div className="row no-gutters justify-content-center align-items-center w-100">
-                        <div className="col-12 text-center">
-                          <Typography variant="p" gutterBottom component="div">
-                            <span>No one has voted against</span>
-                          </Typography>
-                        </div>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : rowsAgainst.length ? (
-                  rowsAgainst.map((row) => (
+                {casts !== undefined ? (
+                  rowsAgainst.length ? (
+                    rowsAgainst.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell align="center">
+                          <a
+                            href="#"
+                            rel="noopener noreferrer"
+                            style={{ color: "rgba(0, 0, 0, 0.87)" }}
+                          >
+                            {shortenAddress(row.address)}
+                          </a>
+                        </TableCell>
+                        <TableCell align="center">
+                          {(row.stakes / 1e9).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
                     <TableRow
-                      key={row.id}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
                     >
-                      <TableCell align="center">
-                        <a
-                          href="#"
-                          rel="noopener noreferrer"
-                          style={{ color: "rgba(0, 0, 0, 0.87)" }}
-                        >
-                          {shortenAddress(row.address)}
-                        </a>
-                      </TableCell>
-                      <TableCell align="center">
-                        {(row.stakes / 1e9).toFixed(2)}
+                      <TableCell
+                        sx={{
+                          textAlign: "center",
+                          width: "100%",
+                        }}
+                        colSpan={2}
+                      >
+                        <div className="row no-gutters justify-content-center align-items-center w-100">
+                          <div className="col-12 text-center">
+                            <Typography
+                              variant="p"
+                              gutterBottom
+                              component="div"
+                            >
+                              <span>No one has voted Against</span>
+                            </Typography>
+                          </div>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))
+                  )
                 ) : (
                   <TableRow>
                     <TableCell
