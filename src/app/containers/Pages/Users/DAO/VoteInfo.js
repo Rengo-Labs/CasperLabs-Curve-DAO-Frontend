@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
 // BOOTSTRAP
@@ -19,6 +19,40 @@ import ShowVoters from "../../../../components/Show Voters/ShowVoters";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+// GRAPHQL
+import { useQuery, gql } from "@apollo/client";
+// UTILS
+import * as voteStore from "../../../../assets/js/voteStore";
+import {
+  shortenAddress,
+  formatDateToHuman,
+} from "../../../../assets/js/helpers";
+import { Spinner } from "react-bootstrap";
+
+// QUERIES
+const GET_VOTE = gql`
+  query getVoteById($id: String) {
+    votesByVoteId(voteId: $id) {
+      id
+      appAddress
+      orgAddress
+      creator
+      metadata
+      executed
+      startDate
+      snapshotBlock
+      supportRequiredPct
+      minAcceptQuorum
+      yea
+      nay
+      votingPower
+      script
+      transactionHash
+      castCount
+      voteCountSeq
+    }
+  }
+`;
 
 function VoteInfo(props) {
   // eslint-disable-next-line
@@ -31,8 +65,77 @@ function VoteInfo(props) {
   // eslint-disable-next-line
   let [torus, setTorus] = useState();
   let [showVoters, setShowVoters] = useState(false);
+  let [voteById, setVoteById] = useState();
   const history = useHistory();
   let { id } = useParams();
+  const VOTE_TIME = 604800;
+
+  // Queries
+  const { error, loading, data } = useQuery(GET_VOTE, {
+    variables: {
+      id,
+    },
+  });
+
+  console.log("Data for vote by id: ", data);
+
+  let loadData = () => {
+    return new Promise((res, rej) => {
+      data ? res(setVoteById(data.votesByVoteId)) : rej(error);
+    });
+  };
+
+  let resolveData = async () => {
+    try {
+      await loadData();
+    } catch (error) {
+      console.log("this is Promise Error: ", error);
+    }
+  };
+
+  // Computations
+  var support = voteStore.getSupportRequiredPct(voteById);
+  var quo = voteStore.getMinAcceptQuorum(voteById);
+
+  let voteByIdObj = {};
+  if (voteById !== undefined) {
+    let results = voteStore.decorateVotes(voteById);
+    let voteObj = voteById.map((vote, index) => {
+      return {
+        legendStatus: `${support[index]}% / ${quo[index]}%`,
+        voteNumber: vote.voteCountSeq,
+        description: results.metadata[index],
+        creator: vote.creator,
+        totalVotes: vote.castCount,
+        nop: results.nop[index],
+        yep: results.yeap[index],
+        voteCreatedOn: results.createdOn[index],
+        support: results.support[index],
+        quroum: results.quorum[index],
+        supportRequired: support[index],
+        quroumRequired: quo[index],
+      };
+    });
+    [voteObj] = voteObj;
+    voteByIdObj = { ...voteObj };
+    console.log("vote created on: ", voteByIdObj.support);
+  }
+
+  const startDateFormat = () => {
+    if (voteById !== undefined) {
+      return formatDateToHuman(voteByIdObj.voteCreatedOn);
+    }
+    return "";
+  };
+
+  const endDateFormat = () => {
+    return formatDateToHuman(voteByIdObj.voteCreatedOn + VOTE_TIME);
+  };
+
+  // Side Effects
+  useEffect(() => {
+    resolveData();
+  }, [data]);
 
   return (
     <>
@@ -61,14 +164,14 @@ function VoteInfo(props) {
                   <legend>Vote Info</legend>
                   <div className="px-3 py-3 text-dark d-flex">
                     <Typography variant="h5" component={"div"}>
-                      Ownership
+                      Vote
                     </Typography>
                     <Typography
                       className="pt-1 pl-3"
                       variant="p"
                       component={"div"}
                     >
-                      (51%/12%)
+                      ({voteByIdObj.legendStatus})
                     </Typography>
                   </div>
                   <Typography
@@ -76,7 +179,10 @@ function VoteInfo(props) {
                     sx={{ fontSize: 19, fontWeight: "bold" }}
                     component={"div"}
                   >
-                    Vote #215
+                    Vote#{" "}
+                    <span style={{ fontWeight: "normal" }}>
+                      {voteByIdObj.voteNumber}
+                    </span>
                   </Typography>
                   <Typography
                     className="px-3 text-dark"
@@ -86,15 +192,17 @@ function VoteInfo(props) {
                     Description:
                   </Typography>
                   <Typography sx={{ fontSize: 16 }} className="px-3 text-dark">
-                    Whitelist Abracadabra, allowing it to lock CRV for veCRV
-                    (https://gov.curve.fi/t/something)
+                    {voteByIdObj.description}
                   </Typography>
                   <Typography
                     className="px-3 text-dark"
                     sx={{ fontSize: 19, fontWeight: "bold" }}
                     component={"div"}
                   >
-                    Proposed by: 0x7457...d7d66c
+                    Proposed by:{" "}
+                    <span style={{ fontWeight: "normal" }}>
+                      {shortenAddress(voteByIdObj.creator)}
+                    </span>
                   </Typography>
                   <div className="px-3 text-dark">
                     <Typography
@@ -106,19 +214,23 @@ function VoteInfo(props) {
                     <VoteInfoProgressBar
                       width="w-25"
                       polarQestion="Yes"
-                      percent="52"
+                      percent={voteById ? voteByIdObj.yep : "0"}
                       color="#5300E8"
                     />
-                    <Typography className="mb-2">330.18</Typography>
+                    <Typography className="mb-2">
+                      {voteById ? voteByIdObj.yep : "0"}
+                    </Typography>
                     <VoteInfoProgressBar
                       width="w-25"
                       polarQestion="No"
-                      percent="14"
+                      percent={voteById ? voteByIdObj.yep : "0"}
                       color="#9fade6"
                     />
-                    <Typography className="mb-2">1.187</Typography>
+                    <Typography className="mb-2">
+                      {voteById ? voteByIdObj.yep : "0"}
+                    </Typography>
                     <Typography sx={{ fontSize: 18 }}>
-                      Total Votes: 9
+                      Total Votes: {voteByIdObj.totalVotes}
                     </Typography>
                   </div>
                   <Typography
@@ -142,7 +254,10 @@ function VoteInfo(props) {
                     </Button>
                   </div>
                   {!showVoters ? null : <ShowVoters voteId={id} />}
-                  <div className="py-3 px-3 mx-3 bg-primary text-white">
+                  <div
+                    className="py-3 px-3 mx-3 bg-primary text-white"
+                    style={{ borderRadius: "4px" }}
+                  >
                     <Typography>
                       You didn't have enough veCRV balance(0.00 required) when
                       vote was created on block snapshot 15679279 at 05/10/2022
@@ -189,13 +304,13 @@ function VoteInfo(props) {
                   <div className="d-flex pt-3 pl-3">
                     <AccessTimeIcon />
                     <Typography className="ml-2" sx={{ fontSize: 19 }}>
-                      05/10/2022 03:39:47
+                      {startDateFormat}
                     </Typography>
                   </div>
                   <div className="d-flex pl-3">
                     <AccessTimeIcon />
                     <Typography className="ml-2" sx={{ fontSize: 19 }}>
-                      12/10/2022 03:39:47
+                      {endDateFormat}
                     </Typography>
                   </div>
                 </fieldset>
@@ -203,10 +318,10 @@ function VoteInfo(props) {
                   <legend>Support</legend>
                   <div className="d-flex pl-4">
                     <Typography sx={{ fontSize: 18, color: "#019267" }}>
-                      99.99%
+                      {voteByIdObj.support}%
                     </Typography>
                     <Typography className="ml-3" sx={{ fontSize: 19 }}>
-                      ({">"} 51% required)
+                      ({">"} {voteByIdObj.supportRequired}% required)
                     </Typography>
                   </div>
                 </fieldset>
@@ -214,10 +329,10 @@ function VoteInfo(props) {
                   <legend>Quorum</legend>
                   <div className="d-flex pl-4">
                     <Typography sx={{ fontSize: 18, color: "#de1738" }}>
-                      0.06%
+                      {voteByIdObj.quroum}%
                     </Typography>
                     <Typography className="ml-3" sx={{ fontSize: 19 }}>
-                      ({">"} 30% required)
+                      ({">"} {voteByIdObj.quroumRequired}% required)
                     </Typography>
                   </div>
                 </fieldset>

@@ -159,7 +159,9 @@ function ShowVoters(props) {
             close={handleCloseFor}
             click={handleCloseFor}
             title="For Vote Distribution"
-            options={rows}
+            labels={optionsForLabels}
+            // series={optionsForSeries}
+            series={[30, 70]}
           />
           <TableContainer component={Paper} elevation={5} className="mt-3">
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
@@ -279,7 +281,9 @@ function ShowVoters(props) {
             close={handleCloseAgainst}
             click={handleCloseAgainst}
             title="Against Vote Distribution"
-            options={rowsAgainst}
+            labels={optionsAgainstLabels}
+            // series={optionsAgainstSeries}
+            series={[60, 40]}
           />
           <TableContainer component={Paper} elevation={5} className="mt-3">
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
