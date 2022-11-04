@@ -35,6 +35,7 @@ import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDep
 import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
 import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
 import { signdeploywithcaspersigner } from "../../../../components/blockchain/SignDeploy/SignDeploy";
+import SigningModal from "../../../../components/Modals/SigningModal";
 
 // CONTENT
 
@@ -370,6 +371,7 @@ const Vesting = () => {
             </div>
           </div>
         </div>
+        <SigningModal show={openSigning} />
       </div>
     </>
   );

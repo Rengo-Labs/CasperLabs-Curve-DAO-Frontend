@@ -309,7 +309,7 @@ const Locks = () => {
                                           // props.createLockMakeDeploy(lockAmount, date);
                                         }}
                                       >
-                                        LOCK TIME
+                                        Create Lock
                                       </Button>
                                     </div>
                                   </div>
