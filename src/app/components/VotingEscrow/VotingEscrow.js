@@ -38,6 +38,7 @@ import Torus from "@toruslabs/casper-embed";
 import { CHAINS, SUPPORTED_NETWORKS } from "../Headers/HeaderDAO";
 import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
 import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
+import SigningModal from "../Modals/SigningModal";
 
 // COMPONENT FUNCTION
 const VotingEscrow = () => {
@@ -414,6 +415,7 @@ const VotingEscrow = () => {
         </fieldset>
       </div>
       <footer style={{ height: "5rem" }}></footer>
+      <SigningModal show={openSigning} />
     </>
   );
 };

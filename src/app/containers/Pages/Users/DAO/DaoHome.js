@@ -20,7 +20,7 @@ import DaoInfoMessage from "../../../../components/DAO/DaoInfoMessage";
 import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
 import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
 import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
-import { VOTING_ESCROW_CONTRACT_HASH } from '../../../../components/blockchain/AccountHashes/Addresses';
+import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from '../../../../components/blockchain/AccountHashes/Addresses';
 import HomeBanner from "../Home/HomeBanner";
 // MATERIAL UI
 import Box from "@mui/material/Box";
@@ -30,6 +30,7 @@ import Typography from "@mui/material/Typography";
 import { CasperServiceByJsonRPC, CLByteArray, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
 import { useSnackbar } from 'notistack';
 import SigningModal from "../../../../components/Modals/SigningModal";
+import Axios from "axios";
 
 // CONTENT
 
@@ -44,6 +45,8 @@ const DaoHome = () => {
     localStorage.getItem("selectedWallet")
   );
   let [torus, setTorus] = useState();
+  const [allowance, setAllowance] = useState(0);
+
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
     setOpenSigning(false);
@@ -150,6 +153,140 @@ const DaoHome = () => {
     }
   }
 
+  async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleCloseAllowance) {
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const spender = VOTING_ESCROW_PACKAGE_HASH;
+      const spenderByteArray = new CLByteArray(
+        Uint8Array.from(Buffer.from(spender, "hex"))
+      );
+      const paymentAmount = 5000000000;
+      const runtimeArgs = RuntimeArgs.fromMap({
+        spender: createRecipientAddress(spenderByteArray),
+        amount: CLValueBuilder.u256(convertToStr(amount)),
+      });
+
+      let contractHashAsByteArray = Uint8Array.from(Buffer.from(ERC20_CRV_CONTRACT_HASH, "hex"));
+      let entryPoint = "increase_allowance";
+
+      // Set contract installation deploy (unsigned).
+      let deploy = await makeDeploy(
+        publicKey,
+        contractHashAsByteArray,
+        entryPoint,
+        runtimeArgs,
+        paymentAmount
+      );
+      console.log("make deploy: ", deploy);
+      try {
+        if (selectedWallet === "Casper") {
+          let signedDeploy = await signdeploywithcaspersigner(
+            deploy,
+            publicKeyHex
+          );
+          let result = await putdeploy(signedDeploy, enqueueSnackbar);
+          console.log("result", result);
+        } else {
+          // let Torus = new Torus();
+          torus = new Torus();
+          console.log("torus", torus);
+          // Slider;
+          await torus.init({
+            buildEnv: "testing",
+            showTorusButton: true,
+            network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+          });
+          console.log("Torus123", torus);
+          console.log("torus", torus.provider);
+          const casperService = new CasperServiceByJsonRPC(torus?.provider);
+          const deployRes = await casperService.deploy(deploy);
+          console.log("deployRes", deployRes.deploy_hash);
+          console.log(
+            `... Contract installation deployHash: ${deployRes.deploy_hash}`
+          );
+          let result = await getDeploy(
+            NODE_ADDRESS,
+            deployRes.deploy_hash,
+            enqueueSnackbar
+          );
+          console.log(
+            `... Contract installed successfully.`,
+            JSON.parse(JSON.stringify(result))
+          );
+          console.log("result", result);
+        }
+        handleCloseAllowance();
+        handleCloseSigning();
+        // let allowanceParam = {
+        //   contractHash: pair,
+        //   owner: CLPublicKey.fromHex(activePublicKey)
+        //     .toAccountHashStr()
+        //     .slice(13),
+        //   spender: ROUTER_PACKAGE_HASH,
+        // };
+        // console.log("allowanceParam0", allowanceParam);
+        // axios
+        //   .post("/allowanceagainstownerandspenderpaircontract", allowanceParam)
+        //   .then((res) => {
+        //     console.log("allowanceagainstownerandspenderpaircontract", res);
+        //     console.log(res.data);
+        //     setpairAllowance(res.data.allowance);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //     console.log(error.response);
+        //   });
+
+        let variant = "success";
+        // increase ?
+        enqueueSnackbar("Allowance Increased Successfully", { variant })
+        // :
+        // enqueueSnackbar("Allowance Decreased Successfully", { variant })
+
+
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        // increase ?
+        enqueueSnackbar("Unable to Increase Allowance", { variant })
+        // :
+        // enqueueSnackbar("Unable to Decrease Allowance", { variant })
+      }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+
+  }
+
+  const getAllowance = () => {
+    let allowanceParam = {
+      contractHash: ERC20_CRV_CONTRACT_HASH,
+      owner: CLPublicKey.fromHex(activePublicKey).toAccountHashStr().slice(13),
+      spender: VOTING_ESCROW_PACKAGE_HASH
+    }
+    console.log('allowanceParam0', allowanceParam);
+    Axios
+      .post('/allowanceagainstownerandspender', allowanceParam)
+      .then((res) => {
+        console.log('allowanceagainstownerandspender', res)
+        console.log(res.data)
+        setAllowance(res.data.allowance)
+
+      })
+      .catch((error) => {
+        setAllowance(0)
+        console.log(error)
+        console.log(error.response)
+      })
+  }
 
   return (
     <>
@@ -228,7 +365,7 @@ const DaoHome = () => {
                             </div>
                             {/* Voting Power Actionables */}
                             <div className="col-12 mt-4">
-                              <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} />
+                            <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} allowance={allowance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
                               <div className="w-100 my-3">
                                 <Divider />
                               </div>
