@@ -19,6 +19,7 @@ import Typography from "@mui/material/Typography";
 // FORMIK AND YUP
 import { Alert } from "@material-ui/lab";
 import { Form, Formik } from "formik";
+import AllowanceModal from "../Modals/AllowanceModal";
 
 // CONTENT
 
@@ -35,7 +36,7 @@ try {
 // COMPONENT FUNCTION
 const VotingPowerActionables = (props) => {
   // States
-  const [userCRVBalance, setUserCRVBalance] = useState(0.0);
+  const [userCRVBalance, setUserCRVBalance] = useState(10);
   const [dateDisplay, setDateDisplay] = useState();
   const [date, setDate] = useState();
   const [lockTime, setLockTime] = useState("");
@@ -43,7 +44,14 @@ const VotingPowerActionables = (props) => {
   const [openA, setOpenA] = useState(false);
   const [startingVPower, setStartingVPower] = useState(0.0);
 
-  console.log("props for actionables: ", props);
+  const [openAllowance, setOpenAllowance] = useState(false);
+  const handleCloseAllowance = () => {
+    setOpenAllowance(false);
+  };
+  const handleShowAllowance = () => {
+    setOpenAllowance(true);
+  };
+  console.log("props for actionables: ", props, lockAmount);
 
   // Content
   const initialValues = {
@@ -99,6 +107,7 @@ const VotingPowerActionables = (props) => {
                 }}
                 value={lockAmount}
                 variant="filled"
+                type="number"
                 name="LockAmount"
                 sx={{ width: "100%" }}
               />
@@ -138,7 +147,8 @@ const VotingPowerActionables = (props) => {
               <DateTimePicker
                 onChange={(e) => {
                   console.log("e.value", e.target.value);
-                  setDate(e.target.value);
+                  console.log("new Date(e.target.value)", new Date(e.target.value));
+                  setDate(new Date(e.target.value));
                   setDateDisplay(e.target.value);
                 }}
                 value={dateDisplay}
@@ -161,17 +171,32 @@ const VotingPowerActionables = (props) => {
           <div className="row no-gutters justify-content-center">
             <div className="col-12 col-md-4">
               <div className="btnWrapper my-4 text-center">
-                <Button
-                  variant="contained"
-                  size="large"
-                  style={{ backgroundColor: "#5300e8", color: "white" }}
-                  onClick={() => {
-                    console.log("Action Taken");
-                    // props.createLockMakeDeploy(lockAmount, date);
-                  }}
-                >
-                  LOCK TIME
-                </Button>
+                {lockAmount > props.allowance ? (
+                  <Button
+                    variant="contained"
+                    size="large"
+                    style={{ backgroundColor: "#5300e8", color: "white" }}
+                    onClick={() => {
+                      console.log("Action Taken");
+                      handleShowAllowance();
+                    }}
+                  >
+                    Increase Allowance
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    size="large"
+                    style={{ backgroundColor: "#5300e8", color: "white" }}
+                    onClick={() => {
+                      console.log("Action Taken");
+                      props.createLockMakeDeploy(lockAmount, date);
+                    }}
+                  >
+                    Create Lock
+                  </Button>
+                )}
+
               </div>
             </div>
           </div>
@@ -206,6 +231,7 @@ const VotingPowerActionables = (props) => {
           <GasPriorityFee />
         </div>
       </div> */}
+      <AllowanceModal show={openAllowance} handleClose={handleCloseAllowance} approvalAmount={(lockAmount * 10 ** 9) - props.allowance} tokenAmount={lockAmount} increaseAndDecreaseAllowanceMakeDeploy={props.increaseAndDecreaseAllowanceMakeDeploy} />
     </>
   );
 };

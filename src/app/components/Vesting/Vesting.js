@@ -37,6 +37,7 @@ import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy"
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
 import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
+import SigningModal from "../Modals/SigningModal";
 
 // COMPONENT FUNCTION
 const Vesting = () => {
@@ -271,9 +272,9 @@ const Vesting = () => {
                           style={{ backgroundColor: "#5300e8", color: "white" }}
                           onClick={() => {
                             recipient.length <= 0 ||
-                            amount.length <= 0 ||
-                            startTime.length <= 0 ||
-                            time.length <= 0
+                              amount.length <= 0 ||
+                              startTime.length <= 0 ||
+                              time.length <= 0
                               ? enqueueSnackbar("Fields are empty")
                               : handleCommitOpen();
                           }}
@@ -419,6 +420,7 @@ const Vesting = () => {
         </fieldset>
       </div>
       <footer style={{ height: "5rem" }}></footer>
+      <SigningModal show={openSigning} />
     </>
   );
 };

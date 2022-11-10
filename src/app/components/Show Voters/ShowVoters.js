@@ -162,6 +162,7 @@ function ShowVoters(props) {
             labels={optionsForLabels}
             // series={optionsForSeries}
             series={[30, 70]}
+            options={rows}
           />
           <TableContainer component={Paper} elevation={5} className="mt-3">
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
@@ -284,6 +285,7 @@ function ShowVoters(props) {
             labels={optionsAgainstLabels}
             // series={optionsAgainstSeries}
             series={[60, 40]}
+            options={rowsAgainst}
           />
           <TableContainer component={Paper} elevation={5} className="mt-3">
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
