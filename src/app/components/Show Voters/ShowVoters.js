@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // CUSTOM CSS
@@ -19,10 +19,60 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import VoteDistributionModal from "../Modals/VoteDistributionModal";
 // COMPONENTS
+// GRAPHQL
+import { useQuery, gql } from "@apollo/client";
+import { Spinner } from "react-bootstrap";
+// UTILS
+import { shortenAddress } from "../../assets/js/helpers";
+
+// QUERIES
+const getCasts = gql`
+  query castById($id: String) {
+    castsByVoteId(voteId: $id) {
+      id
+      supports
+      vote {
+        id
+        voteNum
+      }
+      voter {
+        id
+        address
+      }
+      voterStake
+    }
+  }
+`;
 
 function ShowVoters(props) {
   const [openFor, setOpenFor] = useState(false);
   const [openAgainst, setOpenAgainst] = useState(false);
+  const [casts, setCasts] = useState();
+
+  console.log("id from props: ", props.voteId);
+  let id = props.voteId;
+
+  // Queries
+  const { error, loading, data } = useQuery(getCasts, {
+    variables: {
+      id,
+    },
+  });
+  console.log("this is data of gql: ", data);
+
+  let loadData = () => {
+    return new Promise((res, rej) => {
+      data ? res(setCasts(data.castsByVoteId)) : rej(error);
+    });
+  };
+
+  const resolveData = async () => {
+    try {
+      await loadData();
+    } catch (error) {
+      console.log("this is promise error: ", error);
+    }
+  };
 
   //   Event Handlers
   const handleOpenFor = () => setOpenFor(true);
@@ -30,21 +80,53 @@ function ShowVoters(props) {
   const handleOpenAgainst = () => setOpenAgainst(true);
   const handleCloseAgainst = () => setOpenAgainst(false);
 
-  function createData(Voter, veCRV) {
-    return { Voter, veCRV };
+  // Computations
+  let rows = [];
+  let rowsAgainst = [];
+  let optionsForLabels = [];
+  let optionsAgainstLabels = [];
+  let optionsAgainstSeries = [];
+  let optionsForSeries = [];
+
+  if (casts !== undefined) {
+    for (let i = 0; i < casts.length; i++) {
+      if (!casts[i].supports) {
+        rowsAgainst = [
+          ...rowsAgainst,
+          {
+            address: casts[i].voter.address,
+            stakes: casts[i].voterStake,
+            id: casts[i].id,
+            index: i,
+          },
+        ];
+      } else {
+        rows = [
+          ...rows,
+          {
+            address: casts[i].voter.address,
+            stakes: casts[i].voterStake,
+            id: casts[i].id,
+            index: i,
+          },
+        ];
+      }
+    }
+    optionsAgainstLabels = rowsAgainst.map((row) => row.address);
+    optionsAgainstSeries = rowsAgainst.map((row) => row.stakes);
+    optionsForLabels = rows.map((row) => row.address);
+    optionsForSeries = rows.map((row) => row.stakes);
   }
 
-  const rows = [
-    createData("0x5b3e....54ddb68", 15997),
-    createData("0x6b7e....14iib60", 67976),
-    createData("0x4b3a....24tdb65", 9654),
-    createData("0x3c3s....12kkb68", 389),
-    createData("0xt83c....54ddo87", 159),
-  ];
-  const rowsAgainst = [
-    createData("0x7b3c....56web69", 15997),
-    createData("0x2b7y....19utb60", 67976),
-  ];
+  // Side Effects
+  useEffect(() => {
+    resolveData();
+  }, [data]);
+
+  if (casts !== undefined) {
+    console.log("Cast in favor: ", optionsForLabels);
+    console.log("Cast in opposition: ", optionsAgainstSeries);
+  }
 
   return (
     <>
@@ -77,25 +159,94 @@ function ShowVoters(props) {
             close={handleCloseFor}
             click={handleCloseFor}
             title="For Vote Distribution"
+            options={rows}
           />
           <TableContainer component={Paper} elevation={5} className="mt-3">
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Voters</TableCell>
-                  <TableCell>veCRV</TableCell>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
+                    Voters
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
+                    veCRV
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell align="left">{row.Voter}</TableCell>
-                    <TableCell align="left">{row.veCRV}</TableCell>
+                {casts !== undefined ? (
+                  rows.length ? (
+                    rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell align="center">
+                          <a
+                            href="#"
+                            rel="noopener noreferrer"
+                            style={{ color: "rgba(0, 0, 0, 0.87)" }}
+                          >
+                            {shortenAddress(row.address)}
+                          </a>
+                        </TableCell>
+                        <TableCell align="center">
+                          {(row.stakes / 1e9).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
+                    >
+                      <TableCell
+                        sx={{
+                          textAlign: "center",
+                          width: "100%",
+                        }}
+                        colSpan={2}
+                      >
+                        <div className="row no-gutters justify-content-center align-items-center w-100">
+                          <div className="col-12 text-center">
+                            <Typography
+                              variant="p"
+                              gutterBottom
+                              component="div"
+                            >
+                              <span>No one has voted yet</span>
+                            </Typography>
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                        width: "100%",
+                      }}
+                      colSpan={2}
+                    >
+                      <div className="row no-gutters justify-content-center align-items-center w-100">
+                        <div className="col-12 text-center">
+                          <Spinner
+                            animation="border"
+                            role="status"
+                            style={{
+                              color: "rgb(83, 0, 232)",
+                            }}
+                          ></Spinner>
+                        </div>
+                      </div>
+                    </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -128,25 +279,94 @@ function ShowVoters(props) {
             close={handleCloseAgainst}
             click={handleCloseAgainst}
             title="Against Vote Distribution"
+            options={rowsAgainst}
           />
           <TableContainer component={Paper} elevation={5} className="mt-3">
             <Table sx={{ minWidth: 100 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Voters</TableCell>
-                  <TableCell>veCRV</TableCell>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
+                    Voters
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
+                    veCRV
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rowsAgainst.map((row) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell align="left">{row.Voter}</TableCell>
-                    <TableCell align="left">{row.veCRV}</TableCell>
+                {casts !== undefined ? (
+                  rowsAgainst.length ? (
+                    rowsAgainst.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell align="center">
+                          <a
+                            href="#"
+                            rel="noopener noreferrer"
+                            style={{ color: "rgba(0, 0, 0, 0.87)" }}
+                          >
+                            {shortenAddress(row.address)}
+                          </a>
+                        </TableCell>
+                        <TableCell align="center">
+                          {(row.stakes / 1e9).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
+                    >
+                      <TableCell
+                        sx={{
+                          textAlign: "center",
+                          width: "100%",
+                        }}
+                        colSpan={2}
+                      >
+                        <div className="row no-gutters justify-content-center align-items-center w-100">
+                          <div className="col-12 text-center">
+                            <Typography
+                              variant="p"
+                              gutterBottom
+                              component="div"
+                            >
+                              <span>No one has voted Against</span>
+                            </Typography>
+                          </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                        width: "100%",
+                      }}
+                      colSpan={2}
+                    >
+                      <div className="row no-gutters justify-content-center align-items-center w-100">
+                        <div className="col-12 text-center">
+                          <Spinner
+                            animation="border"
+                            role="status"
+                            style={{
+                              color: "rgb(83, 0, 232)",
+                            }}
+                          ></Spinner>
+                        </div>
+                      </div>
+                    </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </TableContainer>

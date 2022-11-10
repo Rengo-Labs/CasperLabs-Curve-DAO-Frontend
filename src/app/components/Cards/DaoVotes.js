@@ -1,6 +1,7 @@
 // REACT
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useParams } from "react-router";
+import { Link, useHistory } from "react-router-dom";
 // MATERIAL UI
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -15,11 +16,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import VoteInfoProgressBar from "../Progress bar/VoteInfoProgressBar";
 import { Paper } from "@mui/material";
-// GRAPHQL
-import { useQuery, gql } from "@apollo/client";
-// UTILS
-import { decorateVotes } from "../../assets/js/voteStore";
-import { truncate } from "../../assets/js/helpers";
 
 // CONTENT
 const bull = (
@@ -48,81 +44,11 @@ const CountDownTimer = () => {
   return timeLeft;
 };
 
-let defaultAccount = "Default Account";
-
-// const getUserVotes = gql`
-//   fragment vote_cast on Votes {
-//     casts(where: { voter: "${defaultAccount}" }) {
-//       id
-//       voteId
-//       voteNum
-//       voter
-//       supports
-//       voterStake
-//     }
-//   }
-// `;
-
-// const GET_VOTES_DATA = gql`
-//   query {
-//     votes {
-//       id
-//       appAddress
-//       orgAddress
-//       creator
-//       metadata
-//       executed
-//       startDate
-//       snapshotBlock
-//       supportRequiredPct
-//       minAcceptQuorum
-//       yea
-//       nay
-//       votingPower
-//       script
-//       creatorVotingPower
-//       transactionHash
-//       castCount
-//       voteCountSeq
-//       # {getUserVotes !== null ? getUserVotes : ''}
-//     }
-//   }
-// `;
-
 // COMPONENT FUNCTION
 const DaoVotes = (props) => {
   // States
-  // const [votes, setVotes] = useState();
   const [timeLeft, setTimeLeft] = useState(CountDownTimer());
   const history = useHistory();
-
-  // // Queries
-  // const { error, loading, data } = useQuery(GET_VOTES_DATA);
-  // console.log("this is data of gql: ", data);
-
-  // let loadData = () => {
-  //   return new Promise((res, rej) => {
-  //     data ? res(setVotes(data.votes)) : rej(error);
-  //   });
-  // };
-
-  // const resolveData = async () => {
-  //   try {
-  //     await loadData();
-  //   } catch (error) {
-  //     console.log("this is promise error: ", error);
-  //   }
-  // };
-
-  // // Side Effects
-  // useEffect(() => {
-  //   resolveData();
-  // }, [data]);
-
-  // console.log("the votes are: ", votes);
-  // let votesArray = decorateVotes(votes);
-  // console.log("votes after processing: ", votesArray);
-  // console.log("metadata: ", metadata);
 
   // Handlers
 
@@ -133,7 +59,7 @@ const DaoVotes = (props) => {
     }, 1000);
 
     return () => clearTimeout(timer);
-  });
+  }, []);
 
   const timerComponents = [];
   Object.keys(timeLeft).forEach((interval) => {
@@ -142,7 +68,7 @@ const DaoVotes = (props) => {
     }
 
     timerComponents.push(
-      <span>
+      <span key={interval}>
         {timeLeft[interval]} {interval}{" "}
       </span>
     );
@@ -192,20 +118,12 @@ const DaoVotes = (props) => {
           {/* Description */}
           <div className="row no-gutters mb-3" role="button">
             <section style={{ width: "220px", fontSize: "0.75rem" }}>
-              <a
-                style={{
-                  textDecoration: "none",
-                  color: "#212529",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  history.push("/voteInfo");
-                }}
-                // rel="noopener noreferrer nofollow"
-                // target="_blank"
+              <Link
+                to={`/voteInfo/${props.voteId}`}
+                style={{ color: "#212529" }}
               >
                 {props.description}
-              </a>
+              </Link>
             </section>
           </div>
           {/* Time Elapsed - if vote is open */}

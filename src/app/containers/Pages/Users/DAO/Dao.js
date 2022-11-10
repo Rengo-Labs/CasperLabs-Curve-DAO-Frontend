@@ -28,7 +28,7 @@ import { Alert } from "@material-ui/lab";
 // GRAPHQL
 import { useQuery, gql } from "@apollo/client";
 // UTILS
-import { decorateVotes } from "../../../../assets/js/voteStore";
+import * as voteStore from "../../../../assets/js/voteStore";
 import { width } from "@mui/system";
 
 // CONTENT
@@ -125,8 +125,6 @@ const Dao = () => {
     }
   };
 
-  // console.log(votes[0].creator);
-
   // Handlers
   const handleFilterStatusChange = (event) => {
     setFilterStatus(event.target.value);
@@ -140,24 +138,8 @@ const Dao = () => {
     setFilterStatus(event.target.value);
   };
 
-  const getSupportRequiredPct = (votes) => {
-    if (votes !== undefined) {
-      return votes.map((vote) =>
-        (parseInt(vote.supportRequiredPct) / 1e9).toFixed(2)
-      );
-    }
-  };
-
-  const getMinAcceptQuorum = (votes) => {
-    if (votes !== undefined) {
-      return votes.map((vote) =>
-        (parseInt(vote.minAcceptQuorum) / 1e9).toFixed(2)
-      );
-    }
-  };
-
-  var support = getSupportRequiredPct(votes);
-  var quo = getMinAcceptQuorum(votes);
+  var support = voteStore.getSupportRequiredPct(votes);
+  var quo = voteStore.getMinAcceptQuorum(votes);
 
   // Side Effects
   useEffect(() => {
@@ -166,30 +148,16 @@ const Dao = () => {
 
   let decorations = {};
   if (votes !== undefined) {
-    decorations = decorateVotes(votes);
+    decorations = voteStore.decorateVotes(votes);
     console.log("total support: ", decorations.totalSupport[0]);
     console.log("nop: ", decorations.nop[0]);
     console.log("yeap: ", decorations.yeap[0]);
     console.log("vote created on: ", decorations.createdOn[0]);
     console.log("vote metadata on: ", decorations.metadata[0]);
+    console.log("the vote Number: ", votes[0].id);
   }
-  console.log("the vote Number: ", decorations.voteNumber);
 
   // Content
-  var voteStartDate = {};
-  var voteCreatedObj;
-  // voteCreatedObj = new Date(createdOn[i]);
-  // console.log("voteCreatedObj: ", voteCreatedObj);
-  // voteStartDate.date = voteCreatedObj.getDate();
-  // voteStartDate.month = voteCreatedObj.getMonth() + 1;
-  // voteStartDate.year = voteCreatedObj.getFullYear();
-  // voteStartDate.hh = voteCreatedObj.getHours();
-  // voteStartDate.mm = voteCreatedObj.getMinutes();
-  // voteStartDate.ss = voteCreatedObj.getSeconds();
-  // return voteStartDate;
-  // console.log(voteStartDate);
-  // const voteCreatedOn = `${voteStartDate.date}/${voteStartDate.month}/${voteStartDate.year} ${voteStartDate.hh}:${voteStartDate.mm}:${voteStartDate.ss}`;
-  // console.log(voteCreatedOn);
 
   return (
     <>
@@ -389,7 +357,10 @@ const Dao = () => {
                                 {votes ? (
                                   votes.map((vote, index) => {
                                     return (
-                                      <div className="col-12 col-md-6 col-lg-12 col-xl-6">
+                                      <div
+                                        className="col-12 col-md-6 col-lg-12 col-xl-6"
+                                        key={index}
+                                      >
                                         <div className="col-12 py-3 px-sm-3 px-lg-0 px-xl-3">
                                           <DaoVotes
                                             legend={daoLegend}
@@ -398,7 +369,7 @@ const Dao = () => {
                                             description={
                                               decorations.metadata[index]
                                             }
-                                            voteNumber={1}
+                                            voteId={vote.id}
                                             executed={vote.executed}
                                             open={voteOpen}
                                             yes={decorations.yeap[index]}
