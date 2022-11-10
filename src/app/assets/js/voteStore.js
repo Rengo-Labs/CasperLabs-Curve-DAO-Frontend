@@ -1,7 +1,7 @@
 // import { allabis, poolAbis } from "./allabis";
 import BigNumber from "bignumber.js";
 import { gql, useQuery } from "@apollo/client";
-import { truncate } from "./helpers";
+import { truncate, formatDateToHuman } from "./helpers";
 
 export const OWNERSHIP_VOTE_TIME = 604800;
 export const PARAMETER_VOTE_TIME = 604800;
@@ -158,10 +158,32 @@ export const getSupportRequiredPct = (votes) => {
   }
 };
 
+const support = (votes, totalSupport) => {
+  if (votes !== undefined) {
+    return votes.map((vote, index) => {
+      if (totalSupport[index] == 0) return 0;
+      return ((vote.yea / totalSupport[index]) * 100).toFixed(2);
+    });
+  }
+};
+
+const quorum = (votes, totalSupport) => {
+  if (votes !== undefined) {
+    return votes.map((vote, index) => {
+      if (totalSupport[index] == 0) return 0;
+      return ((vote.yea / vote.votingPower) * 100).toFixed(2);
+    });
+  }
+  if (this.vote.totalSupport == 0) return 0;
+  return ((this.vote.yea / this.vote.votingPower) * 100).toFixed(2);
+};
+
 export const decorateVotes = (votes) => {
   let decorations = [];
   // decorations.voteNumber = getVoteId();
   decorations.totalSupport = votes.map((vote) => +vote.yea + +vote.nay);
+  decorations.support = support(votes, decorations.totalSupport);
+  decorations.quorum = quorum(votes, decorations.totalSupport);
   decorations.yeap = votes.map((vote) =>
     decorations.totalSupport == 0
       ? 0
