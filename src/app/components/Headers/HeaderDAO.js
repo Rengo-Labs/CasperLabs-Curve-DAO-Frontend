@@ -273,7 +273,7 @@ function HeaderDAO(props) {
         className="navbar navbar-expand-xl header-nav"
         style={{
           width: "100%",
-          padding: "0.5rem 1rem",
+          // padding: "0.5rem 1rem",
           backgroundColor: "#e7ebf0",
         }}
       >

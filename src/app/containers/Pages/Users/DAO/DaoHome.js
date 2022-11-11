@@ -1,5 +1,5 @@
 // REACT
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // CUSTOM STYLING
 import "../../../../assets/css/common.css";
 import "../../../../assets/css/curveButton.css";
@@ -20,7 +20,7 @@ import DaoInfoMessage from "../../../../components/DAO/DaoInfoMessage";
 import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
 import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
 import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from '../../../../components/blockchain/AccountHashes/Addresses';
+import { ERC20_CRV_CONTRACT_HASH, ERC20_CRV_PACKAGE_HASH, VOTING_ESCROW_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from '../../../../components/blockchain/AccountHashes/Addresses';
 import HomeBanner from "../Home/HomeBanner";
 // MATERIAL UI
 import Box from "@mui/material/Box";
@@ -31,6 +31,7 @@ import { CasperServiceByJsonRPC, CLByteArray, CLPublicKey, CLValueBuilder, Runti
 import { useSnackbar } from 'notistack';
 import SigningModal from "../../../../components/Modals/SigningModal";
 import Axios from "axios";
+import { makeERC20CRVDeployWasm } from "../../../../components/blockchain/MakeDeploy/MakeDeployWasm";
 
 // CONTENT
 
@@ -46,6 +47,7 @@ const DaoHome = () => {
   );
   let [torus, setTorus] = useState();
   const [allowance, setAllowance] = useState(0);
+  const [userLockedCRVBalance, setUserLockedCRVBalance] = useState(0);
 
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
@@ -54,8 +56,8 @@ const DaoHome = () => {
   const handleShowSigning = () => {
     setOpenSigning(true);
   };
-  // Handlers
 
+  // Handlers
   async function createLockMakeDeploy(lockedAmount, unlockTime) {
     if (lockedAmount == 0) {
       let variant = "Error";
@@ -152,7 +154,261 @@ const DaoHome = () => {
       enqueueSnackbar("Connect to Wallet Please", { variant });
     }
   }
-
+  async function withdrawMakeDeploy() {
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const paymentAmount = 5000000000;
+      try {
+        const runtimeArgs = RuntimeArgs.fromMap({
+        });
+        let contractHashAsByteArray = Uint8Array.from(
+          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+        );
+        let entryPoint = "withdraw";
+        // Set contract installation deploy (unsigned).
+        let deploy = await makeDeploy(
+          publicKey,
+          contractHashAsByteArray,
+          entryPoint,
+          runtimeArgs,
+          paymentAmount
+        );
+        console.log("make deploy: ", deploy);
+        try {
+          if (selectedWallet === "Casper") {
+            let signedDeploy = await signdeploywithcaspersigner(
+              deploy,
+              publicKeyHex
+            );
+            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            console.log("result", result);
+          } else {
+            // let Torus = new Torus();
+            torus = new Torus();
+            console.log("torus", torus);
+            await torus.init({
+              buildEnv: "testing",
+              showTorusButton: true,
+              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+            });
+            console.log("Torus123", torus);
+            console.log("torus", torus.provider);
+            const casperService = new CasperServiceByJsonRPC(torus?.provider);
+            const deployRes = await casperService.deploy(deploy);
+            console.log("deployRes", deployRes.deploy_hash);
+            console.log(
+              `... Contract installation deployHash: ${deployRes.deploy_hash}`
+            );
+            let result = await getDeploy(
+              NODE_ADDRESS,
+              deployRes.deploy_hash,
+              enqueueSnackbar
+            );
+            console.log(
+              `... Contract installed successfully.`,
+              JSON.parse(JSON.stringify(result))
+            );
+            console.log("result", result);
+          }
+          handleCloseSigning();
+          let variant = "success";
+          enqueueSnackbar("Funds Withdrawed Successfully", { variant })
+        } catch {
+          handleCloseSigning();
+          let variant = "Error";
+          enqueueSnackbar("Unable to Withdraw Funds", { variant })
+        }
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        enqueueSnackbar("Something Went Wrong", { variant });
+      }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+  }
+  async function increaseUnlockTimeMakeDeploy(unlockTime) {
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (unlockTime == undefined) {
+      let variant = "Error";
+      enqueueSnackbar("Please select Unlock Time", { variant })
+      return
+    }
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const paymentAmount = 5000000000;
+      try {
+        const runtimeArgs = RuntimeArgs.fromMap({
+          unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
+        });
+        let contractHashAsByteArray = Uint8Array.from(
+          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+        );
+        let entryPoint = "increase_unlock_time";
+        // Set contract installation deploy (unsigned).
+        let deploy = await makeDeploy(
+          publicKey,
+          contractHashAsByteArray,
+          entryPoint,
+          runtimeArgs,
+          paymentAmount
+        );
+        console.log("make deploy: ", deploy);
+        try {
+          if (selectedWallet === "Casper") {
+            let signedDeploy = await signdeploywithcaspersigner(
+              deploy,
+              publicKeyHex
+            );
+            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            console.log("result", result);
+          } else {
+            // let Torus = new Torus();
+            torus = new Torus();
+            console.log("torus", torus);
+            await torus.init({
+              buildEnv: "testing",
+              showTorusButton: true,
+              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+            });
+            console.log("Torus123", torus);
+            console.log("torus", torus.provider);
+            const casperService = new CasperServiceByJsonRPC(torus?.provider);
+            const deployRes = await casperService.deploy(deploy);
+            console.log("deployRes", deployRes.deploy_hash);
+            console.log(
+              `... Contract installation deployHash: ${deployRes.deploy_hash}`
+            );
+            let result = await getDeploy(
+              NODE_ADDRESS,
+              deployRes.deploy_hash,
+              enqueueSnackbar
+            );
+            console.log(
+              `... Contract installed successfully.`,
+              JSON.parse(JSON.stringify(result))
+            );
+            console.log("result", result);
+          }
+          handleCloseSigning();
+          let variant = "success";
+          enqueueSnackbar("Amount Increased Successfully", { variant })
+        } catch {
+          handleCloseSigning();
+          let variant = "Error";
+          enqueueSnackbar("Unable to Increase Amount", { variant })
+        }
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        enqueueSnackbar("Something Went Wrong", { variant });
+      }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+  }
+  async function increaseAmountMakeDeploy(lockedAmount) {
+    if (lockedAmount == 0) {
+      let variant = "Error";
+      enqueueSnackbar("Locked amount cannot be Zero", { variant })
+      return
+    }
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const paymentAmount = 5000000000;
+      try {
+        const runtimeArgs = RuntimeArgs.fromMap({
+          value: CLValueBuilder.u256(convertToStr(lockedAmount)),
+        });
+        let contractHashAsByteArray = Uint8Array.from(
+          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+        );
+        let entryPoint = "increase_amount";
+        // Set contract installation deploy (unsigned).
+        let deploy = await makeDeploy(
+          publicKey,
+          contractHashAsByteArray,
+          entryPoint,
+          runtimeArgs,
+          paymentAmount
+        );
+        console.log("make deploy: ", deploy);
+        try {
+          if (selectedWallet === "Casper") {
+            let signedDeploy = await signdeploywithcaspersigner(
+              deploy,
+              publicKeyHex
+            );
+            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            console.log("result", result);
+          } else {
+            // let Torus = new Torus();
+            torus = new Torus();
+            console.log("torus", torus);
+            await torus.init({
+              buildEnv: "testing",
+              showTorusButton: true,
+              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+            });
+            console.log("Torus123", torus);
+            console.log("torus", torus.provider);
+            const casperService = new CasperServiceByJsonRPC(torus?.provider);
+            const deployRes = await casperService.deploy(deploy);
+            console.log("deployRes", deployRes.deploy_hash);
+            console.log(
+              `... Contract installation deployHash: ${deployRes.deploy_hash}`
+            );
+            let result = await getDeploy(
+              NODE_ADDRESS,
+              deployRes.deploy_hash,
+              enqueueSnackbar
+            );
+            console.log(
+              `... Contract installed successfully.`,
+              JSON.parse(JSON.stringify(result))
+            );
+            console.log("result", result);
+          }
+          handleCloseSigning();
+          let variant = "success";
+          enqueueSnackbar("Amount Increased Successfully", { variant })
+        } catch {
+          handleCloseSigning();
+          let variant = "Error";
+          enqueueSnackbar("Unable to Increase Amount", { variant })
+        }
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        enqueueSnackbar("Something Went Wrong", { variant });
+      }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+  }
   async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleCloseAllowance) {
     handleShowSigning();
     const publicKeyHex = activePublicKey;
@@ -166,20 +422,19 @@ const DaoHome = () => {
       const spenderByteArray = new CLByteArray(
         Uint8Array.from(Buffer.from(spender, "hex"))
       );
+      const erc20CrvPackageHash = new CLByteArray(
+        Uint8Array.from(Buffer.from(ERC20_CRV_PACKAGE_HASH, "hex"))
+      );
       const paymentAmount = 5000000000;
       const runtimeArgs = RuntimeArgs.fromMap({
+        package_hash: CLValueBuilder.key(erc20CrvPackageHash),
         spender: createRecipientAddress(spenderByteArray),
         amount: CLValueBuilder.u256(convertToStr(amount)),
+        entrypoint: CLValueBuilder.string("increase_allowance"),
       });
 
-      let contractHashAsByteArray = Uint8Array.from(Buffer.from(ERC20_CRV_CONTRACT_HASH, "hex"));
-      let entryPoint = "increase_allowance";
-
-      // Set contract installation deploy (unsigned).
-      let deploy = await makeDeploy(
+      let deploy = await makeERC20CRVDeployWasm(
         publicKey,
-        contractHashAsByteArray,
-        entryPoint,
         runtimeArgs,
         paymentAmount
       );
@@ -223,40 +478,14 @@ const DaoHome = () => {
         }
         handleCloseAllowance();
         handleCloseSigning();
-        // let allowanceParam = {
-        //   contractHash: pair,
-        //   owner: CLPublicKey.fromHex(activePublicKey)
-        //     .toAccountHashStr()
-        //     .slice(13),
-        //   spender: ROUTER_PACKAGE_HASH,
-        // };
-        // console.log("allowanceParam0", allowanceParam);
-        // axios
-        //   .post("/allowanceagainstownerandspenderpaircontract", allowanceParam)
-        //   .then((res) => {
-        //     console.log("allowanceagainstownerandspenderpaircontract", res);
-        //     console.log(res.data);
-        //     setpairAllowance(res.data.allowance);
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //     console.log(error.response);
-        //   });
-
+        getAllowance();
         let variant = "success";
-        // increase ?
         enqueueSnackbar("Allowance Increased Successfully", { variant })
-        // :
-        // enqueueSnackbar("Allowance Decreased Successfully", { variant })
-
 
       } catch {
         handleCloseSigning();
         let variant = "Error";
-        // increase ?
         enqueueSnackbar("Unable to Increase Allowance", { variant })
-        // :
-        // enqueueSnackbar("Unable to Decrease Allowance", { variant })
       }
     } else {
       handleCloseSigning();
@@ -265,6 +494,10 @@ const DaoHome = () => {
     }
 
   }
+  useEffect(() => {
+    if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined)
+      getAllowance()
+  }, [activePublicKey])
 
   const getAllowance = () => {
     let allowanceParam = {
@@ -274,7 +507,7 @@ const DaoHome = () => {
     }
     console.log('allowanceParam0', allowanceParam);
     Axios
-      .post('/allowanceagainstownerandspender', allowanceParam)
+      .get(`/allowanceagainstownerandspender/${ERC20_CRV_CONTRACT_HASH}/${CLPublicKey.fromHex(activePublicKey).toAccountHashStr().slice(13)}/${VOTING_ESCROW_PACKAGE_HASH}`)
       .then((res) => {
         console.log('allowanceagainstownerandspender', res)
         console.log(res.data)
@@ -365,7 +598,7 @@ const DaoHome = () => {
                             </div>
                             {/* Voting Power Actionables */}
                             <div className="col-12 mt-4">
-                            <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} allowance={allowance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
+                              <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} withdrawMakeDeploy={withdrawMakeDeploy} increaseUnlockTimeMakeDeploy={increaseUnlockTimeMakeDeploy} increaseAmountMakeDeploy={increaseAmountMakeDeploy} allowance={allowance} userLockedCRVBalance={userLockedCRVBalance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
                               <div className="w-100 my-3">
                                 <Divider />
                               </div>
