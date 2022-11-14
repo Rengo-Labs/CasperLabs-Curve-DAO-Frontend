@@ -1,5 +1,5 @@
-import { SnackbarProvider } from "notistack";
-import React from "react";
+import { SnackbarProvider, useSnackbar } from "notistack";
+import React, { createContext, useState } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import HomeScreen from "../Pages/Users/HomeScreen";
 import Pools from "../Pages/Users/Pools";
@@ -20,8 +20,136 @@ import Calc from "../Pages/Users/DAO/Calc";
 import GaugeWeightVote from "../Pages/Users/DAO/GaugeWeightVote";
 import CreateVote from "../Pages/Users/DAO/CreateVote";
 import VoteInfo from "../Pages/Users/DAO/VoteInfo";
+import { CasperServiceByJsonRPC, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
+import { convertToStr } from "../../components/ConvertToString/ConvertToString";
+import { VOTING_ESCROW_CONTRACT_HASH } from "../../components/blockchain/AccountHashes/Addresses";
+import { makeDeploy } from "../../components/blockchain/MakeDeploy/MakeDeploy";
+import { signdeploywithcaspersigner } from "../../components/blockchain/SignDeploy/SignDeploy";
+import { putdeploy } from "../../components/blockchain/PutDeploy/PutDeploy";
+import Torus from "@toruslabs/casper-embed";
+import { SUPPORTED_NETWORKS, CHAINS } from "../../components/Headers/Header";
+import { getDeploy } from "../../components/blockchain/GetDeploy/GetDeploy";
+import { NODE_ADDRESS } from "../../components/blockchain/NodeAddress/NodeAddress";
+
+const AppContext = createContext();
 
 function App() {
+
+  const { enqueueSnackbar } = useSnackbar();
+  let [torus, setTorus] = useState();
+
+  let [selectedWallet, setSelectedWallet] = useState(
+    localStorage.getItem("selectedWallet")
+  );
+  let [activePublicKey, setActivePublicKey] = useState(
+    localStorage.getItem("Address")
+  );
+
+  const [openSigning, setOpenSigning] = useState(false);
+  const handleCloseSigning = () => {
+    setOpenSigning(false);
+  };
+  const handleShowSigning = () => {
+    setOpenSigning(true);
+  };
+
+  async function createLockMakeDeploy(lockedAmount, unlockTime) {
+    if (lockedAmount == 0) {
+      let variant = "Error";
+      enqueueSnackbar("Locked amount cannot be Zero", { variant })
+      return
+    }
+    if (unlockTime == undefined) {
+      let variant = "Error";
+      enqueueSnackbar("Please select Unlock Time", { variant })
+      return
+    }
+    console.log("unlockTime", unlockTime.getTime());
+    handleShowSigning();
+    const publicKeyHex = activePublicKey;
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      const paymentAmount = 5000000000;
+      try {
+        const runtimeArgs = RuntimeArgs.fromMap({
+          value: CLValueBuilder.u256(convertToStr(lockedAmount)),
+          unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
+        });
+        let contractHashAsByteArray = Uint8Array.from(
+          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+        );
+        let entryPoint = "create_lock";
+        // Set contract installation deploy (unsigned).
+        let deploy = await makeDeploy(
+          publicKey,
+          contractHashAsByteArray,
+          entryPoint,
+          runtimeArgs,
+          paymentAmount
+        );
+        console.log("make deploy: ", deploy);
+        try {
+          if (selectedWallet === "Casper") {
+            let signedDeploy = await signdeploywithcaspersigner(
+              deploy,
+              publicKeyHex
+            );
+            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            console.log("result", result);
+          } else {
+            // let Torus = new Torus();
+            torus = new Torus();
+            console.log("torus", torus);
+            await torus.init({
+              buildEnv: "testing",
+              showTorusButton: true,
+              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+            });
+            console.log("Torus123", torus);
+            console.log("torus", torus.provider);
+            const casperService = new CasperServiceByJsonRPC(torus?.provider);
+            const deployRes = await casperService.deploy(deploy);
+            console.log("deployRes", deployRes.deploy_hash);
+            console.log(
+              `... Contract installation deployHash: ${deployRes.deploy_hash}`
+            );
+            let result = await getDeploy(
+              NODE_ADDRESS,
+              deployRes.deploy_hash,
+              enqueueSnackbar
+            );
+            console.log(
+              `... Contract installed successfully.`,
+              JSON.parse(JSON.stringify(result))
+            );
+            console.log("result", result);
+          }
+          handleCloseSigning();
+          let variant = "success";
+          enqueueSnackbar("Funds Locked Successfully", { variant })
+
+
+        } catch {
+          handleCloseSigning();
+          let variant = "Error";
+          enqueueSnackbar("Unable to Lock Funds", { variant })
+        }
+      } catch {
+        handleCloseSigning();
+        let variant = "Error";
+        enqueueSnackbar("Something Went Wrong", { variant });
+      }
+    } else {
+      handleCloseSigning();
+      let variant = "error";
+      enqueueSnackbar("Connect to Wallet Please", { variant });
+    }
+  }
+
   const LoginRegisterRedirectCheck = ({ path, ...rest }) => {
     if (path === "/") {
       return <Route component={DaoHome} />;
@@ -73,32 +201,35 @@ function App() {
 
   return (
     <SnackbarProvider maxSnack={3}>
-      <BrowserRouter>
-        <Switch>
-          <LoginRegisterRedirectCheck exact path="/" />
-          {/* <LoginRegisterRedirectCheck exact path="/pools" /> */}
-          {/* <LoginRegisterRedirectCheck exact path="/factory/create-pool" />
-          <LoginRegisterRedirectCheck exact path="/factory/create-gauge" /> */}
-          {/* <LoginRegisterRedirectCheck exact path="/factory/create-gauge-vote" /> */}
-          {/* <LoginRegisterRedirectCheck exact path="/pool/buy-and-sell/:itemId" /> */}
-          {/* <LoginRegisterRedirectCheck exact path="/use-crv" /> */}
-          {/* <LoginRegisterRedirectCheck exact path="/risks" /> */}
-          {/* <LoginRegisterRedirectCheck exact path="/trade" /> */}
-          <LoginRegisterRedirectCheck exact path="/dao-home" />
-          <LoginRegisterRedirectCheck exact path="/dao" />
-          <LoginRegisterRedirectCheck exact path="/minter" />
-          <LoginRegisterRedirectCheck exact path="/vesting" />
-          <LoginRegisterRedirectCheck exact path="/locker" />
-          <LoginRegisterRedirectCheck exact path="/locks" />
-          <LoginRegisterRedirectCheck exact path="/calc" />
-          <LoginRegisterRedirectCheck exact path="/gw-vote" />
-          <LoginRegisterRedirectCheck exact path="/createVote" />
-          <LoginRegisterRedirectCheck exact path="/voteInfo/:id" />
-          {/* <Route exact path="/voteInfo/:id" component={VoteInfo} /> */}
-        </Switch>
-      </BrowserRouter>
+      <AppContext.Provider value={{ createLockMakeDeploy }}>
+        <BrowserRouter>
+          <Switch>
+            <LoginRegisterRedirectCheck exact path="/" />
+            {/* <LoginRegisterRedirectCheck exact path="/pools" /> */}
+            {/* <LoginRegisterRedirectCheck exact path="/factory/create-pool" />
+            <LoginRegisterRedirectCheck exact path="/factory/create-gauge" /> */}
+            {/* <LoginRegisterRedirectCheck exact path="/factory/create-gauge-vote" /> */}
+            {/* <LoginRegisterRedirectCheck exact path="/pool/buy-and-sell/:itemId" /> */}
+            {/* <LoginRegisterRedirectCheck exact path="/use-crv" /> */}
+            {/* <LoginRegisterRedirectCheck exact path="/risks" /> */}
+            {/* <LoginRegisterRedirectCheck exact path="/trade" /> */}
+            <LoginRegisterRedirectCheck exact path="/dao-home" />
+            <LoginRegisterRedirectCheck exact path="/dao" />
+            <LoginRegisterRedirectCheck exact path="/minter" />
+            <LoginRegisterRedirectCheck exact path="/vesting" />
+            <LoginRegisterRedirectCheck exact path="/locker" />
+            <LoginRegisterRedirectCheck exact path="/locks" />
+            <LoginRegisterRedirectCheck exact path="/calc" />
+            <LoginRegisterRedirectCheck exact path="/gw-vote" />
+            <LoginRegisterRedirectCheck exact path="/createVote" />
+            <LoginRegisterRedirectCheck exact path="/voteInfo/:id" />
+            {/* <Route exact path="/voteInfo/:id" component={VoteInfo} /> */}
+          </Switch>
+        </BrowserRouter>
+      </AppContext.Provider>
     </SnackbarProvider>
   );
 }
 
 export default App;
+export { AppContext };

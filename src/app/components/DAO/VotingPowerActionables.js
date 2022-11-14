@@ -1,5 +1,5 @@
 // REACT
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 // CUSTOM STYLES
 import "../../assets/css/common.css";
@@ -20,6 +20,8 @@ import Typography from "@mui/material/Typography";
 import { Alert } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import AllowanceModal from "../Modals/AllowanceModal";
+// CONTEXT
+import { AppContext } from "../../containers/App/Application";
 
 // CONTENT
 
@@ -35,6 +37,8 @@ try {
 
 // COMPONENT FUNCTION
 const VotingPowerActionables = (props) => {
+  const { createLockMakeDeploy } = useContext(AppContext);
+
   // States
   const [userCRVBalance, setUserCRVBalance] = useState(10);
   const [dateDisplay, setDateDisplay] = useState();
@@ -298,7 +302,8 @@ const VotingPowerActionables = (props) => {
                       style={{ backgroundColor: "#5300e8", color: "white" }}
                       onClick={() => {
                         console.log("Action Taken");
-                        props.createLockMakeDeploy(lockAmount, date);
+                        // props.createLockMakeDeploy(lockAmount, date);
+                        createLockMakeDeploy(lockAmount, date);
                       }}
                     >
                       Create Lock
