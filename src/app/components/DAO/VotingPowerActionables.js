@@ -37,7 +37,7 @@ try {
 
 // COMPONENT FUNCTION
 const VotingPowerActionables = (props) => {
-  const { createLockMakeDeploy } = useContext(AppContext);
+  const { createLockMakeDeploy, withdrawMakeDeploy } = useContext(AppContext);
 
   // States
   const [userCRVBalance, setUserCRVBalance] = useState(10);
@@ -276,7 +276,8 @@ const VotingPowerActionables = (props) => {
                         style={{ backgroundColor: "#5300e8", color: "white" }}
                         onClick={() => {
                           console.log("Action Taken");
-                          props.withdrawMakeDeploy();
+                          // props.withdrawMakeDeploy();
+                          withdrawMakeDeploy();
                         }}
                       >
                         withdraw
@@ -288,7 +289,8 @@ const VotingPowerActionables = (props) => {
                         style={{ backgroundColor: "#5300e8", color: "white" }}
                         onClick={() => {
                           console.log("Action Taken");
-                          props.withdrawMakeDeploy();
+                          // props.withdrawMakeDeploy();
+                          withdrawMakeDeploy();
                         }}
                       >
                         withdraw
