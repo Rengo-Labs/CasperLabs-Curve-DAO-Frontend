@@ -1,5 +1,5 @@
-import { SnackbarProvider, useSnackbar } from "notistack";
-import React, { createContext, useState } from "react";
+import { SnackbarProvider } from "notistack";
+import React, { createContext, useRef, useState } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import HomeScreen from "../Pages/Users/HomeScreen";
 import Pools from "../Pages/Users/Pools";
@@ -34,8 +34,9 @@ import { NODE_ADDRESS } from "../../components/blockchain/NodeAddress/NodeAddres
 const AppContext = createContext();
 
 function App() {
-
-  const { enqueueSnackbar } = useSnackbar();
+  console.log("In app file");
+  // const { enqueueSnackbar } = useSnackbar();
+  const providerRef = useRef();
   let [torus, setTorus] = useState();
 
   let [selectedWallet, setSelectedWallet] = useState(
@@ -56,12 +57,12 @@ function App() {
   async function createLockMakeDeploy(lockedAmount, unlockTime) {
     if (lockedAmount == 0) {
       let variant = "Error";
-      enqueueSnackbar("Locked amount cannot be Zero", { variant })
+      providerRef.current.enqueueSnackbar("Locked amount cannot be Zero", { variant })
       return
     }
     if (unlockTime == undefined) {
       let variant = "Error";
-      enqueueSnackbar("Please select Unlock Time", { variant })
+      providerRef.current.enqueueSnackbar("Please select Unlock Time", { variant })
       return
     }
     console.log("unlockTime", unlockTime.getTime());
@@ -98,7 +99,7 @@ function App() {
               deploy,
               publicKeyHex
             );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            let result = await putdeploy(signedDeploy, providerRef.current.enqueueSnackbar);
             console.log("result", result);
           } else {
             // let Torus = new Torus();
@@ -120,7 +121,7 @@ function App() {
             let result = await getDeploy(
               NODE_ADDRESS,
               deployRes.deploy_hash,
-              enqueueSnackbar
+              providerRef.current.enqueueSnackbar
             );
             console.log(
               `... Contract installed successfully.`,
@@ -130,23 +131,23 @@ function App() {
           }
           handleCloseSigning();
           let variant = "success";
-          enqueueSnackbar("Funds Locked Successfully", { variant })
+          providerRef.current.enqueueSnackbar("Funds Locked Successfully", { variant })
 
 
         } catch {
           handleCloseSigning();
           let variant = "Error";
-          enqueueSnackbar("Unable to Lock Funds", { variant })
+          providerRef.current.enqueueSnackbar("Unable to Lock Funds", { variant })
         }
       } catch {
         handleCloseSigning();
         let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
+        providerRef.current.enqueueSnackbar("Something Went Wrong", { variant });
       }
     } else {
       handleCloseSigning();
       let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
+      providerRef.current.enqueueSnackbar("Connect to Wallet Please", { variant });
     }
   }
 
@@ -182,7 +183,7 @@ function App() {
               deploy,
               publicKeyHex
             );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            let result = await putdeploy(signedDeploy, providerRef.current.enqueueSnackbar);
             console.log("result", result);
           } else {
             // let Torus = new Torus();
@@ -204,7 +205,7 @@ function App() {
             let result = await getDeploy(
               NODE_ADDRESS,
               deployRes.deploy_hash,
-              enqueueSnackbar
+              providerRef.current.enqueueSnackbar
             );
             console.log(
               `... Contract installed successfully.`,
@@ -214,21 +215,21 @@ function App() {
           }
           handleCloseSigning();
           let variant = "success";
-          enqueueSnackbar("Funds Withdrawed Successfully", { variant })
+          providerRef.current.enqueueSnackbar("Funds Withdrawed Successfully", { variant })
         } catch {
           handleCloseSigning();
           let variant = "Error";
-          enqueueSnackbar("Unable to Withdraw Funds", { variant })
+          providerRef.current.enqueueSnackbar("Unable to Withdraw Funds", { variant })
         }
       } catch {
         handleCloseSigning();
         let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
+        providerRef.current.enqueueSnackbar("Something Went Wrong", { variant });
       }
     } else {
       handleCloseSigning();
       let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
+      providerRef.current.enqueueSnackbar("Connect to Wallet Please", { variant });
     }
   }
 
@@ -237,7 +238,7 @@ function App() {
     const publicKeyHex = activePublicKey;
     if (unlockTime == undefined) {
       let variant = "Error";
-      enqueueSnackbar("Please select Unlock Time", { variant })
+      providerRef.current.enqueueSnackbar("Please select Unlock Time", { variant })
       return
     }
     if (
@@ -270,7 +271,7 @@ function App() {
               deploy,
               publicKeyHex
             );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            let result = await putdeploy(signedDeploy, providerRef.current.enqueueSnackbar);
             console.log("result", result);
           } else {
             // let Torus = new Torus();
@@ -292,7 +293,7 @@ function App() {
             let result = await getDeploy(
               NODE_ADDRESS,
               deployRes.deploy_hash,
-              enqueueSnackbar
+              providerRef.current.enqueueSnackbar
             );
             console.log(
               `... Contract installed successfully.`,
@@ -302,28 +303,28 @@ function App() {
           }
           handleCloseSigning();
           let variant = "success";
-          enqueueSnackbar("Amount Increased Successfully", { variant })
+          providerRef.current.enqueueSnackbar("Amount Increased Successfully", { variant })
         } catch {
           handleCloseSigning();
           let variant = "Error";
-          enqueueSnackbar("Unable to Increase Amount", { variant })
+          providerRef.current.enqueueSnackbar("Unable to Increase Amount", { variant })
         }
       } catch {
         handleCloseSigning();
         let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
+        providerRef.current.enqueueSnackbar("Something Went Wrong", { variant });
       }
     } else {
       handleCloseSigning();
       let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
+      providerRef.current.enqueueSnackbar("Connect to Wallet Please", { variant });
     }
   }
 
   async function increaseAmountMakeDeploy(lockedAmount) {
     if (lockedAmount == 0) {
       let variant = "Error";
-      enqueueSnackbar("Locked amount cannot be Zero", { variant })
+      providerRef.current.enqueueSnackbar("Locked amount cannot be Zero", { variant })
       return
     }
     handleShowSigning();
@@ -358,7 +359,7 @@ function App() {
               deploy,
               publicKeyHex
             );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            let result = await putdeploy(signedDeploy, providerRef.current.enqueueSnackbar);
             console.log("result", result);
           } else {
             // let Torus = new Torus();
@@ -380,7 +381,7 @@ function App() {
             let result = await getDeploy(
               NODE_ADDRESS,
               deployRes.deploy_hash,
-              enqueueSnackbar
+              providerRef.current.enqueueSnackbar
             );
             console.log(
               `... Contract installed successfully.`,
@@ -390,21 +391,21 @@ function App() {
           }
           handleCloseSigning();
           let variant = "success";
-          enqueueSnackbar("Amount Increased Successfully", { variant })
+          providerRef.current.enqueueSnackbar("Amount Increased Successfully", { variant })
         } catch {
           handleCloseSigning();
           let variant = "Error";
-          enqueueSnackbar("Unable to Increase Amount", { variant })
+          providerRef.current.enqueueSnackbar("Unable to Increase Amount", { variant })
         }
       } catch {
         handleCloseSigning();
         let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
+        providerRef.current.enqueueSnackbar("Something Went Wrong", { variant });
       }
     } else {
       handleCloseSigning();
       let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
+      providerRef.current.enqueueSnackbar("Connect to Wallet Please", { variant });
     }
   }
 
@@ -458,7 +459,7 @@ function App() {
   };
 
   return (
-    <SnackbarProvider maxSnack={3}>
+    <SnackbarProvider ref={providerRef} maxSnack={3}>
       <AppContext.Provider value={{ createLockMakeDeploy, withdrawMakeDeploy, increaseUnlockTimeMakeDeploy }}>
         <BrowserRouter>
           <Switch>
