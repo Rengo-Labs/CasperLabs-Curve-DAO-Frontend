@@ -37,7 +37,7 @@ try {
 
 // COMPONENT FUNCTION
 const VotingPowerActionables = (props) => {
-  const { createLockMakeDeploy, withdrawMakeDeploy } = useContext(AppContext);
+  const { allowance, createLockMakeDeploy, withdrawMakeDeploy, increaseAndDecreaseAllowanceMakeDeploy } = useContext(AppContext);
 
   // States
   const [userCRVBalance, setUserCRVBalance] = useState(10);
@@ -255,7 +255,7 @@ const VotingPowerActionables = (props) => {
           <div className="row no-gutters justify-content-center">
             <div className="col-12 col-md-4">
               <div className="btnWrapper my-4 text-center">
-                {lockAmount * 10 ** 9 > props.allowance ? (
+                {lockAmount * 10 ** 9 > allowance ? (
                   <Button
                     variant="contained"
                     size="large"
@@ -349,7 +349,7 @@ const VotingPowerActionables = (props) => {
           <GasPriorityFee />
         </div>
       </div> */}
-      <AllowanceModal show={openAllowance} handleClose={handleCloseAllowance} approvalAmount={(lockAmount * 10 ** 9) - props.allowance} tokenAmount={lockAmount} increaseAndDecreaseAllowanceMakeDeploy={props.increaseAndDecreaseAllowanceMakeDeploy} />
+      <AllowanceModal show={openAllowance} handleClose={handleCloseAllowance} approvalAmount={(lockAmount * 10 ** 9) - allowance} tokenAmount={lockAmount} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
     </>
   );
 };
