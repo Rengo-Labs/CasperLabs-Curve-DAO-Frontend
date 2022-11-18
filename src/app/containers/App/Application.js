@@ -344,7 +344,7 @@ function App() {
     ) {
       const publicKey = CLPublicKey.fromHex(publicKeyHex);
       const paymentAmount = 5000000000;
-      try {
+      // try {
         const runtimeArgs = RuntimeArgs.fromMap({
           value: CLValueBuilder.u256(convertToStr(lockedAmount)),
         });
@@ -361,7 +361,7 @@ function App() {
           paymentAmount
         );
         console.log("make deploy: ", deploy);
-        try {
+        // try {
           if (selectedWallet === "Casper") {
             let signedDeploy = await signdeploywithcaspersigner(
               deploy,
@@ -400,16 +400,16 @@ function App() {
           handleCloseSigning();
           let variant = "success";
           providerRef.current.enqueueSnackbar("Amount Increased Successfully", { variant })
-        } catch {
-          handleCloseSigning();
-          let variant = "Error";
-          providerRef.current.enqueueSnackbar("Unable to Increase Amount", { variant })
-        }
-      } catch {
-        handleCloseSigning();
-        let variant = "Error";
-        providerRef.current.enqueueSnackbar("Something Went Wrong", { variant });
-      }
+        // } catch {
+        //   handleCloseSigning();
+        //   let variant = "Error";
+        //   providerRef.current.enqueueSnackbar("Unable to Increase Amount", { variant })
+        // }
+      // } catch {
+      //   handleCloseSigning();
+      //   let variant = "Error";
+      //   providerRef.current.enqueueSnackbar("Something Went Wrong", { variant });
+      // }
     } else {
       handleCloseSigning();
       let variant = "error";
@@ -587,7 +587,8 @@ function App() {
             createLockMakeDeploy, 
             withdrawMakeDeploy, 
             increaseUnlockTimeMakeDeploy, 
-            increaseAndDecreaseAllowanceMakeDeploy 
+            increaseAndDecreaseAllowanceMakeDeploy,
+            increaseAmountMakeDeploy 
           }}
         >
           <BrowserRouter>
