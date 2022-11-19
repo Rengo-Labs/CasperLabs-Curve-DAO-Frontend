@@ -61,441 +61,441 @@ const Locker = () => {
 
 
   // Handlers
-  async function createLockMakeDeploy(lockedAmount, unlockTime) {
-    if (lockedAmount == 0) {
-      let variant = "Error";
-      enqueueSnackbar("Locked amount cannot be Zero", { variant })
-      return
-    }
-    if (unlockTime == undefined) {
-      let variant = "Error";
-      enqueueSnackbar("Please select Unlock Time", { variant })
-      return
-    }
-    console.log("unlockTime", unlockTime.getTime());
-    handleShowSigning();
-    const publicKeyHex = activePublicKey;
-    if (
-      publicKeyHex !== null &&
-      publicKeyHex !== "null" &&
-      publicKeyHex !== undefined
-    ) {
-      const publicKey = CLPublicKey.fromHex(publicKeyHex);
-      const paymentAmount = 5000000000;
-      try {
-        const runtimeArgs = RuntimeArgs.fromMap({
-          value: CLValueBuilder.u256(convertToStr(lockedAmount)),
-          unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
-        });
-        let contractHashAsByteArray = Uint8Array.from(
-          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
-        );
-        let entryPoint = "create_lock";
-        // Set contract installation deploy (unsigned).
-        let deploy = await makeDeploy(
-          publicKey,
-          contractHashAsByteArray,
-          entryPoint,
-          runtimeArgs,
-          paymentAmount
-        );
-        console.log("make deploy: ", deploy);
-        try {
-          if (selectedWallet === "Casper") {
-            let signedDeploy = await signdeploywithcaspersigner(
-              deploy,
-              publicKeyHex
-            );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
-            console.log("result", result);
-          } else {
-            // let Torus = new Torus();
-            torus = new Torus();
-            console.log("torus", torus);
-            await torus.init({
-              buildEnv: "testing",
-              showTorusButton: true,
-              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-            });
-            console.log("Torus123", torus);
-            console.log("torus", torus.provider);
-            const casperService = new CasperServiceByJsonRPC(torus?.provider);
-            const deployRes = await casperService.deploy(deploy);
-            console.log("deployRes", deployRes.deploy_hash);
-            console.log(
-              `... Contract installation deployHash: ${deployRes.deploy_hash}`
-            );
-            let result = await getDeploy(
-              NODE_ADDRESS,
-              deployRes.deploy_hash,
-              enqueueSnackbar
-            );
-            console.log(
-              `... Contract installed successfully.`,
-              JSON.parse(JSON.stringify(result))
-            );
-            console.log("result", result);
-          }
-          handleCloseSigning();
-          let variant = "success";
-          enqueueSnackbar("Funds Locked Successfully", { variant })
+  // async function createLockMakeDeploy(lockedAmount, unlockTime) {
+  //   if (lockedAmount == 0) {
+  //     let variant = "Error";
+  //     enqueueSnackbar("Locked amount cannot be Zero", { variant })
+  //     return
+  //   }
+  //   if (unlockTime == undefined) {
+  //     let variant = "Error";
+  //     enqueueSnackbar("Please select Unlock Time", { variant })
+  //     return
+  //   }
+  //   console.log("unlockTime", unlockTime.getTime());
+  //   handleShowSigning();
+  //   const publicKeyHex = activePublicKey;
+  //   if (
+  //     publicKeyHex !== null &&
+  //     publicKeyHex !== "null" &&
+  //     publicKeyHex !== undefined
+  //   ) {
+  //     const publicKey = CLPublicKey.fromHex(publicKeyHex);
+  //     const paymentAmount = 5000000000;
+  //     try {
+  //       const runtimeArgs = RuntimeArgs.fromMap({
+  //         value: CLValueBuilder.u256(convertToStr(lockedAmount)),
+  //         unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
+  //       });
+  //       let contractHashAsByteArray = Uint8Array.from(
+  //         Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+  //       );
+  //       let entryPoint = "create_lock";
+  //       // Set contract installation deploy (unsigned).
+  //       let deploy = await makeDeploy(
+  //         publicKey,
+  //         contractHashAsByteArray,
+  //         entryPoint,
+  //         runtimeArgs,
+  //         paymentAmount
+  //       );
+  //       console.log("make deploy: ", deploy);
+  //       try {
+  //         if (selectedWallet === "Casper") {
+  //           let signedDeploy = await signdeploywithcaspersigner(
+  //             deploy,
+  //             publicKeyHex
+  //           );
+  //           let result = await putdeploy(signedDeploy, enqueueSnackbar);
+  //           console.log("result", result);
+  //         } else {
+  //           // let Torus = new Torus();
+  //           torus = new Torus();
+  //           console.log("torus", torus);
+  //           await torus.init({
+  //             buildEnv: "testing",
+  //             showTorusButton: true,
+  //             network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+  //           });
+  //           console.log("Torus123", torus);
+  //           console.log("torus", torus.provider);
+  //           const casperService = new CasperServiceByJsonRPC(torus?.provider);
+  //           const deployRes = await casperService.deploy(deploy);
+  //           console.log("deployRes", deployRes.deploy_hash);
+  //           console.log(
+  //             `... Contract installation deployHash: ${deployRes.deploy_hash}`
+  //           );
+  //           let result = await getDeploy(
+  //             NODE_ADDRESS,
+  //             deployRes.deploy_hash,
+  //             enqueueSnackbar
+  //           );
+  //           console.log(
+  //             `... Contract installed successfully.`,
+  //             JSON.parse(JSON.stringify(result))
+  //           );
+  //           console.log("result", result);
+  //         }
+  //         handleCloseSigning();
+  //         let variant = "success";
+  //         enqueueSnackbar("Funds Locked Successfully", { variant })
 
 
-        } catch {
-          handleCloseSigning();
-          let variant = "Error";
-          enqueueSnackbar("Unable to Lock Funds", { variant })
-        }
-      } catch {
-        handleCloseSigning();
-        let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
-      }
-    } else {
-      handleCloseSigning();
-      let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
-    }
-  }
-  async function withdrawMakeDeploy() {
-    handleShowSigning();
-    const publicKeyHex = activePublicKey;
-    if (
-      publicKeyHex !== null &&
-      publicKeyHex !== "null" &&
-      publicKeyHex !== undefined
-    ) {
-      const publicKey = CLPublicKey.fromHex(publicKeyHex);
-      const paymentAmount = 5000000000;
-      try {
-        const runtimeArgs = RuntimeArgs.fromMap({
-        });
-        let contractHashAsByteArray = Uint8Array.from(
-          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
-        );
-        let entryPoint = "withdraw";
-        // Set contract installation deploy (unsigned).
-        let deploy = await makeDeploy(
-          publicKey,
-          contractHashAsByteArray,
-          entryPoint,
-          runtimeArgs,
-          paymentAmount
-        );
-        console.log("make deploy: ", deploy);
-        try {
-          if (selectedWallet === "Casper") {
-            let signedDeploy = await signdeploywithcaspersigner(
-              deploy,
-              publicKeyHex
-            );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
-            console.log("result", result);
-          } else {
-            // let Torus = new Torus();
-            torus = new Torus();
-            console.log("torus", torus);
-            await torus.init({
-              buildEnv: "testing",
-              showTorusButton: true,
-              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-            });
-            console.log("Torus123", torus);
-            console.log("torus", torus.provider);
-            const casperService = new CasperServiceByJsonRPC(torus?.provider);
-            const deployRes = await casperService.deploy(deploy);
-            console.log("deployRes", deployRes.deploy_hash);
-            console.log(
-              `... Contract installation deployHash: ${deployRes.deploy_hash}`
-            );
-            let result = await getDeploy(
-              NODE_ADDRESS,
-              deployRes.deploy_hash,
-              enqueueSnackbar
-            );
-            console.log(
-              `... Contract installed successfully.`,
-              JSON.parse(JSON.stringify(result))
-            );
-            console.log("result", result);
-          }
-          handleCloseSigning();
-          let variant = "success";
-          enqueueSnackbar("Funds Withdrawed Successfully", { variant })
-        } catch {
-          handleCloseSigning();
-          let variant = "Error";
-          enqueueSnackbar("Unable to Withdraw Funds", { variant })
-        }
-      } catch {
-        handleCloseSigning();
-        let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
-      }
-    } else {
-      handleCloseSigning();
-      let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
-    }
-  }
-  async function increaseUnlockTimeMakeDeploy(unlockTime) {
-    handleShowSigning();
-    const publicKeyHex = activePublicKey;
-    if (unlockTime == undefined) {
-      let variant = "Error";
-      enqueueSnackbar("Please select Unlock Time", { variant })
-      return
-    }
-    if (
-      publicKeyHex !== null &&
-      publicKeyHex !== "null" &&
-      publicKeyHex !== undefined
-    ) {
-      const publicKey = CLPublicKey.fromHex(publicKeyHex);
-      const paymentAmount = 5000000000;
-      try {
-        const runtimeArgs = RuntimeArgs.fromMap({
-          unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
-        });
-        let contractHashAsByteArray = Uint8Array.from(
-          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
-        );
-        let entryPoint = "increase_unlock_time";
-        // Set contract installation deploy (unsigned).
-        let deploy = await makeDeploy(
-          publicKey,
-          contractHashAsByteArray,
-          entryPoint,
-          runtimeArgs,
-          paymentAmount
-        );
-        console.log("make deploy: ", deploy);
-        try {
-          if (selectedWallet === "Casper") {
-            let signedDeploy = await signdeploywithcaspersigner(
-              deploy,
-              publicKeyHex
-            );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
-            console.log("result", result);
-          } else {
-            // let Torus = new Torus();
-            torus = new Torus();
-            console.log("torus", torus);
-            await torus.init({
-              buildEnv: "testing",
-              showTorusButton: true,
-              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-            });
-            console.log("Torus123", torus);
-            console.log("torus", torus.provider);
-            const casperService = new CasperServiceByJsonRPC(torus?.provider);
-            const deployRes = await casperService.deploy(deploy);
-            console.log("deployRes", deployRes.deploy_hash);
-            console.log(
-              `... Contract installation deployHash: ${deployRes.deploy_hash}`
-            );
-            let result = await getDeploy(
-              NODE_ADDRESS,
-              deployRes.deploy_hash,
-              enqueueSnackbar
-            );
-            console.log(
-              `... Contract installed successfully.`,
-              JSON.parse(JSON.stringify(result))
-            );
-            console.log("result", result);
-          }
-          handleCloseSigning();
-          let variant = "success";
-          enqueueSnackbar("Amount Increased Successfully", { variant })
-        } catch {
-          handleCloseSigning();
-          let variant = "Error";
-          enqueueSnackbar("Unable to Increase Amount", { variant })
-        }
-      } catch {
-        handleCloseSigning();
-        let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
-      }
-    } else {
-      handleCloseSigning();
-      let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
-    }
-  }
-  async function increaseAmountMakeDeploy(lockedAmount) {
-    if (lockedAmount == 0) {
-      let variant = "Error";
-      enqueueSnackbar("Locked amount cannot be Zero", { variant })
-      return
-    }
-    handleShowSigning();
-    const publicKeyHex = activePublicKey;
-    if (
-      publicKeyHex !== null &&
-      publicKeyHex !== "null" &&
-      publicKeyHex !== undefined
-    ) {
-      const publicKey = CLPublicKey.fromHex(publicKeyHex);
-      const paymentAmount = 5000000000;
-      try {
-        const runtimeArgs = RuntimeArgs.fromMap({
-          value: CLValueBuilder.u256(convertToStr(lockedAmount)),
-        });
-        let contractHashAsByteArray = Uint8Array.from(
-          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
-        );
-        let entryPoint = "increase_amount";
-        // Set contract installation deploy (unsigned).
-        let deploy = await makeDeploy(
-          publicKey,
-          contractHashAsByteArray,
-          entryPoint,
-          runtimeArgs,
-          paymentAmount
-        );
-        console.log("make deploy: ", deploy);
-        try {
-          if (selectedWallet === "Casper") {
-            let signedDeploy = await signdeploywithcaspersigner(
-              deploy,
-              publicKeyHex
-            );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
-            console.log("result", result);
-          } else {
-            // let Torus = new Torus();
-            torus = new Torus();
-            console.log("torus", torus);
-            await torus.init({
-              buildEnv: "testing",
-              showTorusButton: true,
-              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-            });
-            console.log("Torus123", torus);
-            console.log("torus", torus.provider);
-            const casperService = new CasperServiceByJsonRPC(torus?.provider);
-            const deployRes = await casperService.deploy(deploy);
-            console.log("deployRes", deployRes.deploy_hash);
-            console.log(
-              `... Contract installation deployHash: ${deployRes.deploy_hash}`
-            );
-            let result = await getDeploy(
-              NODE_ADDRESS,
-              deployRes.deploy_hash,
-              enqueueSnackbar
-            );
-            console.log(
-              `... Contract installed successfully.`,
-              JSON.parse(JSON.stringify(result))
-            );
-            console.log("result", result);
-          }
-          handleCloseSigning();
-          let variant = "success";
-          enqueueSnackbar("Amount Increased Successfully", { variant })
-        } catch {
-          handleCloseSigning();
-          let variant = "Error";
-          enqueueSnackbar("Unable to Increase Amount", { variant })
-        }
-      } catch {
-        handleCloseSigning();
-        let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
-      }
-    } else {
-      handleCloseSigning();
-      let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
-    }
-  }
-  async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleCloseAllowance) {
-    handleShowSigning();
-    const publicKeyHex = activePublicKey;
-    if (
-      publicKeyHex !== null &&
-      publicKeyHex !== "null" &&
-      publicKeyHex !== undefined
-    ) {
-      const publicKey = CLPublicKey.fromHex(publicKeyHex);
-      const spender = VOTING_ESCROW_PACKAGE_HASH;
-      const spenderByteArray = new CLByteArray(
-        Uint8Array.from(Buffer.from(spender, "hex"))
-      );
-      const erc20CrvPackageHash = new CLByteArray(
-        Uint8Array.from(Buffer.from(ERC20_CRV_PACKAGE_HASH, "hex"))
-      );
-      const paymentAmount = 5000000000;
-      const runtimeArgs = RuntimeArgs.fromMap({
-        package_hash: CLValueBuilder.key(erc20CrvPackageHash),
-        spender: createRecipientAddress(spenderByteArray),
-        amount: CLValueBuilder.u256(convertToStr(amount)),
-        entrypoint: CLValueBuilder.string("increase_allowance"),
-      });
+  //       } catch {
+  //         handleCloseSigning();
+  //         let variant = "Error";
+  //         enqueueSnackbar("Unable to Lock Funds", { variant })
+  //       }
+  //     } catch {
+  //       handleCloseSigning();
+  //       let variant = "Error";
+  //       enqueueSnackbar("Something Went Wrong", { variant });
+  //     }
+  //   } else {
+  //     handleCloseSigning();
+  //     let variant = "error";
+  //     enqueueSnackbar("Connect to Wallet Please", { variant });
+  //   }
+  // }
+  // async function withdrawMakeDeploy() {
+  //   handleShowSigning();
+  //   const publicKeyHex = activePublicKey;
+  //   if (
+  //     publicKeyHex !== null &&
+  //     publicKeyHex !== "null" &&
+  //     publicKeyHex !== undefined
+  //   ) {
+  //     const publicKey = CLPublicKey.fromHex(publicKeyHex);
+  //     const paymentAmount = 5000000000;
+  //     try {
+  //       const runtimeArgs = RuntimeArgs.fromMap({
+  //       });
+  //       let contractHashAsByteArray = Uint8Array.from(
+  //         Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+  //       );
+  //       let entryPoint = "withdraw";
+  //       // Set contract installation deploy (unsigned).
+  //       let deploy = await makeDeploy(
+  //         publicKey,
+  //         contractHashAsByteArray,
+  //         entryPoint,
+  //         runtimeArgs,
+  //         paymentAmount
+  //       );
+  //       console.log("make deploy: ", deploy);
+  //       try {
+  //         if (selectedWallet === "Casper") {
+  //           let signedDeploy = await signdeploywithcaspersigner(
+  //             deploy,
+  //             publicKeyHex
+  //           );
+  //           let result = await putdeploy(signedDeploy, enqueueSnackbar);
+  //           console.log("result", result);
+  //         } else {
+  //           // let Torus = new Torus();
+  //           torus = new Torus();
+  //           console.log("torus", torus);
+  //           await torus.init({
+  //             buildEnv: "testing",
+  //             showTorusButton: true,
+  //             network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+  //           });
+  //           console.log("Torus123", torus);
+  //           console.log("torus", torus.provider);
+  //           const casperService = new CasperServiceByJsonRPC(torus?.provider);
+  //           const deployRes = await casperService.deploy(deploy);
+  //           console.log("deployRes", deployRes.deploy_hash);
+  //           console.log(
+  //             `... Contract installation deployHash: ${deployRes.deploy_hash}`
+  //           );
+  //           let result = await getDeploy(
+  //             NODE_ADDRESS,
+  //             deployRes.deploy_hash,
+  //             enqueueSnackbar
+  //           );
+  //           console.log(
+  //             `... Contract installed successfully.`,
+  //             JSON.parse(JSON.stringify(result))
+  //           );
+  //           console.log("result", result);
+  //         }
+  //         handleCloseSigning();
+  //         let variant = "success";
+  //         enqueueSnackbar("Funds Withdrawed Successfully", { variant })
+  //       } catch {
+  //         handleCloseSigning();
+  //         let variant = "Error";
+  //         enqueueSnackbar("Unable to Withdraw Funds", { variant })
+  //       }
+  //     } catch {
+  //       handleCloseSigning();
+  //       let variant = "Error";
+  //       enqueueSnackbar("Something Went Wrong", { variant });
+  //     }
+  //   } else {
+  //     handleCloseSigning();
+  //     let variant = "error";
+  //     enqueueSnackbar("Connect to Wallet Please", { variant });
+  //   }
+  // }
+  // async function increaseUnlockTimeMakeDeploy(unlockTime) {
+  //   handleShowSigning();
+  //   const publicKeyHex = activePublicKey;
+  //   if (unlockTime == undefined) {
+  //     let variant = "Error";
+  //     enqueueSnackbar("Please select Unlock Time", { variant })
+  //     return
+  //   }
+  //   if (
+  //     publicKeyHex !== null &&
+  //     publicKeyHex !== "null" &&
+  //     publicKeyHex !== undefined
+  //   ) {
+  //     const publicKey = CLPublicKey.fromHex(publicKeyHex);
+  //     const paymentAmount = 5000000000;
+  //     try {
+  //       const runtimeArgs = RuntimeArgs.fromMap({
+  //         unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
+  //       });
+  //       let contractHashAsByteArray = Uint8Array.from(
+  //         Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+  //       );
+  //       let entryPoint = "increase_unlock_time";
+  //       // Set contract installation deploy (unsigned).
+  //       let deploy = await makeDeploy(
+  //         publicKey,
+  //         contractHashAsByteArray,
+  //         entryPoint,
+  //         runtimeArgs,
+  //         paymentAmount
+  //       );
+  //       console.log("make deploy: ", deploy);
+  //       try {
+  //         if (selectedWallet === "Casper") {
+  //           let signedDeploy = await signdeploywithcaspersigner(
+  //             deploy,
+  //             publicKeyHex
+  //           );
+  //           let result = await putdeploy(signedDeploy, enqueueSnackbar);
+  //           console.log("result", result);
+  //         } else {
+  //           // let Torus = new Torus();
+  //           torus = new Torus();
+  //           console.log("torus", torus);
+  //           await torus.init({
+  //             buildEnv: "testing",
+  //             showTorusButton: true,
+  //             network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+  //           });
+  //           console.log("Torus123", torus);
+  //           console.log("torus", torus.provider);
+  //           const casperService = new CasperServiceByJsonRPC(torus?.provider);
+  //           const deployRes = await casperService.deploy(deploy);
+  //           console.log("deployRes", deployRes.deploy_hash);
+  //           console.log(
+  //             `... Contract installation deployHash: ${deployRes.deploy_hash}`
+  //           );
+  //           let result = await getDeploy(
+  //             NODE_ADDRESS,
+  //             deployRes.deploy_hash,
+  //             enqueueSnackbar
+  //           );
+  //           console.log(
+  //             `... Contract installed successfully.`,
+  //             JSON.parse(JSON.stringify(result))
+  //           );
+  //           console.log("result", result);
+  //         }
+  //         handleCloseSigning();
+  //         let variant = "success";
+  //         enqueueSnackbar("Amount Increased Successfully", { variant })
+  //       } catch {
+  //         handleCloseSigning();
+  //         let variant = "Error";
+  //         enqueueSnackbar("Unable to Increase Amount", { variant })
+  //       }
+  //     } catch {
+  //       handleCloseSigning();
+  //       let variant = "Error";
+  //       enqueueSnackbar("Something Went Wrong", { variant });
+  //     }
+  //   } else {
+  //     handleCloseSigning();
+  //     let variant = "error";
+  //     enqueueSnackbar("Connect to Wallet Please", { variant });
+  //   }
+  // }
+  // async function increaseAmountMakeDeploy(lockedAmount) {
+  //   if (lockedAmount == 0) {
+  //     let variant = "Error";
+  //     enqueueSnackbar("Locked amount cannot be Zero", { variant })
+  //     return
+  //   }
+  //   handleShowSigning();
+  //   const publicKeyHex = activePublicKey;
+  //   if (
+  //     publicKeyHex !== null &&
+  //     publicKeyHex !== "null" &&
+  //     publicKeyHex !== undefined
+  //   ) {
+  //     const publicKey = CLPublicKey.fromHex(publicKeyHex);
+  //     const paymentAmount = 5000000000;
+  //     try {
+  //       const runtimeArgs = RuntimeArgs.fromMap({
+  //         value: CLValueBuilder.u256(convertToStr(lockedAmount)),
+  //       });
+  //       let contractHashAsByteArray = Uint8Array.from(
+  //         Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+  //       );
+  //       let entryPoint = "increase_amount";
+  //       // Set contract installation deploy (unsigned).
+  //       let deploy = await makeDeploy(
+  //         publicKey,
+  //         contractHashAsByteArray,
+  //         entryPoint,
+  //         runtimeArgs,
+  //         paymentAmount
+  //       );
+  //       console.log("make deploy: ", deploy);
+  //       try {
+  //         if (selectedWallet === "Casper") {
+  //           let signedDeploy = await signdeploywithcaspersigner(
+  //             deploy,
+  //             publicKeyHex
+  //           );
+  //           let result = await putdeploy(signedDeploy, enqueueSnackbar);
+  //           console.log("result", result);
+  //         } else {
+  //           // let Torus = new Torus();
+  //           torus = new Torus();
+  //           console.log("torus", torus);
+  //           await torus.init({
+  //             buildEnv: "testing",
+  //             showTorusButton: true,
+  //             network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+  //           });
+  //           console.log("Torus123", torus);
+  //           console.log("torus", torus.provider);
+  //           const casperService = new CasperServiceByJsonRPC(torus?.provider);
+  //           const deployRes = await casperService.deploy(deploy);
+  //           console.log("deployRes", deployRes.deploy_hash);
+  //           console.log(
+  //             `... Contract installation deployHash: ${deployRes.deploy_hash}`
+  //           );
+  //           let result = await getDeploy(
+  //             NODE_ADDRESS,
+  //             deployRes.deploy_hash,
+  //             enqueueSnackbar
+  //           );
+  //           console.log(
+  //             `... Contract installed successfully.`,
+  //             JSON.parse(JSON.stringify(result))
+  //           );
+  //           console.log("result", result);
+  //         }
+  //         handleCloseSigning();
+  //         let variant = "success";
+  //         enqueueSnackbar("Amount Increased Successfully", { variant })
+  //       } catch {
+  //         handleCloseSigning();
+  //         let variant = "Error";
+  //         enqueueSnackbar("Unable to Increase Amount", { variant })
+  //       }
+  //     } catch {
+  //       handleCloseSigning();
+  //       let variant = "Error";
+  //       enqueueSnackbar("Something Went Wrong", { variant });
+  //     }
+  //   } else {
+  //     handleCloseSigning();
+  //     let variant = "error";
+  //     enqueueSnackbar("Connect to Wallet Please", { variant });
+  //   }
+  // }
+  // async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleCloseAllowance) {
+  //   handleShowSigning();
+  //   const publicKeyHex = activePublicKey;
+  //   if (
+  //     publicKeyHex !== null &&
+  //     publicKeyHex !== "null" &&
+  //     publicKeyHex !== undefined
+  //   ) {
+  //     const publicKey = CLPublicKey.fromHex(publicKeyHex);
+  //     const spender = VOTING_ESCROW_PACKAGE_HASH;
+  //     const spenderByteArray = new CLByteArray(
+  //       Uint8Array.from(Buffer.from(spender, "hex"))
+  //     );
+  //     const erc20CrvPackageHash = new CLByteArray(
+  //       Uint8Array.from(Buffer.from(ERC20_CRV_PACKAGE_HASH, "hex"))
+  //     );
+  //     const paymentAmount = 5000000000;
+  //     const runtimeArgs = RuntimeArgs.fromMap({
+  //       package_hash: CLValueBuilder.key(erc20CrvPackageHash),
+  //       spender: createRecipientAddress(spenderByteArray),
+  //       amount: CLValueBuilder.u256(convertToStr(amount)),
+  //       entrypoint: CLValueBuilder.string("increase_allowance"),
+  //     });
 
-      let deploy = await makeERC20CRVDeployWasm(
-        publicKey,
-        runtimeArgs,
-        paymentAmount
-      );
-      console.log("make deploy: ", deploy);
-      try {
-        if (selectedWallet === "Casper") {
-          let signedDeploy = await signdeploywithcaspersigner(
-            deploy,
-            publicKeyHex
-          );
-          let result = await putdeploy(signedDeploy, enqueueSnackbar);
-          console.log("result", result);
-        } else {
-          torus = new Torus();
-          console.log("torus", torus);
-          await torus.init({
-            buildEnv: "testing",
-            showTorusButton: true,
-            network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-          });
-          console.log("Torus123", torus);
-          console.log("torus", torus.provider);
-          const casperService = new CasperServiceByJsonRPC(torus?.provider);
-          const deployRes = await casperService.deploy(deploy);
-          console.log("deployRes", deployRes.deploy_hash);
-          console.log(
-            `... Contract installation deployHash: ${deployRes.deploy_hash}`
-          );
-          let result = await getDeploy(
-            NODE_ADDRESS,
-            deployRes.deploy_hash,
-            enqueueSnackbar
-          );
-          console.log(
-            `... Contract installed successfully.`,
-            JSON.parse(JSON.stringify(result))
-          );
-          console.log("result", result);
-        }
-        handleCloseAllowance();
-        handleCloseSigning();
-        getAllowance();
+  //     let deploy = await makeERC20CRVDeployWasm(
+  //       publicKey,
+  //       runtimeArgs,
+  //       paymentAmount
+  //     );
+  //     console.log("make deploy: ", deploy);
+  //     try {
+  //       if (selectedWallet === "Casper") {
+  //         let signedDeploy = await signdeploywithcaspersigner(
+  //           deploy,
+  //           publicKeyHex
+  //         );
+  //         let result = await putdeploy(signedDeploy, enqueueSnackbar);
+  //         console.log("result", result);
+  //       } else {
+  //         torus = new Torus();
+  //         console.log("torus", torus);
+  //         await torus.init({
+  //           buildEnv: "testing",
+  //           showTorusButton: true,
+  //           network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+  //         });
+  //         console.log("Torus123", torus);
+  //         console.log("torus", torus.provider);
+  //         const casperService = new CasperServiceByJsonRPC(torus?.provider);
+  //         const deployRes = await casperService.deploy(deploy);
+  //         console.log("deployRes", deployRes.deploy_hash);
+  //         console.log(
+  //           `... Contract installation deployHash: ${deployRes.deploy_hash}`
+  //         );
+  //         let result = await getDeploy(
+  //           NODE_ADDRESS,
+  //           deployRes.deploy_hash,
+  //           enqueueSnackbar
+  //         );
+  //         console.log(
+  //           `... Contract installed successfully.`,
+  //           JSON.parse(JSON.stringify(result))
+  //         );
+  //         console.log("result", result);
+  //       }
+  //       handleCloseAllowance();
+  //       handleCloseSigning();
+  //       getAllowance();
        
-        let variant = "success";
-        enqueueSnackbar("Allowance Increased Successfully", { variant })
+  //       let variant = "success";
+  //       enqueueSnackbar("Allowance Increased Successfully", { variant })
 
-      } catch {
-        handleCloseSigning();
-        let variant = "Error";
-        enqueueSnackbar("Unable to Increase Allowance", { variant })
-      }
-    } else {
-      handleCloseSigning();
-      let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
-    }
+  //     } catch {
+  //       handleCloseSigning();
+  //       let variant = "Error";
+  //       enqueueSnackbar("Unable to Increase Allowance", { variant })
+  //     }
+  //   } else {
+  //     handleCloseSigning();
+  //     let variant = "error";
+  //     enqueueSnackbar("Connect to Wallet Please", { variant });
+  //   }
 
-  }
+  // }
   useEffect(() => {
     if (activePublicKey && activePublicKey!='null' && activePublicKey!=undefined)
       getAllowance()
@@ -609,7 +609,8 @@ const Locker = () => {
                             {/* Voting Power Actionables */}
                             <div className="row no-gutters">
                               <div className="col-12 mt-4">
-                                <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} withdrawMakeDeploy={withdrawMakeDeploy} increaseUnlockTimeMakeDeploy={increaseUnlockTimeMakeDeploy} increaseAmountMakeDeploy={increaseAmountMakeDeploy} allowance={allowance} userLockedCRVBalance={userLockedCRVBalance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
+                                {/* <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} withdrawMakeDeploy={withdrawMakeDeploy} increaseUnlockTimeMakeDeploy={increaseUnlockTimeMakeDeploy} increaseAmountMakeDeploy={increaseAmountMakeDeploy} allowance={allowance} userLockedCRVBalance={userLockedCRVBalance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} /> */}
+                                <VotingPowerActionables userLockedCRVBalance={userLockedCRVBalance} />
                               </div>
                             </div>
                           </div>
@@ -622,7 +623,7 @@ const Locker = () => {
             </div>
           </div>
         </div>
-        <SigningModal show={openSigning} />
+        {/* <SigningModal show={openSigning} /> */}
 
       </div>
     </>
