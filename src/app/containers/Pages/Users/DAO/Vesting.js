@@ -326,6 +326,9 @@ const Vesting = () => {
                                       variant="filled"
                                       name="CheckVestingAddress"
                                       sx={{ width: "100%" }}
+                                      onChange={(e) => {
+                                        setVestingAddress(e.target.value);
+                                      }}
                                       value={vestingAddress}
                                     />
                                   </div>
