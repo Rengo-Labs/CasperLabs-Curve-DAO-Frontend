@@ -1,4 +1,5 @@
 import { Button, FormControl, FormHelperText, Input, InputAdornment, Typography } from "@material-ui/core";
+import { useSnackbar } from "notistack";
 import React from "react";
 import { Modal } from "react-bootstrap";
 import "../../assets/css/bootstrap.min.css";
@@ -7,6 +8,8 @@ import "../../assets/plugins/fontawesome/css/all.min.css";
 import "../../assets/plugins/fontawesome/css/fontawesome.min.css";
 
 function AllowanceModal(props) {
+    const { enqueueSnackbar } = useSnackbar();
+
     return (
         <Modal centered show={props.show} onHide={props.handleClose}>
             <Modal.Header closeButton>
@@ -41,7 +44,7 @@ function AllowanceModal(props) {
                     style={{
                         fontSize: '15px', fontWeight: '600',
                         padding: "10px",
-                    }} onClick={() => props.increaseAndDecreaseAllowanceMakeDeploy(props.approvalAmount / 10 ** 9, props.handleClose)}>
+                    }} onClick={() => props.increaseAndDecreaseAllowanceMakeDeploy(props.approvalAmount / 10 ** 9, props.handleClose, props.signingModal, enqueueSnackbar, props.getAllowance)}>
                     Increase Allowance
                 </button>
             </Modal.Footer>
