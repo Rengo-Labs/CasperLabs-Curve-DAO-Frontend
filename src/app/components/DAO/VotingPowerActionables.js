@@ -363,6 +363,20 @@ const VotingPowerActionables = (props) => {
                   <div className="row no-gutters justify-content-center">
                     <div className="col-12 col-md-4">
                       <div className="btnWrapper my-4 text-center">
+                        { lockAmount * 10 ** 9 > allowance ? (
+                          <Button
+                            variant="contained"
+                            size="large"
+                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            onClick={() => {
+                              console.log("Action Taken");
+                              // props.createLockMakeDeploy(lockAmount, date);
+                              handleShowAllowance();
+                            }}
+                          >
+                            Increase Allowance
+                          </Button>
+                        ): (
                         <Button
                           variant="contained"
                           size="large"
@@ -375,6 +389,7 @@ const VotingPowerActionables = (props) => {
                         >
                           Create Lock
                         </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -512,18 +527,34 @@ const VotingPowerActionables = (props) => {
                 <div className="row no-gutters justify-content-center">
                   <div className="col-12 col-md-4">
                     <div className="btnWrapper my-4 text-center">
-                      <Button
-                        variant="contained"
-                        size="large"
-                        style={{ backgroundColor: "#5300e8", color: "white" }}
-                        onClick={() => {
-                          console.log("Action Taken");
-                          // props.createLockMakeDeploy(lockAmount, date);
-                          increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
-                        }}
-                      >
-                         Add Amount
-                      </Button>
+                      { lockAmount * 10 ** 9 > allowance ? (
+                        <Button
+                          variant="contained"
+                          size="large"
+                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          onClick={() => {
+                            console.log("Action Taken");
+                            // props.createLockMakeDeploy(lockAmount, date);
+                            handleShowAllowance();
+                          }}
+                        >
+                          Increase Allowance
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          size="large"
+                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          onClick={() => {
+                            console.log("Action Taken");
+                            // props.createLockMakeDeploy(lockAmount, date);
+                            increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
+                          }}
+                        >
+                          Add Amount
+                        </Button>
+                      )}
+                      
                     </div>
                   </div>
                 </div>
@@ -677,7 +708,7 @@ const VotingPowerActionables = (props) => {
         </div>
       </div> */}
       <SigningModal show={ openSigning } />
-      <AllowanceModal show={openAllowance} signingModal={ openSigning } getAllowance={getAllowance} handleClose={handleCloseAllowance} approvalAmount={(lockAmount * 10 ** 9) - allowance} tokenAmount={lockAmount} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
+      <AllowanceModal show={openAllowance} signingModal={ setOpenSigning } getAllowance={getAllowance} handleClose={handleCloseAllowance} approvalAmount={(lockAmount * 10 ** 9) - allowance} tokenAmount={lockAmount} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
     </>
   );
 };
