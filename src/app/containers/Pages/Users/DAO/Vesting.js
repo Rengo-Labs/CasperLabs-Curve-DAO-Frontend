@@ -51,6 +51,7 @@ const Vesting = () => {
   let [torus, setTorus] = useState();
   const [vestingAddress, setVestingAddress] = useState(
     // "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"
+    localStorage.getItem("Address")
   );
   const [initialLock, setInitialLock] = useState("0.00");
   const [startLockTime, setStartLockTime] = useState("13/08/2021 22:17:28");
@@ -82,10 +83,100 @@ const Vesting = () => {
     console.log("Vesting Address Checking", values);
   };
 
-  async function claimMakeDeploy(gauge) {
+  // async function claimMakeDeploy(gauge) {
 
+  //   handleShowSigning();
+  //   const publicKeyHex = activePublicKey;
+  //   if (
+  //     publicKeyHex !== null &&
+  //     publicKeyHex !== "null" &&
+  //     publicKeyHex !== undefined
+  //   ) {
+  //     const publicKey = CLPublicKey.fromHex(publicKeyHex);
+  //     const paymentAmount = 5000000000;
+  //     const addrByteArray = gauge ? new CLByteArray(
+  //       Uint8Array.from(Buffer.from(gauge, "hex"))
+  //     ) : "";
+  //     try {
+  //     const runtimeArgs = addrByteArray != "" ? RuntimeArgs.fromMap({
+  //       addr: new CLOption(Some(new CLKey(addrByteArray))),
+  //     }) : new CLOption(None);
+  //     let contractHashAsByteArray = Uint8Array.from(
+  //       Buffer.from(VESTING_ESCROW_CONTRACT_HASH, "hex")
+  //     );
+  //     let entryPoint = "claim";
+  //     // Set contract installation deploy (unsigned).
+  //     let deploy = await makeDeploy(
+  //       publicKey,
+  //       contractHashAsByteArray,
+  //       entryPoint,
+  //       runtimeArgs,
+  //       paymentAmount
+  //     );
+  //     console.log("make deploy: ", deploy);
+  //     try {
+  //       if (selectedWallet === "Casper") {
+  //         let signedDeploy = await signdeploywithcaspersigner(
+  //           deploy,
+  //           publicKeyHex
+  //         );
+  //         let result = await putdeploy(signedDeploy, enqueueSnackbar);
+  //         console.log("result", result);
+  //       } else {
+  //         // let Torus = new Torus();
+  //         torus = new Torus();
+  //         console.log("torus", torus);
+  //         await torus.init({
+  //           buildEnv: "testing",
+  //           showTorusButton: true,
+  //           network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+  //         });
+  //         console.log("Torus123", torus);
+  //         console.log("torus", torus.provider);
+  //         const casperService = new CasperServiceByJsonRPC(torus?.provider);
+  //         const deployRes = await casperService.deploy(deploy);
+  //         console.log("deployRes", deployRes.deploy_hash);
+  //         console.log(
+  //           `... Contract installation deployHash: ${deployRes.deploy_hash}`
+  //         );
+  //         let result = await getDeploy(
+  //           NODE_ADDRESS,
+  //           deployRes.deploy_hash,
+  //           enqueueSnackbar
+  //         );
+  //         console.log(
+  //           `... Contract installed successfully.`,
+  //           JSON.parse(JSON.stringify(result))
+  //         );
+  //         console.log("result", result);
+  //       }
+  //       handleCloseSigning();
+  //       let variant = "success";
+  //       enqueueSnackbar("Claimed Successfully", { variant })
+
+
+  //     } catch {
+  //       handleCloseSigning();
+  //       let variant = "Error";
+  //       enqueueSnackbar("Unable to Claim", { variant })
+  //     }
+  //     } catch {
+  //       handleCloseSigning();
+  //       let variant = "Error";
+  //       enqueueSnackbar("Something Went Wrong", { variant });
+  //     }
+  //   } else {
+  //     handleCloseSigning();
+  //     let variant = "error";
+  //     enqueueSnackbar("Connect to Wallet Please", { variant });
+  //   }
+  // }
+
+  async function claimMakeDeploy () {
     handleShowSigning();
-    const publicKeyHex = activePublicKey;
+    const publicKeyHex = localStorage.getItem("Address");
+    // const publicKeyHex = activePublicKey;
+    console.log("Public key: ", publicKeyHex);
     if (
       publicKeyHex !== null &&
       publicKeyHex !== "null" &&
@@ -93,77 +184,80 @@ const Vesting = () => {
     ) {
       const publicKey = CLPublicKey.fromHex(publicKeyHex);
       const paymentAmount = 5000000000;
-      const addrByteArray = gauge ? new CLByteArray(
-        Uint8Array.from(Buffer.from(gauge, "hex"))
-      ) : "";
-      // try {
-      const runtimeArgs = addrByteArray != "" ? RuntimeArgs.fromMap({
-        addr: new CLOption(Some(new CLKey(addrByteArray))),
-      }) : new CLOption(None);
-      let contractHashAsByteArray = Uint8Array.from(
-        Buffer.from(VESTING_ESCROW_CONTRACT_HASH, "hex")
-      );
-      let entryPoint = "claim";
-      // Set contract installation deploy (unsigned).
-      let deploy = await makeDeploy(
-        publicKey,
-        contractHashAsByteArray,
-        entryPoint,
-        runtimeArgs,
-        paymentAmount
-      );
-      console.log("make deploy: ", deploy);
       try {
-        if (selectedWallet === "Casper") {
-          let signedDeploy = await signdeploywithcaspersigner(
-            deploy,
-            publicKeyHex
-          );
-          let result = await putdeploy(signedDeploy, enqueueSnackbar);
-          console.log("result", result);
-        } else {
-          // let Torus = new Torus();
-          torus = new Torus();
-          console.log("torus", torus);
-          await torus.init({
-            buildEnv: "testing",
-            showTorusButton: true,
-            network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-          });
-          console.log("Torus123", torus);
-          console.log("torus", torus.provider);
-          const casperService = new CasperServiceByJsonRPC(torus?.provider);
-          const deployRes = await casperService.deploy(deploy);
-          console.log("deployRes", deployRes.deploy_hash);
-          console.log(
-            `... Contract installation deployHash: ${deployRes.deploy_hash}`
-          );
-          let result = await getDeploy(
-            NODE_ADDRESS,
-            deployRes.deploy_hash,
-            enqueueSnackbar
-          );
-          console.log(
-            `... Contract installed successfully.`,
-            JSON.parse(JSON.stringify(result))
-          );
-          console.log("result", result);
+        console.log("In try block");
+        // const runtimeArgs = RuntimeArgs.fromMap({
+        //   value: CLValueBuilder.u256(convertToStr(lockedAmount)),
+        //   unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
+        // });
+        const runtimeArgs = RuntimeArgs.fromMap({
+        });
+        let contractHashAsByteArray = Uint8Array.from(
+          Buffer.from(VESTING_ESCROW_CONTRACT_HASH, "hex")
+        );
+        console.log("contract hash byte array: ", contractHashAsByteArray);
+        let entryPoint = "claim";
+        // Set contract installation deploy (unsigned).
+        let deploy = await makeDeploy(
+          publicKey,
+          contractHashAsByteArray,
+          entryPoint,
+          runtimeArgs,
+          paymentAmount
+        );
+        console.log("make deploy: ", deploy);
+        try {
+          console.log("In other try block");
+          if (selectedWallet === "Casper") {
+            let signedDeploy = await signdeploywithcaspersigner(
+              deploy,
+              publicKeyHex
+            );
+            let result = await putdeploy(signedDeploy, enqueueSnackbar);
+            console.log("result", result);
+          } else {
+            // let Torus = new Torus();
+            torus = new Torus();
+            console.log("torus", torus);
+            await torus.init({
+              buildEnv: "testing",
+              showTorusButton: true,
+              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
+            });
+            console.log("Torus123", torus);
+            console.log("torus", torus.provider);
+            const casperService = new CasperServiceByJsonRPC(torus?.provider);
+            const deployRes = await casperService.deploy(deploy);
+            console.log("deployRes", deployRes.deploy_hash);
+            console.log(
+              `... Contract installation deployHash: ${deployRes.deploy_hash}`
+            );
+            let result = await getDeploy(
+              NODE_ADDRESS,
+              deployRes.deploy_hash,
+              enqueueSnackbar
+            );
+            console.log(
+              `... Contract installed successfully.`,
+              JSON.parse(JSON.stringify(result))
+            );
+            console.log("result", result);
+          }
+          handleCloseSigning();
+          let variant = "success";
+          enqueueSnackbar("Funds Claimed Successfully", { variant })
+
+
+        } catch {
+          handleCloseSigning();
+          let variant = "Error";
+          enqueueSnackbar("Unable to Claim Funds", { variant })
         }
-        handleCloseSigning();
-        let variant = "success";
-        enqueueSnackbar("Claimed Successfully", { variant })
-
-
       } catch {
         handleCloseSigning();
         let variant = "Error";
-        enqueueSnackbar("Unable to Claim", { variant })
+        enqueueSnackbar("Something Went Wrong", { variant });
       }
-      // } catch {
-      //   handleCloseSigning();
-      //   let variant = "Error";
-      //   enqueueSnackbar("Something Went Wrong", { variant });
-      // }
     } else {
       handleCloseSigning();
       let variant = "error";
@@ -232,6 +326,9 @@ const Vesting = () => {
                                       variant="filled"
                                       name="CheckVestingAddress"
                                       sx={{ width: "100%" }}
+                                      onChange={(e) => {
+                                        setVestingAddress(e.target.value);
+                                      }}
                                       value={vestingAddress}
                                     />
                                   </div>
@@ -342,11 +439,11 @@ const Vesting = () => {
                               <VestingTokens />
                             </div>
                             {/* Gas Fee */}
-                            <div className="row no-gutters w-100">
+                            {/* <div className="row no-gutters w-100">
                               <div className="col-12">
                                 <GasPriorityFee />
                               </div>
-                            </div>
+                            </div> */}
 
                             <div className="row no-gutters justify-content-center">
                               {/* <div className="col-12"> */}
@@ -354,7 +451,8 @@ const Vesting = () => {
                                 variant="contained"
                                 size="large"
                                 style={{ backgroundColor: "#5300e8", color: "white" }}
-                                onClick={() => { claimMakeDeploy(vestingAddress) }}
+                                onClick={() => { claimMakeDeploy() }}
+                                // onClick={() => { claimMakeDeploy(vestingAddress) }}
                               >
                                 Claim
                               </Button>
