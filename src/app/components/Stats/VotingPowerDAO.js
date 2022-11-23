@@ -1,5 +1,5 @@
 // REACT
-import React from "react";
+import React, { useEffect, useState } from "react";
 // CUSTOM STYLES
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
@@ -7,6 +7,8 @@ import "../../assets/css/style.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
+import { balanceOf } from "../JsClients/VOTINGESCROW/votingEscrowFunctionsForBackend/functions";
+import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
 // MATERIAL UI ICONS
 // MATERIAL UI
 import { Accordion, AccordionSummary, Avatar, CardHeader, useTheme } from "@material-ui/core";
@@ -14,6 +16,7 @@ import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 // LOGOS
 import curveLogo from "../../assets/img/Logo.png";
+import { CLPublicKey } from "casper-js-sdk";
 
 // CONTENT
 
@@ -21,7 +24,27 @@ import curveLogo from "../../assets/img/Logo.png";
 const VotingPowerDAO = () => {
   // States
   const theme = useTheme();
+  const [balance, setBalance] = useState("");
   // Handlers
+
+  useEffect(() => {
+    let controller = new AbortController();
+    let publicKeyHex = localStorage.getItem("Address");
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      async function fetchData() {
+        let balance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        setBalance(balance);
+      }
+      fetchData();
+    }
+    return () => {
+      controller.abort();
+    }
+  }, [localStorage.getItem("Address")]);
 
   return (
     <>
@@ -200,6 +223,7 @@ const VotingPowerDAO = () => {
                     gutterBottom
                   >
                     0.00
+                    {/* {balance} */}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -232,7 +256,8 @@ const VotingPowerDAO = () => {
                     }}
                     gutterBottom
                   >
-                    0
+                    {/* 0 */}
+                    {balance}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
