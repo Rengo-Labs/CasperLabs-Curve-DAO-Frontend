@@ -37,6 +37,7 @@ const VotingPowerDAO = () => {
     ) {
       async function fetchData() {
         let balance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        console.log("Balance: ", balance);
         setBalance(balance);
       }
       fetchData();
