@@ -117,141 +117,141 @@ class VOTINGESCROWClient {
     }
   }
 
-  public async getLastUserSlopeSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-    });
+  // public async getLastUserSlopeSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async userPointHistoryTsSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    idx:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-      idx: CLValueBuilder.u256(idx)
-    });
+  // public async userPointHistoryTsSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   idx:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //     idx: CLValueBuilder.u256(idx)
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async lockedEndSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-    });
+  // public async lockedEndSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async balanceOfSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    t:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-      t: CLValueBuilder.u256(t)
-    });
+  // public async balanceOfSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   t:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //     t: CLValueBuilder.u256(t)
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
   public async balanceOf(account: string) {
     try {
@@ -270,40 +270,40 @@ class VOTINGESCROWClient {
 
   }
 
-  public async balanceOfAtSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    time:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-      time: CLValueBuilder.u256(time)
-    });
+  // public async balanceOfAtSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   time:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //     time: CLValueBuilder.u256(time)
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
   public async totalSupply() {
     const result = await contractSimpleGetter(
@@ -314,71 +314,71 @@ class VOTINGESCROWClient {
     return result.value();
   }
 
-  public async totalSupplySessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    t:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      t: CLValueBuilder.u256(t)
-    });
+  // public async totalSupplySessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   t:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     t: CLValueBuilder.u256(t)
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async totalSupplyAtSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    time:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      time: CLValueBuilder.u256(time)
-    });
+  // public async totalSupplyAtSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   time:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     time: CLValueBuilder.u256(time)
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
 
   public async setContractHash(hash: string) {
