@@ -19,7 +19,7 @@
     "@testing-library/user-event": "^7.2.1",
     "@toruslabs/casper-embed": "^1.1.2",
     "apexcharts": "^3.35.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "bignumber.js": "^9.1.0",
     "casper-js-sdk": "^2.7.5",
     "clsx": "^1.1.1",
