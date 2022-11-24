@@ -7,8 +7,8 @@ import "../../assets/css/style.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import { balanceOf } from "../JsClients/VOTINGESCROW/votingEscrowFunctionsForBackend/functions";
-import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
+import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
 // MATERIAL UI ICONS
 // MATERIAL UI
 import { Accordion, AccordionSummary, Avatar, CardHeader, useTheme } from "@material-ui/core";
@@ -24,7 +24,8 @@ import { CLPublicKey } from "casper-js-sdk";
 const VotingPowerDAO = () => {
   // States
   const theme = useTheme();
-  const [balance, setBalance] = useState("");
+  const [CRVLockedBalance, setCRVLockedBalance] = useState();
+  const [CRVBalance, setCRVBalance] = useState();
   // Handlers
 
   useEffect(() => {
@@ -36,9 +37,12 @@ const VotingPowerDAO = () => {
       publicKeyHex !== undefined
     ) {
       async function fetchData() {
-        let balance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
-        console.log("Balance: ", balance);
-        setBalance(balance);
+        let CRVLockBalance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        let CRVBalance = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        console.log("CRV Locked Balance: ", CRVLockBalance);
+        console.log("CRV Balance: ", CRVBalance);
+        setCRVLockedBalance(CRVLockBalance);
+        setCRVBalance(CRVBalance);
       }
       fetchData();
     }
@@ -223,8 +227,8 @@ const VotingPowerDAO = () => {
                     }}
                     gutterBottom
                   >
-                    0.00
-                    {/* {balance} */}
+                    {/* 0.00 */}
+                    {CRVBalance ? CRVBalance : 0.00}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -258,7 +262,7 @@ const VotingPowerDAO = () => {
                     gutterBottom
                   >
                     {/* 0 */}
-                    {balance}
+                    {CRVLockedBalance ? CRVLockedBalance : 0}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
