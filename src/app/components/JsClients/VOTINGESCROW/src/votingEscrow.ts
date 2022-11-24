@@ -634,53 +634,53 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  public async applyTransferOwnership(
-    keys: Keys.AsymmetricKey,
-    paymentAmount: string
-  ) {
-    const runtimeArgs = RuntimeArgs.fromMap({
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "apply_transfer_ownership",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async applyTransferOwnership(
+  //   keys: Keys.AsymmetricKey,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "apply_transfer_ownership",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async checkpoint(
-    keys: Keys.AsymmetricKey,
-    paymentAmount: string
-  ) {
-    const runtimeArgs = RuntimeArgs.fromMap({
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "checkpoint",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async checkpoint(
+  //   keys: Keys.AsymmetricKey,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "checkpoint",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
   // public async depositFor(
   //   keys: Keys.AsymmetricKey,
@@ -793,29 +793,29 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  public async withdraw(
-    keys: Keys.AsymmetricKey,
-    paymentAmount: string
-  ) {
-    const runtimeArgs = RuntimeArgs.fromMap({
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "withdraw",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async withdraw(
+  //   keys: Keys.AsymmetricKey,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "withdraw",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
   // public async changeController(
   //   keys: Keys.AsymmetricKey,
