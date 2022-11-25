@@ -8,6 +8,7 @@ import Torus from "@toruslabs/casper-embed";
 import { SUPPORTED_NETWORKS, CHAINS } from "../Headers/Header";
 import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
 import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
+import { checkpoint } from "../checkpoint/Checkpoint";
 
 
 export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSigning, enqueueSnackbar) {
@@ -100,6 +101,7 @@ export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSign
             console.log("result", result);
           }
         //   handleCloseSigning();
+          checkpoint(true, setOpenSigning, enqueueSnackbar);
           setOpenSigning(false);
           let variant = "success";
           enqueueSnackbar("Funds Locked Successfully", { variant })

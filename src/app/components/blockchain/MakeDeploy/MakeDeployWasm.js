@@ -21,3 +21,23 @@ export async function makeERC20CRVDeployWasm(publicKey, runtimeArgs, paymentAmou
     );
     return deploy
 }
+
+export async function makeUserCheckpointDeployWasm(publicKey, runtimeArgs, paymentAmount) {
+    let wasmData = await axios.get('/getErc20ErvWasmData')
+    console.log("wasmData.data.wasmData", wasmData.data.wasmData.data);
+    console.log("new Uint8Array(wasmData.data.wasmData.data)", new Uint8Array(wasmData.data.wasmData.data));
+    let deploy = DeployUtil.makeDeploy(
+        new DeployUtil.DeployParams(
+            publicKey,
+            'casper-test'
+        ),
+        DeployUtil.ExecutableDeployItem.newModuleBytes(
+            new Uint8Array(wasmData.data.wasmData.data),
+            runtimeArgs
+        ),
+        DeployUtil.standardPayment(
+            paymentAmount
+        )
+    );
+    return deploy
+}
