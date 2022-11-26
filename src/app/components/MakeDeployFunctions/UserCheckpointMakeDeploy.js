@@ -1,4 +1,5 @@
 import { CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
+import { LIQUIDITY_GAUGE_V3_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
 import { makeUserCheckpointDeployWasm } from "../blockchain/MakeDeploy/MakeDeployWasm";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
@@ -38,7 +39,7 @@ export async function UserCheckpointMakeDeploy(activePublicKey, setOpenSigning, 
             // amount: CLValueBuilder.u512(convertToStr(Number(cspr_Amount - (cspr_Amount * slippage) / 100).toFixed(9))),
             entrypoint: CLValueBuilder.string("user_checkpoint"),
             addr: activePublicKey,
-            package_hash: "Liquidity_gauge_v3_package_hash"
+            package_hash: LIQUIDITY_GAUGE_V3_CONTRACT_HASH
             // router_hash: new CLKey(new CLByteArray(Uint8Array.from(Buffer.from(ROUTER_PACKAGE_HASH, "hex")))),
             // token: new CLKey(_token),
             // liquidity: CLValueBuilder.u256(convertToStr((liquidity * value) / 100)),
