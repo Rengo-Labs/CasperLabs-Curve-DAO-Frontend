@@ -36,7 +36,9 @@ export async function UserCheckpointMakeDeploy(activePublicKey, setOpenSigning, 
 
         const runtimeArgs = RuntimeArgs.fromMap({
             // amount: CLValueBuilder.u512(convertToStr(Number(cspr_Amount - (cspr_Amount * slippage) / 100).toFixed(9))),
-            destination_entrypoint: CLValueBuilder.string("user_checkpoint"),
+            entrypoint: CLValueBuilder.string("user_checkpoint"),
+            addr: activePublicKey,
+            package_hash: "Liquidity_gauge_v3_package_hash"
             // router_hash: new CLKey(new CLByteArray(Uint8Array.from(Buffer.from(ROUTER_PACKAGE_HASH, "hex")))),
             // token: new CLKey(_token),
             // liquidity: CLValueBuilder.u256(convertToStr((liquidity * value) / 100)),
