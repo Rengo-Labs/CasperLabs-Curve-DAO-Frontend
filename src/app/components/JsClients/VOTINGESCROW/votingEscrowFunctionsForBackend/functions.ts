@@ -26,6 +26,19 @@ export const balanceOf = async (contractHash:string,account:string) => {
 
 };
 
+// export const periodTimeStamp = async (contractHash:string,value:string) => {
+
+//   // We don't need hash- prefix so i'm removing it
+//   await votingEscrow.setContractHash(contractHash);
+
+//   //balanceof
+//   const balance = await votingEscrow.periodTimeStamp(value);
+//   console.log(contractHash +` =... balanceof : ${balance}`);
+
+//   return balance;
+
+// };
+
 export const totalSupply = async (contractHash:string) => {
 
 // We don't need hash- prefix so i'm removing it

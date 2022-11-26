@@ -270,6 +270,24 @@ class VOTINGESCROWClient {
 
   }
 
+  // public async periodTimeStamp(value: string) {
+  //   try {
+
+  //     const result = await contractSimpleGetter(
+  //       this.nodeAddress,
+  //       value,
+  //       // this.namedKeys.balanceOf
+  //       ["period_timestamp"]
+  //     );
+  //     const maybeValue = result.value().unwrap();
+  //     return maybeValue.value().toString();
+
+  //   } catch (error) {
+  //     return "0";
+  //   }
+
+  // }
+
   // public async balanceOfAtSessionCode(
   //   keys: Keys.AsymmetricKey,
   //   entrypointName:string,
