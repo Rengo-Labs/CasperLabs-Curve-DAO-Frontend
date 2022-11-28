@@ -40,7 +40,7 @@ import usdt from "../../../../assets/img/usdt.png";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
-import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/votingEscrowFunctionsForBackend/functions";
+import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 import { CLPublicKey } from "casper-js-sdk";
 import { periodTimestamp, workingBalances, workingSupply } from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
 
