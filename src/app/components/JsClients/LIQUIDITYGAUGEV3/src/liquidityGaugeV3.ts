@@ -82,442 +82,442 @@ class LIQUIDITYGAUGEV3Client {
     }; 
   }
 
-  public async install(
-    keys: Keys.AsymmetricKey,
-    lpAddr: string,
-    minter: string,
-    admin:RecipientType,
-    contractName: string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _lpAddr = new CLByteArray(
-			Uint8Array.from(Buffer.from(lpAddr, "hex"))
-		);
-    const _minter = new CLByteArray(
-			Uint8Array.from(Buffer.from(minter, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      lp_addr: utils.createRecipientAddress(_lpAddr),
-      minter: utils.createRecipientAddress(_minter),
-      admin: utils.createRecipientAddress(admin),
-      contract_name: CLValueBuilder.string(contractName),
-    });
+  // public async install(
+  //   keys: Keys.AsymmetricKey,
+  //   lpAddr: string,
+  //   minter: string,
+  //   admin:RecipientType,
+  //   contractName: string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _lpAddr = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(lpAddr, "hex"))
+	// 	);
+  //   const _minter = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(minter, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     lp_addr: utils.createRecipientAddress(_lpAddr),
+  //     minter: utils.createRecipientAddress(_minter),
+  //     admin: utils.createRecipientAddress(admin),
+  //     contract_name: CLValueBuilder.string(contractName),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async userCheckpointSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-    });
+  // public async userCheckpointSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async claimableTokensSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const _addr = new CLByteArray(
-			Uint8Array.from(Buffer.from(addr, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(_addr),
-    });
+  // public async claimableTokensSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _addr = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(addr, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(_addr),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async rewardContractSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-    });
+  // public async rewardContractSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async lastClaimSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-    });
+  // public async lastClaimSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async claimedRewardSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    token:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const _token = new CLByteArray(
-			Uint8Array.from(Buffer.from(token, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-      token: utils.createRecipientAddress(_token),
-    });
+  // public async claimedRewardSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   token:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _token = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(token, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //     token: utils.createRecipientAddress(_token),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async claimableRewardSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    token:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const _token = new CLByteArray(
-			Uint8Array.from(Buffer.from(token, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-      token: utils.createRecipientAddress(_token),
-    });
+  // public async claimableRewardSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   token:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _token = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(token, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //     token: utils.createRecipientAddress(_token),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async claimableRewardWriteSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    addr:RecipientType,
-    token:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const _token = new CLByteArray(
-			Uint8Array.from(Buffer.from(token, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      addr: utils.createRecipientAddress(addr),
-      token: utils.createRecipientAddress(_token),
-    });
+  // public async claimableRewardWriteSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   token:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _token = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(token, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(addr),
+  //     token: utils.createRecipientAddress(_token),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async transferSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    recipient:string,
-    amount:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const _recipient = new CLByteArray(
-			Uint8Array.from(Buffer.from(recipient, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      recipient: utils.createRecipientAddress(_recipient),
-      amount: CLValueBuilder.u256(amount),
-    });
+  // public async transferSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   recipient:string,
+  //   amount:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _recipient = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(recipient, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     recipient: utils.createRecipientAddress(_recipient),
+  //     amount: CLValueBuilder.u256(amount),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async transferFromSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    owner:RecipientType,
-    recipient:string,
-    amount:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const _recipient = new CLByteArray(
-			Uint8Array.from(Buffer.from(recipient, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      owner: utils.createRecipientAddress(owner),
-      recipient: utils.createRecipientAddress(_recipient),
-      amount: CLValueBuilder.u256(amount),
-    });
+  // public async transferFromSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   owner:RecipientType,
+  //   recipient:string,
+  //   amount:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _recipient = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(recipient, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     owner: utils.createRecipientAddress(owner),
+  //     recipient: utils.createRecipientAddress(_recipient),
+  //     amount: CLValueBuilder.u256(amount),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async increaseAllowanceSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    spender:string,
-    amount:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const _spender = new CLByteArray(
-			Uint8Array.from(Buffer.from(spender, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      spender: utils.createRecipientAddress(_spender),
-      amount: CLValueBuilder.u256(amount),
-    });
+  // public async increaseAllowanceSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   spender:string,
+  //   amount:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _spender = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(spender, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     spender: utils.createRecipientAddress(_spender),
+  //     amount: CLValueBuilder.u256(amount),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
-  public async decreaseAllowanceSessionCode(
-    keys: Keys.AsymmetricKey,
-    entrypointName:string,
-    packageHash: string,
-    spender:string,
-    amount:string,
-    paymentAmount: string,
-    wasmPath: string
-  ) {
-    const _packageHash = new CLByteArray(
-			Uint8Array.from(Buffer.from(packageHash, "hex"))
-		);
-    const _spender = new CLByteArray(
-			Uint8Array.from(Buffer.from(spender, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      entrypoint: CLValueBuilder.string(entrypointName),
-      package_hash: utils.createRecipientAddress(_packageHash),
-      spender: utils.createRecipientAddress(_spender),
-      amount: CLValueBuilder.u256(amount),
-    });
+  // public async decreaseAllowanceSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   spender:string,
+  //   amount:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _spender = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(spender, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     spender: utils.createRecipientAddress(_spender),
+  //     amount: CLValueBuilder.u256(amount),
+  //   });
 
-    const deployHash = await installWasmFile({
-      chainName: this.chainName,
-      paymentAmount,
-      nodeAddress: this.nodeAddress,
-      keys,
-      pathToContract: wasmPath,
-      runtimeArgs,
-    });
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
-      return deployHash;
-    } else {
-      throw Error("Problem with installation");
-    }
-  }
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
 
 
 
@@ -930,302 +930,302 @@ class LIQUIDITYGAUGEV3Client {
 
   //LIQUIDITY GAUGE V3 FUNCTIONS
 
-  public async setRewardsReceiver(
-    keys: Keys.AsymmetricKey,
-    receiver: string,
-    paymentAmount: string
-  ) {
-     const _receiver = new CLByteArray(
-		 	Uint8Array.from(Buffer.from(receiver, "hex"))
-		 );
-    const runtimeArgs = RuntimeArgs.fromMap({
-      receiver: utils.createRecipientAddress(_receiver),
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "set_rewards_receiver",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async setRewardsReceiver(
+  //   keys: Keys.AsymmetricKey,
+  //   receiver: string,
+  //   paymentAmount: string
+  // ) {
+  //    const _receiver = new CLByteArray(
+	// 	 	Uint8Array.from(Buffer.from(receiver, "hex"))
+	// 	 );
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     receiver: utils.createRecipientAddress(_receiver),
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "set_rewards_receiver",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async claimRewards(
-    keys: Keys.AsymmetricKey,
-    addr: RecipientType,
-    receiver: string,
-    paymentAmount: string
-  ) {
-    const _receiver = new CLByteArray(
-			Uint8Array.from(Buffer.from(receiver, "hex"))
-		);
-    const runtimeArgs = RuntimeArgs.fromMap({
-      addr: new CLOption(Some(utils.createRecipientAddress(addr))),
-      receiver: new CLOption(Some(utils.createRecipientAddress(_receiver)))
+  // public async claimRewards(
+  //   keys: Keys.AsymmetricKey,
+  //   addr: RecipientType,
+  //   receiver: string,
+  //   paymentAmount: string
+  // ) {
+  //   const _receiver = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(receiver, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     addr: new CLOption(Some(utils.createRecipientAddress(addr))),
+  //     receiver: new CLOption(Some(utils.createRecipientAddress(_receiver)))
 
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "claim_rewards",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "claim_rewards",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async kick(
-    keys: Keys.AsymmetricKey,
-    //addr: string,
-    addr: RecipientType,
-    paymentAmount: string
-  ) {
-    // const _addr = new CLByteArray(
-		// 	Uint8Array.from(Buffer.from(addr, "hex"))
-		// );
-    const runtimeArgs = RuntimeArgs.fromMap({
-      //addr: utils.createRecipientAddress(_addr),
-      addr: utils.createRecipientAddress(addr),
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "kick",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async kick(
+  //   keys: Keys.AsymmetricKey,
+  //   //addr: string,
+  //   addr: RecipientType,
+  //   paymentAmount: string
+  // ) {
+  //   // const _addr = new CLByteArray(
+	// 	// 	Uint8Array.from(Buffer.from(addr, "hex"))
+	// 	// );
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     //addr: utils.createRecipientAddress(_addr),
+  //     addr: utils.createRecipientAddress(addr),
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "kick",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async deposit(
-    keys: Keys.AsymmetricKey,
-    value: string,
-    addr: RecipientType,
-    claimRewards: boolean,
-    paymentAmount: string
-  ) {
-    const runtimeArgs = RuntimeArgs.fromMap({
-      value: CLValueBuilder.u256(value),
-      addr: new CLOption(Some(utils.createRecipientAddress(addr))),
-      claim_rewards: new CLOption(Some(CLValueBuilder.bool(claimRewards)))
+  // public async deposit(
+  //   keys: Keys.AsymmetricKey,
+  //   value: string,
+  //   addr: RecipientType,
+  //   claimRewards: boolean,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     value: CLValueBuilder.u256(value),
+  //     addr: new CLOption(Some(utils.createRecipientAddress(addr))),
+  //     claim_rewards: new CLOption(Some(CLValueBuilder.bool(claimRewards)))
 
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "deposit",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "deposit",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async withdraw(
-    keys: Keys.AsymmetricKey,
-    value: string,
-    claimRewards: boolean,
-    paymentAmount: string
-  ) {
-    const runtimeArgs = RuntimeArgs.fromMap({
-      value: CLValueBuilder.u256(value),
-      claim_rewards: new CLOption(Some(CLValueBuilder.bool(claimRewards)))
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "withdraw",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async withdraw(
+  //   keys: Keys.AsymmetricKey,
+  //   value: string,
+  //   claimRewards: boolean,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     value: CLValueBuilder.u256(value),
+  //     claim_rewards: new CLOption(Some(CLValueBuilder.bool(claimRewards)))
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "withdraw",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async approve(
-    keys: Keys.AsymmetricKey,
-    spender: string,
-    amount: string,
-    paymentAmount: string
-  ) {
-     const _spender = new CLByteArray(
-		 	Uint8Array.from(Buffer.from(spender, "hex"))
-		 );
-    const runtimeArgs = RuntimeArgs.fromMap({
-      spender: utils.createRecipientAddress(_spender),
-      amount:CLValueBuilder.u256(amount), 
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "approve",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async approve(
+  //   keys: Keys.AsymmetricKey,
+  //   spender: string,
+  //   amount: string,
+  //   paymentAmount: string
+  // ) {
+  //    const _spender = new CLByteArray(
+	// 	 	Uint8Array.from(Buffer.from(spender, "hex"))
+	// 	 );
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     spender: utils.createRecipientAddress(_spender),
+  //     amount:CLValueBuilder.u256(amount), 
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "approve",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async setRewards(
-    keys: Keys.AsymmetricKey,
-    rewardContract: string,
-    claimSig: string,
-    rewardTokens: string[],
-    paymentAmount: string
-  ) {
-     const _rewardContract = new CLByteArray(
-		 	Uint8Array.from(Buffer.from(rewardContract, "hex"))
-		 );
-    const runtimeArgs = RuntimeArgs.fromMap({
-      reward_contract: utils.createRecipientAddress(_rewardContract),
-      claim_sig:CLValueBuilder.string(claimSig),
-      reward_tokens: CLValueBuilder.list(rewardTokens.map(id => CLValueBuilder.string(id))),
+  // public async setRewards(
+  //   keys: Keys.AsymmetricKey,
+  //   rewardContract: string,
+  //   claimSig: string,
+  //   rewardTokens: string[],
+  //   paymentAmount: string
+  // ) {
+  //    const _rewardContract = new CLByteArray(
+	// 	 	Uint8Array.from(Buffer.from(rewardContract, "hex"))
+	// 	 );
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     reward_contract: utils.createRecipientAddress(_rewardContract),
+  //     claim_sig:CLValueBuilder.string(claimSig),
+  //     reward_tokens: CLValueBuilder.list(rewardTokens.map(id => CLValueBuilder.string(id))),
 
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "set_rewards",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "set_rewards",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async setKilled(
-    keys: Keys.AsymmetricKey,
-    isKilled: boolean,
-    paymentAmount: string
-  ) {
-    const runtimeArgs = RuntimeArgs.fromMap({
-      is_killed: CLValueBuilder.bool(isKilled)
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "set_killed",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async setKilled(
+  //   keys: Keys.AsymmetricKey,
+  //   isKilled: boolean,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     is_killed: CLValueBuilder.bool(isKilled)
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "set_killed",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async commitTransferOwnership(
-    keys: Keys.AsymmetricKey,
-    //addr: string,
-    addr: RecipientType,
-    paymentAmount: string
-  ) {
-    // const _addr = new CLByteArray(
-		// 	Uint8Array.from(Buffer.from(addr, "hex"))
-		// );
-    const runtimeArgs = RuntimeArgs.fromMap({
-      //addr: utils.createRecipientAddress(_addr),
-      addr: utils.createRecipientAddress(addr),
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "commit_transfer_ownership",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async commitTransferOwnership(
+  //   keys: Keys.AsymmetricKey,
+  //   //addr: string,
+  //   addr: RecipientType,
+  //   paymentAmount: string
+  // ) {
+  //   // const _addr = new CLByteArray(
+	// 	// 	Uint8Array.from(Buffer.from(addr, "hex"))
+	// 	// );
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     //addr: utils.createRecipientAddress(_addr),
+  //     addr: utils.createRecipientAddress(addr),
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "commit_transfer_ownership",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 
-  public async acceptTransferOwnership(
-    keys: Keys.AsymmetricKey,
-    paymentAmount: string
-  ) {
-    const runtimeArgs = RuntimeArgs.fromMap({
-    });
-    const deployHash = await contractCall({
-      chainName: this.chainName,
-      contractHash: this.contractHash,
-      entryPoint: "accept_transfer_ownership",
-      keys,
-      nodeAddress: this.nodeAddress,
-      paymentAmount,
-      runtimeArgs,
-    });
+  // public async acceptTransferOwnership(
+  //   keys: Keys.AsymmetricKey,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "accept_transfer_ownership",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
 
-    if (deployHash !== null) {
+  //   if (deployHash !== null) {
       
-      return deployHash;
-    } else {
-      throw Error("Invalid Deploy");
-    }
-  }
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 }
 
 interface IInstallParams {
