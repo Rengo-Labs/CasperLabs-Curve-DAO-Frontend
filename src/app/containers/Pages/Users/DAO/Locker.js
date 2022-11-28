@@ -58,7 +58,7 @@ query  votingPower($id: String){
 }
 `;
 
-const VOTING_ESCROW  = gql`
+const VOTING_ESCROW = gql`
   query{
     votingEscrows{
       id,
@@ -85,12 +85,12 @@ const Locker = () => {
   let [torus, setTorus] = useState();
   const [allowance, setAllowance] = useState(0);
   const [userLockedCRVBalance, setUserLockedCRVBalance] = useState(0);
-  const [daoPower,setDaoPower] = useState();
-  const [votingPower,setVotingPower]= useState();
-  let [votingEscrowData,setVotingEscrowData] = useState();
-  const [vPower,setVPower]=useState();
-  const [lastEvent,setLastEvent]=useState();
-  const [lockerChartData, setLockerChartData]= useState();
+  const [daoPower, setDaoPower] = useState();
+  const [votingPower, setVotingPower] = useState();
+  let [votingEscrowData, setVotingEscrowData] = useState([]);
+  const [vPower, setVPower] = useState();
+  const [lastEvent, setLastEvent] = useState();
+  const [lockerChartData, setLockerChartData] = useState();
 
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
@@ -105,56 +105,78 @@ const Locker = () => {
 
   let { id } = useParams();
 
-    // Queries
-    const { error, loading, data } = useQuery(DAO_POWER);
-    console.log("this is data of voting escrow gql: ", data);
-    console.log("this is error of voting escrow gql: ", error);
+  // Queries
+  const { error, loading, data } = useQuery(DAO_POWER);
+  console.log("this is data of voting escrow gql: ", data);
+  console.log("this is error of voting escrow gql: ", error);
 
-    if(data!==undefined){
-      console.log("daopowerrrr",data.daoPowersByTimestamp);
+  if (data !== undefined) {
+    console.log("daopowerrrr", data.daoPowersByTimestamp);
+  }
+
+  const voting = useQuery(VOTING_POWER, {
+    variables: {
+      id: "provider",
+    },
+  })
+  console.log("this is data of voting escrow gql: ", voting.data);
+  if (voting.data !== undefined) {
+    console.log("votingPOWER", voting.data.votingPower[0].power);
+  }
+
+  const votingEscrow = useQuery(VOTING_ESCROW);
+  console.log("this is chartData: ", votingEscrow.data?.votingEscrows);
+  console.log("this is error of voting escrow gql: ", votingEscrow.error);
+
+  if (votingEscrow.data !== undefined) {
+    console.log("votingEscrows", votingEscrow.data.votingEscrows);
+  }
+
+  console.log("yes we didd", votingEscrowData);
+
+  // let loadData = () => {
+  //   return new Promise((res, rej) => {
+  //     data
+  //       ? res(
+
+  //       )
+  //       : rej(error);
+  //   });
+  // };
+
+
+  useEffect(() => {
+    charts();
+  }, [votingEscrowData, setVotingEscrowData])
+  useEffect(() => {
+    // resolveData();
+    console.log("datadata", data);
+    console.log("votingvoting", voting);
+    console.log("votingEscrowvotingEscrow", votingEscrow);
+    if (data) {
+      // mutate data if you need to
+      console.log("data?.daoPowersByTimestamp", data?.daoPowersByTimestamp);
+      setDaoPower(data?.daoPowersByTimestamp)
+
+    }
+    if (voting) {
+      console.log("voting.data?.votingPower", voting.data?.votingPower);
+      setVotingPower(voting.data?.votingPower)
+    }
+    if (votingEscrow) {
+      console.log("votingEscrow.data?.votingEscrows", votingEscrow.data?.votingEscrows);
+      setVotingEscrowData(votingEscrow.data?.votingEscrows != undefined ? (votingEscrow.data?.votingEscrows) : [])
     }
 
-    const voting = useQuery(VOTING_POWER,{
-      variables: {
-        id:"provider",
-      },
-    })
-    console.log("this is data of voting escrow gql: ", voting.data);
-    if(voting.data!==undefined){
-      console.log("votingPOWER",voting.data.votingPower[0].power);
-    }
+  }, [data, voting, votingEscrow]);
 
-    const votingEscrow = useQuery(VOTING_ESCROW);
-    console.log("this is chartData: ", votingEscrow.data?.votingEscrows);
-    console.log("this is error of voting escrow gql: ", votingEscrow.error);
-
-    if(votingEscrow.data!==undefined){
-      console.log("votingEscrows",votingEscrow.data.votingEscrows);
-    }
-
-    console.log("yes we didd",votingEscrowData);
-
-    let loadData = () => {
-      return new Promise((res, rej) => {
-        data
-          ? res(
-              setDaoPower(data.daoPowersByTimestamp),
-              setVotingPower(voting.data.votingPower),
-              setVotingEscrowData(votingEscrow.data.votingEscrows)
-            )
-          : rej(error);
-      });
-    };
-
-    
-
-    const resolveData = async () => {
-      try {
-        await loadData();
-      } catch (error) {
-        console.log("this is promise error: ", error);
-      }
-    };
+  // const resolveData = async () => {
+  //   try {
+  //     await loadData();
+  //   } catch (error) {
+  //     console.log("this is promise error: ", error);
+  //   }
+  // };
 
   //  if(charts!==undefined){
   //   charts = charts.map(chart => {
@@ -165,13 +187,13 @@ const Locker = () => {
 
 
 
-    // if(votingEscrow.data!==undefined){
-    //     setVPower(helpers.calcVotingPower(votingEscrowData[0].totalPower, votingEscrowData[0].timestamp, votingEscrowData[0].locktime) * 1000);
-    //     console.log("this is chart:",vPower);
-    //     setLastEvent(votingEscrowData[votingEscrowData.length - 1]);
-    //     console.log("last event",votingEscrowData.length); 
-    // }
- 
+  // if(votingEscrow.data!==undefined){
+  //     setVPower(helpers.calcVotingPower(votingEscrowData[0].totalPower, votingEscrowData[0].timestamp, votingEscrowData[0].locktime) * 1000);
+  //     console.log("this is chart:",vPower);
+  //     setLastEvent(votingEscrowData[votingEscrowData.length - 1]);
+  //     console.log("last event",votingEscrowData.length); 
+  // }
+
   //   if(chartData!==undefined){
   //    console.log("this is chart:",vPower);
   // }
@@ -181,9 +203,9 @@ const Locker = () => {
     //console.log(origEvents, "ORIG EVENTS")
     let newChartData = []
     //console.log(chartData.slice(), "CHARTDATA LENGTH")
-    for(let j = 1; j < chartData.length; j++) {
+    for (let j = 1; j < chartData.length; j++) {
       let v = chartData[j]
-      let prev = chartData[j-1]
+      let prev = chartData[j - 1]
       //if(v.length == 1) continue
       newChartData.push(prev)
       let startTimestamp = prev[0]
@@ -192,16 +214,16 @@ const Locker = () => {
       let endAmount = v[1]
       let diff = endTimestamp - startTimestamp
       let diffAmount = endAmount - startAmount
-      let amountLocked = origEvents[j-1].totalPower
+      let amountLocked = origEvents[j - 1].totalPower
       let numPoints = 10
-      if(chartData.length > 1) {
-        for(let i = 0; i < numPoints; i++) {
+      if (chartData.length > 1) {
+        for (let i = 0; i < numPoints; i++) {
           //console.log(origEvents[j-1].totalPower, i, "TOTAL POWER")
           let currentTimestamp = startTimestamp + i * (diff / numPoints)
           //console.log(amountLocked, currentTimestamp, this.events[j-1].locktime * 1000, "AMOUNTS")
-          let amount = helpers.calcVotingPower(amountLocked, currentTimestamp, this.events[j-1].locktime * 1000)
+          let amount = helpers.calcVotingPower(amountLocked, currentTimestamp, this.events[j - 1].locktime * 1000)
           //console.log(amount, "THE AMOUNT")
-          if(votingEscrowData.find(e=>e.timestamp == currentTimestamp / 1000) === undefined) {
+          if (votingEscrowData.find(e => e.timestamp == currentTimestamp / 1000) === undefined) {
             votingEscrowData.splice(j, 0, {
               type: 'decrease',
               timestamp: currentTimestamp / 1000,
@@ -219,24 +241,59 @@ const Locker = () => {
   }
 
 
-  const charts = ()=>{
-    if(votingEscrowData!==undefined){
-      setVPower(helpers.calcVotingPower(votingEscrowData[0].totalPower, votingEscrowData[0].timestamp, votingEscrowData[0].locktime) * 1000);
-      console.log("this is chart:",vPower);
-      // var chartData = vPower.map((event, i) => [event.timestamp * 1000, vPower]);
-      // setLastEvent(votingEscrowData[votingEscrowData.length - 1]);
-      // //console.log("last event",votingEscrowData.length); 
-      // var lastData = [lastEvent.locktime * 1000,0];
-      // chartData.push(lastData);
-      // votingEscrowData.push({...votingEscrowData[votingEscrowData.length - 1], value: 0, votingPower: 0})
-      // setLockerChartData(interpolateVotingPower(chartData));
+  const charts = () => {
+    console.log("votingEscrowDatavotingEscrowDatavotingEscrowDatavotingEscrowData", votingEscrowData);
+    let events = votingEscrowData;
+    if (events.length > 0) {
 
+      // setVPower(
+      //   helpers.calcVotingPower(votingEscrowData[0].totalPower / 1, votingEscrowData[0].timestamp,
+      //     // votingEscrowData[0].locktime
+      //     365
+      //   ) * 1000);
+      // console.log("this is chart:", helpers.calcVotingPower(votingEscrowData[0].totalPower / 1, votingEscrowData[0].timestamp,
+      //   // votingEscrowData[0].locktime
+      //   365
+      // ) * 1000);
+
+      // let vPowerTemp =
+      //   helpers.calcVotingPower(votingEscrowData[0].totalPower / 1, votingEscrowData[0].timestamp,
+      //     // votingEscrowData[0].locktime
+      //     365
+      //   ) * 1000;
+
+      events = addVotingPowerProperty(events);
+      console.log("eventseventsevents", events);
+
+
+      var chartData = events.map((event, i) => [event.timestamp * 1000, event.votingPower]);
+      console.log("chartDatachartDatachartData", chartData);
+      let lastEvent = events[events.length - 1]
+      setLastEvent(lastEvent);
+      let lastData = [
+        // lastEvent.locktime 
+        365
+        * 1000, 0]
+      chartData.push(lastData);
+      // votingEscrowData.push({ ...votingEscrowData[votingEscrowData.length - 1], value: 0, votingPower: 0 })
+      // chartData = this.interpolateVotingPower(chartData)
+      // setLockerChartData(chartData);
+
+    }
   }
+  const addVotingPowerProperty = (data) => {
+    return data.map((item) => ({
+      ...item,
+      votingPower: helpers.calcVotingPower(item.totalPower, item.timestamp,
+        365
+        // event.locktime
+      ) * 1000
+    }));
   }
-  charts();
 
 
-     
+
+
 
   // Handlers
   // async function createLockMakeDeploy(lockedAmount, unlockTime) {
@@ -658,7 +715,7 @@ const Locker = () => {
   //       handleCloseAllowance();
   //       handleCloseSigning();
   //       getAllowance();
-       
+
   //       let variant = "success";
   //       enqueueSnackbar("Allowance Increased Successfully", { variant })
 
@@ -675,7 +732,7 @@ const Locker = () => {
 
   // }
   useEffect(() => {
-    if (activePublicKey && activePublicKey!='null' && activePublicKey!=undefined)
+    if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined)
       getAllowance()
   }, [activePublicKey])
 
@@ -717,9 +774,7 @@ const Locker = () => {
     return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
   };
 
-  useEffect(() => {
-    resolveData();
-  }, [data]);
+
 
   return (
     <>
@@ -772,11 +827,11 @@ const Locker = () => {
                             {/* Voting Power Stats */}
                             <div className="row no-gutters">
                               <div className="col-12">
-                                <VotingPowerDAO 
+                                <VotingPowerDAO
                                   totalVeCRV={DAOPowerFormat()}
                                   averageLockTime={averageLock()}
                                   LockedCRV={myLockedCRVFormat()}
-                                  />
+                                />
                                 <div className="w-100 my-3">
                                   <Divider />
                                 </div>
