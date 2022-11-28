@@ -110,6 +110,10 @@ const Locks = () => {
   const { error, loading, data } = useQuery(GET_USER_BALANCES);
   console.log("this is data in Locks: ", data);
 
+  if(data!==undefined){
+    console.log("daopowerrrr",data.daoPowersByTimestamp);
+  }
+
   let loadData = () => {
     return new Promise((res, rej) => {
       data
