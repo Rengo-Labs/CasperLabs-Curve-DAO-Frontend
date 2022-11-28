@@ -1,5 +1,5 @@
 // REACT
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // CUSTOM STYLING
 import "../../../../assets/css/style.css";
 import "../../../../assets/css/curveButton.css";
@@ -39,6 +39,10 @@ import usdt from "../../../../assets/img/usdt.png";
 // FORMIK AND YUP
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
+import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
+import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
+import { CLPublicKey } from "casper-js-sdk";
+import { periodTimestamp, workingBalances, workingSupply } from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
 
 // CONTENT
 const selectGaugeOptionsJSON =
@@ -92,6 +96,13 @@ const Calc = () => {
   const [depositForBoost, setDepositForBoost] = useState(10);
   const [maxDepositPerVeCRV, setMaxDepositPerVeCRV] = useState();
 
+  //temporary
+  const [gauge, setGauge] = useState("");
+  const [gaugeBalance, setGaugeBalance] = useState("");
+  const [myGaugeVeCRV, setMyGaugeVeCRV] = useState("");
+  const [myTotalVeCRV, setMyTotalVeCRV] = useState("");
+  const [minVeCRV, setMinVeCRV] = useState(0);
+
   // Content
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -129,8 +140,101 @@ const Calc = () => {
     setGaugeLock(event.target.value);
   };
 
-  const onSubmitCalc = (values, props) => {
+  useEffect(async () => {
+    if(activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
+      setGaugeCRV(await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
+      setMyGaugeVeCRV(await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
+    }
+  }, [localStorage.getItem("Address")]);
+
+
+  const maxBoost = async () => {
+    // let l = this.gaugeBalance * 1e9
+    let l = gaugeBalance * 1e9
+    // let L = +this.poolLiquidity*1e9 + l
+    let L = poolLiquidity*1e9 + l
+    // let minveCRV = this.totalveCRV * l / L
+    let minveCRV = myTotalVeCRV * l / L
+    // this.minveCRV = minveCRV
+    setMinVeCRV(minveCRV);
+
+    // let [_, maxBoostPossible] = await this.update_liquidity_limit(null, null, this.minveCRV)
+    let [_, maxBoostPossible] = await this.update_liquidity_limit(null, null, minVeCRV);
+    // this.maxBoostPossible = maxBoostPossible
+    setMaxPossibleBoost(maxBoostPossible);
+  }
+
+  const updateLiquidityLimit = async (new_l = null, new_voting_balance = null, minveCRV = null) => {
+    let l = gaugeBalance * 1e9
+
+    // let calls = [
+    //   [this.votingEscrow._address, this.votingEscrow.methods.balanceOf(contract.default_account).encodeABI()],
+    //   [this.votingEscrow._address, this.votingEscrow.methods.totalSupply().encodeABI()],
+    //   [this.gauge._address, this.gauge.methods.period_timestamp(0).encodeABI()],
+    //   [this.gauge._address, this.gauge.methods.working_balances(contract.default_account).encodeABI()],
+    //   [this.gauge._address, this.gauge.methods.working_supply().encodeABI()],
+    //   [this.gauge._address, this.gauge.methods.totalSupply().encodeABI()],
+    // ]
+    // let aggcalls = await contract.multicall.methods.aggregate(calls).call()
+    let aggcalls = "";
+    // let decoded = aggcalls[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
+    let decoded = "";
+    // let voting_balance = +decoded[0]
+    let voting_balance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    // let voting_total = +decoded[1] - +voting_balance
+    let voting_total = await totalSupply(VOTING_ESCROW_CONTRACT_HASH);
+    // let period_timestamp = +decoded[2]
+    let period_timestamp = await periodTimestamp(gauge.address, "0");
+    // let working_balances = +decoded[3]
+    let working_balances = await workingBalances(gauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    // let working_supply = +decoded[4]
+    let working_supply = await workingSupply(gauge.address);
+    // let L = +this.poolLiquidity*1e18 + l
+    let L = +poolLiquidity*1e9 + l
+
+
+    if(new_voting_balance) {
+      voting_balance = new_voting_balance * 1e9
+    }
+
+    voting_total += voting_balance
+
+
+    let TOKENLESS_PRODUCTION = 40
+
+    let lim = l * TOKENLESS_PRODUCTION / 100
+    // let veCRV = this.myveCRV
+    let veCRV = myGaugeVeCRV;
+    if(minveCRV)
+      veCRV = minveCRV
+    // else if(this.entertype == 0)
+    else if(gaugeVeCRV)
+      // veCRV = this.veCRV
+      veCRV = myGaugeVeCRV
+    // lim += L * veCRV / this.totalveCRV * (100 - TOKENLESS_PRODUCTION) / 100
+    lim += L * veCRV / myTotalVeCRV * (100 - TOKENLESS_PRODUCTION) / 100
+
+    lim = Math.min(l, lim)
+    
+    let old_bal = working_balances
+    let noboost_lim = TOKENLESS_PRODUCTION * l / 100
+    let noboost_supply = working_supply + noboost_lim - old_bal
+    let _working_supply = working_supply + lim - old_bal
+
+    // let limCalc = (l * TOKENLESS_PRODUCTION / 100 + (this.poolLiquidity + l) * veCRV / this.totalveCRV * (100 - TOKENLESS_PRODUCTION) / 100)
+    // boost = limCalc
+    // 		/ (working_supply + limCalc - old_bal)
+
+    return [_working_supply, (lim / _working_supply) / (noboost_lim / noboost_supply)]
+  }
+
+  const onSubmitCalc = async (values, props) => {
     console.log("Form data from Select Token", values);
+
+    // IMPLEMENTING SAME AS IN CURVE REPO
+    let [_, boost] = await updateLiquidityLimit();
+    setCrvBoost(boost);
+
   };
 
   return (
@@ -218,6 +322,10 @@ const Calc = () => {
                                         label="Deposit:"
                                         variant="filled"
                                         name="CalcDeposits"
+                                        value={gaugeBalance}
+                                        onChange={(e) => {
+                                          setGaugeBalance(e.target.value);
+                                        }}
                                       />
                                     </Box>
                                     <div className="row no-gutters">
@@ -246,6 +354,10 @@ const Calc = () => {
                                         label="Pool Liquidity:"
                                         variant="filled"
                                         name="PoolLiquidityCalc"
+                                        value={poolLiquidity}
+                                        onChange={(e) => {
+                                          setPoolLiquidity(e.target.value);
+                                        }}
                                       />
                                     </Box>
                                   </div>
@@ -261,6 +373,10 @@ const Calc = () => {
                                         label="My CRV:"
                                         variant="filled"
                                         name="MyCRVCalc"
+                                        value={gaugeCRV}
+                                        onChange={(e) => {
+                                          setGaugeCRV(e.target.value);
+                                        }}
                                       />
                                     </Box>
                                     <div className="col-12">
@@ -288,7 +404,7 @@ const Calc = () => {
                                       </FormControl>
                                     </div>
                                   </div>
-                                  {gaugeVeCRV ? (
+                                  {!gaugeVeCRV ? (
                                     <div className="row no-gutters mt-2 w-100">
                                       <div className="col-12">
                                         <div className="row no-gutters justify-content-md-end">

@@ -15,7 +15,8 @@ import {
   EventStream,
   Keys,
   RuntimeArgs,
-  CLOption
+  CLOption,
+  ToBytes
 } from "casper-js-sdk";
 import { Some, None } from "ts-results";
 import * as blake from "blakejs";
@@ -24,28 +25,29 @@ import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
 import {createRecipientAddress } from "./utils";
 
-class VOTINGESCROWClient {
-  private contractName: string = "votingescrow";
-  private contractHash: string= "votingescrow";
-  private contractPackageHash: string= "votingescrow";
+class LIQUIDITYGAUGEV3Client {
+  private contractName: string = "liquiditygaugev3";
+  private contractHash: string= "liquiditygaugev3";
+  private contractPackageHash: string= "liquiditygaugev3";
   private namedKeys: {
-    balanceOf:string
+    balances:string
     metadata: string;
     nonces: string;
     allowances: string;
     ownedTokens: string;
     owners: string;
     paused: string;
-    minBalance: string;
-    minAcceptQuorumPct: string;
-    minTime:string;
-    supportRequiredPct: string;
-    voteTime: string;
-    token: string;
-    point_history: string;
-    user_point_history: string;
-    user_point_epoch: string;
-    slope_changes: string;
+    working_balances: string;
+    period_timestamp: string;
+    integrate_inv_supply: string;
+    integrate_checkpoint_of: string;
+    integrate_inv_supply_of: string;
+    integrate_fraction: string;
+    reward_tokens: string;
+    rewards_receiver: string;
+    reward_integral: string;
+    reward_integral_for: string;
+    
   };
 
   private isListening = false;
@@ -60,44 +62,45 @@ class VOTINGESCROWClient {
   ) 
   {
     this.namedKeys= {
-      balanceOf:"null",
+      balances:"null",
       metadata: "null",
       nonces: "null",
       allowances: "null",
       ownedTokens: "null",
       owners: "null",
       paused: "null",
-      minBalance: "null",
-      minAcceptQuorumPct: "null",
-      minTime: "null",
-      supportRequiredPct: "null",
-      voteTime: "null",
-      token: "null",
-      point_history: "null",
-      user_point_history: "null",
-      user_point_epoch: "null",
-      slope_changes: "null",
+      working_balances: "null",
+      period_timestamp: "null",
+      integrate_inv_supply: "null",
+      integrate_checkpoint_of: "null",
+      integrate_inv_supply_of: "null",
+      integrate_fraction: "null",
+      reward_tokens: "null",
+      rewards_receiver: "null",
+      reward_integral: "null",
+      reward_integral_for: "null",
     }; 
   }
 
   // public async install(
   //   keys: Keys.AsymmetricKey,
-  //   tokenAddr: string,
-  //   name: string,
-  //   tokenSymbol: string,
-  //   version: string,
+  //   lpAddr: string,
+  //   minter: string,
+  //   admin:RecipientType,
   //   contractName: string,
   //   paymentAmount: string,
   //   wasmPath: string
   // ) {
-  //   const _tokenAddr = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(tokenAddr, "hex"))
+  //   const _lpAddr = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(lpAddr, "hex"))
+	// 	);
+  //   const _minter = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(minter, "hex"))
 	// 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
-  //     token_addr: utils.createRecipientAddress(_tokenAddr),
-  //     name: CLValueBuilder.string(name),
-  //     symbol: CLValueBuilder.string(tokenSymbol),
-  //     version: CLValueBuilder.string(version),
+  //     lp_addr: utils.createRecipientAddress(_lpAddr),
+  //     minter: utils.createRecipientAddress(_minter),
+  //     admin: utils.createRecipientAddress(admin),
   //     contract_name: CLValueBuilder.string(contractName),
   //   });
 
@@ -117,7 +120,7 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  // public async getLastUserSlopeSessionCode(
+  // public async userCheckpointSessionCode(
   //   keys: Keys.AsymmetricKey,
   //   entrypointName:string,
   //   packageHash: string,
@@ -150,23 +153,124 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  // public async userPointHistoryTsSessionCode(
+  // public async claimableTokensSessionCode(
   //   keys: Keys.AsymmetricKey,
   //   entrypointName:string,
   //   packageHash: string,
-  //   addr:RecipientType,
-  //   idx:string,
+  //   addr:string,
   //   paymentAmount: string,
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
 	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _addr = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(addr, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     addr: utils.createRecipientAddress(_addr),
+  //   });
+
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
+
+  // public async rewardContractSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //   });
+
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
+
+  // public async lastClaimSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //   });
+
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
+
+  // public async claimedRewardSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   addr:RecipientType,
+  //   token:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _token = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(token, "hex"))
 	// 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
   //     addr: utils.createRecipientAddress(addr),
-  //     idx: CLValueBuilder.u256(idx)
+  //     token: utils.createRecipientAddress(_token),
   //   });
 
   //   const deployHash = await installWasmFile({
@@ -185,21 +289,26 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  // public async lockedEndSessionCode(
+  // public async claimableRewardSessionCode(
   //   keys: Keys.AsymmetricKey,
   //   entrypointName:string,
   //   packageHash: string,
   //   addr:RecipientType,
+  //   token:string,
   //   paymentAmount: string,
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
 	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _token = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(token, "hex"))
 	// 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
   //     addr: utils.createRecipientAddress(addr),
+  //     token: utils.createRecipientAddress(_token),
   //   });
 
   //   const deployHash = await installWasmFile({
@@ -218,23 +327,26 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  // public async balanceOfSessionCode(
+  // public async claimableRewardWriteSessionCode(
   //   keys: Keys.AsymmetricKey,
   //   entrypointName:string,
   //   packageHash: string,
   //   addr:RecipientType,
-  //   t:string,
+  //   token:string,
   //   paymentAmount: string,
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
 	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _token = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(token, "hex"))
 	// 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
   //     addr: utils.createRecipientAddress(addr),
-  //     t: CLValueBuilder.u256(t)
+  //     token: utils.createRecipientAddress(_token),
   //   });
 
   //   const deployHash = await installWasmFile({
@@ -253,58 +365,26 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  public async balanceOf(account: string) {
-    try {
-
-      const result = await utils.contractDictionaryGetter(
-        this.nodeAddress,
-        account,
-        this.namedKeys.balanceOf
-      );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
-
-    } catch (error) {
-      return "0";
-    }
-
-  }
-
-  // public async periodTimeStamp(value: string) {
-  //   try {
-
-  //     const result = await contractSimpleGetter(
-  //       this.nodeAddress,
-  //       value,
-  //       // this.namedKeys.balanceOf
-  //       ["period_timestamp"]
-  //     );
-  //     const maybeValue = result.value().unwrap();
-  //     return maybeValue.value().toString();
-
-  //   } catch (error) {
-  //     return "0";
-  //   }
-
-  // }
-
-  // public async balanceOfAtSessionCode(
+  // public async transferSessionCode(
   //   keys: Keys.AsymmetricKey,
   //   entrypointName:string,
   //   packageHash: string,
-  //   addr:RecipientType,
-  //   time:string,
+  //   recipient:string,
+  //   amount:string,
   //   paymentAmount: string,
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
 	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
 	// 	);
+  //   const _recipient = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(recipient, "hex"))
+	// 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
-  //     addr: utils.createRecipientAddress(addr),
-  //     time: CLValueBuilder.u256(time)
+  //     recipient: utils.createRecipientAddress(_recipient),
+  //     amount: CLValueBuilder.u256(amount),
   //   });
 
   //   const deployHash = await installWasmFile({
@@ -323,30 +403,28 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  public async totalSupply() {
-    const result = await contractSimpleGetter(
-      this.nodeAddress,
-      this.contractHash,
-      ["total_supply"]
-    );
-    return result.value();
-  }
-
-  // public async totalSupplySessionCode(
+  // public async transferFromSessionCode(
   //   keys: Keys.AsymmetricKey,
   //   entrypointName:string,
   //   packageHash: string,
-  //   t:string,
+  //   owner:RecipientType,
+  //   recipient:string,
+  //   amount:string,
   //   paymentAmount: string,
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
 	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
 	// 	);
+  //   const _recipient = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(recipient, "hex"))
+	// 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
-  //     t: CLValueBuilder.u256(t)
+  //     owner: utils.createRecipientAddress(owner),
+  //     recipient: utils.createRecipientAddress(_recipient),
+  //     amount: CLValueBuilder.u256(amount),
   //   });
 
   //   const deployHash = await installWasmFile({
@@ -365,21 +443,26 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  // public async totalSupplyAtSessionCode(
+  // public async increaseAllowanceSessionCode(
   //   keys: Keys.AsymmetricKey,
   //   entrypointName:string,
   //   packageHash: string,
-  //   time:string,
+  //   spender:string,
+  //   amount:string,
   //   paymentAmount: string,
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
 	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
 	// 	);
+  //   const _spender = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(spender, "hex"))
+	// 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
-  //     time: CLValueBuilder.u256(time)
+  //     spender: utils.createRecipientAddress(_spender),
+  //     amount: CLValueBuilder.u256(amount),
   //   });
 
   //   const deployHash = await installWasmFile({
@@ -397,6 +480,45 @@ class VOTINGESCROWClient {
   //     throw Error("Problem with installation");
   //   }
   // }
+
+  // public async decreaseAllowanceSessionCode(
+  //   keys: Keys.AsymmetricKey,
+  //   entrypointName:string,
+  //   packageHash: string,
+  //   spender:string,
+  //   amount:string,
+  //   paymentAmount: string,
+  //   wasmPath: string
+  // ) {
+  //   const _packageHash = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+	// 	);
+  //   const _spender = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(spender, "hex"))
+	// 	);
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     entrypoint: CLValueBuilder.string(entrypointName),
+  //     package_hash: utils.createRecipientAddress(_packageHash),
+  //     spender: utils.createRecipientAddress(_spender),
+  //     amount: CLValueBuilder.u256(amount),
+  //   });
+
+  //   const deployHash = await installWasmFile({
+  //     chainName: this.chainName,
+  //     paymentAmount,
+  //     nodeAddress: this.nodeAddress,
+  //     keys,
+  //     pathToContract: wasmPath,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Problem with installation");
+  //   }
+  // }
+
 
 
   public async setContractHash(hash: string) {
@@ -414,18 +536,19 @@ class VOTINGESCROWClient {
       ""
     );
     const LIST_OF_NAMED_KEYS = [
-      'balance_of',
+      'balances',
       'nonces',
       'allowances',
-      'minBalance',
-      'minAcceptQuorumPct',
-      'minTime',
-      'supportRequiredPct',
-      'voteTime',
-      'token',
-      'point_history',
-      'user_point_history',
-      'user_point_epoch',
+      'working_balances',
+      'period_timestamp',
+      'integrate_inv_supply',
+      'integrate_checkpoint_of',
+      'integrate_inv_supply_of',
+      'integrate_fraction',
+      'reward_tokens',
+      'rewards_receiver',
+      'reward_integral',
+      'reward_integral_for',
       `${this.contractName}_package_hash`,
       `${this.contractName}_package_hash_wrapped`,
       `${this.contractName}_contract_hash`,
@@ -441,112 +564,49 @@ class VOTINGESCROWClient {
     }, {});
   }
 
-
-  //VOTING_ESCROW FUNCTIONS
-
-  public async token() {
+  public async decimals() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
       this.contractHash,
-      ["token"]
+      ["decimals"]
     );
     return result.value();
   }
 
-  public async supply() {
+  public async integrateCheckpoint() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
       this.contractHash,
-      ["supply"]
+      ["period_timestamp"]
     );
     return result.value();
   }
 
-  public async locked() {
+  public async minter() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
       this.contractHash,
-      ["locked"]
+      ["minter"]
     );
     return result.value();
   }
 
-  public async epoch() {
+  public async crvToken() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
       this.contractHash,
-      ["epoch"]
+      ["crv_token"]
     );
     return result.value();
   }
 
-  public async pointHistory(epoch: string) {
-    try {
-
-      const result = await utils.contractDictionaryGetter(
-        this.nodeAddress,
-        epoch,
-        this.namedKeys.point_history
-      );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
-
-    } catch (error) {
-      return "0";
-    }
-  }
-
-  public async userPointHistory(user:string, userEpoch:string) {
-    try {
-      const _user=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(user, "hex"))));
-      const user_epoch = CLValueBuilder.u256(userEpoch);
-      const finalBytes = concat([CLValueParsers.toBytes(_user).unwrap(), CLValueParsers.toBytes(user_epoch).unwrap()]);
-      const blaked = blake.blake2b(finalBytes, undefined, 32);
-      const encodedBytes = Buffer.from(blaked).toString("hex");
-
-      const result = await utils.contractDictionaryGetter(
-        this.nodeAddress,
-        encodedBytes,
-        this.namedKeys.user_point_history
-      );
-
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
-    } catch (error) {
-      return "0";
-    }
-  }
-
-  public async userPointEpoch(user: string) {
-    try {
-
-      const result = await utils.contractDictionaryGetter(
-        this.nodeAddress,
-        user,
-        this.namedKeys.user_point_epoch
-      );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
-
-    } catch (error) {
-      return "0";
-    }
-  }
-
-  public async slopeChanges(time: string) {
-    try {
-
-      const result = await utils.contractDictionaryGetter(
-        this.nodeAddress,
-        time,
-        this.namedKeys.slope_changes
-      );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
-
-    } catch (error) {
-      return "0";
-    }
+  public async lpToken() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["lp_token"]
+    );
+    return result.value();
   }
 
   public async controller() {
@@ -558,13 +618,73 @@ class VOTINGESCROWClient {
     return result.value();
   }
 
-  public async transfersEnabled() {
+  public async votingEscrow() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
       this.contractHash,
-      ["transfers_enabled"]
+      ["voting_escrow"]
     );
     return result.value();
+  }
+
+  public async futureEpochTime() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["future_epoch_time"]
+    );
+    return result.value();
+  }
+
+  public async balanceOf(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.balances
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+    
+  }
+
+  public async totalSupply() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["total_supply"]
+    );
+    return result.value();
+  }
+
+  public async allowances(owner:string, spender:string) {
+    try {
+      const _spender = new CLByteArray(
+        Uint8Array.from(Buffer.from(spender, "hex"))
+      );
+
+      const _owner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const key_spender = createRecipientAddress(_spender);
+      const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(key_spender).unwrap()]);
+      const blaked = blake.blake2b(finalBytes, undefined, 32);
+      const encodedBytes = Buffer.from(blaked).toString("hex");
+
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        encodedBytes,
+        this.namedKeys.allowances
+      );
+
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+    } catch (error) {
+      return "0";
+    }
   }
 
   public async name() {
@@ -585,22 +705,200 @@ class VOTINGESCROWClient {
     return result.value();
   }
 
-  public async version() {
+  public async workingBalances(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.working_balances
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async workingSupply() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
       this.contractHash,
-      ["version"]
+      ["working_supply"]
     );
     return result.value();
   }
 
-  public async decimals() {
+  public async period() {
     const result = await contractSimpleGetter(
       this.nodeAddress,
       this.contractHash,
-      ["decimals"]
+      ["period"]
     );
     return result.value();
+  }
+
+  public async periodTimestamp(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.period_timestamp
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async integrateInvSupply(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.integrate_inv_supply
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async integrateInvSupplyOf(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.integrate_inv_supply_of
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async integrateCheckpointOf(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.integrate_checkpoint_of
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async integrateFraction(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.integrate_fraction
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async inflationRate() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["inflation_rate"]
+    );
+    return result.value();
+  }
+
+  public async rewardTokens(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.reward_tokens
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async rewardsReceiver(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.rewards_receiver
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async rewardIntegral(owner: string) {
+    try {
+      
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.reward_integral
+      );
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  public async rewardIntegralFor(owner:string, spender:string) {
+    try {
+      const _spender = new CLByteArray(
+        Uint8Array.from(Buffer.from(spender, "hex"))
+      );
+
+      const _owner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const key_spender = createRecipientAddress(_spender);
+      const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(key_spender).unwrap()]);
+      const blaked = blake.blake2b(finalBytes, undefined, 32);
+      const encodedBytes = Buffer.from(blaked).toString("hex");
+
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        encodedBytes,
+        this.namedKeys.reward_integral_for
+      );
+
+      const maybeValue = result.value().unwrap();
+      return maybeValue.value().toString();
+    } catch (error) {
+      return "0";
+    }
   }
 
   public async admin() {
@@ -621,23 +919,64 @@ class VOTINGESCROWClient {
     return result.value();
   }
 
-  // public async commitTransferOwnership(
+  public async isKilled() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["is_killed"]
+    );
+    return result.value();
+  }
+
+  //LIQUIDITY GAUGE V3 FUNCTIONS
+
+  // public async setRewardsReceiver(
   //   keys: Keys.AsymmetricKey,
-  //   addr: string,
-  //   //addr: RecipientType,
+  //   receiver: string,
   //   paymentAmount: string
   // ) {
-  //   const _addr = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(addr, "hex"))
+  //    const _receiver = new CLByteArray(
+	// 	 	Uint8Array.from(Buffer.from(receiver, "hex"))
+	// 	 );
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     receiver: utils.createRecipientAddress(_receiver),
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "set_rewards_receiver",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+      
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
+
+  // public async claimRewards(
+  //   keys: Keys.AsymmetricKey,
+  //   addr: RecipientType,
+  //   receiver: string,
+  //   paymentAmount: string
+  // ) {
+  //   const _receiver = new CLByteArray(
+	// 		Uint8Array.from(Buffer.from(receiver, "hex"))
 	// 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
-  //     addr: utils.createRecipientAddress(_addr),
-  //     //addr: utils.createRecipientAddress(addr),
+  //     addr: new CLOption(Some(utils.createRecipientAddress(addr))),
+  //     receiver: new CLOption(Some(utils.createRecipientAddress(_receiver)))
+
   //   });
   //   const deployHash = await contractCall({
   //     chainName: this.chainName,
   //     contractHash: this.contractHash,
-  //     entryPoint: "commit_transfer_ownership",
+  //     entryPoint: "claim_rewards",
   //     keys,
   //     nodeAddress: this.nodeAddress,
   //     paymentAmount,
@@ -652,16 +991,23 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  // public async applyTransferOwnership(
+  // public async kick(
   //   keys: Keys.AsymmetricKey,
+  //   //addr: string,
+  //   addr: RecipientType,
   //   paymentAmount: string
   // ) {
+  //   // const _addr = new CLByteArray(
+	// 	// 	Uint8Array.from(Buffer.from(addr, "hex"))
+	// 	// );
   //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     //addr: utils.createRecipientAddress(_addr),
+  //     addr: utils.createRecipientAddress(addr),
   //   });
   //   const deployHash = await contractCall({
   //     chainName: this.chainName,
   //     contractHash: this.contractHash,
-  //     entryPoint: "apply_transfer_ownership",
+  //     entryPoint: "kick",
   //     keys,
   //     nodeAddress: this.nodeAddress,
   //     paymentAmount,
@@ -676,127 +1022,23 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  // public async checkpoint(
-  //   keys: Keys.AsymmetricKey,
-  //   paymentAmount: string
-  // ) {
-  //   const runtimeArgs = RuntimeArgs.fromMap({
-  //   });
-  //   const deployHash = await contractCall({
-  //     chainName: this.chainName,
-  //     contractHash: this.contractHash,
-  //     entryPoint: "checkpoint",
-  //     keys,
-  //     nodeAddress: this.nodeAddress,
-  //     paymentAmount,
-  //     runtimeArgs,
-  //   });
-
-  //   if (deployHash !== null) {
-      
-  //     return deployHash;
-  //   } else {
-  //     throw Error("Invalid Deploy");
-  //   }
-  // }
-
-  // public async depositFor(
-  //   keys: Keys.AsymmetricKey,
-  //   addr: string,
-  //   value: string,
-  //   paymentAmount: string
-  // ) {
-  //   const _addr = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(addr, "hex"))
-	// 	);
-  //   const runtimeArgs = RuntimeArgs.fromMap({
-  //     addr: utils.createRecipientAddress(_addr),
-  //     value: CLValueBuilder.u256(value)
-  //   });
-  //   const deployHash = await contractCall({
-  //     chainName: this.chainName,
-  //     contractHash: this.contractHash,
-  //     entryPoint: "deposit_for",
-  //     keys,
-  //     nodeAddress: this.nodeAddress,
-  //     paymentAmount,
-  //     runtimeArgs,
-  //   });
-
-  //   if (deployHash !== null) {
-      
-  //     return deployHash;
-  //   } else {
-  //     throw Error("Invalid Deploy");
-  //   }
-  // }
-
-  // public async createlock(
+  // public async deposit(
   //   keys: Keys.AsymmetricKey,
   //   value: string,
-  //   unlockTime: string,
+  //   addr: RecipientType,
+  //   claimRewards: boolean,
   //   paymentAmount: string
   // ) {
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     value: CLValueBuilder.u256(value),
-  //     unlock_time: CLValueBuilder.u256(unlockTime)
+  //     addr: new CLOption(Some(utils.createRecipientAddress(addr))),
+  //     claim_rewards: new CLOption(Some(CLValueBuilder.bool(claimRewards)))
+
   //   });
   //   const deployHash = await contractCall({
   //     chainName: this.chainName,
   //     contractHash: this.contractHash,
-  //     entryPoint: "create_lock",
-  //     keys,
-  //     nodeAddress: this.nodeAddress,
-  //     paymentAmount,
-  //     runtimeArgs,
-  //   });
-
-  //   if (deployHash !== null) {
-      
-  //     return deployHash;
-  //   } else {
-  //     throw Error("Invalid Deploy");
-  //   }
-  // }
-
-  // public async increaseAmount(
-  //   keys: Keys.AsymmetricKey,
-  //   value: string,
-  //   paymentAmount: string
-  // ) {
-  //   const runtimeArgs = RuntimeArgs.fromMap({
-  //     value: CLValueBuilder.u256(value),
-  //   });
-  //   const deployHash = await contractCall({
-  //     chainName: this.chainName,
-  //     contractHash: this.contractHash,
-  //     entryPoint: "increase_amount",
-  //     keys,
-  //     nodeAddress: this.nodeAddress,
-  //     paymentAmount,
-  //     runtimeArgs,
-  //   });
-
-  //   if (deployHash !== null) {
-      
-  //     return deployHash;
-  //   } else {
-  //     throw Error("Invalid Deploy");
-  //   }
-  // }
-
-  // public async increaseUnlockTime(
-  //   keys: Keys.AsymmetricKey,
-  //   unlockTime: string,
-  //   paymentAmount: string
-  // ) {
-  //   const runtimeArgs = RuntimeArgs.fromMap({
-  //     unlock_time: CLValueBuilder.u256(unlockTime),
-  //   });
-  //   const deployHash = await contractCall({
-  //     chainName: this.chainName,
-  //     contractHash: this.contractHash,
-  //     entryPoint: "increase_unlock_time",
+  //     entryPoint: "deposit",
   //     keys,
   //     nodeAddress: this.nodeAddress,
   //     paymentAmount,
@@ -813,9 +1055,13 @@ class VOTINGESCROWClient {
 
   // public async withdraw(
   //   keys: Keys.AsymmetricKey,
+  //   value: string,
+  //   claimRewards: boolean,
   //   paymentAmount: string
   // ) {
   //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     value: CLValueBuilder.u256(value),
+  //     claim_rewards: new CLOption(Some(CLValueBuilder.bool(claimRewards)))
   //   });
   //   const deployHash = await contractCall({
   //     chainName: this.chainName,
@@ -835,23 +1081,23 @@ class VOTINGESCROWClient {
   //   }
   // }
 
-  // public async changeController(
+  // public async approve(
   //   keys: Keys.AsymmetricKey,
-  //   //newController: string,
-  //   newController: RecipientType,
+  //   spender: string,
+  //   amount: string,
   //   paymentAmount: string
   // ) {
-  //   // const _newController = new CLByteArray(
-	// 	// 	Uint8Array.from(Buffer.from(newController, "hex"))
-	// 	// );
+  //    const _spender = new CLByteArray(
+	// 	 	Uint8Array.from(Buffer.from(spender, "hex"))
+	// 	 );
   //   const runtimeArgs = RuntimeArgs.fromMap({
-  //     // new_controller: utils.createRecipientAddress(_newController),
-  //     new_controller: utils.createRecipientAddress(newController),
+  //     spender: utils.createRecipientAddress(_spender),
+  //     amount:CLValueBuilder.u256(amount), 
   //   });
   //   const deployHash = await contractCall({
   //     chainName: this.chainName,
   //     contractHash: this.contractHash,
-  //     entryPoint: "change_controller",
+  //     entryPoint: "approve",
   //     keys,
   //     nodeAddress: this.nodeAddress,
   //     paymentAmount,
@@ -866,6 +1112,120 @@ class VOTINGESCROWClient {
   //   }
   // }
 
+  // public async setRewards(
+  //   keys: Keys.AsymmetricKey,
+  //   rewardContract: string,
+  //   claimSig: string,
+  //   rewardTokens: string[],
+  //   paymentAmount: string
+  // ) {
+  //    const _rewardContract = new CLByteArray(
+	// 	 	Uint8Array.from(Buffer.from(rewardContract, "hex"))
+	// 	 );
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     reward_contract: utils.createRecipientAddress(_rewardContract),
+  //     claim_sig:CLValueBuilder.string(claimSig),
+  //     reward_tokens: CLValueBuilder.list(rewardTokens.map(id => CLValueBuilder.string(id))),
+
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "set_rewards",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+      
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
+
+  // public async setKilled(
+  //   keys: Keys.AsymmetricKey,
+  //   isKilled: boolean,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     is_killed: CLValueBuilder.bool(isKilled)
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "set_killed",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+      
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
+
+  // public async commitTransferOwnership(
+  //   keys: Keys.AsymmetricKey,
+  //   //addr: string,
+  //   addr: RecipientType,
+  //   paymentAmount: string
+  // ) {
+  //   // const _addr = new CLByteArray(
+	// 	// 	Uint8Array.from(Buffer.from(addr, "hex"))
+	// 	// );
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //     //addr: utils.createRecipientAddress(_addr),
+  //     addr: utils.createRecipientAddress(addr),
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "commit_transfer_ownership",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+      
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
+
+  // public async acceptTransferOwnership(
+  //   keys: Keys.AsymmetricKey,
+  //   paymentAmount: string
+  // ) {
+  //   const runtimeArgs = RuntimeArgs.fromMap({
+  //   });
+  //   const deployHash = await contractCall({
+  //     chainName: this.chainName,
+  //     contractHash: this.contractHash,
+  //     entryPoint: "accept_transfer_ownership",
+  //     keys,
+  //     nodeAddress: this.nodeAddress,
+  //     paymentAmount,
+  //     runtimeArgs,
+  //   });
+
+  //   if (deployHash !== null) {
+      
+  //     return deployHash;
+  //   } else {
+  //     throw Error("Invalid Deploy");
+  //   }
+  // }
 }
 
 interface IInstallParams {
@@ -987,4 +1347,4 @@ const fromCLMap = (map: Map<CLString, CLString>) => {
   return jsMap;
 };
 
-export default VOTINGESCROWClient;
+export default LIQUIDITYGAUGEV3Client;
