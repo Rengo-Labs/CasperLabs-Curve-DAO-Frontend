@@ -134,16 +134,6 @@ const Locker = () => {
 
   console.log("yes we didd", votingEscrowData);
 
-  // let loadData = () => {
-  //   return new Promise((res, rej) => {
-  //     data
-  //       ? res(
-
-  //       )
-  //       : rej(error);
-  //   });
-  // };
-
 
   useEffect(() => {
     charts();
@@ -170,74 +160,46 @@ const Locker = () => {
 
   }, [data, voting, votingEscrow]);
 
-  // const resolveData = async () => {
-  //   try {
-  //     await loadData();
-  //   } catch (error) {
-  //     console.log("this is promise error: ", error);
-  //   }
-  // };
-
-  //  if(charts!==undefined){
-  //   charts = charts.map(chart => {
-  //     chart.votingPower = helpers.calcVotingPower(chart.totalPower, chart.timestamp, chart.locktime) * 1000
-  //     return chart
-  //   })
-  //  }
-
-
-
-  // if(votingEscrow.data!==undefined){
-  //     setVPower(helpers.calcVotingPower(votingEscrowData[0].totalPower, votingEscrowData[0].timestamp, votingEscrowData[0].locktime) * 1000);
-  //     console.log("this is chart:",vPower);
-  //     setLastEvent(votingEscrowData[votingEscrowData.length - 1]);
-  //     console.log("last event",votingEscrowData.length); 
-  // }
-
-  //   if(chartData!==undefined){
-  //    console.log("this is chart:",vPower);
-  // }
-
   function interpolateVotingPower(chartData) {
-    let origEvents = votingEscrowData.slice()
+     let origEvents = votingEscrowData.slice()
     //console.log(origEvents, "ORIG EVENTS")
     let newChartData = []
     //console.log(chartData.slice(), "CHARTDATA LENGTH")
-    for (let j = 1; j < chartData.length; j++) {
-      let v = chartData[j]
-      let prev = chartData[j - 1]
-      //if(v.length == 1) continue
-      newChartData.push(prev)
-      let startTimestamp = prev[0]
-      let startAmount = prev[1]
-      let endTimestamp = v[0]
-      let endAmount = v[1]
-      let diff = endTimestamp - startTimestamp
-      let diffAmount = endAmount - startAmount
-      let amountLocked = origEvents[j - 1].totalPower
-      let numPoints = 10
-      if (chartData.length > 1) {
-        for (let i = 0; i < numPoints; i++) {
-          //console.log(origEvents[j-1].totalPower, i, "TOTAL POWER")
-          let currentTimestamp = startTimestamp + i * (diff / numPoints)
-          //console.log(amountLocked, currentTimestamp, this.events[j-1].locktime * 1000, "AMOUNTS")
-          let amount = helpers.calcVotingPower(amountLocked, currentTimestamp, this.events[j - 1].locktime * 1000)
-          //console.log(amount, "THE AMOUNT")
-          if (votingEscrowData.find(e => e.timestamp == currentTimestamp / 1000) === undefined) {
+     for (let j = 1; j < chartData.length; j++) {
+       let v = chartData[j]
+       let prev = chartData[j - 1]
+       newChartData.push(prev)
+       //console.log("newChartData:",newChartData);
+       let startTimestamp = prev[0]
+       let startAmount = prev[1]
+       let endTimestamp = v[0]
+       let endAmount = v[1]
+       let diff = endTimestamp - startTimestamp
+       let diffAmount = endAmount - startAmount
+       let amountLocked = origEvents[j - 1].totalPower
+       let numPoints = 10
+       if (chartData.length > 1) {
+         for (let i = 0; i < numPoints; i++) {
+           //console.log(origEvents[j-1].totalPower, i, "TOTAL POWER")
+           let currentTimestamp = startTimestamp + i * (diff / numPoints)
+           //console.log(amountLocked, currentTimestamp, this.events[j-1].locktime * 1000, "AMOUNTS")
+           let amount = helpers.calcVotingPower(amountLocked, currentTimestamp, votingEscrowData[j - 1].locktime * 1000)
+           //console.log(amount, "THE AMOUNT")
+           if (votingEscrowData.find(e => e.timestamp === currentTimestamp / 1000) === undefined) {
             votingEscrowData.splice(j, 0, {
               type: 'decrease',
               timestamp: currentTimestamp / 1000,
               locktime: votingEscrowData[j].locktime,
             })
-          }
-          //console.log(amount, "THE AMOUNT")
-          newChartData.push([currentTimestamp, amount])
-        }
-      }
-      newChartData.push(v)
-    }
-    newChartData.push(chartData[chartData.length - 1])
-    return newChartData
+           }
+           //console.log(amount, "THE AMOUNT")
+           newChartData.push([currentTimestamp, amount])
+         }
+       }
+       newChartData.push(v)
+     }
+     newChartData.push(chartData[chartData.length - 1])
+     return newChartData
   }
 
 
@@ -245,22 +207,6 @@ const Locker = () => {
     console.log("votingEscrowDatavotingEscrowDatavotingEscrowDatavotingEscrowData", votingEscrowData);
     let events = votingEscrowData;
     if (events.length > 0) {
-
-      // setVPower(
-      //   helpers.calcVotingPower(votingEscrowData[0].totalPower / 1, votingEscrowData[0].timestamp,
-      //     // votingEscrowData[0].locktime
-      //     365
-      //   ) * 1000);
-      // console.log("this is chart:", helpers.calcVotingPower(votingEscrowData[0].totalPower / 1, votingEscrowData[0].timestamp,
-      //   // votingEscrowData[0].locktime
-      //   365
-      // ) * 1000);
-
-      // let vPowerTemp =
-      //   helpers.calcVotingPower(votingEscrowData[0].totalPower / 1, votingEscrowData[0].timestamp,
-      //     // votingEscrowData[0].locktime
-      //     365
-      //   ) * 1000;
 
       events = addVotingPowerProperty(events);
       console.log("eventseventsevents", events);
@@ -275,9 +221,14 @@ const Locker = () => {
         365
         * 1000, 0]
       chartData.push(lastData);
-      // votingEscrowData.push({ ...votingEscrowData[votingEscrowData.length - 1], value: 0, votingPower: 0 })
-      // chartData = this.interpolateVotingPower(chartData)
-      // setLockerChartData(chartData);
+       //console.log("before pushing",votingEscrowData);
+       votingEscrowData = Object.assign([], votingEscrowData);
+       votingEscrowData.push({ ...votingEscrowData[votingEscrowData.length - 1], value: 0, votingPower: 0 })
+       //console.log("after pushing",votingEscrowData);
+       //chartData = interpolateVotingPower(chartData)
+       setLockerChartData(interpolateVotingPower(chartData));
+       let finalData  = interpolateVotingPower(chartData)
+       //console.log("final chart data:",finalData);
 
     }
   }
@@ -291,7 +242,7 @@ const Locker = () => {
     }));
   }
 
-
+  console.log("final chart data outside:",lockerChartData);
 
 
 
@@ -853,7 +804,7 @@ const Locker = () => {
                               {/* Chart */}
                               <div className="row no-gutters justify-content-center w-100">
                                 <div className="col-12">
-                                  <DaoVotingPower />
+                                  <DaoVotingPower chart={lockerChartData} />
                                 </div>
                               </div>
                               <div className="col-12">
