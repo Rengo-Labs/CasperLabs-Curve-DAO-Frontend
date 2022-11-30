@@ -96,7 +96,9 @@ const Calc = () => {
   const [minVeCRVForBoost, setMinVeCRVForBoost] = useState(2);
   const [depositForBoost, setDepositForBoost] = useState(10);
   const [maxDepositPerVeCRV, setMaxDepositPerVeCRV] = useState();
-  
+  const [period, setPeriod] = useState(1 + "Year");
+  const [toLockCRV, setToLockCRV] = useState(0);
+
   // Content
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -128,13 +130,13 @@ const Calc = () => {
   const handleVeCRVSelect = () => {
     setGaugeVeCRV(true);
     //calling this function because of watchers
-    calculate();
+    calcTrigger();
   };
 
   const handleCRVSelect = () => {
     setGaugeVeCRV(false);
     //calling this function because of watchers
-    calculate();
+    calcTrigger();
   };
 
   const handleGaugeLockChange = (event) => {
@@ -164,7 +166,7 @@ const Calc = () => {
     // setLockedVeCRV((this.myCRV * this.lockPeriod) / (86400 * 365) / 4).toFixed(2);
     setLockedVeCRV((gaugeCRV * gaugeLock) / (86400 * 365) / 4).toFixed(2);
     //calling this function because of watchers
-    calculate();
+    calcTrigger();
   }
 
 
@@ -265,9 +267,15 @@ const Calc = () => {
     setCrvBoost(boost);
   }
 
+  const calcTrigger = () => {
+    updateLiquidityLimit();
+    maxBoost();
+  }
+
   const CRVtoLock = () => {
     let year = 365*24*60*60
-    // return (minVeCRVForBoost / ((minVeCRV / year) / 4)).toFixed(2) //correction needed here for minVeCRV 
+    // return (this.minveCRV / ((this.minveCRVperiod / year) / 4)).toFixed(2)
+    setToLockCRV((minVeCRVForBoost / ((period / year) / 4)).toFixed(2));
   }
 
   return (
@@ -362,7 +370,7 @@ const Calc = () => {
                                         onChange={(e) => {
                                           setGaugeDeposits(e.target.value);
                                           //calling this function because of watchers
-                                          calculate();
+                                          calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -396,7 +404,7 @@ const Calc = () => {
                                         onChange={(e) => {
                                           setPoolLiquidity(e.target.value);
                                           //calling this function because of watchers
-                                          calculate();
+                                          calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -437,7 +445,7 @@ const Calc = () => {
                                           onChange={(e) => {
                                             setMyVeCRV(e.target.value);
                                             //calling this function because of watchers
-                                            calculate();
+                                            calcTrigger();
                                           }}
                                         />
                                       </Box>
@@ -524,7 +532,7 @@ const Calc = () => {
                                         onChange={(e) => {
                                           setTotalVeCRV(e.target.value);
                                           //calling this function because of watchers
-                                          calculate();
+                                          calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -592,6 +600,27 @@ const Calc = () => {
                                   </ListItem>
                                 </List>
                               </div>
+                              {gaugeDeposits > 0 ? (
+                                <div>
+                                  This is {toLockCRV} for a 
+                                  <div className="col-12 col-md-6">
+                                    <SelectInput
+                                      setDate={setDate}
+                                      setDateDisplay={setDateDisplay}
+                                      name="lockPeriod"
+                                      label="Select Lock Period"
+                                      options={lockTimeOptions.map(
+                                        (item) => item.name
+                                      )}
+                                      value={period}
+                                      onChange={(e) => {
+                                        setPeriod(e.target.value);
+                                        CRVtoLock();
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              ) : null}
                             </div>
                             <div className="w-100 my-4 pt-4">
                               <Divider />
