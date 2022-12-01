@@ -16,16 +16,17 @@ const DaoVotingPower = ({chart}) => {
 
 
 if(chart!==undefined){
+  let chartData = chart.splice(0,chart.length-11) 
 
-  for (let i=0;i<chart.length;i++){
+  for (let i=0;i<chartData.length;i++){
 
-    console.log("chart at i",chart[i][0]);
-     seriesDataX.push(chart[i][0])
-     if(isNaN(chart[i][1]) ){
-      seriesDataY.push(0)
+    console.log("chart at i",chartData[i][0]);
+     seriesDataX.push(chartData[i][0])
+     if(isNaN(chartData[i][1]) ){
+      seriesDataY.push(50)
      }
      else{
-      seriesDataY.push(chart[i][1]) 
+      seriesDataY.push(chartData[i][1]) 
      }
      
   }
@@ -34,13 +35,46 @@ if(chart!==undefined){
  console.log("dataX:",seriesDataX);
  console.log("dataY:",seriesDataY);
 
+ let axisData = [];
+ for (var i=0; i<seriesDataX.length; i++) {
+  axisData[i] = {
+      x: seriesDataX[i],
+      y: seriesDataY[i],
+  };
+}
+console.log("axisData",axisData);
 
   let series = [
     {
       name: "DAO Voting Power",
       type: "line",
-      data: [
-        seriesDataX
+      data: axisData
+        //seriesDataX
+        
+        // {
+        //   x: seriesDataX[0],
+        //   y: seriesDataY[0],
+        // },
+        // {
+        //   x: seriesDataX[1],
+        //   y: seriesDataY[1],
+        // },
+        // {
+        //   x: seriesDataX[2],
+        //   y: seriesDataY[2],
+        // },
+        // {
+        //   x: seriesDataX[3],
+        //   y: seriesDataY[3],
+        // },
+        // {
+        //   x: seriesDataX[4],
+        //   y: seriesDataY[4],
+        // },
+        // {
+        //   x: seriesDataX[5],
+        //   y: seriesDataY[5],
+        // },
         // {
         //   x: new Date("2022-05-12"),
         //   y: [1831.43],
@@ -73,13 +107,13 @@ if(chart!==undefined){
         //   x: new Date("2022-05-19"),
         //   y: [130025169.05],
         // },
-      ],
+      //],
     },
     {
       name: "DAO Voting Power",
       type: "line",
-      data: [
-          seriesDataX
+      data:  axisData
+          //seriesDataX
         // {
         //   x: new Date("2022-05-12"),
         //   y: [1831.43],
@@ -112,7 +146,7 @@ if(chart!==undefined){
         //   x: new Date("2022-05-19"),
         //   y: [130025169.05],
         // },
-      ],
+      
     },
   ];
 
@@ -149,7 +183,7 @@ if(chart!==undefined){
     yaxis: {
       title: {
         text: "Amount Locked",
-        categories: [seriesDataY]
+        //categories: [seriesDataY]
       },
     },
   };
@@ -160,8 +194,8 @@ if(chart!==undefined){
     {
       name: "DAO Voting Power",
       type: "line",
-      data: [
-        seriesDataX
+      data: 
+        axisData
     //     {
     //       x: new Date("2022-05-12"),
     //       y: [1831.43],
@@ -194,12 +228,12 @@ if(chart!==undefined){
     //       x: new Date("2022-05-19"),
     //       y: [130025169.05],
     //     },
-    //   ],
-    // },
-    // {
-    //   name: "DAO Voting Power",
-    //   type: "line",
-    //   data: [
+       
+     },
+     {
+      name: "DAO Voting Power",
+      type: "line",
+      data: axisData
     //     {
     //       x: new Date("2022-05-12"),
     //       y: [1831.43],
@@ -232,7 +266,7 @@ if(chart!==undefined){
     //       x: new Date("2022-05-19"),
     //       y: [130025169.05],
     //     },
-      ],
+      
     },
   ];
   let optionsLine = {
@@ -272,7 +306,7 @@ if(chart!==undefined){
       tooltip: {
         enabled: false,
       },
-      categories: [seriesDataY]
+      //categories: [seriesDataY]
     },
     yaxis: {
       tickAmount: 2,
@@ -280,6 +314,36 @@ if(chart!==undefined){
   };
 
   // Handlers
+
+  // const series = [
+  //   {
+  //     name: "Temperature in Fahrenheit", //will be displayed on the y-axis
+  //     data: [seriesDataX]
+  //   }
+  // ];
+  // const options = {
+  //   chart: {
+  //     id: "line"
+  //   },
+  //   xaxis: {
+  //     categories: [seriesDataY] //will be displayed on the x-asis
+  //   }
+  // };
+
+  // const seriesLine = [
+  //   {
+  //     name: "Temperature in Fahrenheit", //will be displayed on the y-axis
+  //     data: [seriesDataY]
+  //   }
+  // ];
+  // const optionsLine = {
+  //   chart: {
+  //     id: "area"
+  //   },
+  //   xaxis: {
+  //     categories: [seriesDataX] //will be displayed on the x-asis
+  //   }
+  // };
 
   return (
     <>

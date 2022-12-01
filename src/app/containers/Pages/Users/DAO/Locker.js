@@ -116,7 +116,7 @@ const Locker = () => {
 
   const voting = useQuery(VOTING_POWER, {
     variables: {
-      id: "provider",
+      id: "e1431ecb9f20f2a6e6571886b1e2f9dec49ebc6b2d3d640a53530abafba9bfa1",
     },
   })
   console.log("this is data of voting escrow gql: ", voting.data);
@@ -164,7 +164,7 @@ const Locker = () => {
      let origEvents = votingEscrowData.slice()
     //console.log(origEvents, "ORIG EVENTS")
     let newChartData = []
-    //console.log(chartData.slice(), "CHARTDATA LENGTH")
+    console.log(chartData.slice(), "CHARTDATA LENGTH")
      for (let j = 1; j < chartData.length; j++) {
        let v = chartData[j]
        let prev = chartData[j - 1]
@@ -217,8 +217,8 @@ const Locker = () => {
       let lastEvent = events[events.length - 1]
       setLastEvent(lastEvent);
       let lastData = [
-        // lastEvent.locktime 
-        365
+         lastEvent.locktime 
+        //365
         * 1000, 0]
       chartData.push(lastData);
        //console.log("before pushing",votingEscrowData);
@@ -228,7 +228,8 @@ const Locker = () => {
        //chartData = interpolateVotingPower(chartData)
        setLockerChartData(interpolateVotingPower(chartData));
        let finalData  = interpolateVotingPower(chartData)
-       //console.log("final chart data:",finalData);
+       console.log("final chart data:",finalData);
+      //  console.log("final data after splice:",finalData.splice(0,finalData.length-11) );
 
     }
   }
@@ -236,8 +237,8 @@ const Locker = () => {
     return data.map((item) => ({
       ...item,
       votingPower: helpers.calcVotingPower(item.totalPower, item.timestamp,
-        365
-        // event.locktime
+        //365
+         item.locktime
       ) * 1000
     }));
   }
