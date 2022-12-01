@@ -10,6 +10,8 @@ import { useField } from "formik";
 
 const TextInput = ({ name, ...otherProps }) => {
   const [field, meta] = useField(name);
+  console.log("Name in text input: ", field);
+  console.log("Meta in text input: ", meta);
 
   const configTextField = {
     ...field,

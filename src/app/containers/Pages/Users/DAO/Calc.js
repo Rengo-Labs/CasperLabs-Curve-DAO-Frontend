@@ -43,6 +43,7 @@ import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../.
 import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 import { CLPublicKey } from "casper-js-sdk";
 import { periodTimestamp, workingBalances, workingSupply } from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
+import { Autocomplete } from "@mui/material";
 
 // CONTENT
 const selectGaugeOptionsJSON =
@@ -65,9 +66,12 @@ const lockTimeOptionsJSON =
 let lockTimeOptions = [];
 try {
   lockTimeOptions = JSON.parse(lockTimeOptionsJSON);
+  console.log("Lock time options after converting it into json parse.", lockTimeOptions);
 } catch (exception) {
   console.log("an exception has occured!", exception);
 }
+
+const year = 365*24*60*60;
 
 // COMPONENT FUNCTION
 const Calc = () => {
@@ -88,7 +92,9 @@ const Calc = () => {
   const [gaugeCRV, setGaugeCRV] = useState("0.00");
   const [gaugeVeCRV, setGaugeVeCRV] = useState(false);
   const [myVeCRV, setMyVeCRV] = useState(0);
-  const [gaugeLock, setGaugeLock] = useState(1 + " Year");
+  // const [gaugeLock, setGaugeLock] = useState(1 + " Year");
+  const [gaugeLock, setGaugeLock] = useState("");
+  const [gaugeLockValue, setGaugeLockValue] = useState(0);
   const [lockedVeCRV, setLockedVeCRV] = useState("0.00");
   const [totalVeCRV, setTotalVeCRV] = useState("452142663.71");
   const [crvBoost, setCrvBoost] = useState("1.00");
@@ -136,11 +142,20 @@ const Calc = () => {
   const handleCRVSelect = () => {
     setGaugeVeCRV(false);
     //calling this function because of watchers
-    calcTrigger();
+    // calcTrigger();
   };
 
-  const handleGaugeLockChange = (event) => {
-    setGaugeLock(event.target.value);
+  const handleGaugeLockChange = (event, newValue) => {
+    console.log("Event: ", event.target.value);
+    setGaugeLock(newValue);
+    let val = +newValue.name.split(" ")[0];
+    console.log("Value: ", val);
+    if(val > 1) {
+      setGaugeLockValue(val*year);
+    }
+    else {
+      setGaugeLockValue(val/year);
+    }
   };
 
   useEffect(() => {
@@ -158,15 +173,18 @@ const Calc = () => {
   //   maxBoost();
   // }, [gaugeBalance, poolLiquidity, myVeCRV, totalVeCRV, gaugeVeCRV, Date.now() ])
 
-  // useEffect(() => {
-  //   console.log("This is entrance");
-  // }, []);
+  useEffect(() => {
+    setLockedVeCRV(((gaugeCRV * gaugeLockValue) / (86400 * 365) / 4).toFixed(2));
+  }, [gaugeCRV, gaugeLockValue]);
 
   const updateLockedVeCRV = async () => {
     // setLockedVeCRV((this.myCRV * this.lockPeriod) / (86400 * 365) / 4).toFixed(2);
-    setLockedVeCRV((gaugeCRV * gaugeLock) / (86400 * 365) / 4).toFixed(2);
+    console.log("In update function: ");
+    console.log("Gauge lock value: ", gaugeLockValue);
+    console.log("Gauge crv: ", gaugeCRV);
+    setLockedVeCRV((gaugeCRV * gaugeLockValue) / (86400 * 365) / 4).toFixed(2);
     //calling this function because of watchers
-    calcTrigger();
+    // calcTrigger();
   }
 
 
@@ -252,8 +270,8 @@ const Calc = () => {
   }
 
   const updateGaugeBalanceAndPoolLiquidity = async () => {
-    setGaugeDeposits(await balanceOf(boostGauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
-    setPoolLiquidity(await totalSupply(boostGauge.address));
+    // setGaugeDeposits(await balanceOf(boostGauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
+    // setPoolLiquidity(await totalSupply(boostGauge.address));
   }
 
   const onSubmitCalc = async (values, props) => {
@@ -267,9 +285,9 @@ const Calc = () => {
     setCrvBoost(boost);
   }
 
-  const calcTrigger = () => {
-    updateLiquidityLimit();
-    maxBoost();
+  const calcTrigger = async () => {
+    await updateLiquidityLimit();
+    await maxBoost();
   }
 
   const CRVtoLock = () => {
@@ -337,13 +355,14 @@ const Calc = () => {
                                 <div className="row no-gutters">
                                   {/* Gauge Selector */}
                                   <div className="col-12 col-md-6">
-                                    <SelectInput
+                                    {/* <SelectInput
                                       name="SelectGaugeCalc"
                                       label="Select a Gauge"
                                       icon={selectGaugeOptions.map((item) => {
                                         return item.icon;
                                       })}
                                       onChange={(e) => {
+                                        console.log("In select input")
                                         handleGaugeChange(e);
                                       }}
                                       options={selectGaugeOptions.map(
@@ -352,6 +371,19 @@ const Calc = () => {
                                           return item.name;
                                         }
                                       )}
+                                    /> */}
+                                    <Autocomplete 
+                                      options={selectGaugeOptions}
+                                      getOptionLabel={(option) => option.name }
+                                      clearOnEscape
+                                      renderInput={(params) => (
+                                        <TextField {...params} label="Select a gauge" variant="standard" />
+                                      )}
+                                      onChange={(event) => {
+                                        handleGaugeChange(event);
+                                      }}
+                                      value={boostGauge}
+                                      // style={{backgroundColor: "grey"}}
                                     />
                                   </div>
                                   {/* Deposit */}
@@ -367,10 +399,13 @@ const Calc = () => {
                                         variant="filled"
                                         name="CalcDeposits"
                                         value={gaugeDeposits}
+                                        type="number"
                                         onChange={(e) => {
+                                          console.log("Gauge deposit: ", typeof(+e.target.value));
+                                          console.log("Gauge deposit: ", e.target.value);
                                           setGaugeDeposits(e.target.value);
                                           //calling this function because of watchers
-                                          calcTrigger();
+                                          // calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -404,7 +439,7 @@ const Calc = () => {
                                         onChange={(e) => {
                                           setPoolLiquidity(e.target.value);
                                           //calling this function because of watchers
-                                          calcTrigger();
+                                          // calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -445,7 +480,7 @@ const Calc = () => {
                                           onChange={(e) => {
                                             setMyVeCRV(e.target.value);
                                             //calling this function because of watchers
-                                            calcTrigger();
+                                            // calcTrigger();
                                           }}
                                         />
                                       </Box>
@@ -480,7 +515,7 @@ const Calc = () => {
                                       <div className="col-12">
                                         <div className="row no-gutters justify-content-md-end">
                                           <div className="col-12 col-md-6">
-                                            <SelectInput
+                                            {/* <SelectInput
                                               setDate={setDate}
                                               setDateDisplay={setDateDisplay}
                                               name="GaugeLockPeriodCalc"
@@ -494,6 +529,28 @@ const Calc = () => {
                                                 // veCRV();
                                                 updateLockedVeCRV();
                                               }}
+                                            /> */}
+                                            <Autocomplete 
+                                              options={lockTimeOptions}
+                                              getOptionLabel={(option) => {
+                                                console.log("Option: ", option);
+                                                return option.name
+                                              }}
+                                              clearOnEscape
+                                              renderInput={(params) => (
+                                                <TextField 
+                                                  {...params} 
+                                                  label="Select Lock Period" 
+                                                  variant="standard" 
+                                                />
+                                              )}
+                                              onChange={async (event, newValue) => {
+                                                console.log("New Value: ", newValue);
+                                                handleGaugeLockChange(event, newValue);                              
+                                                // await updateLockedVeCRV();
+                                              }}
+                                              value={gaugeLock.name}
+                                              // style={{backgroundColor: "grey"}}
                                             />
                                           </div>
                                         </div>
@@ -532,7 +589,7 @@ const Calc = () => {
                                         onChange={(e) => {
                                           setTotalVeCRV(e.target.value);
                                           //calling this function because of watchers
-                                          calcTrigger();
+                                          // calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -604,7 +661,7 @@ const Calc = () => {
                                 <div>
                                   This is {toLockCRV} for a 
                                   <div className="col-12 col-md-6">
-                                    <SelectInput
+                                    {/* <SelectInput
                                       setDate={setDate}
                                       setDateDisplay={setDateDisplay}
                                       name="lockPeriod"
@@ -617,6 +674,20 @@ const Calc = () => {
                                         setPeriod(e.target.value);
                                         CRVtoLock();
                                       }}
+                                    /> */}
+                                    <Autocomplete 
+                                      options={lockTimeOptions}
+                                      getOptionLabel={(option) => option.name }
+                                      clearOnEscape
+                                      renderInput={(params) => (
+                                        <TextField {...params} label="Select Lock Period" variant="standard" />
+                                      )}
+                                      onChange={(event, newValue) => {
+                                        setPeriod(newValue);
+                                        CRVtoLock();
+                                      }}
+                                      value={period.name}
+                                      // style={{backgroundColor: "grey"}}
                                     />
                                   </div>
                                 </div>
