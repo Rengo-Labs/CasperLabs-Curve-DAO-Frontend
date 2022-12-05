@@ -5,6 +5,9 @@ import { Col, Row } from 'react-bootstrap';
 import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
+import { getState } from '../Gauge/GaugeStore';
+import { state } from '../Gauge/GaugeStore';
+import { applyBoostAll } from '../Gauge/GaugeStore';
 
 
 function ValueLabelComponent(props) {

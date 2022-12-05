@@ -48,3 +48,16 @@ export const workingSupply = async (contractHash:string) => {
   
 };
 
+export const lpToken = async (contractHash:string) => {
+
+    // We don't need hash- prefix so i'm removing it
+    await liquiditygaugev3.setContractHash(contractHash);
+  
+    //balanceof
+    const lpToken = await liquiditygaugev3.lpToken();
+    console.log(contractHash +` =... lpToken : ${lpToken}`);
+  
+    return lpToken;
+  
+};
+
