@@ -1,9 +1,10 @@
 import { CLPublicKey } from "casper-js-sdk";
 import { ERC20_CRV_CONTRACT_HASH, LIQUIDITY_GAUGE_V3_CONTRACT_HASH, GAUGE_CONTROLLER_CONTRACT_HASH, MINTER_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
 import { gauges, n_gauges, gaugeTypes, gauge_type_names } from "../JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
-import { lpToken } from "../JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
+import { inflationRate, lpToken, workingSupply } from "../JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
 import { getMinted } from "../JsClients/MINTER/minterFunctionsForBackend/functions";
-import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import { balanceOf, totalSupply } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import { UserCheckpointMakeDeploy } from "../MakeDeployFunctions/UserCheckpointMakeDeploy";
 
 
 export let state = {
@@ -217,28 +218,39 @@ export async function getState(activePublicKey) {
 	// 	[gauge, example_gauge.methods.working_balances(contract.default_account).encodeABI()],
 	// ])
 
-	let ratesCalls = decodedGauges.map(gauge => [
-		[gauge, example_gauge.methods.inflation_rate().encodeABI()],
-		[gauge, example_gauge.methods.working_supply().encodeABI()],
-		[gauge, example_gauge.methods.totalSupply().encodeABI()],
-		[gauge, example_gauge.methods.working_balances(contract.default_account).encodeABI()],
-	])
+	let ratesCalls = decodedGauges.map(async gauge => [
+		await inflationRate(gauge),
+		await workingSupply(gauge),
+		await totalSupply(gauge),
+		await workingBalances(gauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")),
+	]) //discuss about this as there are all encoded ais work
 
 	console.log(ratesCalls, "RATES CALLS")
 
-	let aggRates = await contract.multicall.methods.aggregate(ratesCalls.flat()).call()
-	let decodedRate = aggRates[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
-	let gaugeRates = decodedRate.filter((_, i) => i % 4 == 0).map(v => v / 1e18)
-	let workingSupplies = decodedRate.filter((_, i) => i % 4 == 1).map(v => v / 1e18)
-	let totalSupplies = decodedRate.filter((_, i) => i % 4 == 2).map(v => v / 1e18)
-	let workingBalances = decodedRate.filter((_, i) => i % 4 == 3).map(v => v)
+	// let aggRates = await contract.multicall.methods.aggregate(ratesCalls.flat()).call()
+	// let decodedRate = aggRates[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
+	// let gaugeRates = decodedRate.filter((_, i) => i % 4 == 0).map(v => v / 1e18)
+	let gaugeRates = ratesCalls.filter((_, i) => i % 4 == 0).map(v => v / 1e9)
+	// let workingSupplies = decodedRate.filter((_, i) => i % 4 == 1).map(v => v / 1e18)
+	let workingSupplies = ratesCalls.filter((_, i) => i % 4 == 1).map(v => v / 1e9)
+	// let totalSupplies = decodedRate.filter((_, i) => i % 4 == 2).map(v => v / 1e18)
+	let totalSupplies = ratesCalls.filter((_, i) => i % 4 == 2).map(v => v / 1e9)
+	// let workingBalances = decodedRate.filter((_, i) => i % 4 == 3).map(v => v)
+	let workingBalances = ratesCalls.filter((_, i) => i % 4 == 3).map(v => v)
 
-	let example_pool = new web3.eth.Contract(swap_abi, '0xA5407eAE9Ba41422680e2e00537571bcC53efBfD')
+	// let example_pool = new web3.eth.Contract(swap_abi, '0xA5407eAE9Ba41422680e2e00537571bcC53efBfD')
 
-	let virtualPriceCalls = Object.values(state.pools).map(v => [v.swap, example_pool.methods.get_virtual_price().encodeABI()])
+	// let virtualPriceCalls = Object.values(state.pools).map(v => [v.swap, example_pool.methods.get_virtual_price().encodeABI()]) //ask about this
 	//console.log(virtualPriceCalls, "VIRTUAL PRICE CALLS")
-	let aggVirtualPrices = await contract.multicall.methods.aggregate(virtualPriceCalls).call()
-	let decodedVirtualPrices = aggVirtualPrices[1].map((hex, i) => [virtualPriceCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18])
+	// let aggVirtualPrices = await contract.multicall.methods.aggregate(virtualPriceCalls).call()
+	// let decodedVirtualPrices = aggVirtualPrices[1].map((hex, i) => [virtualPriceCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18])
+	
+	//confirm these calls
+	// let aggVirtualPrices = await contract.multicall.methods.aggregate(virtualPriceCalls).call()
+	// let decodedVirtualPrices = aggVirtualPrices[1].map((hex, i) => [virtualPriceCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18])
+
+	let decodedWeights = [];
+	let decodedVirtualPrices = [];
 
 	window.gauges = {}
 	let weightData = decodedWeights.map((w, i) => {
@@ -261,8 +273,8 @@ export async function getState(activePublicKey) {
 			apy = 0
 		state.mypools.find(v => v.name == pool).gauge_relative_weight = w[1]
 		Object.values(state.pools).find(v => v.name == pool).gauge_relative_weight = w[1]
-		Vue.set(state.APYs, pool, apy)
-		window.gauges[pool] = new web3.eth.Contract(daoabis.liquiditygauge_abi, '0x' + weightCalls[i][1].slice(34).toLowerCase())
+		// Vue.set(state.APYs, pool, apy)
+		// window.gauges[pool] = new web3.eth.Contract(daoabis.liquiditygauge_abi, '0x' + weightCalls[i][1].slice(34).toLowerCase())
 	})
 
 	//console.log(state.mypools, "STATE MY POOLS")
@@ -301,35 +313,37 @@ export async function getState(activePublicKey) {
 
 }
 
-export async function applyBoostAll() {
+export async function applyBoostAll(activePublicKey, setOpenSigning, enqueueSnackbar) {
 	for(let gauge of state.gaugesNeedApply) {
-		let gaugeContract = new contract.web3.eth.Contract(daoabis.liquiditygauge_abi, gauge)
-		let gas = 600000
-		try {
-			gas = await gaugeContract.methods.user_checkpoint(contract.default_account).estimateGas()
-		}
-		catch(err) {
-			console.error(err)
-		}
+		// let gaugeContract = new contract.web3.eth.Contract(daoabis.liquiditygauge_abi, gauge)
+		// let gas = 600000
+		// try {
+		// 	gas = await gaugeContract.methods.user_checkpoint(contract.default_account).estimateGas()
+		// }
+		// catch(err) {
+		// 	console.error(err)
+		// } we are not suppose to estimate gas in casper
 
 		let poolName = state.mypools.find(pool => pool.gauge == gauge).name
-		var { dismiss } = notifyNotification(`Please confirm applying boost for gauge ${poolName}`)
+		// var { dismiss } = notifyNotification(`Please confirm applying boost for gauge ${poolName}`) //use enqueue snackbar here
 
-		await new Promise((resolve, reject) => {
-			gaugeContract.methods.user_checkpoint(contract.default_account).send({
-				from: contract.default_account,
-				gasPrice: gasPriceStore.state.gasPriceWei,
-				gas: gas,
-			})
-			.once('transactionHash', hash => {
-				dismiss()
-				notifyHandler(hash)
-				resolve()
-			})
-			.on('error', err => {
-				console.error(err)
-				reject(err)
-			})
-		})
+		// await new Promise((resolve, reject) => {
+		// 	gaugeContract.methods.user_checkpoint(contract.default_account).send({
+		// 		from: contract.default_account,
+		// 		gasPrice: gasPriceStore.state.gasPriceWei,
+		// 		gas: gas,
+		// 	})
+		// 	.once('transactionHash', hash => {
+		// 		dismiss()
+		// 		notifyHandler(hash)
+		// 		resolve()
+		// 	})
+		// 	.on('error', err => {
+		// 		console.error(err)
+		// 		reject(err)
+		// 	})
+		// })
+
+		UserCheckpointMakeDeploy(activePublicKey ,setOpenSigning, enqueueSnackbar)
 	}
 }
