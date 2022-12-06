@@ -1,5 +1,5 @@
 // REACT
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 // CUSTOM STYLING
@@ -35,6 +35,8 @@ import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { useSnackbar } from 'notistack';
+//GraphQl
+import { useQuery, gql } from "@apollo/client";
 // MATERIA UI ICONS
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 // ICONS
@@ -61,6 +63,25 @@ import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 import TablePaginationActions from "../../../../components/pagination/TablePaginationActions";
 
 // CONTENT
+
+const GAUGE_WEIGHT = gql`
+query gaugeVotesByUser($user: String){
+  gaugeVotesByUser(user: $user){
+    id
+    time
+    user
+    gauge
+    weight
+    gaugeWeights{
+      weight
+      gauge
+    }
+    total_weight
+    veCRV
+    totalveCRV
+  }
+}
+`;
 
 
 const selectGaugeOptions = [
@@ -130,6 +151,8 @@ const GaugeWeightVote = () => {
   const [votingPowerPercentage, setVotingPowerPercentage] = useState(1);
   const [votingPowerNumber, setVotingPowerNumber] = useState("0.00");
   const [gauge, setGauge] = useState("493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a");
+  const [gaugeWeightData,setGaugeWeightData]=useState([]);
+  const [futureWeight,setFutureWeight]=useState([]);
   const { enqueueSnackbar } = useSnackbar();
   // States
   const [openSigning, setOpenSigning] = useState(false);
@@ -147,6 +170,77 @@ const GaugeWeightVote = () => {
   const handleShowVoteForGaugeWeightModal = () => {
     setVoteForGaugeWeightModal(true);
   };
+    // Queries
+    const gaugeWeight = useQuery(GAUGE_WEIGHT, {
+      variables: {
+        user: "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1",
+      },
+    });
+    console.log("this is data of gauge weight: ", gaugeWeight.data);
+    console.log("this is error of gauge weight: ", gaugeWeight.error);
+  
+    // if (gaugeWeight.data !== undefined) {
+    //   console.log("gaugeWeight", gaugeWeight.data.gaugeVotesByUser);
+    // }
+
+
+  useEffect(() => {
+   if(gaugeWeight){
+    console.log("GaugeWeightByUserData", gaugeWeight.data?.gaugeVotesByUser);
+    setGaugeWeightData(gaugeWeight.data?.gaugeVotesByUser != undefined ? (gaugeWeight.data?.gaugeVotesByUser) : [])
+  }
+   },
+   [gaugeWeight]);
+  
+
+  //  let chartPage =0;
+  //  let perPage =10;
+  //  let filteredVotes;
+  //  filteredVotes = gaugeWeightData.slice(chartPage*perPage, chartPage*perPage + perPage)
+  //  console.log("filteredVOtes:",filteredVotes);
+  // let gaugesNames= [
+  //   "0x0000000000000000000000000000000000000000",
+  //   "0x7ca5b0a2910B33e9759DC7dDB0413949071D7575",
+  //   "0xBC89cd85491d81C6AD2954E6d0362Ee29fCa8F53",
+  //   "0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1",
+  //   "0x69Fb7c45726cfE2baDeE8317005d3F94bE838840",
+  //   "0x64E3C23bfc40722d3B649844055F1D51c1ac041d",
+  //   "0xB1F2cdeC61db658F091671F5f199635aEF202CAC",
+  //   "0xA90996896660DEcC6E997655E065b23788857849",
+  //   "0x705350c4BcD35c9441419DdD5d2f097d7a55410F",
+  // ];
+  let gaugesNames = {
+    "32046b7f8ca95d736e6f3fc0daa4ef636d21fc5f79cd08b5e6e4fb57df9238b9": 'compound',
+    "d2cc3ac0c9c364ec0b8e969bd09eb151f9e1b57eecddb900e85abadf2332ebef": 'usdt',
+    "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a": 'y',
+    "3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735": 'busd',
+    "b761da7d5ef67f8825c30c40df8b72feca4724eb666dba556b0e3f67778143e0": 'pax',
+    "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38": 'ren',
+    "adddc432b76fabbb9ff5a694b5839065e89764c1e51df8cffdbdc34f8925876c": 'susdv2',
+    "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38": 'sbtc',
+}
+  //if(gaugeWeightData!==undefined){
+  useEffect(() => {
+    console.log("gaugeWeightData",gaugeWeightData);
+    let totalWeight = gaugeWeightData[0]?.total_weight;
+    //let totalWeight = 200000000000;
+    //let gaugeWeight = gaugeWeightData[0]?.gaugeWeights;
+    //let gaugeWeight = 100000000000;
+    //console.log("gaugeWeight",gaugeWeight);
+    console.log("gaugesNames",gaugesNames["493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"]);
+     //let future_weights = gaugeWeight?.map((v, i) => ({ id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], name: gaugesNames["3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735"], y: +v.weight * 1e18 * 100 / totalWeight}))
+     let future_weights = { id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], 
+                        name: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], 
+                        y: +gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100 / totalWeight
+                     }
+     console.log("future_weights:",future_weights);
+     setFutureWeight(future_weights);
+    
+    console.log("totalWeight",totalWeight);
+  }, [gaugeWeight,gaugeWeightData])
+  
+  //}
+  
 
   //   Event Handlers
   const handleChangePage = (event, newPage) => {
@@ -283,7 +377,7 @@ const GaugeWeightVote = () => {
     }
   }
 
-
+console.log("futureWeight jjjj",futureWeight);
   return (
     <>
       <div className="home-section home-full-height">
@@ -457,7 +551,7 @@ const GaugeWeightVote = () => {
                                   </span>
                                 </Typography>
                               </div>
-                              <GaugeRelativeWeight />
+                              <GaugeRelativeWeight futureWeight={futureWeight} />
                             </div>
                           </div>
                         </Paper>
