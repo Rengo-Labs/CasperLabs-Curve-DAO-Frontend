@@ -7,6 +7,7 @@ import Torus from "@toruslabs/casper-embed";
 import { SUPPORTED_NETWORKS, CHAINS } from "../../components/Headers/Header";
 import { getDeploy } from "../../components/blockchain/GetDeploy/GetDeploy";
 import { NODE_ADDRESS } from "../../components/blockchain/NodeAddress/NodeAddress";
+import { checkpoint } from "../checkpoint/Checkpoint";
 
 
 export async function withdrawMakeDeploy(setOpenSigning, enqueueSnackbar) {
@@ -85,6 +86,7 @@ export async function withdrawMakeDeploy(setOpenSigning, enqueueSnackbar) {
             console.log("result", result);
           }
         //   handleCloseSigning();
+          checkpoint(true, setOpenSigning, enqueueSnackbar);
           setOpenSigning(false);
           let variant = "success";
           enqueueSnackbar("Funds Withdrawed Successfully", { variant })

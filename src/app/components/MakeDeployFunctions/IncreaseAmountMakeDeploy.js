@@ -8,10 +8,11 @@ import Torus from "@toruslabs/casper-embed";
 import { SUPPORTED_NETWORKS, CHAINS } from "../Headers/Header";
 import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
 import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
+import { checkpoint } from "../checkpoint/Checkpoint";
 
 
 
-export async function increaseAmountMakeDeploy(lockedAmount, setOpenSingning, enqueueSnackbar) {
+export async function increaseAmountMakeDeploy(lockedAmount, setOpenSigning, enqueueSnackbar) {
     // CREATING REQUIRED VARIABLES
     let torus;
     const allowance = 0;
@@ -27,7 +28,7 @@ export async function increaseAmountMakeDeploy(lockedAmount, setOpenSingning, en
       return
     }
     // handleShowSigning();
-    setOpenSingning(true);
+    setOpenSigning(true);
     const publicKeyHex = activePublicKey;
     if (
       publicKeyHex !== null &&
@@ -92,27 +93,28 @@ export async function increaseAmountMakeDeploy(lockedAmount, setOpenSingning, en
             console.log("result", result);
           }
         //   handleCloseSigning();
-          setOpenSingning(false);
+          checkpoint(true, setOpenSigning, enqueueSnackbar);
+          setOpenSigning(false);
           let variant = "success";
           enqueueSnackbar("Amount Increased Successfully", { variant })
         //   providerRef.current.enqueueSnackbar("Amount Increased Successfully", { variant })
         } catch {
         //   handleCloseSigning();
-          setOpenSingning(false);
+          setOpenSigning(false);
           let variant = "Error";
           enqueueSnackbar("Unable to Increase Amount", { variant })
         //   providerRef.current.enqueueSnackbar("Unable to Increase Amount", { variant })
         }
       } catch {
         // handleCloseSigning();
-        setOpenSingning(false);
+        setOpenSigning(false);
         let variant = "Error";
         enqueueSnackbar("Something Went Wrong", { variant });
         // providerRef.current.enqueueSnackbar("Something Went Wrong", { variant });
       }
     } else {
     //   handleCloseSigning();
-      setOpenSingning(false);
+      setOpenSigning(false);
       let variant = "error";
       enqueueSnackbar("Connect to Wallet Please", { variant });
     //   providerRef.current.enqueueSnackbar("Connect to Wallet Please", { variant });

@@ -1,5 +1,5 @@
 // REACT
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // CHARTS
 // CUSTOM STYLING
 import "../../../../assets/css/common.css";
@@ -264,6 +264,10 @@ const Vesting = () => {
       enqueueSnackbar("Connect to Wallet Please", { variant });
     }
   }
+
+  useEffect(() => {
+    setVestingAddress(localStorage.getItem("Address"));
+  }, [localStorage.getItem("Address")]);
 
   return (
     <>
