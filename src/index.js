@@ -11,8 +11,8 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 // axios.defaults.withCredentials = true;
 
 const client = new ApolloClient({
-  // uri: "https://curve-backend.herokuapp.com/graphql",
-  uri: "https://curve-backend-finalized.herokuapp.com/graphql",
+  uri: "http://curvegraphqlbackend-env.eba-69snndvn.us-east-1.elasticbeanstalk.com/graphql",
+  //uri:"http://localhost:3000/graphQL",
   cache: new InMemoryCache(),
 });
 
