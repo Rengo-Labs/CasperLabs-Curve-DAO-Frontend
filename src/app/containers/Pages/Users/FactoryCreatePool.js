@@ -16,17 +16,12 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from "@material-ui/core";
+
 import { StyledEngineProvider } from "@mui/styled-engine";
 // FORMIK AND YUP
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
+import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 //CONTENT
 

@@ -1,33 +1,27 @@
 // REACT
 import React, { useState } from "react";
 // CUSTOM STYLING
-import "../../assets/css/SwapUsingCurvePools.css";
-import "../../assets/css/curveButton.css";
 import "../../assets/css/common.css";
+import "../../assets/css/curveButton.css";
+import "../../assets/css/SwapUsingCurvePools.css";
 //BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 //COMPONENTS
-import AdvancedOptions from "../Modals/AdvancedOptions";
 import SelectInput from "../FormsUI/SelectInput";
 import TextInput from "../FormsUI/TextInput";
+import AdvancedOptions from "../Modals/AdvancedOptions";
 // MATERIAL UI
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import TextField from "@mui/material/TextField";
-import { makeStyles } from "@material-ui/core/styles";
 import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
 import { StyledEngineProvider } from "@mui/styled-engine";
 //MATERIAL UI ICONS
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 // FORMIK AND YUP
-import { Formik, Field, Form } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 //ICONS
-import daiIcon from "../../assets/img/dai.png";
 import busdIcon from "../../assets/img/busd.png";
+import daiIcon from "../../assets/img/dai.png";
 import sbtcIcon from "../../assets/img/sbtc.png";
 import tusdIcon from "../../assets/img/tusd.png";
 import usdcIcon from "../../assets/img/usdc.png";

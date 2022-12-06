@@ -1,49 +1,39 @@
 // REACT
 import React, { useEffect, useState } from "react";
 // CUSTOM STYLING
-import "../../../../assets/css/style.css";
-import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/common.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/style.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
 // COMPONENTS
+import TextInput from "../../../../components/FormsUI/TextInput";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
-import SelectInput from "../../../../components/FormsUI/SelectInput";
-import TextInput from "../../../../components/FormsUI/TextInput";
 // MATERIAL UI
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Select from "@mui/material/Select";
-import FormLabel from "@mui/material/FormLabel";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
+import CircularProgress from "@mui/material/CircularProgress";
+import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import CircularProgress from "@mui/material/CircularProgress";
-import { Button } from "@material-ui/core";
-// ICONS
-import cspr from "../../../../assets/img/cspr.png";
-import wbtc from "../../../../assets/img/wbtc.png";
-import usdt from "../../../../assets/img/usdt.png";
-// FORMIK AND YUP
-import { Formik, Field, Form } from "formik";
+import Paper from "@mui/material/Paper";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { Autocomplete } from "@mui/material";
+import { CLPublicKey } from "casper-js-sdk";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
-import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
-import { CLPublicKey } from "casper-js-sdk";
 import { periodTimestamp, workingBalances, workingSupply } from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
-import { Autocomplete } from "@mui/material";
+import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
+import { Button } from "@mui/material";
 
 // CONTENT
 const selectGaugeOptionsJSON =

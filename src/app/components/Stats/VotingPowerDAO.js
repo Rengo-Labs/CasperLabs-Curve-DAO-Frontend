@@ -9,21 +9,18 @@ import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
 import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
-// MATERIAL UI ICONS
-// MATERIAL UI
-import { Accordion, AccordionSummary, Avatar, CardHeader, useTheme } from "@material-ui/core";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 // LOGOS
 import curveLogo from "../../assets/img/Logo.png";
 import { CLPublicKey } from "casper-js-sdk";
+import { Accordion, AccordionSummary, Avatar, CardHeader } from "@mui/material";
 
 // CONTENT
 
 // COMPONENT FUNCTION
 const VotingPowerDAO = (props) => {
   // States
-  const theme = useTheme();
   const [CRVLockedBalance, setCRVLockedBalance] = useState();
   const [CRVBalance, setCRVBalance] = useState();
   // Handlers

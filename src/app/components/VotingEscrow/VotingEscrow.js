@@ -34,7 +34,6 @@ import { createRecipientAddress } from "../blockchain/RecipientAddress/Recipient
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
-import Torus from "@toruslabs/casper-embed";
 import { CHAINS, SUPPORTED_NETWORKS } from "../Headers/HeaderDAO";
 import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
 import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
@@ -49,7 +48,6 @@ const VotingEscrow = () => {
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
   );
-  let [torus, setTorus] = useState();
   const [commitOpen, setCommitOpen] = useState(false);
   const [smartOpen, setSmartOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
@@ -134,41 +132,12 @@ const VotingEscrow = () => {
         );
         console.log("make deploy: ", deploy);
         try {
-          if (selectedWallet === "Casper") {
-            let signedDeploy = await signdeploywithcaspersigner(
-              deploy,
-              publicKeyHex
-            );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
-            console.log("result", result);
-          } else {
-            // let Torus = new Torus();
-            torus = new Torus();
-            console.log("torus", torus);
-            await torus.init({
-              buildEnv: "testing",
-              showTorusButton: true,
-              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-            });
-            console.log("Torus123", torus);
-            console.log("torus", torus.provider);
-            const casperService = new CasperServiceByJsonRPC(torus?.provider);
-            const deployRes = await casperService.deploy(deploy);
-            console.log("deployRes", deployRes.deploy_hash);
-            console.log(
-              `... Contract installation deployHash: ${deployRes.deploy_hash}`
-            );
-            let result = await getDeploy(
-              NODE_ADDRESS,
-              deployRes.deploy_hash,
-              enqueueSnackbar
-            );
-            console.log(
-              `... Contract installed successfully.`,
-              JSON.parse(JSON.stringify(result))
-            );
-            console.log("result", result);
-          }
+          let signedDeploy = await signdeploywithcaspersigner(
+            deploy,
+            publicKeyHex
+          );
+          let result = await putdeploy(signedDeploy, enqueueSnackbar);
+          console.log("result", result);
           handleCloseSigning();
           let variant = "success";
           enqueueSnackbar("Created Vote Successfully", { variant });

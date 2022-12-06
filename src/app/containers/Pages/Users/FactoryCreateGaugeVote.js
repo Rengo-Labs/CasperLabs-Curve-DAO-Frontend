@@ -16,18 +16,12 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from "@material-ui/core";
 import { StyledEngineProvider } from "@mui/styled-engine";
 // FORMIK
 import { Formik, Form } from "formik";
 // YUP
 import * as Yup from "yup";
+import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 //COMPONENT FUNCTION
 const FactoryCreateGaugeVote = () => {

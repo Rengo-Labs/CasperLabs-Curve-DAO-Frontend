@@ -16,14 +16,6 @@
 // import Fade from "@mui/material/Fade";
 // import Backdrop from "@mui/material/Backdrop";
 // import Button from "@mui/material/Button";
-// import {
-//   FormControl,
-//   FormControlLabel,
-//   FormLabel,
-//   Radio,
-//   RadioGroup,
-//   FormGroup,
-// } from "@material-ui/core";
 // //MATERIAL UI ICONS
 // import CloseIcon from "@mui/icons-material/Close";
 
@@ -229,25 +221,22 @@
 
 
 
-import { Avatar, Card, CardHeader, Typography } from "@material-ui/core";
+import { Typography } from '@mui/material';
+import FilledInput from '@mui/material/FilledInput';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormLabel from '@mui/material/FormLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import React from "react";
 import { Modal } from "react-bootstrap";
 import "../../assets/css/bootstrap.min.css";
 import "../../assets/css/style.css";
-import Casper from "../../assets/img/cspr.png";
-import Torus from "../../assets/img/torus.png";
+import Exit from "../../assets/img/exit.svg";
 import "../../assets/plugins/fontawesome/css/all.min.css";
 import "../../assets/plugins/fontawesome/css/fontawesome.min.css";
-import Exit from "../../assets/img/exit.svg";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
 
 
 function AdvancedOptions(props) {

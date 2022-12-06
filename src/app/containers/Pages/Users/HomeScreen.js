@@ -1,17 +1,11 @@
-// REACT
 import React, { useState } from "react";
-// BOOTSTRAP
 import "../../../assets/css/bootstrap.min.css";
-// CUSTOM CSS
 import "../../../assets/css/style.css";
-// FONT AWESOME
 import "../../../assets/plugins/fontawesome/css/all.min.css";
 import "../../../assets/plugins/fontawesome/css/fontawesome.min.css";
-// COMPONENTS
-import Footer from "../../../components/Footers/Footer";
 import HeaderHome from "../../../components/Headers/Header";
-import HomeBanner from "./Home/HomeBanner";
 import CurveTabs from "../../../components/Tabs/CurveTabs";
+import HomeBanner from "./Home/HomeBanner";
 
 function HomeScreen() {
   // eslint-disable-next-line

@@ -1,9 +1,9 @@
 // REACT
 import React from "react";
 // CUSTOM STYLING
-import "../../assets/css/style.css";
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
+import "../../assets/css/style.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
@@ -11,23 +11,16 @@ import "../../assets/css/bootstrap.min.css";
 import HelpIcon from "@mui/icons-material/Help";
 // MATERIAL UI
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
+import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
-import {
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  FormGroup,
-  CardHeader,
-  Avatar,
-} from "@material-ui/core";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+
 // ICONS
+import { Avatar, CardHeader, FormControl, FormControlLabel, FormGroup, Radio, RadioGroup } from "@mui/material";
 import USDT from "../../assets/img/usdt.png";
 
 // CONTENT

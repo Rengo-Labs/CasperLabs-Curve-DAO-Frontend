@@ -25,7 +25,6 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { makeStyles } from "@material-ui/core/styles";
 import { StyledEngineProvider } from "@mui/styled-engine";
 //MATERIAL UI ICONS
 import SwapVertIcon from "@mui/icons-material/SwapVert";
@@ -69,15 +68,6 @@ const tokens = [
   },
 ];
 
-// --Mui Theme
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& > *": {
-      margin: theme.spacing(1),
-      width: "25ch",
-    },
-  },
-}));
 
 // --Tabs
 function TabPanel(props) {
@@ -134,9 +124,6 @@ const Trade = () => {
   const [xrateWithFee, setXrateWithFee] = useState(0.9991);
   const [tradeRoute, setTradeRoute] = useState("tusd");
   const [openAdvancedOptions, setOpenAdvancedOptions] = useState(false);
-
-  const classes = useStyles();
-
   // Content
   const initialValues = {
     selectTokenForChart: "",
@@ -351,7 +338,6 @@ const Trade = () => {
                                     </div>
                                     <div className="col-12 col-md-8 col-lg-6 mt-3 mt-lg-0">
                                       <Box
-                                        className={classes.root}
                                         noValidate
                                         autoComplete="off"
                                       >

@@ -6,7 +6,6 @@ import {
   Keys,
   CLPublicKey,
 } from "casper-js-sdk";
-import fs from "fs";
 
 import { RecipientType } from "./types";
 
@@ -36,9 +35,6 @@ export const getKeyPairOfContract = (pathToFaucet: string) =>
  * @param pathToBinary - Path to binary file to be loaded into memory.
  * @return Uint8Array Byte array.
  */
-export const getBinary = (pathToBinary: string) => {
-  return new Uint8Array(fs.readFileSync(pathToBinary, null).buffer);
-};
 
 /**
  * Returns global state root hash at current block.
