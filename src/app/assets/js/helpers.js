@@ -50,5 +50,5 @@ export function shortenAddress(address) {
 }
 
 export function calcVotingPower(amount, time, locktime) {
-  return amount / 1e18 * ((locktime - time) / 1000) / (86400 * 365) / 4
+  return amount / 1e9 * ((locktime - time) / 1000) / (86400 * 365) / 4
 }
