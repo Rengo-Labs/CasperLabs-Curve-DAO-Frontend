@@ -1,8 +1,7 @@
 import BigNumber from "bignumber.js";
 import { CLPublicKey } from "casper-js-sdk";
-//import { balanceOf } from "../JsClients/VOTINGESCROW/votingEscrowFunctionsForBackend/functions";
+import { balanceOf } from "../JsClients/VOTINGESCROW/votingEscrowFunctionsForBackend/functions";
 import { UserCheckpointMakeDeploy } from "../MakeDeployFunctions/UserCheckpointMakeDeploy";
-let balanceOf
 export async function checkpoint(doCheckpoint = false, setOpenSigning, enqueueSnackbar, setGaugesNeedCheckpoint) {
     let activePublicKey = localStorage.getItem("Address");
 
