@@ -48,3 +48,7 @@ export function shortenAddress(address) {
   if (!address) return "";
   return address.slice(0, 6) + "..." + address.slice(-6);
 }
+
+export function calcVotingPower(amount, time, locktime) {
+  return amount / 1e9 * ((locktime - time) / 1000) / (86400 * 365) / 4
+}
