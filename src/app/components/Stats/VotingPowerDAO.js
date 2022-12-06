@@ -21,7 +21,7 @@ import { CLPublicKey } from "casper-js-sdk";
 // CONTENT
 
 // COMPONENT FUNCTION
-const VotingPowerDAO = () => {
+const VotingPowerDAO = (props) => {
   // States
   const theme = useTheme();
   const [CRVLockedBalance, setCRVLockedBalance] = useState();
@@ -163,7 +163,7 @@ const VotingPowerDAO = () => {
                     }}
                     gutterBottom
                   >
-                    446,108,495.01
+                    {props.totalVeCRV? props.totalVeCRV: 0}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -192,7 +192,8 @@ const VotingPowerDAO = () => {
                     }}
                     gutterBottom
                   >
-                    3.64 years
+                    {props.averageLockTime ? 
+                      `${props.averageLockTime} years`: "0 years"}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
