@@ -779,11 +779,7 @@ const Locker = () => {
                             {/* Voting Power Stats */}
                             <div className="row no-gutters">
                               <div className="col-12">
-                                <VotingPowerDAO
-                                  totalVeCRV={DAOPowerFormat()}
-                                  averageLockTime={averageLock()}
-                                  LockedCRV={myLockedCRVFormat()}
-                                />
+                                <VotingPowerDAO/>
                                 <div className="w-100 my-3">
                                   <Divider />
                                 </div>
