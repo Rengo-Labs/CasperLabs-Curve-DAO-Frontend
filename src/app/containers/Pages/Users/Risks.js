@@ -20,8 +20,8 @@ import Divider from "@mui/material/Divider";
 
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import { Avatar } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import { Avatar } from "@mui/material";
 
 //CONTENT
 var tokenAvatar =

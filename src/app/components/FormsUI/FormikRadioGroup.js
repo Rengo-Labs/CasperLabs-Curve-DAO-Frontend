@@ -1,7 +1,6 @@
 import React from "react";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+
+import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const renderOptions = (options) => {
   return options.map((option) => (

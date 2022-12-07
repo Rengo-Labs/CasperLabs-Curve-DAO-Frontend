@@ -1237,35 +1237,6 @@ interface IInstallParams {
   paymentAmount: string;
 }
 
-const installWasmFile = async ({
-  nodeAddress,
-  keys,
-  chainName,
-  pathToContract,
-  runtimeArgs,
-  paymentAmount,
-}: IInstallParams): Promise<string> => {
-  const client = new CasperClient(nodeAddress);
-
-  // Set contract installation deploy (unsigned).
-  let deploy = DeployUtil.makeDeploy(
-    new DeployUtil.DeployParams(
-      CLPublicKey.fromHex(keys.publicKey.toHex()),
-      chainName
-    ),
-    DeployUtil.ExecutableDeployItem.newModuleBytes(
-      utils.getBinary(pathToContract),
-      runtimeArgs
-    ),
-    DeployUtil.standardPayment(paymentAmount)
-  );
-
-  // Sign deploy.
-  deploy = client.signDeploy(deploy, keys);
-
-  // Dispatch deploy to node.
-  return await client.putDeploy(deploy);
-};
 
 interface IContractCallParams {
   nodeAddress: string;

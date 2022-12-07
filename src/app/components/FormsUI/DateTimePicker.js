@@ -1,7 +1,8 @@
 // REACT
 import React from "react";
 // MATERIAL UI
-import { TextField } from "@material-ui/core";
+import TextField from '@mui/material/TextField';
+
 // FORMIK
 import { useField } from "formik";
 

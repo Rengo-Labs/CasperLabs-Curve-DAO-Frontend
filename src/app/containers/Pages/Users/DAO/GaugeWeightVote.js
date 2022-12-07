@@ -1,21 +1,5 @@
-// REACT
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-// CUSTOM STYLING
-import "../../../../assets/css/common.css";
-import "../../../../assets/css/curveButton.css";
-import "../../../../assets/css/style.css";
-// BOOTSTRAP
-import "../../../../assets/css/bootstrap.min.css";
-// COMPONENTS
-import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
-import SelectInput from "../../../../components/FormsUI/SelectInput";
-import TextInput from "../../../../components/FormsUI/TextInput";
-import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
-import HomeBanner from "../Home/HomeBanner";
-// MATERIAL UI
-import { Avatar, Button, TableFooter, TablePagination } from "@material-ui/core";
+
+import { gql, useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
@@ -35,34 +19,35 @@ import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { useSnackbar } from 'notistack';
-//GraphQl
-import { useQuery, gql } from "@apollo/client";
-// MATERIA UI ICONS
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import "../../../../assets/css/bootstrap.min.css";
+import "../../../../assets/css/common.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/style.css";
+import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
+import TextInput from "../../../../components/FormsUI/TextInput";
+import HeaderDAO from "../../../../components/Headers/HeaderDAO";
+import HomeBanner from "../Home/HomeBanner";
+
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-// ICONS
+import { Alert, Avatar, Button, TableFooter, TablePagination } from "@mui/material";
+import { CLByteArray, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
+import { Form, Formik } from "formik";
+import * as Yup from "yup";
 import clock from "../../../../assets/img/clock.png";
 import cspr from "../../../../assets/img/cspr.png";
 import usdt from "../../../../assets/img/usdt.png";
 import wbtc from "../../../../assets/img/wbtc.png";
-// FORMIK AND YUP
-import { Alert } from "@material-ui/lab";
-import Torus from "@toruslabs/casper-embed";
-import { CasperServiceByJsonRPC, CLByteArray, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
-import { Form, Formik } from "formik";
-import * as Yup from "yup";
 import { GAUGE_CONTROLLER_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
-import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
 import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
-import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
 import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../../../../components/blockchain/RecipientAddress/RecipientAddress";
 import { signdeploywithcaspersigner } from "../../../../components/blockchain/SignDeploy/SignDeploy";
 import SigningModal from "../../../../components/Modals/SigningModal";
 import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeWeightModal";
-import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 import TablePaginationActions from "../../../../components/pagination/TablePaginationActions";
-
-// CONTENT
+import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 
 const GAUGE_WEIGHT = gql`
 query gaugeVotesByUser($user: String){
@@ -138,7 +123,6 @@ const GaugeWeightVote = () => {
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
   );
-  let [torus, setTorus] = useState();
   const [stakes, setStakes] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -152,8 +136,8 @@ const GaugeWeightVote = () => {
   const [votingPowerPercentage, setVotingPowerPercentage] = useState(1);
   const [votingPowerNumber, setVotingPowerNumber] = useState("0.00");
   const [gauge, setGauge] = useState("493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a");
-  const [gaugeWeightData,setGaugeWeightData]=useState([]);
-  const [futureWeight,setFutureWeight]=useState([]);
+  const [gaugeWeightData, setGaugeWeightData] = useState([]);
+  const [futureWeight, setFutureWeight] = useState([]);
   const [weightGauges, setWeightGauges] = useState(["CSPR", "WBTC", "USDT"]);
   const [weightGauge, setWeightGauge] = useState();
   const [selectedWeightGauge, setSelectedWeightGauge] = useState([]); //this has to be return from backend
@@ -174,28 +158,28 @@ const GaugeWeightVote = () => {
   const handleShowVoteForGaugeWeightModal = () => {
     setVoteForGaugeWeightModal(true);
   };
-    // Queries
-    const gaugeWeight = useQuery(GAUGE_WEIGHT, {
-      variables: {
-        user: "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1",
-      },
-    });
-    console.log("this is data of gauge weight: ", gaugeWeight.data);
-    console.log("this is error of gauge weight: ", gaugeWeight.error);
-  
-    // if (gaugeWeight.data !== undefined) {
-    //   console.log("gaugeWeight", gaugeWeight.data.gaugeVotesByUser);
-    // }
+  // Queries
+  const gaugeWeight = useQuery(GAUGE_WEIGHT, {
+    variables: {
+      user: "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1",
+    },
+  });
+  console.log("this is data of gauge weight: ", gaugeWeight.data);
+  console.log("this is error of gauge weight: ", gaugeWeight.error);
+
+  // if (gaugeWeight.data !== undefined) {
+  //   console.log("gaugeWeight", gaugeWeight.data.gaugeVotesByUser);
+  // }
 
 
   useEffect(() => {
-   if(gaugeWeight){
-    console.log("GaugeWeightByUserData", gaugeWeight.data?.gaugeVotesByUser);
-    setGaugeWeightData(gaugeWeight.data?.gaugeVotesByUser != undefined ? (gaugeWeight.data?.gaugeVotesByUser) : [])
-  }
-   },
-   [gaugeWeight]);
-  
+    if (gaugeWeight) {
+      console.log("GaugeWeightByUserData", gaugeWeight.data?.gaugeVotesByUser);
+      setGaugeWeightData(gaugeWeight.data?.gaugeVotesByUser != undefined ? (gaugeWeight.data?.gaugeVotesByUser) : [])
+    }
+  },
+    [gaugeWeight]);
+
 
   //  let chartPage =0;
   //  let perPage =10;
@@ -222,29 +206,30 @@ const GaugeWeightVote = () => {
     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38": 'ren',
     "adddc432b76fabbb9ff5a694b5839065e89764c1e51df8cffdbdc34f8925876c": 'susdv2',
     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38": 'sbtc',
-}
+  }
   //if(gaugeWeightData!==undefined){
   useEffect(() => {
-    console.log("gaugeWeightData",gaugeWeightData);
+    console.log("gaugeWeightData", gaugeWeightData);
     let totalWeight = gaugeWeightData[0]?.total_weight;
     //let totalWeight = 200000000000;
     //let gaugeWeight = gaugeWeightData[0]?.gaugeWeights;
     //let gaugeWeight = 100000000000;
     //console.log("gaugeWeight",gaugeWeight);
-    console.log("gaugesNames",gaugesNames["493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"]);
-     //let future_weights = gaugeWeight?.map((v, i) => ({ id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], name: gaugesNames["3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735"], y: +v.weight * 1e18 * 100 / totalWeight}))
-     let future_weights = { id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], 
-                        name: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], 
-                        y: +gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100 / totalWeight
-                     }
-     console.log("future_weights:",future_weights);
-     setFutureWeight(future_weights);
-    
-    console.log("totalWeight",totalWeight);
-  }, [gaugeWeight,gaugeWeightData])
-  
+    console.log("gaugesNames", gaugesNames["493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"]);
+    //let future_weights = gaugeWeight?.map((v, i) => ({ id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], name: gaugesNames["3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735"], y: +v.weight * 1e18 * 100 / totalWeight}))
+    let future_weights = {
+      id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"],
+      name: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"],
+      y: +gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100 / totalWeight
+    }
+    console.log("future_weights:", future_weights);
+    setFutureWeight(future_weights);
+
+    console.log("totalWeight", totalWeight);
+  }, [gaugeWeight, gaugeWeightData])
+
   //}
-  
+
 
   //   Event Handlers
   const handleChangePage = (event, newPage) => {
@@ -332,41 +317,13 @@ const GaugeWeightVote = () => {
         );
         console.log("make deploy: ", deploy);
         try {
-          if (selectedWallet === "Casper") {
-            let signedDeploy = await signdeploywithcaspersigner(
-              deploy,
-              publicKeyHex
-            );
-            let result = await putdeploy(signedDeploy, enqueueSnackbar);
-            console.log("result", result);
-          } else {
-            // let Torus = new Torus();
-            torus = new Torus();
-            console.log("torus", torus);
-            await torus.init({
-              buildEnv: "testing",
-              showTorusButton: true,
-              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-            });
-            console.log("Torus123", torus);
-            console.log("torus", torus.provider);
-            const casperService = new CasperServiceByJsonRPC(torus?.provider);
-            const deployRes = await casperService.deploy(deploy);
-            console.log("deployRes", deployRes.deploy_hash);
-            console.log(
-              `... Contract installation deployHash: ${deployRes.deploy_hash}`
-            );
-            let result = await getDeploy(
-              NODE_ADDRESS,
-              deployRes.deploy_hash,
-              enqueueSnackbar
-            );
-            console.log(
-              `... Contract installed successfully.`,
-              JSON.parse(JSON.stringify(result))
-            );
-            console.log("result", result);
-          }
+          let signedDeploy = await signdeploywithcaspersigner(
+            deploy,
+            publicKeyHex
+          );
+          let result = await putdeploy(signedDeploy, enqueueSnackbar);
+          console.log("result", result);
+
           handleCloseSigning();
           let variant = "success";
           enqueueSnackbar("Voted For Gauge Weights Successfully", { variant })
@@ -389,7 +346,7 @@ const GaugeWeightVote = () => {
     }
   }
 
-console.log("futureWeight jjjj",futureWeight);
+  console.log("futureWeight jjjj", futureWeight);
   return (
     <>
       <div className="home-section home-full-height">
@@ -397,7 +354,6 @@ console.log("futureWeight jjjj",futureWeight);
           setActivePublicKey={setActivePublicKey}
           setSelectedWallet={setSelectedWallet}
           selectedWallet={selectedWallet}
-          setTorus={setTorus}
           selectedNav={"GWVote"}
         />
         <div
@@ -748,7 +704,7 @@ console.log("futureWeight jjjj",futureWeight);
                                         return item.pool;
                                       })
                                     )} */}
-                                    {/* <SelectInput
+                                  {/* <SelectInput
                                       name="SelectGaugeToken"
                                       label="Select a Gauge"
                                       options={selectGaugeOptions}
@@ -776,7 +732,7 @@ console.log("futureWeight jjjj",futureWeight);
                                         <MenuItem value={"CSPR"}>CSPR</MenuItem> */}
                                         {weightGauges.map((gauge) => {
                                           return (
-                                            <MenuItem value={gauge}>gauge</MenuItem> 
+                                            <MenuItem value={gauge}>gauge</MenuItem>
                                           )
                                         })}
                                       </Select>
@@ -857,70 +813,70 @@ console.log("futureWeight jjjj",futureWeight);
                                   // </div>
                                   <div>
                                     <TableContainer
-                                    sx={{ p: 3, overflow: "hidden" }}
-                                  >
-                                    <Table aria-label="Gauge Weight Vote History">
-                                      <TableHead
-                                        sx={{
-                                          backgroundColor: "#e7ebf0",
-                                          paddingLeft: "0.25rem",
-                                        }}
-                                      >
-                                        <TableRow id="GWVoteHistoryTableSort">
-                                          {weightCells.map((cell) => (
-                                            <TableCell
-                                              sx={{
-                                                border: 0,
-                                                fontWeight: "bold",
-                                                fontSize: "1.25rem",
-                                                textAlign: "center",
-                                              }}
-                                            >
-                                              {cell}
-                                            </TableCell>
-                                          ))}
-                                        </TableRow>
-                                      </TableHead>
-                                      <TableBody id={"GWVoteHistoryTableBody"}>
-                                        {selectedWeightGauge.map((gauge) => {
-                                          return (
-                                            <TableRow>
-                                              <TableCell                                              
-                                                sx={{ textAlign: "center" }}
+                                      sx={{ p: 3, overflow: "hidden" }}
+                                    >
+                                      <Table aria-label="Gauge Weight Vote History">
+                                        <TableHead
+                                          sx={{
+                                            backgroundColor: "#e7ebf0",
+                                            paddingLeft: "0.25rem",
+                                          }}
+                                        >
+                                          <TableRow id="GWVoteHistoryTableSort">
+                                            {weightCells.map((cell) => (
+                                              <TableCell
+                                                sx={{
+                                                  border: 0,
+                                                  fontWeight: "bold",
+                                                  fontSize: "1.25rem",
+                                                  textAlign: "center",
+                                                }}
                                               >
-                                                gauge.name
+                                                {cell}
                                               </TableCell>
-                                              <TableCell                                              
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                gauge.weight
-                                              </TableCell>
-                                              <TableCell                                      
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                <div className="btnWrapper">
-                                                  <Button
-                                                    variant="contained"
-                                                    size="large"
-                                                    style={{
-                                                      backgroundColor: "#5300e8",
-                                                      color: "white",
-                                                    }}
-                                                    onClick={handleResetButton}
-                                                  >
-                                                    Reset
-                                                  </Button>
-                                                </div>
-                                              </TableCell>
-                                              
-                                            </TableRow>
-                                          )
-                                        })}                                                
-                                      </TableBody>
-                                      <TableFooter>
-                                      </TableFooter>
-                                    </Table>
-                                  </TableContainer>
+                                            ))}
+                                          </TableRow>
+                                        </TableHead>
+                                        <TableBody id={"GWVoteHistoryTableBody"}>
+                                          {selectedWeightGauge.map((gauge) => {
+                                            return (
+                                              <TableRow>
+                                                <TableCell
+                                                  sx={{ textAlign: "center" }}
+                                                >
+                                                  gauge.name
+                                                </TableCell>
+                                                <TableCell
+                                                  sx={{ textAlign: "center" }}
+                                                >
+                                                  gauge.weight
+                                                </TableCell>
+                                                <TableCell
+                                                  sx={{ textAlign: "center" }}
+                                                >
+                                                  <div className="btnWrapper">
+                                                    <Button
+                                                      variant="contained"
+                                                      size="large"
+                                                      style={{
+                                                        backgroundColor: "#5300e8",
+                                                        color: "white",
+                                                      }}
+                                                      onClick={handleResetButton}
+                                                    >
+                                                      Reset
+                                                    </Button>
+                                                  </div>
+                                                </TableCell>
+
+                                              </TableRow>
+                                            )
+                                          })}
+                                        </TableBody>
+                                        <TableFooter>
+                                        </TableFooter>
+                                      </Table>
+                                    </TableContainer>
                                   </div>
                                 )}
                                 {/* Vote Weight */}

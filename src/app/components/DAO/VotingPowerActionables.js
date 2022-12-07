@@ -1,5 +1,5 @@
 // REACT
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // CUSTOM STYLES
 import "../../assets/css/common.css";
@@ -13,20 +13,19 @@ import SelectInput from "../FormsUI/SelectInput";
 import TextInput from "../FormsUI/TextInput";
 // MATERIAL UI ICONS
 // MATERIAL UI
-import { Button } from "@material-ui/core";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 // FORMIK AND YUP
-import { Alert } from "@material-ui/lab";
 import { Form, Formik } from "formik";
 import AllowanceModal from "../Modals/AllowanceModal";
 // CONTEXT
-import { AppContext } from "../../containers/App/Application";
-import SigningModal from "../Modals/SigningModal";
-import { useSnackbar } from "notistack";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/AccountHashes/Addresses";
-import { CLPublicKey } from "casper-js-sdk";
 import Axios from "axios";
+import { CLPublicKey } from "casper-js-sdk";
+import { useSnackbar } from "notistack";
+import { AppContext } from "../../containers/App/Application";
+import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/AccountHashes/Addresses";
+import SigningModal from "../Modals/SigningModal";
+import { Alert, Button } from "@mui/material";
 
 // CONTENT
 

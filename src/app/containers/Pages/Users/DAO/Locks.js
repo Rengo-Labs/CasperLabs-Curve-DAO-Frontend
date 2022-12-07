@@ -16,7 +16,6 @@ import TablePaginationActions from "../../../../components/pagination/TablePagin
 import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
 // MATERIAL UI
 import Box from "@mui/material/Box";
-import { Button } from "@material-ui/core";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -32,13 +31,7 @@ import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import {
-  Accordion,
-  AccordionSummary,
-  Avatar,
-  CardHeader,
-  useTheme,
-} from "@material-ui/core";
+
 // ICONS
 import clock from "../../../../assets/img/clock.png";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
@@ -47,6 +40,10 @@ import { TableFooter, TablePagination } from "@mui/material";
 import { useQuery, gql } from "@apollo/client";
 // UTILS
 import * as helpers from "../../../../assets/js/helpers";
+import { Button } from "@mui/material";
+import { Accordion } from "@mui/material";
+import { AccordionSummary } from "@mui/material";
+import { CardHeader } from "@mui/material";
 
 // QUERIES
 const GET_USER_BALANCES = gql`

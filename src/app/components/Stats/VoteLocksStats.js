@@ -10,24 +10,18 @@ import { Spinner } from "react-bootstrap";
 // COMPONENTS
 // MATERIAL UI ICONS
 // MATERIAL UI
-import {
-  Accordion,
-  AccordionSummary,
-  Avatar,
-  CardHeader,
-  useTheme,
-} from "@material-ui/core";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 // LOGOS
 import curveLogo from "../../assets/img/Logo.png";
+import { Accordion, AccordionSummary, Avatar, CardHeader } from "@mui/material";
 
 // CONTENT
 
 // COMPONENT FUNCTION
 const VoteLocksStats = (props) => {
   // States
-  const theme = useTheme();
+
   // Handlers
 
   // Content

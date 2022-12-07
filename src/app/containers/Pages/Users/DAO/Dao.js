@@ -1,20 +1,7 @@
 // REACT
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 // CUSTOM STYLING
-import "../../../../assets/css/common.css";
-import "../../../../assets/css/curveButton.css";
-import "../../../../assets/css/style.css";
-// BOOTSTRAP
-import "../../../../assets/css/bootstrap.min.css";
-import { Spinner } from "react-bootstrap";
-// COMPONENTS
-import DaoVotes from "../../../../components/Cards/DaoVotes";
-import HeaderDAO from "../../../../components/Headers/HeaderDAO";
-import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
-import HomeBanner from "../Home/HomeBanner";
-// MATERIAL UI
-import { Button } from "@material-ui/core";
+import { gql, useQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
@@ -23,13 +10,18 @@ import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import { useHistory } from "react-router-dom";
-import { Alert } from "@material-ui/lab";
-// GRAPHQL
-import { useQuery, gql } from "@apollo/client";
-// UTILS
+import { Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import "../../../../assets/css/bootstrap.min.css";
+import "../../../../assets/css/common.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/style.css";
 import * as voteStore from "../../../../assets/js/voteStore";
-import { width } from "@mui/system";
+import DaoVotes from "../../../../components/Cards/DaoVotes";
+import HeaderDAO from "../../../../components/Headers/HeaderDAO";
+import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
+import HomeBanner from "../Home/HomeBanner";
+import { Alert, Button } from "@mui/material";
 
 // CONTENT
 
@@ -78,7 +70,7 @@ const GET_VOTES_DATA = gql`
 const Dao = () => {
   // States
   const [votes, setVotes] = useState();
-  const history = useHistory();
+  const navigate = useNavigate();
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
@@ -230,7 +222,7 @@ const Dao = () => {
                                         color: "white",
                                       }}
                                       onClick={() => {
-                                        history.push("/locker");
+                                        navigate("/locker");
                                       }}
                                     >
                                       Manage locking in Locker
@@ -259,7 +251,7 @@ const Dao = () => {
                                         color: "white",
                                       }}
                                       onClick={() => {
-                                        history.push("/createVote");
+                                        navigate("/createVote");
                                       }}
                                     >
                                       Create Vote

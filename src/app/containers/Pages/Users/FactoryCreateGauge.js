@@ -19,17 +19,11 @@ import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from "@material-ui/core";
 // FORMIK
 import { Formik, Field, Form } from "formik";
 // YUP
 import * as Yup from "yup";
+import { FormControl, FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 //COMPONENT FUNCTION
 const FactoryCreateGauge = () => {

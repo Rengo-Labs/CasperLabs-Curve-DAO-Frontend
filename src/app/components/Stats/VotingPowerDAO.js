@@ -7,22 +7,15 @@ import "../../assets/css/style.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
-// MATERIAL UI ICONS
-//GraphQl
-import { useQuery, gql } from "@apollo/client";
-// MATERIAL UI
-import { Accordion, AccordionSummary, Avatar, CardHeader, useTheme } from "@material-ui/core";
+import { gql, useQuery } from "@apollo/client";
+import { Accordion, AccordionSummary, Avatar, CardHeader } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-// LOGOS
-import curveLogo from "../../assets/img/Logo.png";
 import { CLPublicKey } from "casper-js-sdk";
-//UTILS
+import curveLogo from "../../assets/img/Logo.png";
 import * as helpers from "../../assets/js/helpers";
-
-// CONTENT
+import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
+import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 
 const DAO_POWER = gql`
 query {
@@ -43,7 +36,6 @@ query  votingPower($id: String){
 // COMPONENT FUNCTION
 const VotingPowerDAO = (props) => {
   // States
-  const theme = useTheme();
   const [CRVLockedBalance, setCRVLockedBalance] = useState();
   const [CRVBalance, setCRVBalance] = useState();
   const [daoPower, setDaoPower] = useState();

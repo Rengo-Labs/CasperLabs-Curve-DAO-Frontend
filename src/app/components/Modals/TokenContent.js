@@ -1,4 +1,5 @@
-import { Avatar, CardHeader, Typography } from "@material-ui/core";
+
+import { Avatar, CardHeader, Typography } from "@mui/material";
 import numeral from "numeral";
 import React from "react";
 import { Col, Row } from "react-bootstrap";

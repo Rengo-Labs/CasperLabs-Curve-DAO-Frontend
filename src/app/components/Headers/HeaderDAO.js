@@ -1,4 +1,4 @@
-import Torus from "@toruslabs/casper-embed";
+
 import { Signer } from "casper-js-sdk";
 import Cookies from "js-cookie";
 import { useSnackbar } from "notistack";
@@ -130,32 +130,7 @@ function HeaderDAO(props) {
     // eslint-disable-next-line
   }, [props.selectedWallet]);
 
-  const login = async () => {
-    try {
-      setIsLoading(true);
-      torus = new Torus();
-      console.log("torus", torus);
-      await torus.init({
-        buildEnv: "testing",
-        showTorusButton: true,
-        network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-      });
-      const loginaccs = await torus?.login();
-      props.setTorus(torus);
-      localStorage.setItem("torus", JSON.stringify(torus));
-      localStorage.setItem("Address", (loginaccs || [])[0]);
-      props.setActivePublicKey((loginaccs || [])[0]);
-      setAccount((loginaccs || [])[0] || "");
-      handleCloseWalletModal();
-    } catch (error) {
-      console.error(error);
-      await torus?.clearInit();
-      let variant = "Error";
-      enqueueSnackbar("Unable to Login", { variant });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
   // const changeProvider = async () => {
   //   const providerRes = await torus?.setProvider(SUPPORTED_NETWORKS[CHAINS.CASPER_MAINNET]);
   //   console.log("provider res", providerRes);
@@ -172,22 +147,7 @@ function HeaderDAO(props) {
   //   console.log("userInfo", userInfo);
   // };
 
-  const logout = async () => {
-    try {
-      console.log("logout", torus);
-      await torus?.logout();
-      setAccount("");
-      props.setTorus("");
-      props.setSelectedWallet();
-      localStorage.removeItem("Address");
-      localStorage.removeItem("selectedWallet");
-      window.location.reload();
-    } catch (error) {
-      console.log("logout error", error);
-      let variant = "Error";
-      enqueueSnackbar("Unable to Logout", { variant });
-    }
-  };
+
   async function checkConnection() {
     try {
       return await Signer.isConnected();
@@ -390,22 +350,13 @@ function HeaderDAO(props) {
 
             <li
               onClick={() => {
-                if (
-                  localStorage.getItem("selectedWallet") &&
-                  localStorage.getItem("selectedWallet") !== null &&
-                  localStorage.getItem("selectedWallet") !== "null" &&
-                  localStorage.getItem("selectedWallet") === "Torus"
-                ) {
-                  logout();
-                } else {
-                  Disconnect();
-                }
+                Disconnect();
               }}
               className="login-link "
             >
               {localStorage.getItem("Address") &&
-              localStorage.getItem("Address") !== null &&
-              localStorage.getItem("Address") !== "null" ? (
+                localStorage.getItem("Address") !== null &&
+                localStorage.getItem("Address") !== "null" ? (
                 <a
                   href="#"
                   className=" align-items-center justify-content-center text-center"
@@ -556,21 +507,12 @@ function HeaderDAO(props) {
           </li>
           <li>
             {localStorage.getItem("Address") &&
-            localStorage.getItem("Address") !== null &&
-            localStorage.getItem("Address") !== "null" ? (
+              localStorage.getItem("Address") !== null &&
+              localStorage.getItem("Address") !== "null" ? (
               <span
                 style={{ cursor: "pointer", color: "#5300e8" }}
                 onClick={() => {
-                  if (
-                    localStorage.getItem("selectedWallet") &&
-                    localStorage.getItem("selectedWallet") !== null &&
-                    localStorage.getItem("selectedWallet") !== "null" &&
-                    localStorage.getItem("selectedWallet") === "Torus"
-                  ) {
-                    logout();
-                  } else {
-                    Disconnect();
-                  }
+                  Disconnect();
                 }}
               >
                 Disconnect
@@ -582,7 +524,6 @@ function HeaderDAO(props) {
       <WalletModal
         show={openWalletModal}
         handleClose={handleCloseWalletModal}
-        torusLogin={login}
         casperLogin={connectToSigner}
         setSelectedWallet={props.setSelectedWallet}
       />

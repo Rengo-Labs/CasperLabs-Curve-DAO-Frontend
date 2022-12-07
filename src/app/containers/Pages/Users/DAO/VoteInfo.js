@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
@@ -66,7 +66,7 @@ function VoteInfo(props) {
   let [torus, setTorus] = useState();
   let [showVoters, setShowVoters] = useState(false);
   let [voteById, setVoteById] = useState();
-  const history = useHistory();
+  const navigate = useNavigate();
   let { id } = useParams();
   const VOTE_TIME = 604800;
 
@@ -238,7 +238,7 @@ function VoteInfo(props) {
                     sx={{ fontSize: 19, fontWeight: "bold", cursor: "pointer" }}
                     component={"div"}
                     onClick={() => {
-                      history.push("/locks");
+                      navigate("/locks");
                     }}
                   >
                     Vote distribution at snapshot chart

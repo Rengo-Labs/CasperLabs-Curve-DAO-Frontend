@@ -1,11 +1,5 @@
-import {
-  Button,
-  FormControl,
-  FormHelperText,
-  Input,
-  InputAdornment,
-  Typography
-} from "@material-ui/core";
+
+import { Button, FormControl, FormHelperText, Input, InputAdornment, Typography } from "@mui/material";
 import React from "react";
 import { Modal } from "react-bootstrap";
 import "../../assets/css/bootstrap.min.css";

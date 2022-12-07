@@ -5,10 +5,10 @@ import "../../assets/css/SelectInput.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // MATERIAL UI
-import { TextField, MenuItem, Avatar } from "@material-ui/core";
 import { StyledEngineProvider } from "@mui/styled-engine";
 // FORMIK
 import { useField, useFormikContext } from "formik";
+import { Avatar, MenuItem, TextField } from "@mui/material";
 
 const SelectInput = ({
   icon,
