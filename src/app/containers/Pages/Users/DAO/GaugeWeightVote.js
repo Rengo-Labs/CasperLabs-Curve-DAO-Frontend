@@ -25,7 +25,7 @@ import "../../../../assets/css/bootstrap.min.css";
 import "../../../../assets/css/common.css";
 import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/style.css";
-import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
+import FutureGaugeWeight from "../../../../components/Charts/FutureGaugeWeight";
 import TextInput from "../../../../components/FormsUI/TextInput";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
@@ -519,7 +519,7 @@ const GaugeWeightVote = () => {
                                   </span>
                                 </Typography>
                               </div>
-                              <GaugeRelativeWeight futureWeight={futureWeight} />
+                              <FutureGaugeWeight futureWeight={futureWeight} />
                             </div>
                           </div>
                         </Paper>
