@@ -1,5 +1,5 @@
 // REACT
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 // CHARTS
 // CUSTOM STYLING
 import Box from "@mui/material/Box";
@@ -29,6 +29,7 @@ import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/He
 import SigningModal from "../../../../components/Modals/SigningModal";
 import HomeBanner from "../Home/HomeBanner";
 import { Button } from "@mui/material";
+import * as helpers from "../../../../components/Utils/Helpers";
 
 // CONTENT
 
@@ -52,7 +53,15 @@ const Vesting = () => {
   const [claimAvailTokens, setClaimAvailTokens] = useState("0.00");
   const [availableTokens, setAvailableTokens] = useState("0.00");
   const [lockedTokens, setLockedTokens] = useState("0.00");
+  const [vestedOf, setVestedOf] = useState(0);
+  const [balanceOf, setBalanceOf] = useState(0);
+  const [lockedOf, setLockedOf] = useState(0);
+  const [initialLocked, setInitialLocked] = useState(0);
+  const [totalClaimed, setTotalClaimed] = useState(0);
+  const [startTime, setStartTime] = useState();
+  const [endTime, setEndTime] = useState();
   const { enqueueSnackbar } = useSnackbar();
+
   // States
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
@@ -140,9 +149,134 @@ const Vesting = () => {
     }
   }
 
+  const getValues = async () => { //needs to import all of these functions
+    setVestedOf(await vestedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+    setBalanceOf(await balanceOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+    setLockedOf(await lockedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+    setInitialLocked(await initialLocked(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+    setStartTime(await startTime(VESTING_ESCROW_CONTRACT_HASH));
+    setEndTime(await endTime(VESTING_ESCROW_CONTRACT_HASH));
+    setTotalClaimed(await totalClaimed(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+  }
+
+  // USE EFFECT
   useEffect(() => {
     setVestingAddress(localStorage.getItem("Address"));
   }, [localStorage.getItem("Address")]);
+
+  useEffect(() => {
+    // this.chart = this.$refs.highcharts.chart
+    // while(this.chart.series.length) {
+    //   this.chart.series[0].remove()
+    // }
+    // this.chart.showLoading()
+
+    // this.vesting = new web3.eth.Contract(daoabis.vesting_abi, this.address)
+
+    // let calls = [
+    //   [this.vesting._address, this.vesting.methods.vestedOf(contract.default_account).encodeABI()],
+    //   [this.vesting._address, this.vesting.methods.balanceOf(contract.default_account).encodeABI()],
+    //   [this.vesting._address, this.vesting.methods.lockedOf(contract.default_account).encodeABI()],
+    //   [this.vesting._address, this.vesting.methods.initial_locked(contract.default_account).encodeABI()],
+    //   [this.vesting._address, this.vesting.methods.start_time().encodeABI()],
+    //   [this.vesting._address, this.vesting.methods.end_time().encodeABI()],
+    //   [this.vesting._address, this.vesting.methods.total_claimed(contract.default_account).encodeABI()],
+    // ]
+
+    // let aggcalls = await contract.multicall.methods.aggregate(calls).call()
+
+    // let decoded = aggcalls[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
+
+    // console.log(decoded, "DECODED")
+
+    // this.vestedOf = decoded[0]
+    // this.balanceOf = decoded[1]
+    // this.lockedOf = decoded[2]
+    // this.initial_locked = decoded[3]
+    // this.start_time = decoded[4]
+    // this.end_time = decoded[5]
+    // this.total_claimed = decoded[6]
+
+    getValues();
+
+    if(+this.initial_locked == 0) {
+      //this.notVested = true
+      //return;
+    }
+
+    let vestedTime = +this.end_time - +this.start_time
+    let vestedData = []
+    let releasedAmount = this.initial_locked / 1e18 / (vestedTime / 86400)
+    for(let i = 0; i < vestedTime / 86400; i++) {
+      vestedData.push([(+this.start_time + i*86400) * 1000, i*releasedAmount])
+    }
+
+    // this.chart.addSeries({
+    //   id: 'unvested',
+    //   name: "Unvested tokens",
+    //   data: vestedData,
+    //   color: '#0b0a57',
+    // })
+
+    // this.chart.addSeries({
+    //   id: 'vested',
+    //   name: "Vested tokens",
+    //   data: vestedData.map(([k, v]) => [k, this.initial_locked / 1e18 - v]),
+    //   color: '#7bb5ec',
+    // })
+
+    // this.chart.hideLoading()
+  })
+
+  //COMPUTED
+  // vestedFormat() {
+  //   return (this.vestedOf / 1e18).toFixed(2)
+  // },
+  const vestedFormat = useMemo(() => {
+    return (vestedOf / 1e9).toFixed(2);
+  }, [vestedOf]);
+  // balanceFormat() {
+  //   return (this.balanceOf / 1e18).toFixed(2)
+  // },
+  const balanceFormat = useMemo(() => {
+    return (balanceOf / 1e9).toFixed(2);
+  }, [balanceOf]);
+  // lockedFormat() {
+  //   return (this.lockedOf / 1e18).toFixed(2)
+  // },
+  const lockedFormat = useMemo(() => {
+    return (lockedOf / 1e9).toFixed(2);
+  }, [lockedOf]);
+  // initialLockedFormat() {
+  //   return (this.initial_locked / 1e18).toFixed(2)
+  // },
+  const initialLockedFormat = useMemo(() => {
+    return (initialLocked / 1e9).toFixed(2);
+  }, [initialLocked]);
+  // totalClaimedFormat() {
+  //   return (this.total_claimed / 1e18).toFixed(2)
+  // },
+  const totalClaimedFormat = useMemo(() => {
+    return (totalClaimed / 1e9).toFixed(2);
+  }, [totalClaimed]);
+  // startTimeFormat() {
+  //   return helpers.formatDateToHuman(this.start_time)
+  // },
+  const startTimeFormat = useMemo(() => {
+    return helpers.formatDateToHuman(startTime);
+  }, [startTime]);
+  // endTimeFormat() {
+  //   return helpers.formatDateToHuman(this.end_time)
+  // },
+  const endTimeFormat = useMemo(() => {
+    return helpers.formatDateToHuman(endTime);
+  }, [endTime]);
+  // gasPrice() {
+  //     return gasPriceStore.state.gasPrice
+  // },
+  // gasPriceWei() {
+  //     return gasPriceStore.state.gasPriceWei
+  // },
 
   return (
     <>
