@@ -1,3 +1,4 @@
+import { Keys } from "casper-js-sdk";
 import { NODE_ADDRESS } from "../../../blockchain/NodeAddress/NodeAddress";
 import { MINTERClient} from "../src";
 
@@ -60,6 +61,18 @@ const minter = new MINTERClient(
     //controller
     const result = await minter.controller();
     console.log(contractHash +` =... controller : ${result}`);
+  
+    return result;
+  };
+
+  export const mint = async (contractHash: string, keys: Keys.AsymmetricKey, gauge_addr : string, paymentAmount: string) => {
+  
+    // We don't need hash- prefix so i'm removing it
+    await minter.setContractHash(contractHash);
+  
+    //minted
+    const result = await minter.mint(keys, gauge_addr, paymentAmount);
+    console.log(contractHash +` =... mint : ${result}`);
   
     return result;
   };

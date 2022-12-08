@@ -1,19 +1,25 @@
 import { Button, TextField } from '@material-ui/core';
 import { Checkbox, Divider, FormControlLabel, FormGroup, Slider } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
-import { getState } from '../Gauge/GaugeStore';
-import { state } from '../Gauge/GaugeStore';
-import { applyBoostAll } from '../Gauge/GaugeStore';
 import { balanceOf, totalSupply } from '../JsClients/VOTINGESCROW/QueryHelper/functions';
-import { ERC20_CRV_CONTRACT_HASH, LIQUIDITY_GAUGE_V3_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from '../blockchain/AccountHashes/Addresses';
+import { ERC20_CRV_CONTRACT_HASH, LIQUIDITY_GAUGE_V3_CONTRACT_HASH, MINTER_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from '../blockchain/AccountHashes/Addresses';
 import { useSnackbar } from 'notistack';
 import BigNumber from 'bignumber.js';
 import { CLPublicKey } from 'casper-js-sdk';
 import { periodTimestamp, workingBalances, workingSupply } from '../JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions';
+import { mint } from '../JsClients/MINTER/minterFunctionsForBackend/functions';
+import { UserCheckpointMakeDeploy } from '../MakeDeployFunctions/UserCheckpointMakeDeploy';
+import * as gaugeStore from "../stores/GaugeStore";
+import * as veStore from "../stores/VeStore";
+import SigningModal from '../Modals/SigningModal';
+import { withdrawMakeDeploy } from '../MakeDeployFunctions/WithdrawMakeDeploy';
+import { mintMakeDeploy } from '../MakeDeployFunctions/MintMakeDeploy';
+import { depositMakeDeploy } from '../MakeDeployFunctions/DepositMakeDeploy';
+import { claimRewardsMakeDeploy } from '../MakeDeployFunctions/ClaimRewardsMakeDeploy';
 
 
 function ValueLabelComponent(props) {
@@ -79,44 +85,171 @@ const PoolInfo = (props) => {
 
     // STATES
     const [activePublicKey, setActivePublicKey] = useState(localStorage.getItem("Address"));
-    const [canApplyBoost, setCanApplyBoost] = useState(false);
+    // const [canApplyBoost, setCanApplyBoost] = useState(false);
     const [claimableTokens, setClaimableTokens] = useState(10);
-    const [gaugeRelativeWeight, setGaugeRelativeWeight] = useState(0);
-    const [mintedFormat, setMintedFormat] = useState() //this will be replaced by function
+    // const [gaugeRelativeWeight, setGaugeRelativeWeight] = useState(0);
+    // const [mintedFormat, setMintedFormat] = useState() //this will be replaced by function
     const [claimedRewards, setClaimedRewards] = useState(0);
-    const [gauge, setGauge] = useState({});
-    const [claimedRewardsFormat, setClaimedRewardsFormat] = useState(); //this will be replace by function
+    // const [gauge, setGauge] = useState({});
+    // const [claimedRewardsFormat, setClaimedRewardsFormat] = useState(); //this will be replace by function
     const [boost, setBoost] = useState(0);
     const [currentBoost, setCurrentBoost] = useState(0);
-    const [synthsUnavailable, setSynthsUnavailable] = useState(0);
+    // const [synthsUnavailable, setSynthsUnavailable] = useState(0);
     const [stakedBalance, setStakedBalance] = useState(0);
-    const [poolBalanceFormat, setPoolBalanceFormat] = useState(); //this will be replace by function
+    // const [poolBalanceFormat, setPoolBalanceFormat] = useState(); //this will be replace by function
     const [depositAmount, setDepositAmount] = useState(0);
     const [depositSlider, setDepositSlider] = useState(0);
-    const [gaugeBalance, setGaugeBalance] = useState(10);
-    const [gaugeBalanceFormat, setGaugeBalanceFormat] = useState(); //this will be replace by function
+    // const [gaugeBalance, setGaugeBalance] = useState(10);
+    // const [gaugeBalanceFormat, setGaugeBalanceFormat] = useState(); //this will be replace by function
     const [withdrawAmount, setWithdrawAmount] = useState(0);
     const [withdrawSlider, setWithdrawSlider] = useState(0);
     const [claimableTokensFormat, setClaimableTokensFormat] = useState(10); //this will be replace by function
     const [claimableReward, setClaimableReward] = useState(0);
     const [claimableRewardFormat, setClaimableRewardFormat] = useState(); //this will be replace by function
     const [currentBoostCheck, setCurrentBoostCheck] = useState(0);
+    const [loaded, setLoaded] = useState(false);
+    const [minted, setMinted] = useState(0);
+    const [openSigning, setOpenSigning] = useState(false);
     
     //HANDLERS
-    const handleChangeCanApplyBoost = () => {
-        setCanApplyBoost(gaugeBalance > 0 && (Date.now() / 1000) > 1597271916 && currentBoost < currentBoostCheck)
+    // const handleChangeCanApplyBoost = () => {
+    //     setCanApplyBoost(gaugeBalance > 0 && (Date.now() / 1000) > 1597271916 && currentBoost < currentBoostCheck)
+    // }
+
+    //USE EFFECT
+    useEffect(() => {
+        console.log("Entry point");
+    }, []);
+
+    //COMPUTED WORK
+    // gauge() {
+    //     return gaugeStore.state.mypools[this.i]
+    // },
+    const gauge = useMemo(() => {
+        return gaugeStore.state.mypools[props.i];
+    }, [gaugeStore.state.mypools[props.i]]);
+    // gaugeBalance() {
+    //     return +this.gauge.gaugeBalance
+    // },
+    const gaugeBalance = useMemo(() => {
+        return +(gauge.gaugeBalance);
+    }, [gauge.gaugeBalance])
+    // poolBalanceFormat() {
+    //     return this.toFixed(this.gauge.balance / 1e18)
+    // },
+    const poolBalanceFormat = useMemo(() => {
+        return toFixed(gauge.balance / 1e9);
+    }, [gauge.balance]);
+    // gaugeBalanceFormat() {
+    //     return (this.gauge.gaugeBalance / 1e18).toFixed(2)
+    // },
+    const gaugeBalanceFormat = useMemo(() => {
+        return (gauge.gaugeBalance / 1e18).toFixed(2)
+    }, [gauge.gaugeBalance]);
+    // apy() {
+    //     return gaugeStore.state.APYs[this.gauge.name]
+    // },
+    const apy = useMemo(() => {
+        return gaugeStore.state.APYs[gauge.name];
+    }, [gaugeStore.state.APYs[gauge.name]]);
+    // gaugeRelativeWeight() {
+    //     return this.gauge.gauge_relative_weight * 100
+    // },
+    const gaugeRelativeWeight = useMemo(() => {
+        return (gauge.gauge_relative_weight * 100);
+    }, [gauge.gauge_relative_weight]);
+    // claimableTokensFormat() {
+    //     return (this.claimableTokens / 1e18).toFixed(2)
+    // },
+    const claimableTokenFormat = useMemo(() => {
+        return (claimableTokens / 1e9).toFixed(2);
+    }, [claimableTokens]);
+    // mintedFormat() {
+    //     return (this.minted / 1e18).toFixed(2)
+    // },
+    const mintedFormat = useMemo(() => {
+        return (minted / 1e9).toFixed(2);
+    }, [minted]);
+    // triggerUpdateLimit() {
+    //     return this.depositAmount, veStore.state.deposit, veStore.state.increaseLock, Date.now()
+    // },
+    const triggerUpdateLimit = useMemo(() => {
+        updateLimit();
+    }, [depositAmount, veStore.state.deposit, veStore.state.increaseLock, Date.now()]);
+    // claimableRewardFormat() {
+    //     return this.toFixed(this.claimableReward / 1e18)
+    // },
+    const claimableRewardsFormat = useMemo(() => {
+        return toFixed(claimableReward / 1e9);
+    }, [claimableReward]);
+    // claimedRewardsFormat() {
+    //     return this.toFixed(this.claimedRewards / 1e18)
+    // },
+    const claimedRewardsFormat = useMemo(() => {
+        return toFixed(claimedRewards / 1e9);
+    }, [claimedRewards]);
+    // gasPrice() {
+    //     return gasPriceStore.state.gasPrice
+    // },
+    // gasPriceWei() {
+    //     return gasPriceStore.state.gasPriceWei
+    // },
+    // publicPath() {
+    //     return process.env.BASE_URL
+    // },
+    // canApplyBoost() {
+    //     console.log(this.gauge.name, this.gauge.currentWorkingBalance, this.gauge.previousWorkingBalance, this.gauge.currentWorkingBalance > +this.gauge.previousWorkingBalance, "WORKING BALANCES")
+    //     return this.gauge.gaugeBalance > 0 && (Date.now() / 1000) > 1597271916 && this.currentBoost < this.currentBoostCheck
+    // },
+    const canApplyBoost =  useMemo(() => {
+        return gauge.gaugeBalance > 0 && (Date.now() / 1000) > 1597271916 && currentBoost < currentBoostCheck    
+    }, [gauge.gaugeBalance, currentBoost, currentBoostCheck]);
+    // CRVAPY() {
+    //     let apy = this.apy
+    //     if(this.currentBoost > 0)
+    //         apy *= this.currentBoost
+    //     return apy
+    // },
+    const CRVAPY = useMemo(() => {
+        let apy = apy;
+        if(currentBoost > 0){
+            apy *= currentBoost
+        }
+        return apy
+    }, [apy, currentBoost]);
+    // synthsUnavailable() {
+    //     return gaugeStore.state.synthsUnavailable
+    // }
+    const synthsUnavailable = useMemo(() => {
+        return gaugeStore.state.synthsUnavailable;
+    }, [gaugeStore.state.synthsUnavailable]);
+
+
+    //WATCHERS
+    const watchDepositAmount = async (val) => {
+        let depositVal = (val * 100 / (gauge.balance / 1e9)) || 0
+        setDepositSlider((Math.min(depositVal, 100)).toFixed(0));
     }
 
+    const watchwithdrawAmount = async (val) => {
+        let withdrawVal = (val * 100 / (gauge.gaugeBalance / 1e9)) || 0
+
+        setWithdrawSlider((Math.min(withdrawVal, 100)).toFixed(0));
+    }
+
+    const watchTriggerUpdate = async () => {
+        updateLimit();
+    }
 
     //FUNCTIONS
-    const deposit = async () => {
+    const deposit = async () => { //confirm entry point
         let deposit = BigNumber(depositAmount).time(1e9);
         let balance = balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
         if (deposit.gt(BigNumber(this.gauge.balance))) {
             deposit = balance;
         }
 
-        // await common.approveAmount(this.swap_token, deposit, contract.default_account, this.gauge.gauge, this.inf_approval) //asl about this (not any function found against this)
+        // await common.approveAmount(this.swap_token, deposit, contract.default_account, this.gauge.gauge, this.inf_approval) //ask about this (not any function found against this)
 
         // var { dismiss } = notifyNotification(`Please confirm depositing into ${this.gauge.name} gauge`)
         
@@ -132,6 +265,9 @@ const PoolInfo = (props) => {
         //     dismiss()
         //     notifyHandler(hash)
         // }) // gauge contract is liquidity contract (confirm about deposit function)
+
+        //BLOCKCHAIN CALL
+        depositMakeDeploy(deposit.toFixed(0,1), setOpenSigning, enqueueSnackbar);
 
         updateBalances()
 
@@ -157,6 +293,8 @@ const PoolInfo = (props) => {
         // }
 
         // var { dismiss } = notifyNotification(`Please confirm withdrawing from ${this.gauge.name} gauge`)
+        let variant = "Success";
+        enqueueSnackbar(`Please confirm withdrawing from ${gauge.name} gauge`, { variant });
 
         // await withdrawMethod.send({
         //     from: contract.default_account,
@@ -168,11 +306,13 @@ const PoolInfo = (props) => {
         //     notifyHandler(hash)
         // }) //this whole call is based on withdraw functions
 
+        //BLOCKCHAIN CALL
+        await withdrawMakeDeploy(setOpenSigning, enqueueSnackbar);
+
         updateBalances()
     }
 
     const updateBalances = async () => {
-        let gaugeStore = {}; //temporary
 
         // let calls = [
         //     //balanceOf
@@ -186,7 +326,7 @@ const PoolInfo = (props) => {
         // let decoded = aggcalls[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
 
         // gaugeStore.state.mypools[this.i].balance = decoded[0]
-        gaugeStore.state.mypools[this.i].gaugeBalance = balanceOf(LIQUIDITY_GAUGE_V3_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+        gaugeStore.state.mypools[props.i].gaugeBalance = balanceOf(LIQUIDITY_GAUGE_V3_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
     }
 
     const toFixed = (num) => {
@@ -275,6 +415,96 @@ const PoolInfo = (props) => {
 
     }
 
+    const claim = async () => {
+        // let gas = await gaugeStore.state.minter.methods.mint(this.gauge.gauge).estimateGas()
+        // if(['susdv2', 'sbtc'].includes(this.gauge.name))
+        //     gas = 1000000
+
+        // var { dismiss } = notifyNotification(`Please confirm claiming CRV from ${this.gauge.name} gauge`)
+        let variant = "Success"
+        enqueueSnackbar(`Please confirm claiming CRV from ${gauge.name} gauge`, { variant});
+
+        // await gaugeStore.state.minter.methods.mint(this.gauge.gauge).send({
+        //     from: contract.default_account,
+        //     gasPrice: this.gasPriceWei,
+        //     gas: gas * 1.5 | 0,
+        // })
+        // .once('transactionHash', hash => {
+        //     dismiss()
+        //     notifyHandler(hash)
+        // })
+
+        //BLOCKCHAIN CALL
+        mintMakeDeploy(gauge.gauge, setOpenSigning, enqueueSnackbar);
+    }
+
+    const claimRewards = async () => { //confirm entry points
+        // let gas = await this.gaugeContract.methods.claim_rewards(contract.default_account).estimateGas()
+        // if(['susdv2', 'sbtc'].includes(this.gauge.name))
+        // 	gas = 1000000
+
+        // var { dismiss } = notifyNotification(`Please confirm claiming ${this.gauge.name == 'susdv2' ? 'SNX' : 'BPT'}`)
+        let variant = "Success";
+        enqueueSnackbar(`Please confirm claiming ${gauge.name == 'susdv2' ? 'SNX' : 'BPT'}`, { variant });
+
+        // await this.gaugeContract.methods.claim_rewards(contract.default_account).send({
+        //     from: contract.default_account,
+        //     gasPrice: this.gasPriceWei,
+        //     gas: 500000,
+        // })
+        // .once('transactionHash', hash => {
+        //     dismiss()
+        //     notifyHandler(hash)
+        // })
+
+        //BLOCKCHAIN CALL
+        await claimRewardsMakeDeploy(setOpenSigning, enqueueSnackbar);
+    }
+
+    const applyBoost = async () => {
+        // let gas = 600000
+        // try {
+        //     gas = await this.gaugeContract.methods.user_checkpoint(contract.default_account).estimateGas()
+        // }
+        // catch(err) {
+        //     console.error(err)
+        // }
+
+        // var { dismiss } = notifyNotification(`Please confirm applying boost`)
+        let variant = "Success";
+        enqueueSnackbar(`Please confirm applying boost`, { variant });
+
+        // await this.gaugeContract.methods.user_checkpoint(contract.default_account).send({
+        //     from: contract.default_account,
+        //     gasPrice: this.gasPriceWei,
+        //     gas: gas,
+        // })
+        // .once('transactionHash', hash => {
+        //     dismiss()
+        //     notifyHandler(hash)
+        // })
+        UserCheckpointMakeDeploy(activePublicKey, setOpenSigning, enqueueSnackbar);
+    }
+
+    const updateLimit = async () => { //ask about this function
+        if(!loaded) return;
+        // this.promise.cancel()
+        // this.promise = helpers.makeCancelable(this.update_liquidity_limit(this.depositAmount, veStore.newVotingPower()))
+        // let newLimit = await this.promise
+
+        // this.boost = newLimit[1]
+        //search about this.promise 
+    }
+
+    const checkLimit = async () => {
+        let currentLimit = await update_liquidity_limit()
+
+        // this.currentBoostCheck = currentLimit[1]
+        setCurrentBoostCheck(currentLimit[1]);
+        if(currentBoost < currentBoostCheck && claimableTokens == 0)
+            gaugeStore.state.gaugesNeedApply.push(gauge.gauge)
+    }
+
     return (
         <>
             <div className="row no-gutters">
@@ -282,7 +512,11 @@ const PoolInfo = (props) => {
                     <div>
                         {canApplyBoost && claimableTokens == 0 ? (
                             <div>
-                                <Button>
+                                <Button
+                                    onClick={() => {
+                                        applyBoost();
+                                    }}
+                                >
                                     Apply Boost
                                 </Button>
                             </div>
@@ -396,6 +630,10 @@ const PoolInfo = (props) => {
                                     variant="outlined"
                                     value={depositAmount}
                                     style={{margin: '5px'}}
+                                    onChange={(event) => {
+                                        setDepositAmount(event.target.value);
+                                        watchDepositAmount(event.target.value); //watcher
+                                    }}
                                 />
                             </div>
                             {/* SLIDER PUTS OVER HERE */}
@@ -440,6 +678,9 @@ const PoolInfo = (props) => {
                                     variant='contained'
                                     size='large'
                                     style={{backgroundColor: "#5300e8", color: "white"}}
+                                    onClick={() => {
+                                        deposit();
+                                    }}
                                 >
                                     Deposit
                                     {['susdv2', 'sbtc'].includes(gauge.name) ? (
@@ -468,6 +709,10 @@ const PoolInfo = (props) => {
                                             variant="outlined"
                                             value={withdrawAmount}
                                             style={{margin: '5px'}}
+                                            onChange={(event) => {
+                                                setWithdrawAmount(event.target.value);
+                                                watchwithdrawAmount(event.target.value);
+                                            }}
                                         />
                                     </div>
                                     {/* SLIDER PUTS OVER HERE */}
@@ -502,6 +747,9 @@ const PoolInfo = (props) => {
                                             variant='contained'
                                             size='large'
                                             style={{backgroundColor: "#5300e8", color: "white"}}
+                                            onClick={() => {
+                                                withdraw();
+                                            }}
                                         >
                                             Withdraw
                                         </Button>
@@ -519,6 +767,9 @@ const PoolInfo = (props) => {
                                 variant='contained'
                                 size='large'
                                 style={{backgroundColor: "#5300e8", color: "white"}}
+                                onClick={() => {
+                                    claim();
+                                }}
                             >
                                 Claim {claimableTokensFormat}% CRV
                             </Button>
@@ -528,6 +779,9 @@ const PoolInfo = (props) => {
                                 variant='contained'
                                 size='large'
                                 style={{backgroundColor: "#5300e8", color: "white"}}
+                                onClick={() => {
+                                    claimRewards();
+                                }}
                             >
                                 Claim {claimableRewardFormat}
                                 {gauge.name == 'susdv2' ? (
@@ -540,6 +794,9 @@ const PoolInfo = (props) => {
                     </div>
                 </div>
             </div>
+            
+            {/* SIGNING MODAL */}
+            <SigningModal show={openSigning} />
         </>
     );
 }
