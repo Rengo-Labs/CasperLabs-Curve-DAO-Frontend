@@ -110,6 +110,7 @@ const PoolInfo = (props) => {
     const [loaded, setLoaded] = useState(false);
     const [minted, setMinted] = useState(0);
     const [openSigning, setOpenSigning] = useState(false);
+    const [infApproval, setInfApproval] = useState(false);
     
     //HANDLERS
     // const handleChangeCanApplyBoost = () => {
@@ -119,6 +120,65 @@ const PoolInfo = (props) => {
     //USE EFFECT
     useEffect(() => {
         console.log("Entry point");
+        // this.depositAmount = this.poolBalanceFormat
+        setDepositAmount(poolBalanceFormat);
+        // this.withdrawAmount = this.gaugeBalanceFormat
+        setWithdrawAmount(gaugeBalanceFormat);
+
+        // this.gaugeContract = new contract.web3.eth.Contract(daoabis.liquiditygauge_abi, this.gauge.gauge)
+
+        // this.swap_token = new contract.web3.eth.Contract(ERC20_abi, this.gauge.swap_token)
+
+        // this.loaded = true
+        setLoaded(true);
+
+        // this.claimableTokens = +this.gauge.claimable_tokens
+        setClaimableTokens(gauge.claimable_tokens);
+        
+        gaugeStore.state.totalClaimableCRV += +claimableTokens
+
+        const getData = async () => {
+            if(['susdv2', 'sbtc'].includes(gauge.name)) {
+                // let curveRewards = new web3.eth.Contract(allabis[this.gauge.name].sCurveRewards_abi, allabis[this.gauge.name].sCurveRewards_address)
+                // this.stakedBalance = await curveRewards.methods.balanceOf(contract.default_account).call()
+                balanceOf(gauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex"));
+
+    
+                // this.claimableReward = await this.gaugeContract.methods.claimable_reward(contract.default_account).call()
+                setClaimableReward(await claimableReward(LIQUIDITY_GAUGE_V3_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+                // this.claimedRewards = await this.gaugeContract.methods.claimed_rewards_for(contract.default_account).call()
+                setClaimedRewards(await claimedRewards(LIQUIDITY_GAUGE_V3_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+    
+                // this.claimableReward -= this.claimedRewards
+                setClaimableReward(claimableReward-claimedRewards);
+            }
+        }
+        getData();
+        
+        //this.minted = await gaugeStore.state.minter.methods.minted(contract.default_account, this.gauge.gauge).call()
+        // this.minted = this.gauge.minted
+        setMinted(gauge.minted);
+
+        gaugeStore.state.totalMintedCRV += +gauge.minted; //writing this as gauge minted because we don't get instant value by setFunction unless function is completed
+
+        // let allowance = BN(await this.swap_token.methods.allowance(contract.default_account, this.gauge.gauge).call())
+        let allowance;
+
+        const getAllowance = async () => {
+            allowance = await allowance(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash)).toString("Hex");
+        }
+        getAllowance();
+
+
+        // if(allowance.lte(contract.max_allowance.div(BN(2))))
+        //     // this.inf_approval = false
+        //     setInfApproval(false); //ask about this
+
+        if(+gauge.gaugeBalance > 0) {
+            // this.currentBoost = Math.max(1, gaugeStore.state.boosts[this.gauge.name])
+            setCurrentBoost(Math.max(1, gaugeStore.state.boosts[gauge.name]));
+            checkLimit()
+        }
     }, []);
 
     //COMPUTED WORK
