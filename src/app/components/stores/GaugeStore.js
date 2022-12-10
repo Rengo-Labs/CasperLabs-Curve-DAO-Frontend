@@ -94,7 +94,7 @@ export async function getState(activePublicKey) {
 	// calls = calls.concat(Object.values(state.pools).map(v => v.swap_token).map(v => [v, swap_token.methods.balanceOf(contract.default_account).encodeABI()]))
     
     //getting the balance of account key again each swap token address for erc20 abi contract (casper)
-	calls = calls.concat(Object.values(state.pools).map(v => v.swap_token).map(async v => [v, await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"))]))
+	// calls = calls.concat(Object.values(state.pools).map(v => v.swap_token).map(async v => [v, await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"))]))
     
 
     let aggcalls;
@@ -102,8 +102,12 @@ export async function getState(activePublicKey) {
 	// let decodedGauges = aggcalls[1].slice(0, state.n_gauges).map(hex => web3.eth.abi.decodeParameter('address', hex))
 	// let decodedBalances = aggcalls[1].slice(state.n_gauges).map((hex, i) => ({swap_token: calls[state.n_gauges + i][0], balance: web3.eth.abi.decodeParameter('uint256', hex)}))  //also ask about this
 
-	let decodedBalances = [];
-    let decodedGauges = [];
+	let decodedBalances = Object.values(state.pools).map(v => v.swap_token).map(async pool => { //confirm about values of n_gauges and swap_token
+		return {swap_token: pool, balance: await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex"))};
+	})
+    let decodedGauges = state.n_gauges.map(async gauge => {
+		await gauges(state.gaugeController._address, gauge);
+	});
 
 	// let example_gauge = new contract.web3.eth.Contract(daoabis.liquiditygauge_abi, decodedGauges[0])
 
@@ -115,15 +119,6 @@ export async function getState(activePublicKey) {
 	// 	[state.minter._address, state.minter.methods.minted(contract.default_account, gauge).encodeABI()],
 
 	// ])
-
-	// implementation according to casper
-    let calls1 = decodedGauges.flatMap(async gauge => [
-        [gauge, await lpToken(LIQUIDITY_GAUGE_V3_CONTRACT_HASH)],
-        [state.gaugeController._address, await gaugeTypes(GAUGE_CONTROLLER_CONTRACT_HASH, gauge)], //converted according to casper but discuss about this
-        [gauge, await balanceOf(LIQUIDITY_GAUGE_V3_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"))],
-        // [gauge, await claimableTokens(LIQUIDITY_GAUGE_V3_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"))], //ask about this as there is only session code available
-        [state.minter._address, await getMinted(MINTER_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"), Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"))], //converted according to casper but discuss about this as it is decode parameter
-    ])
 
     //This will be remain as it is unless confirmed
 	let aggcalls1
@@ -145,22 +140,38 @@ export async function getState(activePublicKey) {
 	// let gaugeTypes = aggcalls1[1].filter((_, i) => i % 5 == 1).map(hex => +web3.eth.abi.decodeParameter('uint256', hex))
 	// gaugeTypes = [...new Set(gaugeTypes)]
 
-    let gaugeTypes = [];
+	let gaugeTypes = decodedGauges.flatMap(async gauge => [
+		[await lpToken(LIQUIDITY_GAUGE_V3_CONTRACT_HASH)],
+		[await gaugeTypes(GAUGE_CONTROLLER_CONTRACT_HASH, gauge)],
+		[await balanceOf(gauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"))],
+		// [await claimableTokens(gauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex"))],
+		[await getMinted(MINTER_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"), Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"))]
+	])
 	
 	// calls = gaugeTypes.map(type => [state.gaugeController._address, state.gaugeController.methods.gauge_type_names(type).encodeABI()])
-	calls = gaugeTypes.map(async type => [state.gaugeController._address, await gauge_type_names(GAUGE_CONTROLLER_CONTRACT_HASH, type)]) //done coording to casper but discuss about this as it is decode abi work
+	calls = gaugeTypes.map(async type => [state.gaugeController._address, await gauge_type_names(GAUGE_CONTROLLER_CONTRACT_HASH, type)])
 	// aggcalls = await contract.multicall.methods.aggregate(calls).call()
 	// let gaugeTypesNames = aggcalls[1].map((hex, i) => ({type: gaugeTypes[i], name: web3.eth.abi.decodeParameter('string', hex)}))
-	let gaugeTypesNames = aggcalls[1].map((hex, i) => ({type: gaugeTypes[i]})) //removed name because we already have decoded values
+	let gaugeTypesNames = gaugeTypes.map((hex, i) => ({type: gaugeTypes[i], name: gaugeTypes[i].name})) //assuming name will be returned from blockchain
 
-	let decodedGaugeLP = aggcalls1[1].filter((_, i) => i % 5 == 0).map((hex, i) => ({
-		gauge: decodedGauges[i], 
+	// let decodedGaugeLP = aggcalls1[1].filter((_, i) => i % 5 == 0).map((hex, i) => ({
+		// gauge: decodedGauges[i], 
 		// swap_token: web3.eth.abi.decodeParameter('address', hex), 
 		// type: web3.eth.abi.decodeParameter('uint256', aggcalls1[1][i*5+1]),
 		// typeName: Object.values(gaugeTypesNames).find(v => v.type == +web3.eth.abi.decodeParameter('uint256', aggcalls1[1][i*5+1])).name,
 		// claimable_tokens: web3.eth.abi.decodeParameter('uint256', aggcalls1[1][i*5+3]),
 		// minted: web3.eth.abi.decodeParameter('uint256', aggcalls1[1][i*5+4]),
-	})) //discuss about this because all of this work is decodeing abis
+	// })) //discuss about this because all of this work is decodeing abis
+
+	let decodedGaugeLP = gaugeTypes.filter((_, i) => i % 5 == 0).map((hex, i) => ({
+		gauge: decodedGauges[i], 
+		swap_token: hex, 
+		type: gaugeTypes[i*5+1],
+		typeName: Object.values(gaugeTypesNames).find(v => v.type == +gaugeTypes[i*5+1]).name,
+		claimable_tokens: gaugeTypes[i*5+3],
+		minted: gaugeTypes[i*5+4],
+	}))
+
 	Object.values(decodedGaugeLP).forEach((gauge, i) => {
 		let poolgauge = Object.values(state.pools).find(pool => pool.swap_token.toLowerCase() == gauge.swap_token.toLowerCase())
 		poolgauge.gauge = gauge.gauge
@@ -171,10 +182,10 @@ export async function getState(activePublicKey) {
 	})
 
 
-	let gaugeBalances = aggcalls1[1].filter((_, i) => i % 5 == 2).map((hex, i) => ({
-		gauge: calls1[i*5+2][0],
-		// balance: web3.eth.abi.decodeParameter('uint256', hex),
-	})) //discuss about balance because it is in decode parameter
+	let gaugeBalances = gaugeTypes.filter((_, i) => i % 5 == 2).map((hex, i) => ({
+		gauge: gaugeTypes[i*5+2],
+		balance: hex.balance
+	})) //base on the assumed values
 
 
 
@@ -204,7 +215,7 @@ export async function getState(activePublicKey) {
 	//console.log(weightCalls, "WEIGHT CALLS")
 
 	// let aggCallsWeights = await contract.multicall.methods.aggregate(weightCalls).call()
-	// let decodedWeights = aggCallsWeights[1].map((hex, i) => [weightCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18]) //asl about these 2 lines
+	// let decodedWeights = aggCallsWeights[1].map((hex, i) => [weightCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18]) //will be replace after confirming function
 
 	let aggCallsWeights = [];
 	let decodeWeights = [];
@@ -223,7 +234,7 @@ export async function getState(activePublicKey) {
 		await workingSupply(gauge),
 		await totalSupply(gauge),
 		await workingBalances(gauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")),
-	]) //discuss about this as there are all encoded ais work
+	])
 
 	console.log(ratesCalls, "RATES CALLS")
 
