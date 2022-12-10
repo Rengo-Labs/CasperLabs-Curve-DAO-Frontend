@@ -30,6 +30,7 @@ import SigningModal from "../../../../components/Modals/SigningModal";
 import HomeBanner from "../Home/HomeBanner";
 import { Button } from "@mui/material";
 import * as helpers from "../../../../components/Utils/Helpers";
+window.Buffer = window.Buffer || require("buffer").Buffer;
 
 // CONTENT
 
@@ -149,15 +150,6 @@ const Vesting = () => {
     }
   }
 
-  const getValues = async () => { //needs to import all of these functions
-    setVestedOf(await vestedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-    setBalanceOf(await balanceOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-    setLockedOf(await lockedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-    setInitialLocked(await initialLocked(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-    setStartTime(await startTime(VESTING_ESCROW_CONTRACT_HASH));
-    setEndTime(await endTime(VESTING_ESCROW_CONTRACT_HASH));
-    setTotalClaimed(await totalClaimed(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-  }
 
   // USE EFFECT
   useEffect(() => {
@@ -197,19 +189,38 @@ const Vesting = () => {
     // this.end_time = decoded[5]
     // this.total_claimed = decoded[6]
 
-    getValues();
+    let publicKey = localStorage.getItem("Address");
 
-    if(+this.initial_locked == 0) {
-      //this.notVested = true
-      //return;
+    if (publicKey !== null && 
+        publicKey !== undefined &&
+        publicKey !== "null"
+    ) {
+      
+      const getValues = async () => { //needs to import all of these functions
+        setVestedOf(await vestedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+        setBalanceOf(await balanceOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+        setLockedOf(await lockedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+        setInitialLocked(await initialLocked(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+        setStartTime(await startTime(VESTING_ESCROW_CONTRACT_HASH));
+        setEndTime(await endTime(VESTING_ESCROW_CONTRACT_HASH));
+        setTotalClaimed(await totalClaimed(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+      }
+  
+      getValues();
+  
+      if(+initialLocked == 0) {
+        //this.notVested = true
+        //return;
+      }
+  
+      let vestedTime = +endTime - +startTime
+      let vestedData = []
+      let releasedAmount = initialLocked / 1e18 / (vestedTime / 86400)
+      for(let i = 0; i < vestedTime / 86400; i++) {
+        vestedData.push([(+startTime + i*86400) * 1000, i*releasedAmount])
+      }
     }
 
-    let vestedTime = +this.end_time - +this.start_time
-    let vestedData = []
-    let releasedAmount = this.initial_locked / 1e18 / (vestedTime / 86400)
-    for(let i = 0; i < vestedTime / 86400; i++) {
-      vestedData.push([(+this.start_time + i*86400) * 1000, i*releasedAmount])
-    }
 
     // this.chart.addSeries({
     //   id: 'unvested',
@@ -226,7 +237,7 @@ const Vesting = () => {
     // })
 
     // this.chart.hideLoading()
-  })
+  }, [localStorage.getItem("Address")]);
 
   //COMPUTED
   // vestedFormat() {
