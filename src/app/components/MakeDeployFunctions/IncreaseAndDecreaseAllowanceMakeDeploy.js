@@ -9,6 +9,7 @@ import { VOTING_ESCROW_PACKAGE_HASH } from "../../components/blockchain/AccountH
 import { ERC20_CRV_PACKAGE_HASH } from "../../components/blockchain/AccountHashes/Addresses";
 import { createRecipientAddress } from "../../components/blockchain/RecipientAddress/RecipientAddress";
 import { makeERC20CRVDeployWasm } from "../../components/blockchain/MakeDeploy/MakeDeployWasm";
+window.Buffer = window.Buffer || require("buffer").Buffer;
 
 
 export async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleCloseAllowance, setOpenSigning, enqueueSnackbar, getAllowance) {
