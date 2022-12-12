@@ -71,6 +71,25 @@ query gaugeVotesByUser($user: String){
 }
 `;
 
+const GAUGE_VOTES_BY_TIME = gql`
+query gaugeVotesByTime($time:String){
+  gaugeVotesByTime(time : $time){
+    id
+    time
+    user
+    gauge
+    weight
+    gaugeWeights{
+      weight
+      gauge
+    }
+    total_weight
+    veCRV
+    totalveCRV
+  }
+}
+`
+
 
 const selectGaugeOptions = [
   {
@@ -140,6 +159,7 @@ const GaugeWeightVote = () => {
   const [votingPowerNumber, setVotingPowerNumber] = useState("0.00");
   const [gauge, setGauge] = useState("493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a");
   const [gaugeWeightData, setGaugeWeightData] = useState([]);
+  const [gaugeVoteTime,setGaugeVoteTime]=useState([]);
   const [futureWeight, setFutureWeight] = useState([]);
   const [historicGaugeWeight,setHistoricGaugeWeight]=useState([]);
   const [weightGauges, setWeightGauges] = useState(["CSPR", "WBTC", "USDT"]);
@@ -178,6 +198,7 @@ const GaugeWeightVote = () => {
     }
 
   },[showVotes])
+
   const gaugeWeight = useQuery(GAUGE_WEIGHT, {
     variables: {
       user: users,
@@ -185,6 +206,14 @@ const GaugeWeightVote = () => {
   });
   console.log("this is data of gauge weight: ", gaugeWeight.data);
   console.log("this is error of gauge weight: ", gaugeWeight.error);
+
+  const gaugeVotesByTime = useQuery(GAUGE_VOTES_BY_TIME, {
+    variables: {
+      time: "50",
+    },
+  });
+  console.log("this is data of gauge votes by time: ", gaugeVotesByTime.data);
+  console.log("this is error of gauge weight: ", gaugeVotesByTime.error);
 
   // if (gaugeWeight.data !== undefined) {
   //   console.log("gaugeWeight", gaugeWeight.data.gaugeVotesByUser);
@@ -195,6 +224,10 @@ const GaugeWeightVote = () => {
     if (gaugeWeight) {
       console.log("GaugeWeightByUserData", gaugeWeight.data?.gaugeVotesByUser);
       setGaugeWeightData(gaugeWeight.data?.gaugeVotesByUser != undefined ? (gaugeWeight.data?.gaugeVotesByUser) : [])
+    }
+    if (gaugeVotesByTime) {
+      console.log("gaugeVotesByTime...", gaugeVotesByTime.data?.gaugeVotesByTime);
+      setGaugeVoteTime(gaugeWeight.data?.gaugeVotesByUser != undefined ? (gaugeWeight.data?.gaugeVotesByUser) : [])
     }
   },
     [gaugeWeight]);
@@ -1257,7 +1290,7 @@ const GaugeWeightVote = () => {
                                       <TableBody id={"GWVoteHistoryTableBody"}>
                                         {
                                         (rowsPerPage > 0
-                                          ? gaugeWeightData?.slice(
+                                          ? showVotes? gaugeWeightData:gaugeVoteTime?.slice(
                                             page * rowsPerPage,
                                             page * rowsPerPage + rowsPerPage
                                           )
