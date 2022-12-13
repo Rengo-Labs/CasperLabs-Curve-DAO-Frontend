@@ -110,39 +110,7 @@ import {
       return result.value();
     }
   
-    public async balanceOf(owner: string) {
-      try {
-        
-        const result = await utils.contractDictionaryGetter(
-          this.nodeAddress,
-          owner,
-          this.namedKeys.balances
-        );
-        const maybeValue = result.value().unwrap();
-        return maybeValue.value().toString();
-  
-      } catch (error) {
-        return "0";
-      }
-      
-    }
 
-    public async vestedOf(owner: string) {
-      try {
-        
-        const result = await utils.contractDictionaryGetter(
-          this.nodeAddress,
-          owner,
-          this.namedKeys.vested_of
-        );
-        const maybeValue = result.value().unwrap();
-        return maybeValue.value().toString();
-  
-      } catch (error) {
-        return "0";
-      }
-      
-    }
 
     public async intialLocked(owner: string) {
       try {
@@ -167,22 +135,6 @@ import {
           this.nodeAddress,
           owner,
           this.namedKeys.total_claimed
-        );
-        const maybeValue = result.value().unwrap();
-        return maybeValue.value().toString();
-  
-      } catch (error) {
-        return "0";
-      }
-      
-    }
-    public async lockedOf(owner: string) {
-      try {
-        
-        const result = await utils.contractDictionaryGetter(
-          this.nodeAddress,
-          owner,
-          this.namedKeys.locked_of
         );
         const maybeValue = result.value().unwrap();
         return maybeValue.value().toString();

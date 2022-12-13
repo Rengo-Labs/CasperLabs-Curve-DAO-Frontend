@@ -198,9 +198,9 @@ const Vesting = () => {
     ) {
       
       const getValues = async () => { //needs to import all of these functions
-        setVestedOf(await vestedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-        setBalanceOf(await balanceOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-        setLockedOf(await lockedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+        // setVestedOf(await vestedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+        // setBalanceOf(await balanceOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+        // setLockedOf(await lockedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
         setInitialLocked(await initialLocked(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
         setStartTime(await startTime(VESTING_ESCROW_CONTRACT_HASH));
         setEndTime(await endTime(VESTING_ESCROW_CONTRACT_HASH));
