@@ -1,8 +1,6 @@
-import { Button, TextField } from '@material-ui/core';
-import { Checkbox, Divider, FormControlLabel, FormGroup, Slider } from '@mui/material';
+import { Button, Checkbox, Divider, FormControlLabel, FormGroup, Slider, TextField, Tooltip } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
-import Tooltip from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { balanceOf, totalSupply } from '../JsClients/VOTINGESCROW/QueryHelper/functions';

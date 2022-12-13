@@ -4,7 +4,6 @@ import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Address
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
-import Torus from "@toruslabs/casper-embed";
 import { SUPPORTED_NETWORKS, CHAINS } from "../Headers/Header";
 import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
 import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
@@ -12,7 +11,6 @@ import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
 
 export async function claimRewardsMakeDeploy(setOpenSigning, enqueueSnackbar) {
     // CREATING REQUIRED VARIABLES
-    let torus;
     const allowance = 0;
 
     let selectedWallet = localStorage.getItem("selectedWallet")
@@ -47,7 +45,6 @@ export async function claimRewardsMakeDeploy(setOpenSigning, enqueueSnackbar) {
         );
         console.log("make deploy: ", deploy);
         try {
-          if (selectedWallet === "Casper") {
             let signedDeploy = await signdeploywithcaspersigner(
               deploy,
               publicKeyHex
@@ -55,35 +52,6 @@ export async function claimRewardsMakeDeploy(setOpenSigning, enqueueSnackbar) {
             let result = await putdeploy(signedDeploy, enqueueSnackbar);
             // let result = await putdeploy(signedDeploy, providerRef.current.enqueueSnackbar);
             console.log("result", result);
-          } else {
-            // let Torus = new Torus();
-            torus = new Torus();
-            console.log("torus", torus);
-            await torus.init({
-              buildEnv: "testing",
-              showTorusButton: true,
-              network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-            });
-            console.log("Torus123", torus);
-            console.log("torus", torus.provider);
-            const casperService = new CasperServiceByJsonRPC(torus?.provider);
-            const deployRes = await casperService.deploy(deploy);
-            console.log("deployRes", deployRes.deploy_hash);
-            console.log(
-              `... Contract installation deployHash: ${deployRes.deploy_hash}`
-            );
-            let result = await getDeploy(
-              NODE_ADDRESS,
-              deployRes.deploy_hash,
-              enqueueSnackbar
-            //   providerRef.current.enqueueSnackbar
-            );
-            console.log(
-              `... Contract installed successfully.`,
-              JSON.parse(JSON.stringify(result))
-            );
-            console.log("result", result);
-          }
         //   handleCloseSigning();
           setOpenSigning(false);
           let variant = "success";
