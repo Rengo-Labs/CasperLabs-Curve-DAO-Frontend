@@ -5,7 +5,6 @@ import "../../assets/css/curveButton.css";
 import "../../assets/css/common.css";
 //BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
-import { Pool } from "@material-ui/icons";
 //COMPONENTS
 //MATERIAL UI
 import { Typography } from "@mui/material";

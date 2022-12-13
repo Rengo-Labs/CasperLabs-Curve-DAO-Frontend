@@ -1,10 +1,10 @@
 // REACT
 import React, { useState } from "react";
 // CUSTOM STYLING
-import "../../assets/css/style.css";
+import "../../assets/css/BuyAndSell.css";
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
-import "../../assets/css/BuyAndSell.css";
+import "../../assets/css/style.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
@@ -13,25 +13,17 @@ import AdvancedOptions from "../Modals/AdvancedOptions";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 // MATERIAL UI
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
-import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
-import {
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  FormGroup,
-  CardHeader,
-  Avatar,
-} from "@material-ui/core";
-// ICONS
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+
+import cspr from "../../assets/img/cspr.png";
 import usdt from "../../assets/img/usdt.png";
 import wbtc from "../../assets/img/wbtc.png";
-import cspr from "../../assets/img/cspr.png";
+import { Avatar, CardHeader, FormControl, FormControlLabel, FormGroup, Radio, RadioGroup } from "@mui/material";
 
 // CONTENT
 

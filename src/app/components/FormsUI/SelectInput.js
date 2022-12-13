@@ -5,10 +5,10 @@ import "../../assets/css/SelectInput.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // MATERIAL UI
-import { TextField, MenuItem, Avatar } from "@material-ui/core";
 import { StyledEngineProvider } from "@mui/styled-engine";
 // FORMIK
 import { useField, useFormikContext } from "formik";
+import { Avatar, MenuItem, TextField } from "@mui/material";
 
 const SelectInput = ({
   icon,
@@ -23,8 +23,11 @@ const SelectInput = ({
   console.log("values: ", options);
   console.log("icons as props: ", icon);
   // States
-  const { setFieldValue } = useFormikContext();
+  const { setFieldValue } = useFormikContext() ?? {};
   const [field, meta] = useField(name);
+  console.log("Name: ", name);
+  console.log("Field: ", field);
+  console.log("Meta: ", meta);
   const [currentDate, setCurrentDate] = useState(new Date());
 
   function padTo2Digits(num) {

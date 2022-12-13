@@ -16,9 +16,10 @@ import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import { FormControlLabel, FormGroup } from "@material-ui/core";
 import { AlertTitle } from "@mui/material";
 import { Link } from "react-router-dom";
+import { FormGroup } from "@mui/material";
+import { FormControlLabel } from "@mui/material";
 
 // CONTENT
 

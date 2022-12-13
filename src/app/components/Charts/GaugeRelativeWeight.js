@@ -7,6 +7,7 @@ import ApexChart from "react-apexcharts";
 
 // COMPONENT FUNCTION
 const GaugeRelativeWeight = () => {
+
   // States
 
   // Content
@@ -21,11 +22,13 @@ const GaugeRelativeWeight = () => {
         enabled: true,
       },
     },
-    series: [
+    series: 
+    [
       5, 4, 5, 2, 1, 6, 3, 4, 2, 1, 3, 5, 6, 1, 2, 4, 1, 3, 5, 1, 1, 2, 1, 3, 2,
       1, 4, 2, 1, 5,
-    ],
-    labels: [
+    ]
+    ,
+    labels:[
       "CSPR",
       "USDT",
       "BTC",
@@ -67,7 +70,8 @@ const GaugeRelativeWeight = () => {
     },
   };
 
-  const series = [
+  const series = 
+  [
     5, 4, 5, 2, 1, 6, 3, 4, 2, 1, 3, 5, 6, 1, 2, 4, 1, 3, 5, 1, 1, 2, 1, 3, 2,
     1, 4, 2, 1, 5,
   ];

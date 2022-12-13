@@ -5,23 +5,13 @@ import "../../assets/css/poolsTabs.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 //COMPONENTS
-import PoolsTableAll from "../Tables/PoolsTableAll";
 import PoolsDashboard from "../Dashboard/PoolsDashboard";
+import PoolsTableAll from "../Tables/PoolsTableAll";
 //MATERIAL UI
-import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
-import { StyledEngineProvider } from "@mui/styled-engine";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import { Link } from "react-router-dom";
-import AppBar from "@material-ui/core/AppBar";
 
 //CONTENT
 function TabPanel(props) {

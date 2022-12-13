@@ -3,88 +3,150 @@ import React, { useState } from "react";
 // CHARTS
 import ApexChart from "react-apexcharts";
 
+let seriesDataX=[];
+let seriesDataY=[];
+
+  
+
 // COMPONENT CLASS
-const DaoVotingPower = () => {
+const DaoVotingPower = ({chart}) => {
   // States
 
   // Content
+
+
+if(chart!==undefined){
+  let chartData = chart.splice(0,chart.length-11) 
+
+  for (let i=0;i<chartData.length;i++){
+
+    console.log("chart at i",chartData[i][0]);
+     seriesDataX.push(chartData[i][0])
+     if(isNaN(chartData[i][1]) ){
+      seriesDataY.push(50)
+     }
+     else{
+      seriesDataY.push(chartData[i][1]) 
+     }
+     
+  }
+}
+
+ console.log("dataX:",seriesDataX);
+ console.log("dataY:",seriesDataY);
+
+ let axisData = [];
+ for (var i=0; i<seriesDataX.length; i++) {
+  axisData[i] = {
+      x: seriesDataX[i],
+      y: seriesDataY[i],
+  };
+}
+console.log("axisData",axisData);
 
   let series = [
     {
       name: "DAO Voting Power",
       type: "line",
-      data: [
-        {
-          x: new Date("2022-05-12"),
-          y: [1831.43],
-        },
-        {
-          x: new Date("2022-05-13"),
-          y: [2261.32],
-        },
-        {
-          x: new Date("2022-05-14"),
-          y: [451561497.72],
-        },
-        {
-          x: new Date("2022-05-15"),
-          y: [451222282.92],
-        },
-        {
-          x: new Date("2022-05-16"),
-          y: [445795809.24],
-        },
-        {
-          x: new Date("2022-05-17"),
-          y: [418345769.97],
-        },
-        {
-          x: new Date("2022-05-18"),
-          y: [332834519.13],
-        },
-        {
-          x: new Date("2022-05-19"),
-          y: [130025169.05],
-        },
-      ],
+      data: axisData
+        //seriesDataX
+        
+        // {
+        //   x: seriesDataX[0],
+        //   y: seriesDataY[0],
+        // },
+        // {
+        //   x: seriesDataX[1],
+        //   y: seriesDataY[1],
+        // },
+        // {
+        //   x: seriesDataX[2],
+        //   y: seriesDataY[2],
+        // },
+        // {
+        //   x: seriesDataX[3],
+        //   y: seriesDataY[3],
+        // },
+        // {
+        //   x: seriesDataX[4],
+        //   y: seriesDataY[4],
+        // },
+        // {
+        //   x: seriesDataX[5],
+        //   y: seriesDataY[5],
+        // },
+        // {
+        //   x: new Date("2022-05-12"),
+        //   y: [1831.43],
+        // },
+        // {
+        //   x: new Date("2022-05-13"),
+        //   y: [2261.32],
+        // },
+        // {
+        //   x: new Date("2022-05-14"),
+        //   y: [451561497.72],
+        // },
+        // {
+        //   x: new Date("2022-05-15"),
+        //   y: [451222282.92],
+        // },
+        // {
+        //   x: new Date("2022-05-16"),
+        //   y: [445795809.24],
+        // },
+        // {
+        //   x: new Date("2022-05-17"),
+        //   y: [418345769.97],
+        // },
+        // {
+        //   x: new Date("2022-05-18"),
+        //   y: [332834519.13],
+        // },
+        // {
+        //   x: new Date("2022-05-19"),
+        //   y: [130025169.05],
+        // },
+      //],
     },
     {
       name: "DAO Voting Power",
       type: "line",
-      data: [
-        {
-          x: new Date("2022-05-12"),
-          y: [1831.43],
-        },
-        {
-          x: new Date("2022-05-13"),
-          y: [2261.32],
-        },
-        {
-          x: new Date("2022-05-14"),
-          y: [451561497.72],
-        },
-        {
-          x: new Date("2022-05-15"),
-          y: [451222282.92],
-        },
-        {
-          x: new Date("2022-05-16"),
-          y: [445795809.24],
-        },
-        {
-          x: new Date("2022-05-17"),
-          y: [418345769.97],
-        },
-        {
-          x: new Date("2022-05-18"),
-          y: [332834519.13],
-        },
-        {
-          x: new Date("2022-05-19"),
-          y: [130025169.05],
-        },
-      ],
+      data:  axisData
+          //seriesDataX
+        // {
+        //   x: new Date("2022-05-12"),
+        //   y: [1831.43],
+        // },
+        // {
+        //   x: new Date("2022-05-13"),
+        //   y: [2261.32],
+        // },
+        // {
+        //   x: new Date("2022-05-14"),
+        //   y: [451561497.72],
+        // },
+        // {
+        //   x: new Date("2022-05-15"),
+        //   y: [451222282.92],
+        // },
+        // {
+        //   x: new Date("2022-05-16"),
+        //   y: [445795809.24],
+        // },
+        // {
+        //   x: new Date("2022-05-17"),
+        //   y: [418345769.97],
+        // },
+        // {
+        //   x: new Date("2022-05-18"),
+        //   y: [332834519.13],
+        // },
+        // {
+        //   x: new Date("2022-05-19"),
+        //   y: [130025169.05],
+        // },
+      
     },
   ];
 
@@ -121,86 +183,90 @@ const DaoVotingPower = () => {
     yaxis: {
       title: {
         text: "Amount Locked",
+        //categories: [seriesDataY]
       },
     },
   };
+
+
 
   let seriesLine = [
     {
       name: "DAO Voting Power",
       type: "line",
-      data: [
-        {
-          x: new Date("2022-05-12"),
-          y: [1831.43],
-        },
-        {
-          x: new Date("2022-05-13"),
-          y: [2261.32],
-        },
-        {
-          x: new Date("2022-05-14"),
-          y: [451561497.72],
-        },
-        {
-          x: new Date("2022-05-15"),
-          y: [451222282.92],
-        },
-        {
-          x: new Date("2022-05-16"),
-          y: [445795809.24],
-        },
-        {
-          x: new Date("2022-05-17"),
-          y: [418345769.97],
-        },
-        {
-          x: new Date("2022-05-18"),
-          y: [332834519.13],
-        },
-        {
-          x: new Date("2022-05-19"),
-          y: [130025169.05],
-        },
-      ],
-    },
-    {
+      data: 
+        axisData
+    //     {
+    //       x: new Date("2022-05-12"),
+    //       y: [1831.43],
+    //     },
+    //     {
+    //       x: new Date("2022-05-13"),
+    //       y: [2261.32],
+    //     },
+    //     {
+    //       x: new Date("2022-05-14"),
+    //       y: [451561497.72],
+    //     },
+    //     {
+    //       x: new Date("2022-05-15"),
+    //       y: [451222282.92],
+    //     },
+    //     {
+    //       x: new Date("2022-05-16"),
+    //       y: [445795809.24],
+    //     },
+    //     {
+    //       x: new Date("2022-05-17"),
+    //       y: [418345769.97],
+    //     },
+    //     {
+    //       x: new Date("2022-05-18"),
+    //       y: [332834519.13],
+    //     },
+    //     {
+    //       x: new Date("2022-05-19"),
+    //       y: [130025169.05],
+    //     },
+       
+     },
+     {
       name: "DAO Voting Power",
       type: "line",
-      data: [
-        {
-          x: new Date("2022-05-12"),
-          y: [1831.43],
-        },
-        {
-          x: new Date("2022-05-13"),
-          y: [2261.32],
-        },
-        {
-          x: new Date("2022-05-14"),
-          y: [451561497.72],
-        },
-        {
-          x: new Date("2022-05-15"),
-          y: [451222282.92],
-        },
-        {
-          x: new Date("2022-05-16"),
-          y: [445795809.24],
-        },
-        {
-          x: new Date("2022-05-17"),
-          y: [418345769.97],
-        },
-        {
-          x: new Date("2022-05-18"),
-          y: [332834519.13],
-        },
-        {
-          x: new Date("2022-05-19"),
-          y: [130025169.05],
-        },
-      ],
+      data: axisData
+    //     {
+    //       x: new Date("2022-05-12"),
+    //       y: [1831.43],
+    //     },
+    //     {
+    //       x: new Date("2022-05-13"),
+    //       y: [2261.32],
+    //     },
+    //     {
+    //       x: new Date("2022-05-14"),
+    //       y: [451561497.72],
+    //     },
+    //     {
+    //       x: new Date("2022-05-15"),
+    //       y: [451222282.92],
+    //     },
+    //     {
+    //       x: new Date("2022-05-16"),
+    //       y: [445795809.24],
+    //     },
+    //     {
+    //       x: new Date("2022-05-17"),
+    //       y: [418345769.97],
+    //     },
+    //     {
+    //       x: new Date("2022-05-18"),
+    //       y: [332834519.13],
+    //     },
+    //     {
+    //       x: new Date("2022-05-19"),
+    //       y: [130025169.05],
+    //     },
+      
     },
   ];
   let optionsLine = {
@@ -240,6 +306,7 @@ const DaoVotingPower = () => {
       tooltip: {
         enabled: false,
       },
+      //categories: [seriesDataY]
     },
     yaxis: {
       tickAmount: 2,
@@ -247,6 +314,36 @@ const DaoVotingPower = () => {
   };
 
   // Handlers
+
+  // const series = [
+  //   {
+  //     name: "Temperature in Fahrenheit", //will be displayed on the y-axis
+  //     data: [seriesDataX]
+  //   }
+  // ];
+  // const options = {
+  //   chart: {
+  //     id: "line"
+  //   },
+  //   xaxis: {
+  //     categories: [seriesDataY] //will be displayed on the x-asis
+  //   }
+  // };
+
+  // const seriesLine = [
+  //   {
+  //     name: "Temperature in Fahrenheit", //will be displayed on the y-axis
+  //     data: [seriesDataY]
+  //   }
+  // ];
+  // const optionsLine = {
+  //   chart: {
+  //     id: "area"
+  //   },
+  //   xaxis: {
+  //     categories: [seriesDataX] //will be displayed on the x-asis
+  //   }
+  // };
 
   return (
     <>

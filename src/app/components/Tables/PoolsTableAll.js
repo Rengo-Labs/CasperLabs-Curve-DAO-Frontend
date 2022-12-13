@@ -1,8 +1,8 @@
 // REACT
-import React, { useState } from "react";
+import React from "react";
 // CUSTOM STYLING
-import "../../assets/css/curveButton.css";
 import "../../assets/css/common.css";
+import "../../assets/css/curveButton.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
@@ -14,12 +14,10 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { TablePagination, Typography } from "@mui/material";
 import { StyledEngineProvider } from "@mui/styled-engine";
 import { Link } from "react-router-dom";
 import logoAddress from "../../assets/img/usdc.png";
-import { Avatar, CardHeader } from "@material-ui/core";
+import { Avatar, CardHeader } from "@mui/material";
 
 // CONTENT
 const cells = ["Pool", "Base vAPY", "Rewards tAPR", "Volume", "TVL"];

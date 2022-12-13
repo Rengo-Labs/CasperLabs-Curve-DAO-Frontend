@@ -1,4 +1,4 @@
-import { Avatar, Card, CardHeader, Typography } from "@material-ui/core";
+
 import React from "react";
 import { Modal } from "react-bootstrap";
 import "../../assets/css/bootstrap.min.css";
@@ -8,6 +8,7 @@ import Torus from "../../assets/img/torus.png";
 import "../../assets/plugins/fontawesome/css/all.min.css";
 import "../../assets/plugins/fontawesome/css/fontawesome.min.css";
 import Exit from "../../assets/img/exit.svg";
+import { Avatar, Card, CardHeader, Typography } from "@mui/material";
 
 function WalletModal(props) {
   // console.log("props", props);
@@ -37,22 +38,6 @@ function WalletModal(props) {
 
       </Modal.Body>
       <Modal.Body>
-        <Card
-          onClick={() => {
-            props.torusLogin();
-            props.setSelectedWallet("Torus");
-            localStorage.setItem("selectedWallet", "Torus");
-          }}
-          className="custom-card"
-          style={{ borderRadius: "8px"}}
-        >
-          <CardHeader
-            avatar={<Avatar src={Torus} aria-label="Torus Wallet" />}
-            title="Torus Wallet"
-            subheader="Connect to Torus Waller"
-          />
-        </Card>
-        <hr></hr>
         <Card
           onClick={() => {
             props.casperLogin();

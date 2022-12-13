@@ -1,7 +1,7 @@
 // REACT
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 // MATERIAL UI
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -48,7 +48,6 @@ const CountDownTimer = () => {
 const DaoVotes = (props) => {
   // States
   const [timeLeft, setTimeLeft] = useState(CountDownTimer());
-  const history = useHistory();
 
   // Handlers
 

@@ -1,4 +1,4 @@
-import Torus from "@toruslabs/casper-embed";
+
 import { Signer } from "casper-js-sdk";
 import Cookies from "js-cookie";
 import { useSnackbar } from "notistack";
@@ -130,32 +130,7 @@ function HeaderHome(props) {
     // eslint-disable-next-line
   }, [props.selectedWallet]);
 
-  const login = async () => {
-    try {
-      setIsLoading(true);
-      torus = new Torus();
-      console.log("torus", torus);
-      await torus.init({
-        buildEnv: "testing",
-        showTorusButton: true,
-        network: SUPPORTED_NETWORKS[CHAINS.CASPER_TESTNET],
-      });
-      const loginaccs = await torus?.login();
-      props.setTorus(torus);
-      localStorage.setItem("torus", JSON.stringify(torus));
-      localStorage.setItem("Address", (loginaccs || [])[0]);
-      props.setActivePublicKey((loginaccs || [])[0]);
-      setAccount((loginaccs || [])[0] || "");
-      handleCloseWalletModal();
-    } catch (error) {
-      console.error(error);
-      await torus?.clearInit();
-      let variant = "Error";
-      enqueueSnackbar("Unable to Login", { variant });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
   // const changeProvider = async () => {
   //   const providerRes = await torus?.setProvider(SUPPORTED_NETWORKS[CHAINS.CASPER_MAINNET]);
   //   console.log("provider res", providerRes);
@@ -655,7 +630,6 @@ function HeaderHome(props) {
       <WalletModal
         show={openWalletModal}
         handleClose={handleCloseWalletModal}
-        torusLogin={login}
         casperLogin={connectToSigner}
         setSelectedWallet={props.setSelectedWallet}
       />

@@ -1,4 +1,3 @@
-import { Box, Button, Card, CardContent, Paper, Typography } from "@material-ui/core";
 import React from "react";
 import { Modal, Spinner } from "react-bootstrap";
 import { Alert } from "reactstrap";
@@ -10,6 +9,7 @@ import Exit from "../../assets/img/exit.svg"
 import TokenContent from "./TokenContent";
 import FutureAPYTable from "../Tables/FutureAPYTable";
 import GaugeRelativeWeight from "../Charts/GaugeRelativeWeight";
+import { Box, Button, Paper, Typography } from "@mui/material";
 
 function VoteForGaugeWeightModal(props) {
   console.log("props.cells", props.cells);

@@ -3,13 +3,15 @@ import React from "react";
 // CUSTOM STYLES
 import "../../assets/css/TextInput.css";
 // MATERIAL UI
-import { TextField } from "@material-ui/core";
 import { StyledEngineProvider } from "@mui/styled-engine";
 // FORMIK
 import { useField } from "formik";
+import { TextField } from "@mui/material";
 
 const TextInput = ({ name, ...otherProps }) => {
   const [field, meta] = useField(name);
+  console.log("Name in text input: ", field);
+  console.log("Meta in text input: ", meta);
 
   const configTextField = {
     ...field,

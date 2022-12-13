@@ -1,26 +1,16 @@
 // React
 import React from "react";
 // CUSTOM STYLING
-import "../../assets/css/style.css";
-import "../../assets/css/curveButton.css";
 import "../../assets/css/common.css";
+import "../../assets/css/curveButton.css";
 import "../../assets/css/factoryCreatePool.css";
+import "../../assets/css/style.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
 // MATERIAL UI
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
-import TextField from "@mui/material/TextField";
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-} from "@material-ui/core";
+import { FormControl, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material";
 
 // CONTENT
 
