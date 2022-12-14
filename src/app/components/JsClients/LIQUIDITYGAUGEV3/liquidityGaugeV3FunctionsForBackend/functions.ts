@@ -48,3 +48,43 @@ export const workingSupply = async (contractHash:string) => {
   
 };
 
+
+export const totalSupply = async (contractHash:string) => {
+
+    // We don't need hash- prefix so i'm removing it
+    await liquiditygaugev3.setContractHash(contractHash);
+  
+    //balanceof
+    const totalSupply = await liquiditygaugev3.totalSupply();
+    console.log(contractHash +` =... balanceof : ${totalSupply}`);
+  
+    return totalSupply;
+  
+};
+
+export const lpToken = async (contractHash:string) => {
+
+    // We don't need hash- prefix so i'm removing it
+    await liquiditygaugev3.setContractHash(contractHash);
+  
+    //balanceof
+    const lpToken = await liquiditygaugev3.lpToken();
+    console.log(contractHash +` =... lpToken : ${lpToken}`);
+  
+    return lpToken;
+  
+};
+
+export const inflationRate = async (contractHash:string) => {
+
+    // We don't need hash- prefix so i'm removing it
+    await liquiditygaugev3.setContractHash(contractHash);
+  
+    //balanceof
+    const inflationRate = await liquiditygaugev3.inflationRate();
+    console.log(contractHash +` =... lpToken : ${inflationRate}`);
+  
+    return inflationRate;
+  
+};
+

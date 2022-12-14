@@ -20,6 +20,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 // CASPER SDK
 import Axios from "axios";
+import PoolInfo from "../../../../components/Stats/PoolInfo";
 import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from 'notistack';
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from '../../../../components/blockchain/AccountHashes/Addresses';
@@ -44,6 +45,41 @@ const Minter = () => {
   const handleShowSigning = () => {
     setOpenSigning(true);
   };
+
+  let gauges = [
+    {
+      name: "compound",
+      hash: "32046b7f8ca95d736e6f3fc0daa4ef636d21fc5f79cd08b5e6e4fb57df9238b9"
+    },
+    {
+      name: "usdt",
+      hash: "d2cc3ac0c9c364ec0b8e969bd09eb151f9e1b57eecddb900e85abadf2332ebef"
+    },
+    {
+      name: "y",
+      hash: "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"
+    },
+    {
+      name: "busd",
+      hash: "b761da7d5ef67f8825c30c40df8b72feca4724eb666dba556b0e3f67778143e0"
+    },
+    {
+      name: "pax",
+      hash: "b761da7d5ef67f8825c30c40df8b72feca4724eb666dba556b0e3f67778143e0"
+    },
+    {
+      name: "ren",
+      hash: "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
+    },
+    {
+      name: "susdv2",
+      hash: "adddc432b76fabbb9ff5a694b5839065e89764c1e51df8cffdbdc34f8925876c"
+    },
+    {
+      name: "sbtc",
+      hash: "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
+    },
+  ]
 
   useEffect(() => {
     if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined)
@@ -162,6 +198,39 @@ const Minter = () => {
                           </div>
                         </Paper>
                       </Box>
+                      {/* GAUGE */}
+                      {gauges.map((gauge) => (
+                        <Box
+                          sx={{
+                            width: "100%",
+                          }}
+                          className="mt-4"
+                        >
+                          <Paper elevation={4}>
+                            <div className="py-5 px-4">
+                              {/* Heading */}
+                              <div className="col-12">
+                                <Typography
+                                  variant="h5"
+                                  gutterBottom
+                                  component="div"
+                                  fontWeight={900}
+                                >
+                                  {gauge.name}
+                                  {/* CRV APY: "Some value" */}
+                                </Typography>
+                              </div>
+                              {/* Pool Info */}
+                              <div className="col-12">
+                                <PoolInfo />
+                                <div className="w-100 my-3">
+                                  <Divider />
+                                </div>
+                              </div>                            
+                            </div>
+                          </Paper>
+                        </Box>
+                      ))}                      
                     </div>
                   </div>
                 </div>
