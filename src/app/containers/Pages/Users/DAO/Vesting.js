@@ -30,7 +30,7 @@ import SigningModal from "../../../../components/Modals/SigningModal";
 import HomeBanner from "../Home/HomeBanner";
 import { Button } from "@mui/material";
 import * as helpers from "../../../../components/Utils/Helpers";
-import { balanceOf, endTime, intialLocked, lockedOf, startTime, totalClaimed, vestedOf } from '../../../../components/JsClients/VESTINGESCROW/vestingEscrowFunctionsForBackend/functions'
+import { endTime, intialLocked, startTime, totalClaimed } from '../../../../components/JsClients/VESTINGESCROW/vestingEscrowFunctionsForBackend/functions'
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 // CONTENT

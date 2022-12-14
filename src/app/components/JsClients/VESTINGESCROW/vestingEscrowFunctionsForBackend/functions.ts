@@ -12,11 +12,11 @@ export const intialLocked = async (contractHash:string,account: string) => {
     // We don't need hash- prefix so i'm removing it
     await vestingescrow.setContractHash(contractHash);
   
-    //balanceof
-    const balance = await vestingescrow.intialLocked(account);
-    console.log(contractHash +` =... balanceof : ${balance}`);
+    //intitialLocked
+    const initialLocked = await vestingescrow.intialLocked(account);
+    console.log(contractHash +` =... intital Locked : ${intialLocked}`);
   
-    return balance;
+    return intialLocked;
   
 };
 
@@ -25,11 +25,11 @@ export const totalClaimed = async (contractHash:string,account: string) => {
     // We don't need hash- prefix so i'm removing it
     await vestingescrow.setContractHash(contractHash);
   
-    //balanceof
-    const balance = await vestingescrow.totalClaimed(account);
-    console.log(contractHash +` =... balanceof : ${balance}`);
+    //totalClaimed
+    const totalClaimed = await vestingescrow.totalClaimed(account);
+    console.log(contractHash +` =... totalClaimed : ${totalClaimed}`);
   
-    return balance;
+    return totalClaimed;
   
 };
 
@@ -41,7 +41,7 @@ export const startTime = async (contractHash:string) => {
   
     //balanceof
     const time = await vestingescrow.start_time();
-    console.log(contractHash +` =... balanceof : ${time}`);
+    console.log(contractHash +` =... time : ${time}`);
   
     return time;
   
@@ -54,7 +54,7 @@ export const endTime = async (contractHash:string) => {
   
     //balanceof
     const time = await vestingescrow.end_time();
-    console.log(contractHash +` =... balanceof : ${time}`);
+    console.log(contractHash +` =... time : ${time}`);
   
     return time;
   
