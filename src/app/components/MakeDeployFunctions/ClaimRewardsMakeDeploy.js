@@ -55,7 +55,7 @@ export async function claimRewardsMakeDeploy(setOpenSigning, enqueueSnackbar) {
         //   handleCloseSigning();
           setOpenSigning(false);
           let variant = "success";
-          enqueueSnackbar("Minted Successfully", { variant })
+          enqueueSnackbar("Rewards Claimed Successfully", { variant })
         //   providerRef.current.enqueueSnackbar("Funds Locked Successfully", { variant })
 
 
@@ -63,7 +63,7 @@ export async function claimRewardsMakeDeploy(setOpenSigning, enqueueSnackbar) {
         //   handleCloseSigning();
           setOpenSigning(false);
           let variant = "Error";
-          enqueueSnackbar("Unable to Mint", { variant })
+          enqueueSnackbar("Unable to Claim Rewards", { variant })
         //   providerRef.current.enqueueSnackbar("Unable to Lock Funds", { variant })
         }
       } catch {

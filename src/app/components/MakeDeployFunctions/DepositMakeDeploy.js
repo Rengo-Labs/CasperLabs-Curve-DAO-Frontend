@@ -63,7 +63,7 @@ export async function depositMakeDeploy(depositAmount, setOpenSigning, enqueueSn
         //   handleCloseSigning();
           setOpenSigning(false);
           let variant = "success";
-          enqueueSnackbar("Minted Successfully", { variant })
+          enqueueSnackbar("Deposit Successfully", { variant })
         //   providerRef.current.enqueueSnackbar("Funds Locked Successfully", { variant })
 
 
@@ -71,7 +71,7 @@ export async function depositMakeDeploy(depositAmount, setOpenSigning, enqueueSn
         //   handleCloseSigning();
           setOpenSigning(false);
           let variant = "Error";
-          enqueueSnackbar("Unable to Mint", { variant })
+          enqueueSnackbar("Unable to Deposit", { variant })
         //   providerRef.current.enqueueSnackbar("Unable to Lock Funds", { variant })
         }
       } catch {
