@@ -22,14 +22,14 @@ import * as blake from "blakejs";
 import { concat } from "@ethersproject/bytes";
 import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
-import {createRecipientAddress } from "./utils";
+import { createRecipientAddress } from "./utils";
 
 class VOTINGESCROWClient {
   private contractName: string = "votingescrow";
-  private contractHash: string= "votingescrow";
-  private contractPackageHash: string= "votingescrow";
+  private contractHash: string = "votingescrow";
+  private contractPackageHash: string = "votingescrow";
   private namedKeys: {
-    balanceOf:string
+    balances: string
     metadata: string;
     nonces: string;
     allowances: string;
@@ -38,7 +38,7 @@ class VOTINGESCROWClient {
     paused: string;
     minBalance: string;
     minAcceptQuorumPct: string;
-    minTime:string;
+    minTime: string;
     supportRequiredPct: string;
     voteTime: string;
     token: string;
@@ -56,11 +56,10 @@ class VOTINGESCROWClient {
     private nodeAddress: string,
     private chainName: string,
     private eventStreamAddress?: string,
-    
-  ) 
-  {
-    this.namedKeys= {
-      balanceOf:"null",
+
+  ) {
+    this.namedKeys = {
+      balances: "null",
       metadata: "null",
       nonces: "null",
       allowances: "null",
@@ -77,7 +76,7 @@ class VOTINGESCROWClient {
       user_point_history: "null",
       user_point_epoch: "null",
       slope_changes: "null",
-    }; 
+    };
   }
 
   // public async install(
@@ -91,8 +90,8 @@ class VOTINGESCROWClient {
   //   wasmPath: string
   // ) {
   //   const _tokenAddr = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(tokenAddr, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(tokenAddr, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     token_addr: utils.createRecipientAddress(_tokenAddr),
   //     name: CLValueBuilder.string(name),
@@ -126,8 +125,8 @@ class VOTINGESCROWClient {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -160,8 +159,8 @@ class VOTINGESCROWClient {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -194,8 +193,8 @@ class VOTINGESCROWClient {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -228,8 +227,8 @@ class VOTINGESCROWClient {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -254,17 +253,23 @@ class VOTINGESCROWClient {
   // }
 
   public async balanceOf(account: string) {
+    console.log("accountaccount", account);
+
     try {
 
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         account,
-        this.namedKeys.balanceOf
+        this.namedKeys.balances
       );
+      console.log("result", result);
+
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
 
     } catch (error) {
+      console.log("error", error);
+
       return "0";
     }
 
@@ -298,8 +303,8 @@ class VOTINGESCROWClient {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -341,8 +346,8 @@ class VOTINGESCROWClient {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -374,8 +379,8 @@ class VOTINGESCROWClient {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -414,7 +419,7 @@ class VOTINGESCROWClient {
       ""
     );
     const LIST_OF_NAMED_KEYS = [
-      'balance_of',
+      'balances',
       'nonces',
       'allowances',
       'minBalance',
@@ -496,9 +501,9 @@ class VOTINGESCROWClient {
     }
   }
 
-  public async userPointHistory(user:string, userEpoch:string) {
+  public async userPointHistory(user: string, userEpoch: string) {
     try {
-      const _user=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(user, "hex"))));
+      const _user = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(user, "hex"))));
       const user_epoch = CLValueBuilder.u256(userEpoch);
       const finalBytes = concat([CLValueParsers.toBytes(_user).unwrap(), CLValueParsers.toBytes(user_epoch).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
@@ -628,8 +633,8 @@ class VOTINGESCROWClient {
   //   paymentAmount: string
   // ) {
   //   const _addr = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(addr, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(addr, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     addr: utils.createRecipientAddress(_addr),
   //     //addr: utils.createRecipientAddress(addr),
@@ -645,7 +650,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -669,7 +674,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -693,7 +698,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -707,8 +712,8 @@ class VOTINGESCROWClient {
   //   paymentAmount: string
   // ) {
   //   const _addr = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(addr, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(addr, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     addr: utils.createRecipientAddress(_addr),
   //     value: CLValueBuilder.u256(value)
@@ -724,7 +729,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -752,7 +757,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -778,7 +783,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -804,7 +809,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -828,7 +833,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -842,8 +847,8 @@ class VOTINGESCROWClient {
   //   paymentAmount: string
   // ) {
   //   // const _newController = new CLByteArray(
-	// 	// 	Uint8Array.from(Buffer.from(newController, "hex"))
-	// 	// );
+  // 	// 	Uint8Array.from(Buffer.from(newController, "hex"))
+  // 	// );
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     // new_controller: utils.createRecipientAddress(_newController),
   //     new_controller: utils.createRecipientAddress(newController),
@@ -859,7 +864,7 @@ class VOTINGESCROWClient {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
