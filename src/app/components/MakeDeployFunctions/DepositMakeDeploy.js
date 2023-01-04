@@ -1,6 +1,6 @@
 import { CasperServiceByJsonRPC, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
 import { convertToStr } from "../ConvertToString/ConvertToString";
-import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
+import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";

@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import { CLPublicKey } from "casper-js-sdk";
 import curveLogo from "../../assets/img/Logo.png";
 import * as helpers from "../../assets/js/helpers";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
+import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 
 const DAO_POWER = gql`

@@ -23,9 +23,10 @@ import Axios from "axios";
 import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from "notistack";
 import { AppContext } from "../../containers/App/Application";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/AccountHashes/Addresses";
+import { ERC20_CRV_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import SigningModal from "../Modals/SigningModal";
 import { Alert, Button } from "@mui/material";
+import { VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 
 // CONTENT
 

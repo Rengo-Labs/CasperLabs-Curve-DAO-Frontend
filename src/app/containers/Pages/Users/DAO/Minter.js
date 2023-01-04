@@ -23,7 +23,8 @@ import Axios from "axios";
 import PoolInfo from "../../../../components/Stats/PoolInfo";
 import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from 'notistack';
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from '../../../../components/blockchain/AccountHashes/Addresses';
+import { ERC20_CRV_CONTRACT_HASH,  } from '../../../../components/blockchain/Hashes/ContractHashes';
+import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
 // CONTENT
 
 // COMPONENT FUNCTION

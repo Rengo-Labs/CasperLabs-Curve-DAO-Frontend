@@ -1,5 +1,5 @@
 import { CLPublicKey } from "casper-js-sdk";
-import { ERC20_CRV_CONTRACT_HASH, LIQUIDITY_GAUGE_V3_CONTRACT_HASH, GAUGE_CONTROLLER_CONTRACT_HASH, MINTER_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
+import { ERC20_CRV_CONTRACT_HASH, LIQUIDITY_GAUGE_V3_CONTRACT_HASH, GAUGE_CONTROLLER_CONTRACT_HASH, MINTER_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { gauges, n_gauges, gaugeTypes, gauge_type_names } from "../JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
 import { inflationRate, lpToken, workingSupply } from "../JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
 import { getMinted } from "../JsClients/MINTER/minterFunctionsForBackend/functions";

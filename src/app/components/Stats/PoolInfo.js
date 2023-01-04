@@ -4,7 +4,7 @@ import { Col, Row } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { balanceOf, totalSupply } from '../JsClients/VOTINGESCROW/QueryHelper/functions';
-import { ERC20_CRV_CONTRACT_HASH, LIQUIDITY_GAUGE_V3_CONTRACT_HASH, MINTER_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from '../blockchain/AccountHashes/Addresses';
+import { ERC20_CRV_CONTRACT_HASH, LIQUIDITY_GAUGE_V3_CONTRACT_HASH, MINTER_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from '../blockchain/Hashes/ContractHashes';
 import { useSnackbar } from 'notistack';
 import BigNumber from 'bignumber.js';
 import { CLPublicKey } from 'casper-js-sdk';

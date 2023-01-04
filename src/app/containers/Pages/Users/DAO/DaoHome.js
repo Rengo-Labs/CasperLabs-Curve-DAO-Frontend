@@ -7,7 +7,7 @@ import "../../../../assets/css/style.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from '../../../../components/blockchain/AccountHashes/Addresses';
+import { ERC20_CRV_CONTRACT_HASH, } from '../../../../components/blockchain/Hashes/ContractHashes';
 import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
 import DaoInfoMessage from "../../../../components/DAO/DaoInfoMessage";
 import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
@@ -22,6 +22,7 @@ import Typography from "@mui/material/Typography";
 import Axios from "axios";
 import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from 'notistack';
+import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
 
 // CONTENT
 
