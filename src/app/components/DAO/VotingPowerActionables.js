@@ -135,12 +135,12 @@ const VotingPowerActionables = (props) => {
       publicKeyHex !== undefined
     ) {
       async function fetchData() {
-        // let CRVLockBalance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        let CRVLockBalance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
         // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString(hex)", Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
         let CRVBalance = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
-        // console.log("CRV Locked Balance: ", CRVLockBalance);
+        console.log("CRV Locked Balance: ", CRVLockBalance);
         console.log("CRV Balance: ", CRVBalance);
-        // setCRVLockedBalance(CRVLockBalance);
+        setCRVLockedBalance(CRVLockBalance);
         setUserCRVBalance(CRVBalance / 10 ** 9);
       }
       fetchData();
