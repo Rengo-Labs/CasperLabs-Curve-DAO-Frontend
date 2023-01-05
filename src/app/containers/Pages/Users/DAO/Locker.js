@@ -27,7 +27,8 @@ import axios from "axios";
 import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from 'notistack';
 import { useEffect } from "react";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from '../../../../components/blockchain/AccountHashes/Addresses';
+import { ERC20_CRV_CONTRACT_HASH } from '../../../../components/blockchain/Hashes/ContractHashes';
+import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
 // CONTENT
 
 

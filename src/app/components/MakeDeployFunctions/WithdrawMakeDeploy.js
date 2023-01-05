@@ -1,5 +1,5 @@
 import { CasperServiceByJsonRPC, CLPublicKey, RuntimeArgs } from "casper-js-sdk";
-import { VOTING_ESCROW_CONTRACT_HASH } from "../../components/blockchain/AccountHashes/Addresses";
+import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { makeDeploy } from "../../components/blockchain/MakeDeploy/MakeDeploy";
 import { signdeploywithcaspersigner } from "../../components/blockchain/SignDeploy/SignDeploy";
 import { putdeploy } from "../../components/blockchain/PutDeploy/PutDeploy";

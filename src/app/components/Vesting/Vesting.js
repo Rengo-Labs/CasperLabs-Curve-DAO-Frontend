@@ -11,8 +11,7 @@ import CreateVoteModal from "../Modals/CreateVoteModal";
 import { useSnackbar } from "notistack";
 import {
   CREATE_VOTE_CONTRACT_HASH,
-  GAUGE_CONTROLLER_PACKAGE_HASH,
-} from "../blockchain/AccountHashes/Addresses";
+} from "../blockchain/Hashes/ContractHashes";
 import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
 // MATERIAL UI
 import TextField from "@mui/material/TextField";
@@ -37,6 +36,7 @@ import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
 import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
 import SigningModal from "../Modals/SigningModal";
+import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 
 // COMPONENT FUNCTION
 const Vesting = () => {

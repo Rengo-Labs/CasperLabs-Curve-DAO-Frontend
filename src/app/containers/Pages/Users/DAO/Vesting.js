@@ -17,7 +17,7 @@ import "../../../../assets/css/bootstrap.min.css";
 import "../../../../assets/css/common.css";
 import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/style.css";
-import { VESTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
+import { VESTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
 import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
 import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";

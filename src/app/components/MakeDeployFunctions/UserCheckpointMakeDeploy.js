@@ -1,5 +1,5 @@
 import { CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
-import { LIQUIDITY_GAUGE_V3_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
+import { LIQUIDITY_GAUGE_V3_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { makeUserCheckpointDeployWasm } from "../blockchain/MakeDeploy/MakeDeployWasm";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";

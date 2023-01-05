@@ -26,9 +26,9 @@ import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
-import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/AccountHashes/Addresses";
-import { CREATE_VOTE_CONTRACT_HASH } from "../blockchain/AccountHashes/Addresses";
+import { CREATE_VOTE_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { useSnackbar } from 'notistack';
+import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 
 // COMPONENT FUNCTION
 const GaugeVote = () => {

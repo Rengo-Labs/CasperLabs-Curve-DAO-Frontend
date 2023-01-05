@@ -42,7 +42,7 @@ import clock from "../../../../assets/img/clock.png";
 import cspr from "../../../../assets/img/cspr.png";
 import usdt from "../../../../assets/img/usdt.png";
 import wbtc from "../../../../assets/img/wbtc.png";
-import { GAUGE_CONTROLLER_CONTRACT_HASH } from "../../../../components/blockchain/AccountHashes/Addresses";
+import { GAUGE_CONTROLLER_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
 import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../../../../components/blockchain/RecipientAddress/RecipientAddress";

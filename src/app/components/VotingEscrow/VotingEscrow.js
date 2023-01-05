@@ -28,8 +28,7 @@ import {
 } from "casper-js-sdk";
 import {
   CREATE_VOTE_CONTRACT_HASH,
-  GAUGE_CONTROLLER_PACKAGE_HASH,
-} from "../blockchain/AccountHashes/Addresses";
+} from "../blockchain/Hashes/ContractHashes";
 import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
@@ -38,6 +37,7 @@ import { CHAINS, SUPPORTED_NETWORKS } from "../Headers/HeaderDAO";
 import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
 import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
 import SigningModal from "../Modals/SigningModal";
+import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 
 // COMPONENT FUNCTION
 const VotingEscrow = () => {

@@ -23,9 +23,11 @@ import Axios from "axios";
 import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from "notistack";
 import { AppContext } from "../../containers/App/Application";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/AccountHashes/Addresses";
+import { ERC20_CRV_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import SigningModal from "../Modals/SigningModal";
 import { Alert, Button } from "@mui/material";
+import { VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
+import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 
 // CONTENT
 
@@ -41,12 +43,12 @@ try {
 
 // COMPONENT FUNCTION
 const VotingPowerActionables = (props) => {
-  const {enqueueSnackbar} = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const { createLockMakeDeploy, withdrawMakeDeploy, increaseAndDecreaseAllowanceMakeDeploy, increaseAmountMakeDeploy, increaseUnlockTimeMakeDeploy } = useContext(AppContext);
 
   // States
   const [allowance, setAllowance] = useState(0);
-  const [userCRVBalance, setUserCRVBalance] = useState(10);
+  const [userCRVBalance, setUserCRVBalance] = useState(0);
   const [dateDisplay, setDateDisplay] = useState();
   const [date, setDate] = useState();
   const [lockTime, setLockTime] = useState("");
@@ -124,6 +126,29 @@ const VotingPowerActionables = (props) => {
     console.log("Voting Power Actionables", values);
   };
 
+  useEffect(() => {
+    let controller = new AbortController();
+    let publicKeyHex = localStorage.getItem("Address");
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      async function fetchData() {
+        let CRVLockBalance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString(hex)", Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        let CRVBalance = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        console.log("CRV Locked Balance: ", CRVLockBalance);
+        console.log("CRV Balance: ", CRVBalance);
+        setCRVLockedBalance(CRVLockBalance);
+        setUserCRVBalance(CRVBalance / 10 ** 9);
+      }
+      fetchData();
+    }
+    return () => {
+      controller.abort();
+    }
+  }, [localStorage.getItem("Address")]);
   return (
     <>
       <Formik
@@ -134,9 +159,9 @@ const VotingPowerActionables = (props) => {
         <Form>
           {/* WITHDRAWAL CHECK */}
           {new Date().getTime() < 1668038400000 ? (
-              <>
-                {/* <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between"> */}
-                  {/* <div className="col-12 col-lg-5">
+            <>
+              {/* <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between"> */}
+              {/* <div className="col-12 col-lg-5">
                     <TextInput
                       id="daoAmount"
                       label="Lock Amount"
@@ -156,8 +181,8 @@ const VotingPowerActionables = (props) => {
                       sx={{ width: "100%" }}
                     />
                   </div> */}
-                  {/* Max Button */}
-                  {/* <div className="col-12 col-lg-5 mt-3 mt-lg-0">
+              {/* Max Button */}
+              {/* <div className="col-12 col-lg-5 mt-3 mt-lg-0">
                     <div className="row no-gutters align-items-center">
                       <div className="col-12 col-lg-8">
                         <Button
@@ -186,8 +211,8 @@ const VotingPowerActionables = (props) => {
                     </div>
                   </div>
                 </div> */}
-                {/* ADD BUTTON */}
-                {/* <div className="row no-gutters justify-content-center">
+              {/* ADD BUTTON */}
+              {/* <div className="row no-gutters justify-content-center">
                   <div className="col-12 col-md-4">
                     <div className="btnWrapper my-4 text-center">
                       <Button
@@ -206,8 +231,8 @@ const VotingPowerActionables = (props) => {
                     </div>
                   </div>
                 </div> */}
-                {/* Lock Time */}
-                {/* <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
+              {/* Lock Time */}
+              {/* <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
                   <div className="col-12 col-lg-5 px-0">
                     <DateTimePicker
                       disabled
@@ -223,8 +248,8 @@ const VotingPowerActionables = (props) => {
                       sx={{ width: "100%" }}
                     />
                   </div> */}
-                  {/* Lock Time Dropdown */}
-                  {/* <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
+              {/* Lock Time Dropdown */}
+              {/* <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
                     <SelectInput
                       disabled
                       setDate={setDate}
@@ -235,8 +260,8 @@ const VotingPowerActionables = (props) => {
                     />
                   </div>
                 </div> */}
-                {/* INCREASE TIME */}
-                {/* <div className="row no-gutters justify-content-center">
+              {/* INCREASE TIME */}
+              {/* <div className="row no-gutters justify-content-center">
                   <div className="col-12 col-md-4">
                     <div className="btnWrapper my-4 text-center">
                       <Button
@@ -255,26 +280,26 @@ const VotingPowerActionables = (props) => {
                     </div>
                   </div>
                 </div> */}
-                {/* WITHDRAWAL BUTTON */}
-                <div className="row no-gutters justify-content-center">
-                  <div className="col-12 col-md-4">
-                    <div className="btnWrapper my-4 text-center">
-                      <Button
-                        variant="contained"
-                        size="large"
-                        style={{ backgroundColor: "#5300e8", color: "white" }}
-                        onClick={() => {
-                          console.log("Action Taken");
-                          // props.createLockMakeDeploy(lockAmount, date);
-                          withdrawMakeDeploy(setOpenSigning, enqueueSnackbar);
-                        }}
-                      >
-                        Withdraw
-                      </Button>
-                    </div>
+              {/* WITHDRAWAL BUTTON */}
+              <div className="row no-gutters justify-content-center">
+                <div className="col-12 col-md-4">
+                  <div className="btnWrapper my-4 text-center">
+                    <Button
+                      variant="contained"
+                      size="large"
+                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                      onClick={() => {
+                        console.log("Action Taken");
+                        // props.createLockMakeDeploy(lockAmount, date);
+                        withdrawMakeDeploy(setOpenSigning, enqueueSnackbar);
+                      }}
+                    >
+                      Withdraw
+                    </Button>
                   </div>
                 </div>
-              </>
+              </div>
+            </>
           ) : (
             <div>
               {/* Set Amount */}
@@ -362,7 +387,7 @@ const VotingPowerActionables = (props) => {
                   <div className="row no-gutters justify-content-center">
                     <div className="col-12 col-md-4">
                       <div className="btnWrapper my-4 text-center">
-                        { lockAmount * 10 ** 9 > allowance ? (
+                        {lockAmount * 10 ** 9 > allowance ? (
                           <Button
                             variant="contained"
                             size="large"
@@ -375,237 +400,237 @@ const VotingPowerActionables = (props) => {
                           >
                             Increase Allowance
                           </Button>
-                        ): (
-                        <Button
-                          variant="contained"
-                          size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
-                          onClick={() => {
-                            console.log("Action Taken");
-                            // props.createLockMakeDeploy(lockAmount, date);
-                            createLockMakeDeploy(lockAmount, date, setOpenSigning, enqueueSnackbar);
-                          }}
-                        >
-                          Create Lock
-                        </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            size="large"
+                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            onClick={() => {
+                              console.log("Action Taken");
+                              // props.createLockMakeDeploy(lockAmount, date);
+                              createLockMakeDeploy(lockAmount, date, setOpenSigning, enqueueSnackbar);
+                            }}
+                          >
+                            Create Lock
+                          </Button>
                         )}
                       </div>
                     </div>
                   </div>
                 </>
-            ) : (
+              ) : (
                 // FALSE CONDIIION WORK
-              // <div>
-              //   <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
+                // <div>
+                //   <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
 
-              //     <div className="col-12 col-lg-6">
-              //       <DateTimePicker
-              //         onChange={(e) => {
-              //           console.log("e.value", e.target.value);
-              //           console.log("new Date(e.target.value)", new Date(e.target.value));
-              //           setDate(new Date(e.target.value));
-              //           setDateDisplay(e.target.value);
-              //         }}
-              //         value={dateDisplay}
-              //         name="LockTimePicker"
-              //         label="Choose Lock Time"
-              //         sx={{ width: "100%" }}
-              //       />
-              //     </div>
-              //     {/* Max Button */}
-              //     <div className="col-12 col-lg-6">
-              //       <div className="row no-gutters align-items-center">
-              //         <Button
-              //           variant="contained"
-              //           size="large"
-              //           fullWidth
-              //           style={{ backgroundColor: "#5300e8", color: "white" }}
-              //           onClick={() => {
-              //             setLockAmount(userCRVBalance);
-              //           }}
-              //         >
-              //           Increase Lock Time
-              //         </Button>
+                //     <div className="col-12 col-lg-6">
+                //       <DateTimePicker
+                //         onChange={(e) => {
+                //           console.log("e.value", e.target.value);
+                //           console.log("new Date(e.target.value)", new Date(e.target.value));
+                //           setDate(new Date(e.target.value));
+                //           setDateDisplay(e.target.value);
+                //         }}
+                //         value={dateDisplay}
+                //         name="LockTimePicker"
+                //         label="Choose Lock Time"
+                //         sx={{ width: "100%" }}
+                //       />
+                //     </div>
+                //     {/* Max Button */}
+                //     <div className="col-12 col-lg-6">
+                //       <div className="row no-gutters align-items-center">
+                //         <Button
+                //           variant="contained"
+                //           size="large"
+                //           fullWidth
+                //           style={{ backgroundColor: "#5300e8", color: "white" }}
+                //           onClick={() => {
+                //             setLockAmount(userCRVBalance);
+                //           }}
+                //         >
+                //           Increase Lock Time
+                //         </Button>
 
-              //       </div>
-              //     </div>
-              //   </div>
-              //   <br />
-              //   <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
+                //       </div>
+                //     </div>
+                //   </div>
+                //   <br />
+                //   <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
 
-              //     <div className="col-12 col-lg-6">
-              //       <TextInput
-              //         id="daoAmount"
-              //         label="Lock Amount"
-              //         onChange={(e) => {
-              //           console.log("e", e.target.value);
-              //           if (userCRVBalance >= e.target.value)
-              //             setLockAmount(e.target.value);
-              //           else {
-              //             setLockAmount(userCRVBalance);
-              //           }
-              //         }}
-              //         value={lockAmount}
-              //         variant="filled"
-              //         type="number"
-              //         name="LockAmount"
-              //         sx={{ width: "100%" }}
-              //       />
-              //     </div>
-              //     {/* Max Button */}
-              //     <div className="col-12 col-lg-6">
-              //       <div className="row no-gutters align-items-center">
-              //         <Button
-              //           variant="contained"
-              //           size="large"
-              //           fullWidth
-              //           style={{ backgroundColor: "#5300e8", color: "white" }}
-              //           onClick={() => {
-              //             setLockAmount(userCRVBalance);
-              //           }}
-              //         >
-              //           Increase Lock Amount
-              //         </Button>
+                //     <div className="col-12 col-lg-6">
+                //       <TextInput
+                //         id="daoAmount"
+                //         label="Lock Amount"
+                //         onChange={(e) => {
+                //           console.log("e", e.target.value);
+                //           if (userCRVBalance >= e.target.value)
+                //             setLockAmount(e.target.value);
+                //           else {
+                //             setLockAmount(userCRVBalance);
+                //           }
+                //         }}
+                //         value={lockAmount}
+                //         variant="filled"
+                //         type="number"
+                //         name="LockAmount"
+                //         sx={{ width: "100%" }}
+                //       />
+                //     </div>
+                //     {/* Max Button */}
+                //     <div className="col-12 col-lg-6">
+                //       <div className="row no-gutters align-items-center">
+                //         <Button
+                //           variant="contained"
+                //           size="large"
+                //           fullWidth
+                //           style={{ backgroundColor: "#5300e8", color: "white" }}
+                //           onClick={() => {
+                //             setLockAmount(userCRVBalance);
+                //           }}
+                //         >
+                //           Increase Lock Amount
+                //         </Button>
 
-              //       </div>
-              //     </div>
-              //   </div>
-              // </div>
-              <>
-                <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
+                //       </div>
+                //     </div>
+                //   </div>
+                // </div>
+                <>
+                  <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
 
-                  <div className="col-12 col-lg-5">
-                    <TextInput
-                      id="daoAmount"
-                      label="Lock Amount"
-                      onChange={(e) => {
-                        console.log("e", e.target.value);
-                        if (userCRVBalance >= e.target.value)
-                          setLockAmount(e.target.value);
-                        else {
-                          setLockAmount(userCRVBalance);
-                        }
-                      }}
-                      value={lockAmount}
-                      variant="filled"
-                      type="number"
-                      name="LockAmount"
-                      sx={{ width: "100%" }}
-                    />
-                  </div>
-                  {/* Max Button */}
-                  <div className="col-12 col-lg-5 mt-3 mt-lg-0">
-                    <div className="row no-gutters align-items-center">
-                      <div className="col-12 col-lg-8">
-                        <Button
-                          variant="contained"
-                          size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
-                          onClick={() => {
+                    <div className="col-12 col-lg-5">
+                      <TextInput
+                        id="daoAmount"
+                        label="Lock Amount"
+                        onChange={(e) => {
+                          console.log("e", e.target.value);
+                          if (userCRVBalance >= e.target.value)
+                            setLockAmount(e.target.value);
+                          else {
                             setLockAmount(userCRVBalance);
-                          }}
-                        >
-                          Max
-                        </Button>
-                      </div>
-                      <div className="col-12 col-lg-4">
-                        <Typography
-                          variant="body1"
-                          gutterBottom
-                          component="span"
-                          fontWeight={900}
-                          sx={{ padding: "10px", fontSize: "1.5rem" }}
-                        >
-                          {userCRVBalance}
-                        </Typography>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* ADD BUTTON */}
-                <div className="row no-gutters justify-content-center">
-                  <div className="col-12 col-md-4">
-                    <div className="btnWrapper my-4 text-center">
-                      { lockAmount * 10 ** 9 > allowance ? (
-                        <Button
-                          variant="contained"
-                          size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
-                          onClick={() => {
-                            console.log("Action Taken");
-                            // props.createLockMakeDeploy(lockAmount, date);
-                            handleShowAllowance();
-                          }}
-                        >
-                          Increase Allowance
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="contained"
-                          size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
-                          onClick={() => {
-                            console.log("Action Taken");
-                            // props.createLockMakeDeploy(lockAmount, date);
-                            increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
-                          }}
-                        >
-                          Add Amount
-                        </Button>
-                      )}
-                      
-                    </div>
-                  </div>
-                </div>
-                {/* Lock Time */}
-                <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
-                  <div className="col-12 col-lg-5 px-0">
-                    <DateTimePicker
-                      onChange={(e) => {
-                        console.log("e.value", e.target.value);
-                        console.log("new Date(e.target.value)", new Date(e.target.value));
-                        setDate(new Date(e.target.value));
-                        setDateDisplay(e.target.value);
-                      }}
-                      value={dateDisplay}
-                      name="LockTimePicker"
-                      label="Choose Lock Time"
-                      sx={{ width: "100%" }}
-                    />
-                  </div>
-                  {/* Lock Time Dropdown */}
-                  <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
-                    <SelectInput
-                      setDate={setDate}
-                      setDateDisplay={setDateDisplay}
-                      name="LockTimeSelect"
-                      label="Select Lock Time"
-                      options={lockTimeOptions.map((item) => item.name)}
-                    />
-                  </div>
-                </div>
-                <div className="row no-gutters justify-content-center">
-                  <div className="col-12 col-md-4">
-                    <div className="btnWrapper my-4 text-center">
-                      <Button
-                        variant="contained"
-                        size="large"
-                        style={{ backgroundColor: "#5300e8", color: "white" }}
-                        onClick={() => {
-                          console.log("Action Taken");
-                          // props.createLockMakeDeploy(lockAmount, date);
-                          increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar);
+                          }
                         }}
-                      >
-                        Increase Time
-                      </Button>
+                        value={lockAmount}
+                        variant="filled"
+                        type="number"
+                        name="LockAmount"
+                        sx={{ width: "100%" }}
+                      />
+                    </div>
+                    {/* Max Button */}
+                    <div className="col-12 col-lg-5 mt-3 mt-lg-0">
+                      <div className="row no-gutters align-items-center">
+                        <div className="col-12 col-lg-8">
+                          <Button
+                            variant="contained"
+                            size="large"
+                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            onClick={() => {
+                              setLockAmount(userCRVBalance);
+                            }}
+                          >
+                            Max
+                          </Button>
+                        </div>
+                        <div className="col-12 col-lg-4">
+                          <Typography
+                            variant="body1"
+                            gutterBottom
+                            component="span"
+                            fontWeight={900}
+                            sx={{ padding: "10px", fontSize: "1.5rem" }}
+                          >
+                            {userCRVBalance}
+                          </Typography>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </>
-              
-            )}
-            {/* <div className="row no-gutters justify-content-center">
+                  {/* ADD BUTTON */}
+                  <div className="row no-gutters justify-content-center">
+                    <div className="col-12 col-md-4">
+                      <div className="btnWrapper my-4 text-center">
+                        {lockAmount * 10 ** 9 > allowance ? (
+                          <Button
+                            variant="contained"
+                            size="large"
+                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            onClick={() => {
+                              console.log("Action Taken");
+                              // props.createLockMakeDeploy(lockAmount, date);
+                              handleShowAllowance();
+                            }}
+                          >
+                            Increase Allowance
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            size="large"
+                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            onClick={() => {
+                              console.log("Action Taken");
+                              // props.createLockMakeDeploy(lockAmount, date);
+                              increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
+                            }}
+                          >
+                            Add Amount
+                          </Button>
+                        )}
+
+                      </div>
+                    </div>
+                  </div>
+                  {/* Lock Time */}
+                  <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
+                    <div className="col-12 col-lg-5 px-0">
+                      <DateTimePicker
+                        onChange={(e) => {
+                          console.log("e.value", e.target.value);
+                          console.log("new Date(e.target.value)", new Date(e.target.value));
+                          setDate(new Date(e.target.value));
+                          setDateDisplay(e.target.value);
+                        }}
+                        value={dateDisplay}
+                        name="LockTimePicker"
+                        label="Choose Lock Time"
+                        sx={{ width: "100%" }}
+                      />
+                    </div>
+                    {/* Lock Time Dropdown */}
+                    <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
+                      <SelectInput
+                        setDate={setDate}
+                        setDateDisplay={setDateDisplay}
+                        name="LockTimeSelect"
+                        label="Select Lock Time"
+                        options={lockTimeOptions.map((item) => item.name)}
+                      />
+                    </div>
+                  </div>
+                  <div className="row no-gutters justify-content-center">
+                    <div className="col-12 col-md-4">
+                      <div className="btnWrapper my-4 text-center">
+                        <Button
+                          variant="contained"
+                          size="large"
+                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          onClick={() => {
+                            console.log("Action Taken");
+                            // props.createLockMakeDeploy(lockAmount, date);
+                            increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar);
+                          }}
+                        >
+                          Increase Time
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+
+              )}
+              {/* <div className="row no-gutters justify-content-center">
               <div className="col-12 col-md-4">
                 <div className="btnWrapper my-4 text-center">
                   {lockAmount * 10 ** 9 > allowance ? (
@@ -671,10 +696,10 @@ const VotingPowerActionables = (props) => {
                 </div>
               </div>
             </div> */}
-            
-          </div>
+
+            </div>
           )}
-          
+
         </Form>
       </Formik >
       {/* Starting Voting Power */}
@@ -706,8 +731,8 @@ const VotingPowerActionables = (props) => {
           <GasPriorityFee />
         </div>
       </div> */}
-      <SigningModal show={ openSigning } />
-      <AllowanceModal show={openAllowance} signingModal={ setOpenSigning } getAllowance={getAllowance} handleClose={handleCloseAllowance} approvalAmount={(lockAmount * 10 ** 9) - allowance} tokenAmount={lockAmount} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
+      <SigningModal show={openSigning} />
+      <AllowanceModal show={openAllowance} signingModal={setOpenSigning} getAllowance={getAllowance} handleClose={handleCloseAllowance} approvalAmount={(lockAmount * 10 ** 9) - allowance} tokenAmount={lockAmount} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} />
     </>
   );
 };
