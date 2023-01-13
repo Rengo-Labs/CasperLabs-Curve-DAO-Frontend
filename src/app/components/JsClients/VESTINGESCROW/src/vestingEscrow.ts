@@ -30,11 +30,8 @@ import {
     private contractHash: string= "vestingescrow";
     private contractPackageHash: string= "vestingescrow";
     private namedKeys: {
-      balances:string
-      vested_of: string
-      locked_of: string
-      initial_locked: string
-      total_claimed: string
+      initialLocked: string
+      totalClaimed: string
     };
   
     private isListening = false;
@@ -49,11 +46,8 @@ import {
     ) 
     {
       this.namedKeys= {
-        balances:"null",
-        vested_of: "null",
-        locked_of: "null",
-        initial_locked: "null",
-        total_claimed: "null"
+        initialLocked: "null",
+        totalClaimed: "null"
       }; 
     }
   
@@ -72,9 +66,6 @@ import {
         ""
       );
       const LIST_OF_NAMED_KEYS = [
-        'balances',
-        'vested_of',
-        'locked_of',
         'initial_locked',
         'total_claimed',
         `${this.contractName}_package_hash`,
@@ -118,7 +109,7 @@ import {
         const result = await utils.contractDictionaryGetter(
           this.nodeAddress,
           owner,
-          this.namedKeys.initial_locked
+          this.namedKeys.initialLocked
         );
         const maybeValue = result.value().unwrap();
         return maybeValue.value().toString();
@@ -134,7 +125,7 @@ import {
         const result = await utils.contractDictionaryGetter(
           this.nodeAddress,
           owner,
-          this.namedKeys.total_claimed
+          this.namedKeys.totalClaimed
         );
         const maybeValue = result.value().unwrap();
         return maybeValue.value().toString();
