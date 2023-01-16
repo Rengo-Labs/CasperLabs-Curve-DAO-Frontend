@@ -6,7 +6,7 @@ import ApexChart from "react-apexcharts";
 // CONTENT
 
 // COMPONENT FUNCTION
-const GaugeRelativeWeight = ({chart}) => {
+const GaugeAllocationChart = ({chart}) => {
 
   console.log("chart data in chart screen..",chart);
 
@@ -102,4 +102,4 @@ const GaugeRelativeWeight = ({chart}) => {
   );
 };
 
-export default GaugeRelativeWeight;
+export default GaugeAllocationChart;

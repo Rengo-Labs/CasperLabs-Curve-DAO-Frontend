@@ -28,6 +28,7 @@ import SigningModal from "../Modals/SigningModal";
 import { Alert, Button } from "@mui/material";
 import { VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import {VOTING_ESCROW_CONTRACT_HASH} from "../blockchain/Hashes/ContractHashes"
 
 // CONTENT
 
@@ -55,6 +56,7 @@ const VotingPowerActionables = (props) => {
   const [lockAmount, setLockAmount] = useState(0);
   const [openA, setOpenA] = useState(false);
   const [startingVPower, setStartingVPower] = useState(0.0);
+  const [CRVLockedBalanceValue,setCRVLockedBalanceValue] = useState();
 
   const [openAllowance, setOpenAllowance] = useState(false);
   const handleCloseAllowance = () => {
@@ -140,7 +142,7 @@ const VotingPowerActionables = (props) => {
         let CRVBalance = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
         console.log("CRV Locked Balance: ", CRVLockBalance);
         console.log("CRV Balance: ", CRVBalance);
-        setCRVLockedBalance(CRVLockBalance);
+        setCRVLockedBalanceValue(CRVLockBalance);
         setUserCRVBalance(CRVBalance / 10 ** 9);
       }
       fetchData();
