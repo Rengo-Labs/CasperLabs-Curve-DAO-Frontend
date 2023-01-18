@@ -1,5 +1,6 @@
 // REACT
 import React, { useState } from "react";
+import * as helpers from "../../components/Utils/Helpers";
 // CHARTS
 import ApexChart from "react-apexcharts";
 
@@ -35,10 +36,17 @@ if(chart!==undefined){
  console.log("dataX:",seriesDataX);
  console.log("dataY:",seriesDataY);
 
+ const fixed = seriesDataY.map((i)=>{
+  return i.toFixed(3)
+})
+const time  = seriesDataX.map((i)=>{
+  return helpers.formatDateToHumanChart(i);
+})
+
  let axisData = [];
  for (var i=0; i<seriesDataX.length; i++) {
   axisData[i] = {
-      x: seriesDataX[i],
+      x: time[i],
       y: seriesDataY[i],
   };
 }
@@ -281,7 +289,7 @@ console.log("axisData",axisData);
       selection: {
         enabled: true,
         xaxis: {
-          min: new Date("13 May 2022").getTime(),
+          min: new Date("13 May 2021").getTime(),
           max: new Date().getTime(),
         },
       },
