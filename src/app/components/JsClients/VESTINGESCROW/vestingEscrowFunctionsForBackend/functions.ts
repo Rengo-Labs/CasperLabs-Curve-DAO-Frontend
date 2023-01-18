@@ -4,19 +4,20 @@ import { VESTINGESCROWClient } from "../src";
 const vestingescrow = new VESTINGESCROWClient(
     NODE_ADDRESS,
     "casper-test"!,
-    "http://44.208.234.65:9999/events/main"!,
+     "http://44.208.234.65:9999/events/main"!,
+    //"http://44.208.234.65:7777/rpc"!,
 );
 
-export const intialLocked = async (contractHash:string,account: string) => {
+export const initialLocked = async (contractHash:string,account: string) => {
 
     // We don't need hash- prefix so i'm removing it
     await vestingescrow.setContractHash(contractHash);
   
     //intitialLocked
     const initialLocked = await vestingescrow.intialLocked(account);
-    console.log(contractHash +` =... intital Locked : ${intialLocked}`);
+    console.log(contractHash +` =... intital Locked : ${initialLocked}`);
   
-    return intialLocked;
+    return initialLocked;
   
 };
 
