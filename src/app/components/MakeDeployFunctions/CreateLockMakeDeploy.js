@@ -1,13 +1,10 @@
-import { CasperServiceByJsonRPC, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
-import { convertToStr } from "../ConvertToString/ConvertToString";
+import { CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
 import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
-import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
-import { SUPPORTED_NETWORKS, CHAINS } from "../Headers/Header";
-import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
-import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
+import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
 import { checkpoint } from "../checkpoint/Checkpoint";
+import { convertToStr } from "../ConvertToString/ConvertToString";
 
 
 export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSigning, enqueueSnackbar) {

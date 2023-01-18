@@ -378,15 +378,6 @@ function HeaderDAO(props) {
             </li>
             <li>
               <Link
-                to="/dao"
-                className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
-              >
-                <span style={selectedNavStyle.Dao}>DAO</span>
-              </Link>
-            </li>
-            <li>
-              <Link
                 to="/gw-vote"
                 className=" align-items-center justify-content-center text-center"
                 style={{ color: "#5300e8" }}
