@@ -11,6 +11,7 @@ import "../../assets/css/bootstrap.min.css";
 import DateTimePicker from "../FormsUI/DateTimePicker";
 import SelectInput from "../FormsUI/SelectInput";
 import TextInput from "../FormsUI/TextInput";
+import LockTimeButtons from "../FormsUI/LockTimeButtons";
 // MATERIAL UI ICONS
 // MATERIAL UI
 import Paper from "@mui/material/Paper";
@@ -331,7 +332,7 @@ const VotingPowerActionables = (props) => {
                     {/* Max Button */}
                     <div className="col-12 col-lg-5 mt-3 mt-lg-0">
                       <div className="row no-gutters align-items-center">
-                        <div className="col-12 col-lg-8">
+                        <div className="col-12 col-lg-5">
                           <Button
                             variant="contained"
                             size="large"
@@ -374,7 +375,7 @@ const VotingPowerActionables = (props) => {
                       />
                     </div>
                     {/* Lock Time Dropdown */}
-                    <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
+                    {/* <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
                       <SelectInput
                         setDate={setDate}
                         setDateDisplay={setDateDisplay}
@@ -382,8 +383,20 @@ const VotingPowerActionables = (props) => {
                         label="Select Lock Time"
                         options={lockTimeOptions.map((item) => item.name)}
                       />
-                    </div>
+                    </div> */}
                   </div>
+                  {/* TIME BUTTONS */}
+                  {/* <div className=""> */}
+                    <LockTimeButtons
+                      date={date}
+                      setDate={setDate}
+                      setDateDisplay={setDateDisplay}
+                      
+                      // name="LockTimeSelect"
+                      // label="Select Lock Time"
+                      // options={lockTimeOptions.map((item) => item.name)}
+                    />
+                  {/* </div> */}
                   {/* CREATE LOCK BUTTON */}
                   <div className="row no-gutters justify-content-center">
                     <div className="col-12 col-md-4">
@@ -600,7 +613,7 @@ const VotingPowerActionables = (props) => {
                       />
                     </div>
                     {/* Lock Time Dropdown */}
-                    <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
+                    {/* <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
                       <SelectInput
                         setDate={setDate}
                         setDateDisplay={setDateDisplay}
@@ -608,7 +621,14 @@ const VotingPowerActionables = (props) => {
                         label="Select Lock Time"
                         options={lockTimeOptions.map((item) => item.name)}
                       />
-                    </div>
+                    </div> */}
+                    <LockTimeButtons
+                      date={date}
+                      setDate={setDate}
+                      setDateDisplay={setDateDisplay}
+            
+                    />
+
                   </div>
                   <div className="row no-gutters justify-content-center">
                     <div className="col-12 col-md-4">
