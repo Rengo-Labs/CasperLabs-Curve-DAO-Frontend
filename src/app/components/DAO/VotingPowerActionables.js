@@ -29,7 +29,6 @@ import SigningModal from "../Modals/SigningModal";
 import { Alert, Button } from "@mui/material";
 import { VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
-import {VOTING_ESCROW_CONTRACT_HASH} from "../blockchain/Hashes/ContractHashes"
 
 // CONTENT
 

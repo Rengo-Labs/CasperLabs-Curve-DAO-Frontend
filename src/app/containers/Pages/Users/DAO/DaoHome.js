@@ -23,6 +23,7 @@ import Axios from "axios";
 import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from 'notistack';
 import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
+import { pools } from "../../../../components/Charts/ChartHelper/ChartHelpers";
 
 // CONTENT
 
@@ -33,6 +34,7 @@ const DaoHome = () => {
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
+  const [gaugeRelativeWeightChart, setGaugeRelativeWeightChart] = useState([]);
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
   );
@@ -75,6 +77,19 @@ const DaoHome = () => {
       })
   }
 
+
+  useEffect(() => {
+    let gauge_relative_weight = 100;
+    let gaugeSum = Object.values(pools).reduce((a, b) => +a + +gauge_relative_weight, 0)
+    console.log("gaugeSum...", gaugeSum);
+    let piegauges = Object.values(pools).map(v => ({ name: v.name, y: gauge_relative_weight / gaugeSum }))
+    console.log("piegauges...", piegauges);
+    let highest = piegauges.map(data => data.y).indexOf(Math.max(...piegauges.map(data => data.y)))
+    piegauges[highest].sliced = true;
+    piegauges[highest].selected = true;
+    console.log("piegauges final...", piegauges);
+    setGaugeRelativeWeightChart(piegauges);
+  }, [])
   return (
     <>
       <div className="home-section home-full-height">
@@ -117,7 +132,7 @@ const DaoHome = () => {
                                   Gauge Relative Weight
                                 </Typography>
                               </div>
-                              <GaugeRelativeWeight />
+                              <GaugeRelativeWeight chart={gaugeRelativeWeightChart} />
                             </div>
                           </div>
                         </Paper>
