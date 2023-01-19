@@ -891,10 +891,10 @@ const GaugeWeightVote = () => {
                                         {/* <MenuItem value={"USDT"}>USDT</MenuItem>
                                         <MenuItem value={"BTC"}>BTC</MenuItem>
                                         <MenuItem value={"CSPR"}>CSPR</MenuItem> */}
-                                        {weightGauges.map((gauge) => {
+                                        {weightGauges.map((gauge, key) => {
                                           return (
-                                            <MenuItem value={gauge}>
-                                              gauge
+                                            <MenuItem key={key}>
+                                              {gauge}
                                             </MenuItem>
                                           );
                                         })}
@@ -1294,9 +1294,13 @@ const GaugeWeightVote = () => {
                                     <MenuItem value="Select a Gauge">
                                       <em>Select a Gauge</em>
                                     </MenuItem>
-                                    <MenuItem value={"USDT"}>USDT</MenuItem>
-                                    <MenuItem value={"BTC"}>BTC</MenuItem>
-                                    <MenuItem value={"CSPR"}>CSPR</MenuItem>
+                                    {Object.keys(gaugesNames).map(
+                                      (item, key) => (
+                                        <MenuItem key={key}>
+                                          {gaugesNames[item]} {item}
+                                        </MenuItem>
+                                      )
+                                    )}
                                   </Select>
                                 </FormControl>
                               </div>
