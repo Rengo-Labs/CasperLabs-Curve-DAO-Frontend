@@ -180,6 +180,7 @@ const GaugeWeightVote = () => {
   const [showVotes, setShowVotes] = useState(true);
   const [users, setUsers] = useState("");
   const [open, setOpen] = useState(false);
+  const [selectedGauge, setSelectedGauge] = "";
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -200,6 +201,26 @@ const GaugeWeightVote = () => {
   const handleShowVoteForGaugeWeightModal = () => {
     setVoteForGaugeWeightModal(true);
   };
+
+  const handleSelectedGauge = async (event) => {
+    if (selectedGauge !== "") {
+      // statsStore.state.calculatedWeights[oldval] = statsStore.state.gaugesWeights[oldval]
+    }
+
+    setSelectedGauge(event.target.value);
+
+    this.outcomeWeights = [];
+    this.oldAPY = null;
+    this.newAPY = null;
+
+    // this.last_user_vote = await this.gaugeController.methods
+    //   .last_user_vote(contract.default_account, this.selectedGauge)
+    //   .call();
+    // this.old_slope = await this.gaugeController.methods
+    //   .vote_user_slopes(contract.default_account, this.selectedGauge)
+    //   .call();
+  };
+
   // Queries
   useEffect(() => {
     if (
@@ -839,7 +860,7 @@ const GaugeWeightVote = () => {
                             <Formik
                               initialValues={initialValues}
                               validationSchema={validationSchema}
-                              onSubmit={onSubmitGaugeWeightVote}
+                              // onSubmit={onSubmitGaugeWeightVote}
                             >
                               <Form>
                                 <div className="row no-gutters justify-content-center">
@@ -1289,15 +1310,18 @@ const GaugeWeightVote = () => {
                                     labelId="select-gauge-label"
                                     id="gauge-select"
                                     value={boostGauge}
-                                    onChange={handleBoostGaugeChange}
+                                    onChange={(event) => {
+                                      handleSelectedGauge(event);
+                                    }}
                                   >
                                     <MenuItem value="Select a Gauge">
                                       <em>Select a Gauge</em>
                                     </MenuItem>
                                     {Object.keys(gaugesNames).map(
                                       (item, key) => (
-                                        <MenuItem key={key}>
-                                          {gaugesNames[item]} {item}
+                                        <MenuItem key={key} value={item}>
+                                          {gaugesNames[item]} {item.slice(0, 6)}{" "}
+                                          ... {item.slice(-6)}
                                         </MenuItem>
                                       )
                                     )}
