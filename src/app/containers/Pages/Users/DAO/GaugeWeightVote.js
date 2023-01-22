@@ -178,8 +178,9 @@ const GaugeWeightVote = () => {
   const [selectedWeightGauge, setSelectedWeightGauge] = useState([]); //this has to be return from backend
   const [filteredVotes, setFilteredVotes] = useState([]);
   const [showVotes, setShowVotes] = useState(true);
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState("");
   const [open, setOpen] = useState(false);
+  const [selectedGauge, setSelectedGauge] = "";
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -200,24 +201,43 @@ const GaugeWeightVote = () => {
   const handleShowVoteForGaugeWeightModal = () => {
     setVoteForGaugeWeightModal(true);
   };
+
+  const handleSelectedGauge = async (event) => {
+    if (selectedGauge !== "") {
+      // statsStore.state.calculatedWeights[oldval] = statsStore.state.gaugesWeights[oldval]
+    }
+
+    setSelectedGauge(event.target.value);
+
+    this.outcomeWeights = [];
+    this.oldAPY = null;
+    this.newAPY = null;
+
+    // this.last_user_vote = await this.gaugeController.methods
+    //   .last_user_vote(contract.default_account, this.selectedGauge)
+    //   .call();
+    // this.old_slope = await this.gaugeController.methods
+    //   .vote_user_slopes(contract.default_account, this.selectedGauge)
+    //   .call();
+  };
+
   // Queries
   useEffect(() => {
-    if (showVotes) {
-      setUsers(
-        "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1"
-      );
-    } else {
-      setUsers(
-        "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1"
-      );
+    if (
+      activePublicKey !== null &&
+      activePublicKey !== undefined &&
+      activePublicKey !== "null"
+    ) {
+      setUsers(activePublicKey);
     }
-  }, [showVotes]);
+  }, [activePublicKey]);
 
   const gaugeWeight = useQuery(GAUGE_WEIGHT, {
     variables: {
       user: users,
     },
   });
+  // console.log("Users: ", users);
   console.log("this is data of gauge weight: ", gaugeWeight.data);
   console.log("this is error of gauge weight: ", gaugeWeight.error);
 
@@ -237,7 +257,7 @@ const GaugeWeightVote = () => {
     if (gaugeWeight) {
       console.log("GaugeWeightByUserData", gaugeWeight.data?.gaugeVotesByUser);
       setGaugeWeightData(
-        gaugeWeight.data?.gaugeVotesByUser != undefined
+        gaugeWeight.data?.gaugeVotesByUser !== undefined
           ? gaugeWeight.data?.gaugeVotesByUser
           : []
       );
@@ -248,12 +268,13 @@ const GaugeWeightVote = () => {
         gaugeVotesByTime.data?.gaugeVotesByTime
       );
       setGaugeVoteTime(
-        gaugeWeight.data?.gaugeVotesByUser != undefined
-          ? gaugeWeight.data?.gaugeVotesByUser
+        gaugeVotesByTime.data?.gaugeVotesByTime !== undefined
+          ? gaugeVotesByTime.data?.gaugeVotesByTime
           : []
       );
+      // setGaugeVoteTime(gaugeVotesByTime.data?.gaugeVotesByTime);
     }
-  }, [gaugeWeight]);
+  }, [gaugeWeight, gaugeVotesByTime]);
 
   let gaugesNames = {
     "32046b7f8ca95d736e6f3fc0daa4ef636d21fc5f79cd08b5e6e4fb57df9238b9":
@@ -407,6 +428,7 @@ const GaugeWeightVote = () => {
   const onSubmitGaugeWeightVote = (values, props) => {
     console.log("Gauge Weight Vote: ", values);
   };
+
   async function voteForGaugeWeightsMakeDeploy(gauge, votingPowerPercentage) {
     if (votingPowerPercentage == 0) {
       let variant = "Error";
@@ -838,7 +860,7 @@ const GaugeWeightVote = () => {
                             <Formik
                               initialValues={initialValues}
                               validationSchema={validationSchema}
-                              onSubmit={onSubmitGaugeWeightVote}
+                              // onSubmit={onSubmitGaugeWeightVote}
                             >
                               <Form>
                                 <div className="row no-gutters justify-content-center">
@@ -890,10 +912,10 @@ const GaugeWeightVote = () => {
                                         {/* <MenuItem value={"USDT"}>USDT</MenuItem>
                                         <MenuItem value={"BTC"}>BTC</MenuItem>
                                         <MenuItem value={"CSPR"}>CSPR</MenuItem> */}
-                                        {weightGauges.map((gauge) => {
+                                        {weightGauges.map((gauge, key) => {
                                           return (
-                                            <MenuItem value={gauge}>
-                                              gauge
+                                            <MenuItem key={key}>
+                                              {gauge}
                                             </MenuItem>
                                           );
                                         })}
@@ -1192,7 +1214,7 @@ const GaugeWeightVote = () => {
                             <div className="row no-gutters justify-content-center mt-2">
                               <div className="col-12 col-md-8">
                                 <div className="row no-gutters w-100">
-                                  <div className="col-12 col-md-6 col-lg-7 text-center w-100 px-2">
+                                  {/* <div className="col-12 col-md-6 col-lg-7 text-center w-100 px-2">
                                     <div className="btnWrapper">
                                       <Button
                                         onClick={() => {
@@ -1210,24 +1232,54 @@ const GaugeWeightVote = () => {
                                         Show Last Week Votes
                                       </Button>
                                     </div>
-                                  </div>
-                                  <div className="col-12 col-md-6 col-lg-5 mt-2 mt-md-0 text-center w-100 px-2">
+                                  </div> */}
+                                  <div className="col-12 col-md-12 col-lg-12 text-center w-100 px-2">
                                     <div className="btnWrapper">
-                                      <Button
-                                        onClick={() => {
-                                          setShowVotes(false);
-                                          console.log("showVotes", showVotes);
-                                        }}
-                                        variant="contained"
-                                        size="large"
-                                        style={{
-                                          backgroundColor: "#5300e8",
-                                          color: "white",
-                                          width: "100%",
-                                        }}
-                                      >
-                                        Show My Votes
-                                      </Button>
+                                      {showVotes ? (
+                                        <Button
+                                          onClick={() => {
+                                            if (
+                                              activePublicKey !== null &&
+                                              activePublicKey !== undefined &&
+                                              activePublicKey !== "null"
+                                            ) {
+                                              setShowVotes(false);
+                                            } else {
+                                              let variant = "error";
+                                              enqueueSnackbar(
+                                                "Signer Not Connected",
+                                                { variant }
+                                              );
+                                            }
+                                            console.log("showVotes", showVotes);
+                                          }}
+                                          variant="contained"
+                                          size="large"
+                                          style={{
+                                            backgroundColor: "#5300e8",
+                                            color: "white",
+                                            width: "100%",
+                                          }}
+                                        >
+                                          Show My Votes
+                                        </Button>
+                                      ) : (
+                                        <Button
+                                          onClick={() => {
+                                            setShowVotes(true);
+                                            console.log("showVotes", showVotes);
+                                          }}
+                                          variant="contained"
+                                          size="large"
+                                          style={{
+                                            backgroundColor: "#5300e8",
+                                            color: "white",
+                                            width: "100%",
+                                          }}
+                                        >
+                                          Show All Votes
+                                        </Button>
+                                      )}
                                     </div>
                                   </div>
                                 </div>
@@ -1258,14 +1310,21 @@ const GaugeWeightVote = () => {
                                     labelId="select-gauge-label"
                                     id="gauge-select"
                                     value={boostGauge}
-                                    onChange={handleBoostGaugeChange}
+                                    onChange={(event) => {
+                                      handleSelectedGauge(event);
+                                    }}
                                   >
                                     <MenuItem value="Select a Gauge">
                                       <em>Select a Gauge</em>
                                     </MenuItem>
-                                    <MenuItem value={"USDT"}>USDT</MenuItem>
-                                    <MenuItem value={"BTC"}>BTC</MenuItem>
-                                    <MenuItem value={"CSPR"}>CSPR</MenuItem>
+                                    {Object.keys(gaugesNames).map(
+                                      (item, key) => (
+                                        <MenuItem key={key} value={item}>
+                                          {gaugesNames[item]} {item.slice(0, 6)}{" "}
+                                          ... {item.slice(-6)}
+                                        </MenuItem>
+                                      )
+                                    )}
                                   </Select>
                                 </FormControl>
                               </div>
@@ -1277,9 +1336,7 @@ const GaugeWeightVote = () => {
                             <div className="row no-gutters mt-3">
                               <div className="col-12">
                                 <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 justify-content-center">
-                                  <TableContainer
-                                    sx={{ p: 3, overflow: "hidden" }}
-                                  >
+                                  <TableContainer sx={{ p: 3 }}>
                                     <Table aria-label="Gauge Weight Vote History">
                                       <TableHead
                                         sx={{
@@ -1375,107 +1432,237 @@ const GaugeWeightVote = () => {
                                         </TableRow>
                                       </TableHead>
                                       <TableBody id={"GWVoteHistoryTableBody"}>
-                                        {(rowsPerPage > 0
-                                          ? showVotes
-                                            ? gaugeWeightData
-                                            : gaugeVoteTime?.slice(
+                                        {showVotes
+                                          ? gaugeVoteTime
+                                              ?.slice(
                                                 page * rowsPerPage,
                                                 page * rowsPerPage + rowsPerPage
                                               )
-                                          : gaugeWeightData
-                                        ).map((item) => {
-                                          //filteredVotes?.map((item) => {
-                                          console.log("this runs!");
-                                          return (
-                                            <TableRow>
-                                              <TableCell
-                                                //key={item.index}
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                <Tooltip title={item.time}>
-                                                  <Avatar
-                                                    src={clock}
-                                                    aria-label="clock"
-                                                  />
-                                                </Tooltip>
-                                              </TableCell>
-                                              <TableCell
-                                                //key={item.user}
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                <Link
-                                                  style={{ color: "#5300E8" }}
-                                                  to="/"
-                                                  className="tableCellLink font-weight-bold"
-                                                >
-                                                  {helpers.shortenAddress(
-                                                    item.user
-                                                  )}
-                                                </Link>
-                                              </TableCell>
-                                              <TableCell
-                                                //key={item.index}
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                {(item.veCRV / 1e9).toFixed(2)}
-                                              </TableCell>
-                                              <TableCell
-                                                //key={item.index}
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                {helpers.formatNumber(
-                                                  item.totalveCRV / 1e9
-                                                )}
-                                              </TableCell>
-                                              <TableCell
-                                                //key={item.index}
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                <Link
-                                                  style={{ color: "#5300E8" }}
-                                                  to="/"
-                                                  className="tableCellLink font-weight-bold"
-                                                >
-                                                  {/* {getGaugeAddress(item.gauge)} */}
-                                                  {helpers.shortenAddress(
-                                                    item.gauge
-                                                  )}
-                                                </Link>
-                                              </TableCell>
-                                              <TableCell
-                                                //key={item.index}
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                <Link
-                                                  style={{ color: "#5300E8" }}
-                                                  to="/"
-                                                  className="tableCellLink"
-                                                >
-                                                  {item.weight / 100}%
-                                                </Link>
-                                              </TableCell>
-                                              <TableCell
-                                                //key={item.index}
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                {(
-                                                  item.total_weight / 1e9
-                                                ).toFixed(2)}
-                                              </TableCell>
-                                              <TableCell
-                                                //key={item.index}
-                                                sx={{ textAlign: "center" }}
-                                              >
-                                                <PieChartIcon
-                                                  onClick={() => {
-                                                    handleTableGraph(item);
-                                                  }}
-                                                  style={{ color: "#D29300" }}
-                                                />
-                                              </TableCell>
-                                            </TableRow>
-                                          );
-                                        })}
+                                              .map((item, key) => {
+                                                console.log("In votes by time");
+                                                return (
+                                                  <TableRow key={key}>
+                                                    <TableCell
+                                                      //key={item.index}
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      <Tooltip
+                                                        title={item.time}
+                                                      >
+                                                        <Avatar
+                                                          src={clock}
+                                                          aria-label="clock"
+                                                        />
+                                                      </Tooltip>
+                                                    </TableCell>
+                                                    <TableCell
+                                                      //key={item.user}
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      <Link
+                                                        style={{
+                                                          color: "#5300E8",
+                                                        }}
+                                                        to="/"
+                                                        className="tableCellLink font-weight-bold"
+                                                      >
+                                                        {helpers.shortenAddress(
+                                                          item.user
+                                                        )}
+                                                      </Link>
+                                                    </TableCell>
+                                                    <TableCell
+                                                      //key={item.index}
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      {(
+                                                        item.veCRV / 1e9
+                                                      ).toFixed(2)}
+                                                    </TableCell>
+                                                    <TableCell
+                                                      //key={item.index}
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      {helpers.formatNumber(
+                                                        item.totalveCRV / 1e9
+                                                      )}
+                                                    </TableCell>
+                                                    <TableCell
+                                                      //key={item.index}
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      <Link
+                                                        style={{
+                                                          color: "#5300E8",
+                                                        }}
+                                                        to="/"
+                                                        className="tableCellLink font-weight-bold"
+                                                      >
+                                                        {/* {getGaugeAddress(item.gauge)} */}
+                                                        {helpers.shortenAddress(
+                                                          item.gauge
+                                                        )}
+                                                      </Link>
+                                                    </TableCell>
+                                                    <TableCell
+                                                      //key={item.index}
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      <Link
+                                                        style={{
+                                                          color: "#5300E8",
+                                                        }}
+                                                        to="/"
+                                                        className="tableCellLink"
+                                                      >
+                                                        {item.weight / 100}%
+                                                      </Link>
+                                                    </TableCell>
+                                                    <TableCell
+                                                      //key={item.index}
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      {(
+                                                        item.total_weight / 1e9
+                                                      ).toFixed(2)}
+                                                    </TableCell>
+                                                    <TableCell
+                                                      //key={item.index}
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      <PieChartIcon
+                                                        onClick={() => {
+                                                          handleTableGraph(
+                                                            item
+                                                          );
+                                                        }}
+                                                        style={{
+                                                          color: "#D29300",
+                                                        }}
+                                                      />
+                                                    </TableCell>
+                                                  </TableRow>
+                                                );
+                                              })
+                                          : gaugeWeightData.map((item, key) => {
+                                              //filteredVotes?.map((item) => {
+                                              console.log("this runs!");
+                                              return (
+                                                <TableRow key={key}>
+                                                  <TableCell
+                                                    //key={item.index}
+                                                    sx={{ textAlign: "center" }}
+                                                  >
+                                                    <Tooltip title={item.time}>
+                                                      <Avatar
+                                                        src={clock}
+                                                        aria-label="clock"
+                                                      />
+                                                    </Tooltip>
+                                                  </TableCell>
+                                                  <TableCell
+                                                    //key={item.user}
+                                                    sx={{ textAlign: "center" }}
+                                                  >
+                                                    <Link
+                                                      style={{
+                                                        color: "#5300E8",
+                                                      }}
+                                                      to="/"
+                                                      className="tableCellLink font-weight-bold"
+                                                    >
+                                                      {helpers.shortenAddress(
+                                                        item.user
+                                                      )}
+                                                    </Link>
+                                                  </TableCell>
+                                                  <TableCell
+                                                    //key={item.index}
+                                                    sx={{ textAlign: "center" }}
+                                                  >
+                                                    {(item.veCRV / 1e9).toFixed(
+                                                      2
+                                                    )}
+                                                  </TableCell>
+                                                  <TableCell
+                                                    //key={item.index}
+                                                    sx={{ textAlign: "center" }}
+                                                  >
+                                                    {helpers.formatNumber(
+                                                      item.totalveCRV / 1e9
+                                                    )}
+                                                  </TableCell>
+                                                  <TableCell
+                                                    //key={item.index}
+                                                    sx={{ textAlign: "center" }}
+                                                  >
+                                                    <Link
+                                                      style={{
+                                                        color: "#5300E8",
+                                                      }}
+                                                      to="/"
+                                                      className="tableCellLink font-weight-bold"
+                                                    >
+                                                      {/* {getGaugeAddress(item.gauge)} */}
+                                                      {helpers.shortenAddress(
+                                                        item.gauge
+                                                      )}
+                                                    </Link>
+                                                  </TableCell>
+                                                  <TableCell
+                                                    //key={item.index}
+                                                    sx={{ textAlign: "center" }}
+                                                  >
+                                                    <Link
+                                                      style={{
+                                                        color: "#5300E8",
+                                                      }}
+                                                      to="/"
+                                                      className="tableCellLink"
+                                                    >
+                                                      {item.weight / 100}%
+                                                    </Link>
+                                                  </TableCell>
+                                                  <TableCell
+                                                    //key={item.index}
+                                                    sx={{ textAlign: "center" }}
+                                                  >
+                                                    {(
+                                                      item.total_weight / 1e9
+                                                    ).toFixed(2)}
+                                                  </TableCell>
+                                                  <TableCell
+                                                    //key={item.index}
+                                                    sx={{ textAlign: "center" }}
+                                                  >
+                                                    <PieChartIcon
+                                                      onClick={() => {
+                                                        handleTableGraph(item);
+                                                      }}
+                                                      style={{
+                                                        color: "#D29300",
+                                                      }}
+                                                    />
+                                                  </TableCell>
+                                                </TableRow>
+                                              );
+                                            })}
                                       </TableBody>
                                       <TableFooter>
                                         <TableRow>

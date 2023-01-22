@@ -12,7 +12,7 @@ import GaugeRelativeWeight from "../Charts/GaugeRelativeWeight";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
 function VoteForGaugeWeightModal(props) {
-  console.log("props.cells", props.cells);
+  console.log("props.cells", props);
   return (
     <Modal size="lg" centered show={props.show} onHide={props.handleClose}>
       <Modal.Body style={{
@@ -58,7 +58,7 @@ function VoteForGaugeWeightModal(props) {
                       </span>
                     </Typography>
                   </div>
-                  <GaugeRelativeWeight />
+                  {/* <GaugeRelativeWeight /> */}
                 </div>
               </div>
             </Paper>
