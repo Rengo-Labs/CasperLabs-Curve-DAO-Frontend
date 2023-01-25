@@ -261,7 +261,7 @@ const Vesting = () => {
       console.log("unvestedData....",unvested);
       setUnVestedData(unvested);
       setVestedData(vested);
-  }, [localStorage.getItem("Address")]);
+  }, [startTimeVal,endTimeVal]);
 
 
   //COMPUTED
