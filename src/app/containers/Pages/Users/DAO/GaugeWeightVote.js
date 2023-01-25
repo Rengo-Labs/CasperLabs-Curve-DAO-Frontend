@@ -180,7 +180,7 @@ const GaugeWeightVote = () => {
   const [showVotes, setShowVotes] = useState(true);
   const [users, setUsers] = useState("");
   const [open, setOpen] = useState(false);
-  const [selectedGauge, setSelectedGauge] = "";
+  const [selectedGauge, setSelectedGauge] = useState(" ");
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -209,9 +209,9 @@ const GaugeWeightVote = () => {
 
     setSelectedGauge(event.target.value);
 
-    this.outcomeWeights = [];
-    this.oldAPY = null;
-    this.newAPY = null;
+    // this.outcomeWeights = [];
+    // this.oldAPY = null;
+    // this.newAPY = null;
 
     // this.last_user_vote = await this.gaugeController.methods
     //   .last_user_vote(contract.default_account, this.selectedGauge)
@@ -338,18 +338,15 @@ const GaugeWeightVote = () => {
   }, [gaugeWeight, gaugeWeightData]);
 
   const handleTableGraph = (vote) => {
+    console.log("Vote in handle table graph: ", vote);
     //this.showModal = true
 
     let total_weight = vote?.total_weight;
 
     //let future_weights = vote.gaugeWeights?.map((v, i) => ({ id: gaugesNames[v.gauge], name: gaugesNames[v.gauge], y: +v.weight * 1e9 * 100 / total_weight}))
     let future_weights = vote?.gaugeWeights?.map((v, i) => ({
-      id: gaugesNames[
-        "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-      ],
-      name: gaugesNames[
-        "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-      ],
+      id: gaugesNames[v.gauge],
+      name: gaugesNames[v.gauge],
       y: (+v.weight * 1e9 * 100) / total_weight,
     }));
 
@@ -522,7 +519,7 @@ const GaugeWeightVote = () => {
               <fieldset>
                 <legend>Gauge Weight Voting</legend>
                 <div className="row no-gutters justify-content-center">
-                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-6">
+                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-8">
                     <div className="row no-gutters justify-content-center">
                       {/* Gauge Weight Voting info */}
                       <Box
@@ -903,7 +900,7 @@ const GaugeWeightVote = () => {
                                       <Select
                                         labelId="select-gauge-label"
                                         id="gauge-select"
-                                        value={weightGauge}
+                                        // value={weightGauge}
                                         onChange={handleWeightGaugeChange}
                                       >
                                         <MenuItem value="Select a Gauge">
@@ -912,13 +909,16 @@ const GaugeWeightVote = () => {
                                         {/* <MenuItem value={"USDT"}>USDT</MenuItem>
                                         <MenuItem value={"BTC"}>BTC</MenuItem>
                                         <MenuItem value={"CSPR"}>CSPR</MenuItem> */}
-                                        {weightGauges.map((gauge, key) => {
-                                          return (
-                                            <MenuItem key={key}>
-                                              {gauge}
+                                        {Object.keys(gaugesNames).map(
+                                          (item, key) => (
+                                            <MenuItem key={key} value={item}>
+                                              {gaugesNames[item]}
+                                              {"-"}
+                                              {item.slice(0, 6)} ...{" "}
+                                              {item.slice(-6)}
                                             </MenuItem>
-                                          );
-                                        })}
+                                          )
+                                        )}
                                       </Select>
                                     </FormControl>
                                   </div>
@@ -1309,8 +1309,9 @@ const GaugeWeightVote = () => {
                                   <Select
                                     labelId="select-gauge-label"
                                     id="gauge-select"
-                                    value={boostGauge}
+                                    // value={selectedGauge}
                                     onChange={(event) => {
+                                      console.log("Event: ", event);
                                       handleSelectedGauge(event);
                                     }}
                                   >
@@ -1320,8 +1321,10 @@ const GaugeWeightVote = () => {
                                     {Object.keys(gaugesNames).map(
                                       (item, key) => (
                                         <MenuItem key={key} value={item}>
-                                          {gaugesNames[item]} {item.slice(0, 6)}{" "}
-                                          ... {item.slice(-6)}
+                                          {gaugesNames[item]}
+                                          {"-"}
+                                          {item.slice(0, 6)} ...{" "}
+                                          {item.slice(-6)}
                                         </MenuItem>
                                       )
                                     )}
@@ -1438,6 +1441,22 @@ const GaugeWeightVote = () => {
                                                 page * rowsPerPage,
                                                 page * rowsPerPage + rowsPerPage
                                               )
+                                              .filter((value) => {
+                                                if (
+                                                  selectedGauge !==
+                                                    "Select a Gauge" &&
+                                                  selectedGauge !== " "
+                                                ) {
+                                                  if (
+                                                    selectedGauge ===
+                                                    value.gauge
+                                                  ) {
+                                                    return value;
+                                                  }
+                                                } else {
+                                                  return value;
+                                                }
+                                              })
                                               .map((item, key) => {
                                                 console.log("In votes by time");
                                                 return (
