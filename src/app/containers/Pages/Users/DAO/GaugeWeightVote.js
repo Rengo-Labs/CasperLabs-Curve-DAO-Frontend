@@ -62,6 +62,7 @@ import SigningModal from "../../../../components/Modals/SigningModal";
 import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeWeightModal";
 import TablePaginationActions from "../../../../components/pagination/TablePaginationActions";
 import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
+import axios from "axios";
 
 const GAUGE_WEIGHT = gql`
   query gaugeVotesByUser($user: String) {
@@ -233,6 +234,18 @@ const GaugeWeightVote = () => {
     }
   }, [activePublicKey]);
 
+  // useEffect(() => {
+  //   if (showVotes) {
+  //     setUsers(
+  //       "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1"
+  //     );
+  //   } else {
+  //     setUsers(
+  //       "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1"
+  //     );
+  //   }
+  // }, [showVotes]);
+
   const gaugeWeight = useQuery(GAUGE_WEIGHT, {
     variables: {
       user: users,
@@ -337,6 +350,43 @@ const GaugeWeightVote = () => {
     // }
     // changePagination();
   }, [gaugeWeight, gaugeWeightData]);
+
+  // useEffect(() => {
+  //   let totalWeight;
+  //   let gaugeWeights;
+  //   const fetchData = async () => {
+  //     //GETTING TOTAL WEIGHT
+  //     await axios
+  //       .get(
+  //         `/gaugeController/getTotalWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`
+  //       )
+  //       .then((response) => {
+  //         console.log("Response from getting total weight: ", response);
+  //         totalWeight = response;
+  //       })
+  //       .catch((error) => {
+  //         console.log("Error: ", error);
+  //       });
+
+  //     //GETTING GAUGE WEIGHT
+  //     gaugeWeights = Object.keys(gaugesNames).map(async (gauge) => [
+  //       GAUGE_CONTROLLER_CONTRACT_HASH,
+  //       await axios
+  //         .get(
+  //           `/gaugeController/getGaugeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
+  //           { address: `${gauge}` }
+  //         )
+  //         .then((response) => {
+  //           console.log("Response from get Gauge Weight: ", response);
+  //         })
+  //         .catch((error) => {
+  //           console.log("Error from get gauge weight: ", error);
+  //         }),
+  //     ]);
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   const handleTableGraph = (vote) => {
     console.log("Vote in handle table graph: ", vote);
@@ -1840,8 +1890,8 @@ const GaugeWeightVote = () => {
         <VoteForGaugeWeightModal
           show={openVoteForGaugeWeightModal}
           handleClose={handleCloseVoteForGaugeWeightModal}
-          cells={cells}
-          gaugeWeightVoteData={gaugeWeightVoteData}
+          cells={cells} //table headings
+          gaugeWeightVoteData={gaugeWeightVoteData} //table data
           voteForGaugeWeightsMakeDeploy={voteForGaugeWeightsMakeDeploy}
           gauge={gauge}
           votingPowerPercentage={votingPowerPercentage}
