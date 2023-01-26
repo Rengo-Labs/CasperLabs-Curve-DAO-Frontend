@@ -98,6 +98,17 @@ const Calc = () => {
   // Content
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
+  let gaugesNames= [
+    {address:"0x7ca5b0a2910B33e9759DC7dDB0413949071D7575",name:"compound"},
+    {address:"0xBC89cd85491d81C6AD2954E6d0362Ee29fCa8F53",name: 'usdt'},
+    {address:"0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1",name: 'y'},
+    {address:"0x69Fb7c45726cfE2baDeE8317005d3F94bE838840",name: 'busd'},
+    {address:"0x64E3C23bfc40722d3B649844055F1D51c1ac041d",name: 'pax'},
+    {address:"0xB1F2cdeC61db658F091671F5f199635aEF202CAC",name: 'ren'},
+    {address:"0xA90996896660DEcC6E997655E065b23788857849",name: 'susdv2'},
+    {address:"0x705350c4BcD35c9441419DdD5d2f097d7a55410F",name: 'sbtc'}
+  ]
+
   const initialValues = {
     SelectGaugeCalc: "",
     CalcDeposits: "",
@@ -363,7 +374,7 @@ const Calc = () => {
                                       )}
                                     /> */}
                                     <Autocomplete 
-                                      options={selectGaugeOptions}
+                                      options={gaugesNames}
                                       getOptionLabel={(option) => option.name }
                                       clearOnEscape
                                       renderInput={(params) => (
@@ -648,9 +659,9 @@ const Calc = () => {
                                 </List>
                               </div>
                               {gaugeDeposits > 0 ? (
-                                <div>
-                                  This is {toLockCRV} for a 
-                                  <div className="col-12 col-md-6">
+                                <div className="col-12 col-md-6">
+                                  This is {toLockCRV} CRV for a 
+                                  <div className="">
                                     {/* <SelectInput
                                       setDate={setDate}
                                       setDateDisplay={setDateDisplay}
