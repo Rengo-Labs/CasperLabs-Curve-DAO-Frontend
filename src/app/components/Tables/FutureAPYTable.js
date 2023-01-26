@@ -35,8 +35,11 @@ const FutureAPYTable = (props) => {
 
   return (
     <>
-      <TableContainer sx={{ p: 3 }}>
-        <Table aria-label="Gauge Weight Vote">
+      {/* <TableContainer sx={{ p: 3 }}> */}
+        <Table
+          aria-label="Gauge Weight Vote"
+          style={{ border: "0.6px solid #e0e0e0" }}
+        >
           <TableHead
             sx={{
               backgroundColor: "#e7ebf0",
@@ -49,7 +52,7 @@ const FutureAPYTable = (props) => {
                   sx={{
                     border: 0,
                     fontWeight: "bold",
-                    fontSize: "1.25rem",
+                    fontSize: "1rem",
                     textAlign: "center",
                   }}
                 >
@@ -62,7 +65,10 @@ const FutureAPYTable = (props) => {
             {props.gaugeWeightVoteData.map((item) => {
               return (
                 <TableRow>
-                  <TableCell key={item.index} sx={{ textAlign: "center" }}>
+                  <TableCell
+                    key={item.index}
+                    sx={{ textAlign: "center", border: "0.6px solid #e0e0e0" }}
+                  >
                     {/* <Link
                       to="/pool/buy-and-sell"
                       className="tableCellLink"
@@ -70,7 +76,10 @@ const FutureAPYTable = (props) => {
                     {item.indexNo}
                     {/* </Link> */}
                   </TableCell>
-                  <TableCell key={item.index} sx={{ textAlign: "center" }}>
+                  <TableCell
+                    key={item.index}
+                    sx={{ textAlign: "center", border: "0.6px solid #e0e0e0" }}
+                  >
                     {/* <Link
                       to="/pool/buy-and-sell"
                       className="tableCellLink"
@@ -78,7 +87,10 @@ const FutureAPYTable = (props) => {
                     {item.pool}
                     {/* </Link> */}
                   </TableCell>
-                  <TableCell key={item.index} sx={{ textAlign: "center" }}>
+                  <TableCell
+                    key={item.index}
+                    sx={{ textAlign: "center", border: "0.6px solid #e0e0e0" }}
+                  >
                     {/* <Link
                       to="/pool/buy-and-sell"
                       className="tableCellLink"
@@ -86,7 +98,10 @@ const FutureAPYTable = (props) => {
                     {item.currentCrv}
                     {/* </Link> */}
                   </TableCell>
-                  <TableCell key={item.index} sx={{ textAlign: "center" }}>
+                  <TableCell
+                    key={item.index}
+                    sx={{ textAlign: "center", border: "0.6px solid #e0e0e0" }}
+                  >
                     {/* <Link
                       to="/pool/buy-and-sell"
                       className="tableCellLink"
@@ -99,7 +114,7 @@ const FutureAPYTable = (props) => {
             })}
           </TableBody>
         </Table>
-      </TableContainer>
+      {/* </TableContainer> */}
     </>
   );
 };
