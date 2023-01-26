@@ -25,42 +25,42 @@ import * as helpers from "../../../../assets/js/helpers";
 
 import axios from "axios";
 import { CLPublicKey } from "casper-js-sdk";
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from "notistack";
 import { useEffect } from "react";
-import { ERC20_CRV_CONTRACT_HASH } from '../../../../components/blockchain/Hashes/ContractHashes';
+import { ERC20_CRV_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
+import { Container } from "@mui/material";
 // CONTENT
 
-
 const DAO_POWER = gql`
-query {
-  daoPowersByTimestamp{    	
-    totalPower
+  query {
+    daoPowersByTimestamp {
+      totalPower
+    }
   }
-}
 `;
 
 const VOTING_POWER = gql`
-query  votingPower($id: String){
-    votingPower(id : $id){
+  query votingPower($id: String) {
+    votingPower(id: $id) {
       power
-     }
-}
+    }
+  }
 `;
 
 const VOTING_ESCROW = gql`
-  query{
-    votingEscrows{
-      id,
-      provider,
-      value,
-      locktime,
-      type,
-      totalPower,
-      timestamp,
+  query {
+    votingEscrows {
+      id
+      provider
+      value
+      locktime
+      type
+      totalPower
+      timestamp
     }
   }
-`
+`;
 
 // COMPONENT FUNCTION
 const Locker = () => {
@@ -89,9 +89,6 @@ const Locker = () => {
     setOpenSigning(true);
   };
 
-
-
-
   let { id } = useParams();
 
   // Queries
@@ -107,7 +104,7 @@ const Locker = () => {
     variables: {
       id: "e1431ecb9f20f2a6e6571886b1e2f9dec49ebc6b2d3d640a53530abafba9bfa1",
     },
-  })
+  });
   console.log("this is data of voting escrow gql: ", voting.data);
   if (voting.data !== undefined) {
     console.log("votingPOWER", voting.data.votingPower[0].power);
@@ -123,10 +120,9 @@ const Locker = () => {
 
   console.log("yes we didd", votingEscrowData);
 
-
   useEffect(() => {
     charts();
-  }, [votingEscrowData, setVotingEscrowData])
+  }, [votingEscrowData, setVotingEscrowData]);
   useEffect(() => {
     // resolveData();
     console.log("datadata", data);
@@ -135,106 +131,128 @@ const Locker = () => {
     if (data) {
       // mutate data if you need to
       console.log("data?.daoPowersByTimestamp", data?.daoPowersByTimestamp);
-      setDaoPower(data?.daoPowersByTimestamp)
-
+      setDaoPower(data?.daoPowersByTimestamp);
     }
     if (voting) {
       console.log("voting.data?.votingPower", voting.data?.votingPower);
-      setVotingPower(voting.data?.votingPower)
+      setVotingPower(voting.data?.votingPower);
     }
     if (votingEscrow) {
-      console.log("votingEscrow.data?.votingEscrows", votingEscrow.data?.votingEscrows);
-      setVotingEscrowData(votingEscrow.data?.votingEscrows != undefined ? (votingEscrow.data?.votingEscrows) : [])
+      console.log(
+        "votingEscrow.data?.votingEscrows",
+        votingEscrow.data?.votingEscrows
+      );
+      setVotingEscrowData(
+        votingEscrow.data?.votingEscrows != undefined
+          ? votingEscrow.data?.votingEscrows
+          : []
+      );
     }
-
   }, [data, voting, votingEscrow]);
 
   function interpolateVotingPower(chartData) {
-    let origEvents = votingEscrowData.slice()
+    let origEvents = votingEscrowData.slice();
     //console.log(origEvents, "ORIG EVENTS")
-    let newChartData = []
-    console.log(chartData.slice(), "CHARTDATA LENGTH")
+    let newChartData = [];
+    console.log(chartData.slice(), "CHARTDATA LENGTH");
     for (let j = 1; j < chartData.length; j++) {
-      let v = chartData[j]
-      let prev = chartData[j - 1]
-      newChartData.push(prev)
+      let v = chartData[j];
+      let prev = chartData[j - 1];
+      newChartData.push(prev);
       //console.log("newChartData:",newChartData);
-      let startTimestamp = prev[0]
-      let startAmount = prev[1]
-      let endTimestamp = v[0]
-      let endAmount = v[1]
-      let diff = endTimestamp - startTimestamp
-      let diffAmount = endAmount - startAmount
-      let amountLocked = origEvents[j - 1].totalPower
-      let numPoints = 10
+      let startTimestamp = prev[0];
+      let startAmount = prev[1];
+      let endTimestamp = v[0];
+      let endAmount = v[1];
+      let diff = endTimestamp - startTimestamp;
+      let diffAmount = endAmount - startAmount;
+      let amountLocked = origEvents[j - 1].totalPower;
+      let numPoints = 10;
       if (chartData.length > 1) {
         for (let i = 0; i < numPoints; i++) {
           //console.log(origEvents[j-1].totalPower, i, "TOTAL POWER")
-          let currentTimestamp = startTimestamp + i * (diff / numPoints)
+          let currentTimestamp = startTimestamp + i * (diff / numPoints);
           //console.log(amountLocked, currentTimestamp, this.events[j-1].locktime * 1000, "AMOUNTS")
-          let amount = helpers.calcVotingPower(amountLocked, currentTimestamp, votingEscrowData[j - 1].locktime * 1000)
+          let amount = helpers.calcVotingPower(
+            amountLocked,
+            currentTimestamp,
+            votingEscrowData[j - 1].locktime * 1000
+          );
           //console.log(amount, "THE AMOUNT")
-          if (votingEscrowData.find(e => e.timestamp === currentTimestamp / 1000) === undefined) {
+          if (
+            votingEscrowData.find(
+              (e) => e.timestamp === currentTimestamp / 1000
+            ) === undefined
+          ) {
             votingEscrowData.splice(j, 0, {
-              type: 'decrease',
+              type: "decrease",
               timestamp: currentTimestamp / 1000,
               locktime: votingEscrowData[j].locktime,
-            })
+            });
           }
           //console.log(amount, "THE AMOUNT")
-          newChartData.push([currentTimestamp, amount])
+          newChartData.push([currentTimestamp, amount]);
         }
       }
-      newChartData.push(v)
+      newChartData.push(v);
     }
-    newChartData.push(chartData[chartData.length - 1])
-    return newChartData
+    newChartData.push(chartData[chartData.length - 1]);
+    return newChartData;
   }
 
-
   const charts = () => {
-    console.log("votingEscrowDatavotingEscrowDatavotingEscrowDatavotingEscrowData", votingEscrowData);
+    console.log(
+      "votingEscrowDatavotingEscrowDatavotingEscrowDatavotingEscrowData",
+      votingEscrowData
+    );
     let events = votingEscrowData;
     if (events.length > 0) {
-
       events = addVotingPowerProperty(events);
       console.log("eventseventsevents", events);
 
-
-      var chartData = events.map((event, i) => [event.timestamp * 1000, event.votingPower]);
+      var chartData = events.map((event, i) => [
+        event.timestamp * 1000,
+        event.votingPower,
+      ]);
       console.log("chartDatachartDatachartData", chartData);
-      let lastEvent = events[events.length - 1]
+      let lastEvent = events[events.length - 1];
       setLastEvent(lastEvent);
       let lastData = [
-        lastEvent.locktime
-        //365
-        * 1000, 0]
+        lastEvent.locktime *
+          //365
+          1000,
+        0,
+      ];
       chartData.push(lastData);
       //console.log("before pushing",votingEscrowData);
       votingEscrowData = Object.assign([], votingEscrowData);
-      votingEscrowData.push({ ...votingEscrowData[votingEscrowData.length - 1], value: 0, votingPower: 0 })
+      votingEscrowData.push({
+        ...votingEscrowData[votingEscrowData.length - 1],
+        value: 0,
+        votingPower: 0,
+      });
       //console.log("after pushing",votingEscrowData);
       //chartData = interpolateVotingPower(chartData)
       setLockerChartData(interpolateVotingPower(chartData));
-      let finalData = interpolateVotingPower(chartData)
+      let finalData = interpolateVotingPower(chartData);
       console.log("final chart data:", finalData);
       //  console.log("final data after splice:",finalData.splice(0,finalData.length-11) );
-
     }
-  }
+  };
   const addVotingPowerProperty = (data) => {
     return data.map((item) => ({
       ...item,
-      votingPower: helpers.calcVotingPower(item.totalPower, item.timestamp,
-        //365
-        item.locktime
-      ) * 1000
+      votingPower:
+        helpers.calcVotingPower(
+          item.totalPower,
+          item.timestamp,
+          //365
+          item.locktime
+        ) * 1000,
     }));
-  }
+  };
 
   console.log("final chart data outside:", lockerChartData);
-
-
 
   // Handlers
   // async function createLockMakeDeploy(lockedAmount, unlockTime) {
@@ -285,34 +303,42 @@ const Locker = () => {
   //           let result = await putdeploy(signedDeploy, enqueueSnackbar);
   //           console.log("result", result);
   //         } else {
-  //           // let 
+  //           // let
   useEffect(() => {
-    if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined)
-      getAllowance()
-  }, [activePublicKey])
-
+    if (
+      activePublicKey &&
+      activePublicKey != "null" &&
+      activePublicKey != undefined
+    )
+      getAllowance();
+  }, [activePublicKey]);
 
   const getAllowance = () => {
     let allowanceParam = {
       contractHash: ERC20_CRV_CONTRACT_HASH,
       owner: CLPublicKey.fromHex(activePublicKey).toAccountHashStr().slice(13),
-      spender: VOTING_ESCROW_PACKAGE_HASH
-    }
-    console.log('allowanceParam0', allowanceParam);
+      spender: VOTING_ESCROW_PACKAGE_HASH,
+    };
+    console.log("allowanceParam0", allowanceParam);
     axios
-      .get(`/allowanceagainstownerandspender/${ERC20_CRV_CONTRACT_HASH}/${CLPublicKey.fromHex(activePublicKey).toAccountHashStr().slice(13)}/${VOTING_ESCROW_PACKAGE_HASH}`)
+      .get(
+        `/allowanceagainstownerandspender/${ERC20_CRV_CONTRACT_HASH}/${CLPublicKey.fromHex(
+          activePublicKey
+        )
+          .toAccountHashStr()
+          .slice(13)}/${VOTING_ESCROW_PACKAGE_HASH}`
+      )
       .then((res) => {
-        console.log('allowanceagainstownerandspender', res)
-        console.log(res.data)
-        setAllowance(res.data.allowance)
-
+        console.log("allowanceagainstownerandspender", res);
+        console.log(res.data);
+        setAllowance(res.data.allowance);
       })
       .catch((error) => {
-        setAllowance(0)
-        console.log(error)
-        console.log(error.response)
-      })
-  }
+        setAllowance(0);
+        console.log(error);
+        console.log(error.response);
+      });
+  };
 
   const DAOPowerFormat = () => {
     return daoPower ? helpers.formatNumber(daoPower[0].totalPower / 1e9) : 0;
@@ -320,16 +346,12 @@ const Locker = () => {
 
   const averageLock = () => {
     let crvLocked = 200000;
-    return daoPower
-      ? ((4 * daoPower[0].totalPower) / crvLocked).toFixed(2)
-      : 0;
+    return daoPower ? ((4 * daoPower[0].totalPower) / crvLocked).toFixed(2) : 0;
   };
 
   const myLockedCRVFormat = () => {
     return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
   };
-
-
 
   return (
     <>
@@ -353,7 +375,7 @@ const Locker = () => {
             <div className="curve-content-banks">
               <fieldset>
                 <div className="row no-gutters justify-content-center">
-                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-6">
+                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-8">
                     <div className="row no-gutters justify-content-center">
                       {/* Voting Power */}
                       <Box
@@ -363,63 +385,75 @@ const Locker = () => {
                         className="mt-4"
                       >
                         <Paper elevation={4}>
-                          <div className="py-5 px-4">
-                            {/* Heading */}
-                            <div className="row no-gutters">
-                              <div className="col-12 text-center py-3">
-                                <Typography
-                                  variant="h4"
-                                  gutterBottom
-                                  component="div"
-                                >
-                                  <span className="font-weight-bold">
-                                    Voting Power in DAO
-                                  </span>
-                                </Typography>
-                              </div>
-                            </div>
-                            {/* Voting Power Stats */}
-                            <div className="row no-gutters">
-                              <div className="col-12">
-                                <VotingPowerDAO/>
-                                <div className="w-100 my-3">
-                                  <Divider />
+                          <Container>
+                            <div className="py-5 px-4">
+                              {/* Heading */}
+                              <div className="row no-gutters">
+                                <div className="col-12 text-center py-3">
+                                  <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    component="div"
+                                    sx={{
+                                      marginLeft: "20%",
+                                      marginRight: "20%",
+                                    }}
+                                  >
+                                    <span className="font-weight-bold">
+                                      Voting Power in DAO
+                                    </span>
+                                  </Typography>
                                 </div>
                               </div>
-                            </div>
-                            {/* veCRV Voting Power Chart */}
-                            <div className="row no-gutters">
-                              <div className="col-12 text-center pt-3">
-                                <Typography
-                                  variant="h4"
-                                  gutterBottom
-                                  component="div"
-                                >
-                                  <span className="font-weight-bold">
-                                    Voting Power in DAO
-                                  </span>
-                                </Typography>
-                              </div>
-                              {/* Chart */}
-                              <div className="row no-gutters justify-content-center w-100">
+                              {/* Voting Power Stats */}
+                              <div className="row no-gutters">
                                 <div className="col-12">
-                                  <DaoVotingPower chart={lockerChartData} />
+                                  <VotingPowerDAO />
+                                  <div className="w-100 my-3">
+                                    <Divider />
+                                  </div>
                                 </div>
                               </div>
-                              <div className="col-12">
-                                <div className="w-100 my-3">
-                                  <Divider />
+                              {/* veCRV Voting Power Chart */}
+                              <div className="row no-gutters">
+                                <div className="col-12 text-center pt-3">
+                                  <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    component="div"
+                                    sx={{
+                                      marginLeft: "20%",
+                                      marginRight: "20%",
+                                    }}
+                                  >
+                                    <span className="font-weight-bold">
+                                      Voting Power in DAO
+                                    </span>
+                                  </Typography>
+                                </div>
+                                {/* Chart */}
+                                <div className="row no-gutters justify-content-center w-100">
+                                  <div className="col-12">
+                                    <DaoVotingPower chart={lockerChartData} />
+                                  </div>
+                                </div>
+                                <div className="col-12">
+                                  <div className="w-100 my-3">
+                                    <Divider />
+                                  </div>
+                                </div>
+                              </div>
+                              {/* Voting Power Actionables */}
+                              <div className="row no-gutters">
+                                <div className="col-12 mt-4">
+                                  {/* <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} withdrawMakeDeploy={withdrawMakeDeploy} increaseUnlockTimeMakeDeploy={increaseUnlockTimeMakeDeploy} increaseAmountMakeDeploy={increaseAmountMakeDeploy} allowance={allowance} userLockedCRVBalance={userLockedCRVBalance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} /> */}
+                                  <VotingPowerActionables
+                                    userLockedCRVBalance={userLockedCRVBalance}
+                                  />
                                 </div>
                               </div>
                             </div>
-                            {/* Voting Power Actionables */}
-                            <div className="row no-gutters">
-                              <div className="col-12 mt-4">
-                                {/* <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} withdrawMakeDeploy={withdrawMakeDeploy} increaseUnlockTimeMakeDeploy={increaseUnlockTimeMakeDeploy} increaseAmountMakeDeploy={increaseAmountMakeDeploy} allowance={allowance} userLockedCRVBalance={userLockedCRVBalance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} /> */}
-                                <VotingPowerActionables userLockedCRVBalance={userLockedCRVBalance} />
-                              </div>
-                            </div>
-                          </div>
+                          </Container>
                         </Paper>
                       </Box>
                     </div>
@@ -430,7 +464,6 @@ const Locker = () => {
           </div>
         </div>
         {/* <SigningModal show={openSigning} /> */}
-
       </div>
     </>
   );

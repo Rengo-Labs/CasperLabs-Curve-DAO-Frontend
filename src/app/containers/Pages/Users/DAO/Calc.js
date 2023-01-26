@@ -26,13 +26,23 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, Container } from "@mui/material";
 import { CLPublicKey } from "casper-js-sdk";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
-import { periodTimestamp, workingBalances, workingSupply } from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
-import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
+import {
+  ERC20_CRV_CONTRACT_HASH,
+  VOTING_ESCROW_CONTRACT_HASH,
+} from "../../../../components/blockchain/Hashes/ContractHashes";
+import {
+  periodTimestamp,
+  workingBalances,
+  workingSupply,
+} from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
+import {
+  balanceOf,
+  totalSupply,
+} from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 import { Button } from "@mui/material";
 
 // CONTENT
@@ -56,12 +66,15 @@ const lockTimeOptionsJSON =
 let lockTimeOptions = [];
 try {
   lockTimeOptions = JSON.parse(lockTimeOptionsJSON);
-  console.log("Lock time options after converting it into json parse.", lockTimeOptions);
+  console.log(
+    "Lock time options after converting it into json parse.",
+    lockTimeOptions
+  );
 } catch (exception) {
   console.log("an exception has occured!", exception);
 }
 
-const year = 365*24*60*60;
+const year = 365 * 24 * 60 * 60;
 
 // COMPONENT FUNCTION
 const Calc = () => {
@@ -140,19 +153,36 @@ const Calc = () => {
     setGaugeLock(newValue);
     let val = +newValue.name.split(" ")[0];
     console.log("Value: ", val);
-    if(val > 1) {
-      setGaugeLockValue(val*year);
-    }
-    else {
-      setGaugeLockValue(val/year);
+    if (val > 1) {
+      setGaugeLockValue(val * year);
+    } else {
+      setGaugeLockValue(val / year);
     }
   };
 
   useEffect(() => {
     async function updateBalance() {
-      if(activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
-        setGaugeCRV(await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
-        setMyVeCRV(await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
+      if (
+        activePublicKey &&
+        activePublicKey != "null" &&
+        activePublicKey != undefined
+      ) {
+        setGaugeCRV(
+          await balanceOf(
+            ERC20_CRV_CONTRACT_HASH,
+            Buffer.from(
+              CLPublicKey.fromHex(activePublicKey).toAccountHash()
+            ).toString("hex")
+          )
+        );
+        setMyVeCRV(
+          await balanceOf(
+            VOTING_ESCROW_CONTRACT_HASH,
+            Buffer.from(
+              CLPublicKey.fromHex(activePublicKey).toAccountHash()
+            ).toString("hex")
+          )
+        );
       }
     }
     updateBalance();
@@ -164,7 +194,9 @@ const Calc = () => {
   // }, [gaugeBalance, poolLiquidity, myVeCRV, totalVeCRV, gaugeVeCRV, Date.now() ])
 
   useEffect(() => {
-    setLockedVeCRV(((gaugeCRV * gaugeLockValue) / (86400 * 365) / 4).toFixed(2));
+    setLockedVeCRV(
+      ((gaugeCRV * gaugeLockValue) / (86400 * 365) / 4).toFixed(2)
+    );
   }, [gaugeCRV, gaugeLockValue]);
 
   const updateLockedVeCRV = async () => {
@@ -175,28 +207,35 @@ const Calc = () => {
     setLockedVeCRV((gaugeCRV * gaugeLockValue) / (86400 * 365) / 4).toFixed(2);
     //calling this function because of watchers
     // calcTrigger();
-  }
-
+  };
 
   const maxBoost = async () => {
     // let l = this.gaugeBalance * 1e9
-    let l = gaugeDeposits * 1e9
+    let l = gaugeDeposits * 1e9;
     // let L = +this.poolLiquidity*1e9 + l
-    let L = poolLiquidity*1e9 + l
+    let L = poolLiquidity * 1e9 + l;
     // let minveCRV = this.totalveCRV * l / L
-    let minveCRV = totalVeCRV * l / L
+    let minveCRV = (totalVeCRV * l) / L;
     // this.minveCRV = minveCRV
     setMinVeCRVForBoost(minveCRV);
 
     // let [_, maxBoostPossible] = await this.update_liquidity_limit(null, null, this.minveCRV)
-    let [_, maxBoostPossible] = await this.update_liquidity_limit(null, null, minveCRV);
+    let [_, maxBoostPossible] = await this.update_liquidity_limit(
+      null,
+      null,
+      minveCRV
+    );
     // this.maxBoostPossible = maxBoostPossible
     setMaxPossibleBoost(maxBoostPossible);
-  }
+  };
 
-  const updateLiquidityLimit = async (new_l = null, new_voting_balance = null, minveCRV = null) => {
+  const updateLiquidityLimit = async (
+    new_l = null,
+    new_voting_balance = null,
+    minveCRV = null
+  ) => {
     // let l = this.gaugeBalance * 1e18
-    let l = gaugeDeposits * 1e9
+    let l = gaugeDeposits * 1e9;
 
     // let calls = [
     //   [this.votingEscrow._address, this.votingEscrow.methods.balanceOf(contract.default_account).encodeABI()],
@@ -211,58 +250,68 @@ const Calc = () => {
     // let decoded = aggcalls[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
     let decoded = "";
     // let voting_balance = +decoded[0]
-    let voting_balance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    let voting_balance = await balanceOf(
+      VOTING_ESCROW_CONTRACT_HASH,
+      Buffer.from(
+        CLPublicKey.fromHex(activePublicKey).toAccountHash()
+      ).toString("hex")
+    );
     // let voting_total = +decoded[1] - +voting_balance
     let voting_total = await totalSupply(VOTING_ESCROW_CONTRACT_HASH);
     // let period_timestamp = +decoded[2]
     let period_timestamp = await periodTimestamp(boostGauge.address, "0");
     // let working_balances = +decoded[3]
-    let working_balances = await workingBalances(boostGauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    let working_balances = await workingBalances(
+      boostGauge.address,
+      Buffer.from(
+        CLPublicKey.fromHex(activePublicKey).toAccountHash()
+      ).toString("hex")
+    );
     // let working_supply = +decoded[4]
     let working_supply = await workingSupply(boostGauge.address);
     // let L = +this.poolLiquidity*1e18 + l
-    let L = +poolLiquidity*1e9 + l
+    let L = +poolLiquidity * 1e9 + l;
 
-
-    if(new_voting_balance) {
-      voting_balance = new_voting_balance * 1e9
+    if (new_voting_balance) {
+      voting_balance = new_voting_balance * 1e9;
     }
 
-    voting_total += voting_balance
+    voting_total += voting_balance;
 
+    let TOKENLESS_PRODUCTION = 40;
 
-    let TOKENLESS_PRODUCTION = 40
-
-    let lim = l * TOKENLESS_PRODUCTION / 100
+    let lim = (l * TOKENLESS_PRODUCTION) / 100;
     // let veCRV = this.myveCRV
     let veCRV = myVeCRV;
-    if(minveCRV)
-      veCRV = minveCRV
+    if (minveCRV) veCRV = minveCRV;
     // else if(this.entertype == 0)
-    else if(gaugeVeCRV)
+    else if (gaugeVeCRV)
       // veCRV = this.veCRV
-      veCRV = myVeCRV
+      veCRV = myVeCRV;
     // lim += L * veCRV / this.totalveCRV * (100 - TOKENLESS_PRODUCTION) / 100
-    lim += L * veCRV / totalVeCRV * (100 - TOKENLESS_PRODUCTION) / 100
+    lim += (((L * veCRV) / totalVeCRV) * (100 - TOKENLESS_PRODUCTION)) / 100;
 
-    lim = Math.min(l, lim)
-    
-    let old_bal = working_balances
-    let noboost_lim = TOKENLESS_PRODUCTION * l / 100
-    let noboost_supply = working_supply + noboost_lim - old_bal
-    let _working_supply = working_supply + lim - old_bal
+    lim = Math.min(l, lim);
+
+    let old_bal = working_balances;
+    let noboost_lim = (TOKENLESS_PRODUCTION * l) / 100;
+    let noboost_supply = working_supply + noboost_lim - old_bal;
+    let _working_supply = working_supply + lim - old_bal;
 
     // let limCalc = (l * TOKENLESS_PRODUCTION / 100 + (this.poolLiquidity + l) * veCRV / this.totalveCRV * (100 - TOKENLESS_PRODUCTION) / 100)
     // boost = limCalc
     // 		/ (working_supply + limCalc - old_bal)
 
-    return [_working_supply, (lim / _working_supply) / (noboost_lim / noboost_supply)]
-  }
+    return [
+      _working_supply,
+      lim / _working_supply / (noboost_lim / noboost_supply),
+    ];
+  };
 
   const updateGaugeBalanceAndPoolLiquidity = async () => {
     // setGaugeDeposits(await balanceOf(boostGauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
     // setPoolLiquidity(await totalSupply(boostGauge.address));
-  }
+  };
 
   const onSubmitCalc = async (values, props) => {
     console.log("Form data from Select Token", values);
@@ -273,18 +322,18 @@ const Calc = () => {
     // IMPLEMENTING SAME AS IN CURVE REPO
     let [_, boost] = await updateLiquidityLimit();
     setCrvBoost(boost);
-  }
+  };
 
   const calcTrigger = async () => {
     await updateLiquidityLimit();
     await maxBoost();
-  }
+  };
 
   const CRVtoLock = () => {
-    let year = 365*24*60*60
+    let year = 365 * 24 * 60 * 60;
     // return (this.minveCRV / ((this.minveCRVperiod / year) / 4)).toFixed(2)
-    setToLockCRV((minVeCRVForBoost / ((period / year) / 4)).toFixed(2));
-  }
+    setToLockCRV((minVeCRVForBoost / (period / year / 4)).toFixed(2));
+  };
 
   return (
     <>
@@ -309,7 +358,7 @@ const Calc = () => {
             <div className="curve-content-banks">
               <fieldset>
                 <div className="row no-gutters justify-content-center">
-                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-6">
+                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-8">
                     <div className="row no-gutters justify-content-center">
                       {/* Voting Power */}
                       <Box
@@ -319,33 +368,38 @@ const Calc = () => {
                         className="mt-4"
                       >
                         <Paper elevation={4}>
-                          <div className="py-5 px-4">
-                            {/* Heading */}
-                            <div className="row no-gutters">
-                              <div className="col-12 text-center py-3">
-                                <Typography
-                                  variant="h4"
-                                  gutterBottom
-                                  component="div"
-                                >
-                                  <span className="font-weight-bold">
-                                    Gauge Boost Calculator
-                                  </span>
-                                </Typography>
+                          <Container>
+                            <div className="py-5 px-4">
+                              {/* Heading */}
+                              <div className="row no-gutters">
+                                <div className="col-12 text-center py-3">
+                                  <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    component="div"
+                                    sx={{
+                                      marginLeft: "20%",
+                                      marginRight: "20%",
+                                    }}
+                                  >
+                                    <span className="font-weight-bold">
+                                      Gauge Boost Calculator
+                                    </span>
+                                  </Typography>
+                                </div>
                               </div>
-                            </div>
-                            {/* Formik */}
-                            <Formik
-                              initialValues={initialValues}
-                              validationSchema={validationSchema}
-                              onSubmit={onSubmitCalc}
-                            >
-                              <Form>
-                                {/* Gauge Selector & Deposit */}
-                                <div className="row no-gutters">
-                                  {/* Gauge Selector */}
-                                  <div className="col-12 col-md-6">
-                                    {/* <SelectInput
+                              {/* Formik */}
+                              <Formik
+                                initialValues={initialValues}
+                                validationSchema={validationSchema}
+                                onSubmit={onSubmitCalc}
+                              >
+                                <Form>
+                                  {/* Gauge Selector & Deposit */}
+                                  <div className="row no-gutters">
+                                    {/* Gauge Selector */}
+                                    <div className="col-12 col-md-6">
+                                      {/* <SelectInput
                                       name="SelectGaugeCalc"
                                       label="Select a Gauge"
                                       icon={selectGaugeOptions.map((item) => {
@@ -362,150 +416,160 @@ const Calc = () => {
                                         }
                                       )}
                                     /> */}
-                                    <Autocomplete 
-                                      options={selectGaugeOptions}
-                                      getOptionLabel={(option) => option.name }
-                                      clearOnEscape
-                                      renderInput={(params) => (
-                                        <TextField {...params} label="Select a gauge" variant="standard" />
-                                      )}
-                                      onChange={(event) => {
-                                        handleGaugeChange(event);
-                                      }}
-                                      value={boostGauge}
-                                      // style={{backgroundColor: "grey"}}
-                                    />
-                                  </div>
-                                  {/* Deposit */}
-                                  <div className="col-12 col-md-6 mt-3 mt-md-0">
-                                    <Box
-                                      component="form"
-                                      noValidate
-                                      autoComplete="off"
-                                    >
-                                      <TextInput
-                                        id="calc-deposits"
-                                        label="Deposit:"
-                                        variant="filled"
-                                        name="CalcDeposits"
-                                        value={gaugeDeposits}
-                                        type="number"
-                                        onChange={(e) => {
-                                          console.log("Gauge deposit: ", typeof(+e.target.value));
-                                          console.log("Gauge deposit: ", e.target.value);
-                                          setGaugeDeposits(e.target.value);
-                                          //calling this function because of watchers
-                                          // calcTrigger();
-                                        }}
-                                      />
-                                    </Box>
-                                    <div className="row no-gutters">
-                                      <div className="col-12">
-                                        <FormGroup>
-                                          <FormControlLabel
-                                            control={<Checkbox />}
-                                            label="Use Existing Deposit"
+                                      <Autocomplete
+                                        options={selectGaugeOptions}
+                                        getOptionLabel={(option) => option.name}
+                                        clearOnEscape
+                                        renderInput={(params) => (
+                                          <TextField
+                                            {...params}
+                                            label="Select a gauge"
+                                            variant="standard"
                                           />
-                                        </FormGroup>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                {/* Pool Liquidity & CRV */}
-                                <div className="row no-gutters mt-3">
-                                  {/* Pool Liquidity */}
-                                  <div className="col-12 col-md-6">
-                                    <Box
-                                      component="form"
-                                      noValidate
-                                      autoComplete="off"
-                                    >
-                                      <TextInput
-                                        id="pool-liquidity"
-                                        label="Pool Liquidity:"
-                                        variant="filled"
-                                        name="PoolLiquidityCalc"
-                                        value={poolLiquidity}
-                                        onChange={(e) => {
-                                          setPoolLiquidity(e.target.value);
-                                          //calling this function because of watchers
-                                          // calcTrigger();
+                                        )}
+                                        onChange={(event) => {
+                                          handleGaugeChange(event);
                                         }}
+                                        value={boostGauge}
+                                        // style={{backgroundColor: "grey"}}
                                       />
-                                    </Box>
-                                  </div>
-                                  {/* CRV */}
-                                  <div className="col-12 col-md-6 mt-3 mt-md-0">
-                                    {!gaugeVeCRV ? (
+                                    </div>
+                                    {/* Deposit */}
+                                    <div className="col-12 col-md-6 mt-3 mt-md-0">
                                       <Box
                                         component="form"
                                         noValidate
                                         autoComplete="off"
                                       >
                                         <TextInput
-                                          id="my-crv"
-                                          label="My CRV:"
+                                          id="calc-deposits"
+                                          label="Deposit:"
                                           variant="filled"
-                                          name="MyCRVCalc"
-                                          value={gaugeCRV}
+                                          name="CalcDeposits"
+                                          value={gaugeDeposits}
+                                          type="number"
                                           onChange={(e) => {
-                                            setGaugeCRV(e.target.value);
-                                            // veCRV();
-                                            updateLockedVeCRV();
-                                          }}
-                                        />
-                                      </Box>                                    
-                                    ) : (
-                                      <Box
-                                        component="form"
-                                        noValidate
-                                        autoComplete="off"
-                                      >
-                                        <TextInput
-                                          id="my-vecrv"
-                                          label="My VeCRV:"
-                                          variant="filled"
-                                          name="MyVeCRVCalc"
-                                          value={myVeCRV}
-                                          onChange={(e) => {
-                                            setMyVeCRV(e.target.value);
+                                            console.log(
+                                              "Gauge deposit: ",
+                                              typeof +e.target.value
+                                            );
+                                            console.log(
+                                              "Gauge deposit: ",
+                                              e.target.value
+                                            );
+                                            setGaugeDeposits(e.target.value);
                                             //calling this function because of watchers
                                             // calcTrigger();
                                           }}
                                         />
                                       </Box>
-                                    )}
-                                    <div className="col-12">
-                                      <FormControl>
-                                        {/* <FormLabel id="gauge-crv-radio">Gender</FormLabel> */}
-                                        <RadioGroup
-                                          row
-                                          aria-labelledby="gauge-crv-radio"
-                                          name="crv-vecrv"
-                                          defaultValue="crv"
-                                        >
-                                          <FormControlLabel
-                                            value="crv"
-                                            control={<Radio />}
-                                            label="CRV"
-                                            onChange={handleCRVSelect}
-                                          />
-                                          <FormControlLabel
-                                            value="cecrv"
-                                            control={<Radio />}
-                                            label="veCRV"
-                                            onChange={handleVeCRVSelect}
-                                          />
-                                        </RadioGroup>
-                                      </FormControl>
+                                      <div className="row no-gutters">
+                                        <div className="col-12">
+                                          <FormGroup>
+                                            <FormControlLabel
+                                              control={<Checkbox />}
+                                              label="Use Existing Deposit"
+                                            />
+                                          </FormGroup>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
-                                  {!gaugeVeCRV ? (
-                                    <div className="row no-gutters mt-2 w-100">
+                                  {/* Pool Liquidity & CRV */}
+                                  <div className="row no-gutters mt-3">
+                                    {/* Pool Liquidity */}
+                                    <div className="col-12 col-md-6">
+                                      <Box
+                                        component="form"
+                                        noValidate
+                                        autoComplete="off"
+                                      >
+                                        <TextInput
+                                          id="pool-liquidity"
+                                          label="Pool Liquidity:"
+                                          variant="filled"
+                                          name="PoolLiquidityCalc"
+                                          value={poolLiquidity}
+                                          onChange={(e) => {
+                                            setPoolLiquidity(e.target.value);
+                                            //calling this function because of watchers
+                                            // calcTrigger();
+                                          }}
+                                        />
+                                      </Box>
+                                    </div>
+                                    {/* CRV */}
+                                    <div className="col-12 col-md-6 mt-3 mt-md-0">
+                                      {!gaugeVeCRV ? (
+                                        <Box
+                                          component="form"
+                                          noValidate
+                                          autoComplete="off"
+                                        >
+                                          <TextInput
+                                            id="my-crv"
+                                            label="My CRV:"
+                                            variant="filled"
+                                            name="MyCRVCalc"
+                                            value={gaugeCRV}
+                                            onChange={(e) => {
+                                              setGaugeCRV(e.target.value);
+                                              // veCRV();
+                                              updateLockedVeCRV();
+                                            }}
+                                          />
+                                        </Box>
+                                      ) : (
+                                        <Box
+                                          component="form"
+                                          noValidate
+                                          autoComplete="off"
+                                        >
+                                          <TextInput
+                                            id="my-vecrv"
+                                            label="My VeCRV:"
+                                            variant="filled"
+                                            name="MyVeCRVCalc"
+                                            value={myVeCRV}
+                                            onChange={(e) => {
+                                              setMyVeCRV(e.target.value);
+                                              //calling this function because of watchers
+                                              // calcTrigger();
+                                            }}
+                                          />
+                                        </Box>
+                                      )}
                                       <div className="col-12">
-                                        <div className="row no-gutters justify-content-md-end">
-                                          <div className="col-12 col-md-6">
-                                            {/* <SelectInput
+                                        <FormControl>
+                                          {/* <FormLabel id="gauge-crv-radio">Gender</FormLabel> */}
+                                          <RadioGroup
+                                            row
+                                            aria-labelledby="gauge-crv-radio"
+                                            name="crv-vecrv"
+                                            defaultValue="crv"
+                                          >
+                                            <FormControlLabel
+                                              value="crv"
+                                              control={<Radio />}
+                                              label="CRV"
+                                              onChange={handleCRVSelect}
+                                            />
+                                            <FormControlLabel
+                                              value="cecrv"
+                                              control={<Radio />}
+                                              label="veCRV"
+                                              onChange={handleVeCRVSelect}
+                                            />
+                                          </RadioGroup>
+                                        </FormControl>
+                                      </div>
+                                    </div>
+                                    {!gaugeVeCRV ? (
+                                      <div className="row no-gutters mt-2 w-100">
+                                        <div className="col-12">
+                                          <div className="row no-gutters justify-content-md-end">
+                                            <div className="col-12 col-md-6">
+                                              {/* <SelectInput
                                               setDate={setDate}
                                               setDateDisplay={setDateDisplay}
                                               name="GaugeLockPeriodCalc"
@@ -520,138 +584,162 @@ const Calc = () => {
                                                 updateLockedVeCRV();
                                               }}
                                             /> */}
-                                            <Autocomplete 
-                                              options={lockTimeOptions}
-                                              getOptionLabel={(option) => {
-                                                console.log("Option: ", option);
-                                                return option.name
-                                              }}
-                                              clearOnEscape
-                                              renderInput={(params) => (
-                                                <TextField 
-                                                  {...params} 
-                                                  label="Select Lock Period" 
-                                                  variant="standard" 
-                                                />
-                                              )}
-                                              onChange={async (event, newValue) => {
-                                                console.log("New Value: ", newValue);
-                                                handleGaugeLockChange(event, newValue);                              
-                                                // await updateLockedVeCRV();
-                                              }}
-                                              value={gaugeLock.name}
-                                              // style={{backgroundColor: "grey"}}
-                                            />
+                                              <Autocomplete
+                                                options={lockTimeOptions}
+                                                getOptionLabel={(option) => {
+                                                  console.log(
+                                                    "Option: ",
+                                                    option
+                                                  );
+                                                  return option.name;
+                                                }}
+                                                clearOnEscape
+                                                renderInput={(params) => (
+                                                  <TextField
+                                                    {...params}
+                                                    label="Select Lock Period"
+                                                    variant="standard"
+                                                  />
+                                                )}
+                                                onChange={async (
+                                                  event,
+                                                  newValue
+                                                ) => {
+                                                  console.log(
+                                                    "New Value: ",
+                                                    newValue
+                                                  );
+                                                  handleGaugeLockChange(
+                                                    event,
+                                                    newValue
+                                                  );
+                                                  // await updateLockedVeCRV();
+                                                }}
+                                                value={gaugeLock.name}
+                                                // style={{backgroundColor: "grey"}}
+                                              />
+                                            </div>
                                           </div>
-                                        </div>
-                                        <div className="row no-gutters justify-content-end">
-                                          <div className="col-12 col-md-6 text-right align-self-center p-2 py-3">
-                                            <Typography
-                                              variant="body1"
-                                              component={"div"}
-                                            >
-                                              <span className="font-weight-bold">
-                                                {/* {lockedVeCRV}&nbsp; */}
-                                                {lockedVeCRV}&nbsp;
-                                              </span>
-                                              veCRV
-                                            </Typography>
+                                          <div className="row no-gutters justify-content-end">
+                                            <div className="col-12 col-md-6 text-right align-self-center p-2 py-3">
+                                              <Typography
+                                                variant="body1"
+                                                component={"div"}
+                                              >
+                                                <span
+                                                  className="font-weight-bold"
+                                                  style={{ fontSize: "15px" }}
+                                                >
+                                                  {/* {lockedVeCRV}&nbsp; */}
+                                                  {lockedVeCRV}&nbsp;
+                                                </span>
+                                                veCRV
+                                              </Typography>
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  ) : null}
-                                </div>
-                                {/* Total veCRV */}
-                                <div className="row no-gutters mt-3 align-items-center">
-                                  <div className="col-12 col-md-6">
-                                    <Box
-                                      component="form"
-                                      noValidate
-                                      autoComplete="off"
-                                    >
-                                      <TextInput
-                                        id="total-vecrv"
-                                        label="Total veCRV:"
-                                        variant="filled"
-                                        name="TotalveCRVCalc"
-                                        value={totalVeCRV}
-                                        onChange={(e) => {
-                                          setTotalVeCRV(e.target.value);
-                                          //calling this function because of watchers
-                                          // calcTrigger();
-                                        }}
-                                      />
-                                    </Box>
-                                    <div className="row no-gutters">
-                                      <div className="col-12 text-right p-2 py-3">
-                                        <Typography
-                                          variant="body1"
-                                          component={"div"}
-                                        >
-                                          <span className="font-weight-bold">
-                                            Boost:&nbsp;
-                                          </span>
-                                          {crvBoost}x
-                                        </Typography>
-                                      </div>
-                                    </div>
+                                    ) : null}
                                   </div>
-                                </div>
-                                {/* Button */}
-                                <div className="row no-gutters justify-content-center">
-                                  <div className="col-12 col-md-6 text-center my-3">
-                                    <div className="btnWrapper">
-                                      <Button
-                                        variant="contained"
-                                        size="large"
-                                        style={{
-                                          backgroundColor: "#5300e8",
-                                          color: "white",
-                                        }}
-                                        type="submit"
-                                        onClick={() =>
-                                          console.log("Calc Submitted")
-                                        }
+                                  {/* Total veCRV */}
+                                  <div className="row no-gutters mt-3 align-items-center">
+                                    <div className="col-12 col-md-6">
+                                      <Box
+                                        component="form"
+                                        noValidate
+                                        autoComplete="off"
                                       >
-                                        Calculate
-                                      </Button>
+                                        <TextInput
+                                          id="total-vecrv"
+                                          label="Total veCRV:"
+                                          variant="filled"
+                                          name="TotalveCRVCalc"
+                                          value={totalVeCRV}
+                                          onChange={(e) => {
+                                            setTotalVeCRV(e.target.value);
+                                            //calling this function because of watchers
+                                            // calcTrigger();
+                                          }}
+                                        />
+                                      </Box>
+                                      <div className="row no-gutters">
+                                        <div className="col-12 text-right p-2 py-3">
+                                          <Typography
+                                            variant="body1"
+                                            component={"div"}
+                                          >
+                                            <span
+                                              className="font-weight-bold"
+                                              style={{ fontSize: "15px" }}
+                                            >
+                                              Boost:&nbsp;
+                                            </span>
+                                            {crvBoost}x
+                                          </Typography>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
+                                  {/* Button */}
+                                  <div className="row no-gutters justify-content-center">
+                                    <div className="col-12 col-md-6 text-center my-3">
+                                      <div className="btnWrapper">
+                                        <Button
+                                          variant="contained"
+                                          size="large"
+                                          style={{
+                                            backgroundColor: "#5300e8",
+                                            color: "white",
+                                          }}
+                                          type="submit"
+                                          onClick={() =>
+                                            console.log("Calc Submitted")
+                                          }
+                                        >
+                                          Calculate
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </Form>
+                              </Formik>
+                              {/* Boost Requirements */}
+                              <div className="row no-gutters mt-3">
+                                <div className="col-12 col-md-6">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span
+                                          className="font-weight-bold"
+                                          style={{ fontSize: "15px" }}
+                                        >
+                                          Max boost possible:&nbsp;
+                                        </span>
+                                        {maxPossibleBoost}x
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span
+                                          className="font-weight-bold"
+                                          style={{ fontSize: "15px" }}
+                                        >
+                                          Min veCRV for max boost:&nbsp;
+                                        </span>
+                                        {gaugeDeposits > 0 &&
+                                        gaugeDeposits !== "" &&
+                                        gaugeDeposits !== null
+                                          ? minVeCRVForBoost
+                                          : "Please enter a deposit amount"}
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
                                 </div>
-                              </Form>
-                            </Formik>
-                            {/* Boost Requirements */}
-                            <div className="row no-gutters mt-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Max boost possible:&nbsp;
-                                      </span>
-                                      {maxPossibleBoost}x
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Min veCRV for max boost:&nbsp;
-                                      </span>
-                                      {gaugeDeposits > 0 &&
-                                      gaugeDeposits !== "" &&
-                                      gaugeDeposits !== null
-                                        ? minVeCRVForBoost
-                                        : "Please enter a deposit amount"}
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
-                              </div>
-                              {gaugeDeposits > 0 ? (
-                                <div>
-                                  This is {toLockCRV} for a 
-                                  <div className="col-12 col-md-6">
-                                    {/* <SelectInput
+                                {gaugeDeposits > 0 ? (
+                                  <div>
+                                    This is {toLockCRV} for a
+                                    <div className="col-12 col-md-6">
+                                      {/* <SelectInput
                                       setDate={setDate}
                                       setDateDisplay={setDateDisplay}
                                       name="lockPeriod"
@@ -665,74 +753,89 @@ const Calc = () => {
                                         CRVtoLock();
                                       }}
                                     /> */}
-                                    <Autocomplete 
-                                      options={lockTimeOptions}
-                                      getOptionLabel={(option) => option.name }
-                                      clearOnEscape
-                                      renderInput={(params) => (
-                                        <TextField {...params} label="Select Lock Period" variant="standard" />
-                                      )}
-                                      onChange={(event, newValue) => {
-                                        setPeriod(newValue);
-                                        CRVtoLock();
-                                      }}
-                                      value={period.name}
-                                      // style={{backgroundColor: "grey"}}
-                                    />
+                                      <Autocomplete
+                                        options={lockTimeOptions}
+                                        getOptionLabel={(option) => option.name}
+                                        clearOnEscape
+                                        renderInput={(params) => (
+                                          <TextField
+                                            {...params}
+                                            label="Select Lock Period"
+                                            variant="standard"
+                                          />
+                                        )}
+                                        onChange={(event, newValue) => {
+                                          setPeriod(newValue);
+                                          CRVtoLock();
+                                        }}
+                                        value={period.name}
+                                        // style={{backgroundColor: "grey"}}
+                                      />
+                                    </div>
                                   </div>
+                                ) : null}
+                              </div>
+                              <div className="w-100 my-4 pt-4">
+                                <Divider />
+                              </div>
+                              {/* Gauge Selection Info Heading*/}
+                              <div className="row no-gutters mt-4">
+                                <div className="col-12 text-center py-3">
+                                  <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    component="div"
+                                    sx={{
+                                      marginLeft: "20%",
+                                      marginRight: "20%",
+                                    }}
+                                  >
+                                    <span className="font-weight-bold">
+                                      Gauge Selection Info
+                                    </span>
+                                  </Typography>
                                 </div>
-                              ) : null}
-                            </div>
-                            <div className="w-100 my-4 pt-4">
-                              <Divider />
-                            </div>
-                            {/* Gauge Selection Info Heading*/}
-                            <div className="row no-gutters mt-4">
-                              <div className="col-12 text-center py-3">
-                                <Typography
-                                  variant="h4"
-                                  gutterBottom
-                                  component="div"
-                                >
-                                  <span className="font-weight-bold">
-                                    Gauge Selection Info
-                                  </span>
-                                </Typography>
+                              </div>
+                              {/* Gauge Selection Info */}
+                              <div className="row no-gutters mt-3">
+                                <div className="col-12 col-md-6">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span
+                                          className="font-weight-bold"
+                                          style={{ fontSize: "15px" }}
+                                        >
+                                          Max deposit to have boost:&nbsp;
+                                        </span>
+                                        {depositForBoost ? (
+                                          depositForBoost
+                                        ) : (
+                                          <CircularProgress size={20} />
+                                        )}
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span
+                                          className="font-weight-bold"
+                                          style={{ fontSize: "15px" }}
+                                        >
+                                          Max deposit per veCRV to have max
+                                          boost:&nbsp;
+                                        </span>
+                                        {maxDepositPerVeCRV ? (
+                                          maxDepositPerVeCRV
+                                        ) : (
+                                          <CircularProgress size={20} />
+                                        )}
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
+                                </div>
                               </div>
                             </div>
-                            {/* Gauge Selection Info */}
-                            <div className="row no-gutters mt-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Max deposite to have boost:&nbsp;
-                                      </span>
-                                      {depositForBoost ? (
-                                        depositForBoost
-                                      ) : (
-                                        <CircularProgress size={20} />
-                                      )}
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Max deposit per veCRV to have max
-                                        boost:&nbsp;
-                                      </span>
-                                      {maxDepositPerVeCRV ? (
-                                        maxDepositPerVeCRV
-                                      ) : (
-                                        <CircularProgress size={20} />
-                                      )}
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
-                              </div>
-                            </div>
-                          </div>
+                          </Container>
                         </Paper>
                       </Box>
                     </div>
