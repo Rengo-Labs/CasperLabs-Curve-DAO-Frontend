@@ -315,19 +315,19 @@ const GaugeWeightVote = () => {
       ]
     );
     //let future_weights = gaugeWeight?.map((v, i) => ({ id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], name: gaugesNames["3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735"], y: +v.weight * 1e18 * 100 / totalWeight}))
-    let future_weights = {
-      id: gaugesNames[
-        "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-      ],
-      name: gaugesNames[
-        "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-      ],
-      y:
-        (+gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100) /
-        totalWeight,
-    };
-    console.log("future_weights:", future_weights);
-    setFutureWeight(future_weights);
+    // let future_weights = {
+    //   id: gaugesNames[
+    //     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
+    //   ],
+    //   name: gaugesNames[
+    //     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
+    //   ],
+    //   y:
+    //     (+gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100) /
+    //     totalWeight,
+    // };
+    // console.log("future_weights:", future_weights);
+    // setFutureWeight(future_weights);
 
     console.log("totalWeight", totalWeight);
 
@@ -351,42 +351,55 @@ const GaugeWeightVote = () => {
     // changePagination();
   }, [gaugeWeight, gaugeWeightData]);
 
-  // useEffect(() => {
-  //   let totalWeight;
-  //   let gaugeWeights;
-  //   const fetchData = async () => {
-  //     //GETTING TOTAL WEIGHT
-  //     await axios
-  //       .get(
-  //         `/gaugeController/getTotalWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`
-  //       )
-  //       .then((response) => {
-  //         console.log("Response from getting total weight: ", response);
-  //         totalWeight = response;
-  //       })
-  //       .catch((error) => {
-  //         console.log("Error: ", error);
-  //       });
+  //GETTING DATA FOR GRAPH
+  useEffect(() => {
+    let totalWeight;
+    let gaugeWeights = [];
+    const fetchData = async () => {
+      //GETTING TOTAL WEIGHT
+      await axios
+        .post(
+          `/gaugeController/getTotalWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`
+        )
+        .then((response) => {
+          console.log("Response from getting total weight: ", response);
+          totalWeight = parseFloat(response.data.totalWeight);
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+        });
 
-  //     //GETTING GAUGE WEIGHT
-  //     gaugeWeights = Object.keys(gaugesNames).map(async (gauge) => [
-  //       GAUGE_CONTROLLER_CONTRACT_HASH,
-  //       await axios
-  //         .get(
-  //           `/gaugeController/getGaugeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
-  //           { address: `${gauge}` }
-  //         )
-  //         .then((response) => {
-  //           console.log("Response from get Gauge Weight: ", response);
-  //         })
-  //         .catch((error) => {
-  //           console.log("Error from get gauge weight: ", error);
-  //         }),
-  //     ]);
-  //   };
+      //GETTING GAUGE WEIGHT
+      Object.keys(gaugesNames).map(async (gauge) => [
+        GAUGE_CONTROLLER_CONTRACT_HASH,
+        await axios
+          .post(
+            `/gaugeController/getGaugeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
+            { address: `${gauge}` }
+          )
+          .then((response) => {
+            console.log("Response from get Gauge Weight: ", response);
+            gaugeWeights.push(response.data.gaugeWeight);
+          })
+          .catch((error) => {
+            console.log("Error from get gauge weight: ", error);
+          }),
+      ]);
 
-  //   fetchData();
-  // }, []);
+      let futureWeightTemp = Object.keys(gaugesNames).map((gauge, i) => ({
+        id: gaugesNames[gauge],
+        name: gaugesNames[gauge],
+        y: gaugeWeights[i] ? (gaugeWeights[i] * 10e9 * 100) / totalWeight : 0,
+      }));
+      console.log("GaugeWeights: ", gaugeWeights);
+
+      console.log("Future weights: ", futureWeightTemp);
+      setFutureWeight(futureWeightTemp);
+    };
+
+    fetchData();
+    console.log("After getting data from backend");
+  }, []);
 
   const handleTableGraph = (vote) => {
     console.log("Vote in handle table graph: ", vote);
