@@ -1,5 +1,6 @@
 // REACT
 import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 // CHARTS
 // CUSTOM STYLING
 import Box from "@mui/material/Box";
@@ -208,6 +209,42 @@ const Vesting = () => {
         // setVestedOf(await vestedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
         // setBalanceOf(await balanceOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
         // setLockedOf(await lockedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+        let account = Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex");
+        console.log("accountHash.......",account); 
+        let data = { account:Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex") }
+
+        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/balanceOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+          .then(response => {
+            // handle the response
+            console.log("response of balance of:...",response.data);
+            setBalanceOf(response.data.balance)
+          })
+          .catch(error => {
+            // handle the error
+            console.log("error of balance of:...",error);
+          });
+
+          axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/vestedOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+          .then(response => {
+            // handle the response
+            console.log("response of vested of:...",response.data);
+            setVestedOf(response.data.vestedOf)
+          })
+          .catch(error => {
+            // handle the error
+            console.log("error of balance of:...",error);
+          });
+
+          axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/lockedOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+          .then(response => {
+            // handle the response
+            console.log("response of locked of:...",response.data);
+            setLockedOf(response.data.lockedOf)
+          })
+          .catch(error => {
+            // handle the error
+            console.log("error of balance of:...",error);
+          });
         
          let initialLockValues = await initialLocked(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex"));
          let totalClaimedValue = await totalClaimed(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex"));
@@ -450,7 +487,7 @@ const Vesting = () => {
                                       <span className="font-weight-bold">
                                         Claimed + Available Tokens:&nbsp;
                                       </span>
-                                      {claimAvailTokens}
+                                      {vestedFormat}
                                     </ListItemText>
                                   </ListItem>
                                   <ListItem disablePadding>
@@ -458,7 +495,7 @@ const Vesting = () => {
                                       <span className="font-weight-bold">
                                         Available Tokens:&nbsp;
                                       </span>
-                                      {availableTokens}
+                                      {balanceFormat}
                                     </ListItemText>
                                   </ListItem>
                                   <ListItem disablePadding>
@@ -466,7 +503,7 @@ const Vesting = () => {
                                       <span className="font-weight-bold">
                                         Locked Tokens:&nbsp;
                                       </span>
-                                      {lockedTokens}
+                                      {lockedFormat}
                                     </ListItemText>
                                   </ListItem>
                                 </List>
