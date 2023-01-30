@@ -62,6 +62,14 @@ const VOTING_ESCROW = gql`
   }
 `;
 
+const USER_BALANCES_BY_UNLOCK_TIME = gql`
+  query {
+    userBalancesByUnlockTime {
+      unlock_time
+    }
+  }
+`;
+
 // COMPONENT FUNCTION
 const Locker = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -76,6 +84,7 @@ const Locker = () => {
   const [userLockedCRVBalance, setUserLockedCRVBalance] = useState(0);
   const [daoPower, setDaoPower] = useState();
   const [votingPower, setVotingPower] = useState();
+  const [unlockTime, setUnlockTime] = useState();
   let [votingEscrowData, setVotingEscrowData] = useState([]);
   const [vPower, setVPower] = useState();
   const [lastEvent, setLastEvent] = useState();
@@ -118,7 +127,16 @@ const Locker = () => {
     console.log("votingEscrows", votingEscrow.data.votingEscrows);
   }
 
-  console.log("yes we didd", votingEscrowData);
+  console.log("votingEscrowData......", votingEscrowData);
+
+  const userBalances = useQuery(USER_BALANCES_BY_UNLOCK_TIME);
+  console.log("this is unlockTime: ", userBalances.data);
+  console.log("this is error of unlock time gql: ", userBalances.error);
+
+  // if (votingEscrow.data !== undefined) {
+  //   console.log("votingEscrows", votingEscrow.data.votingEscrows);
+  // }
+
 
   useEffect(() => {
     charts();
@@ -148,7 +166,11 @@ const Locker = () => {
           : []
       );
     }
-  }, [data, voting, votingEscrow]);
+    if (userBalances) {
+      console.log("userBalances.data?.unlock_time", userBalances.data?.userBalancesByUnlockTime);
+      // setUnlockTime(userBalances.data?.unlock_time);
+    }
+  }, [data, voting, votingEscrow,userBalances]);
 
   function interpolateVotingPower(chartData) {
     let origEvents = votingEscrowData.slice();
@@ -239,6 +261,19 @@ const Locker = () => {
       //  console.log("final data after splice:",finalData.splice(0,finalData.length-11) );
     }
   };
+
+  useEffect(()=>{
+    let lastUnlockTime = unlockTime[0].unlock_time
+    let now = (Date.now() / 1000) | 0
+		console.log("now time value",now);
+		let calls = []
+		let i = 0
+		// while(now < lastUnlockTime) {
+		// 	calls.push([this.votingEscrow._address, this.votingEscrow.methods.totalSupply(now).encodeABI()])
+		// 	now += i ** 4 * 86400
+		// 	i++
+		// }
+  },[])
   const addVotingPowerProperty = (data) => {
     return data.map((item) => ({
       ...item,
