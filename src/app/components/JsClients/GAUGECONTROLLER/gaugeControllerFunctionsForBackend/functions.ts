@@ -38,6 +38,30 @@ export const points_weight = async (contractHash : string ,owner : string, spend
  return pointsWeight;
 }
 
+export const time_weight = async (contractHash : string ,owner : string) => {
+ 
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+ //timeWeight
+ const timeWeight = await gaugeController.time_weight(owner);
+//  console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points type weight: ${pointsWeight}`);
+
+ return timeWeight;
+}
+
+export const changes_sum = async (contractHash : string ,owner : string, spender: string) => {
+ 
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+ //timeWeight
+ const changesSum = await gaugeController.changes_sum(owner, spender);
+//  console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points type weight: ${pointsWeight}`);
+
+ return changesSum;
+}
+
 export const points_total = async (contractHash : string, owner : string) => {
   // We don't need hash- prefix so i'm removing it
   await gaugeController.setContractHash(contractHash);

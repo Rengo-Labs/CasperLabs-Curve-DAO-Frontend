@@ -53,7 +53,10 @@ import clock from "../../../../assets/img/clock.png";
 import cspr from "../../../../assets/img/cspr.png";
 import usdt from "../../../../assets/img/usdt.png";
 import wbtc from "../../../../assets/img/wbtc.png";
-import { GAUGE_CONTROLLER_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
+import {
+  GAUGE_CONTROLLER_CONTRACT_HASH,
+  VOTING_ESCROW_CONTRACT_HASH,
+} from "../../../../components/blockchain/Hashes/ContractHashes";
 import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
 import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../../../../components/blockchain/RecipientAddress/RecipientAddress";
@@ -63,6 +66,8 @@ import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeW
 import TablePaginationActions from "../../../../components/pagination/TablePaginationActions";
 import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 import axios from "axios";
+import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
+import * as statsStore from "../../../../components/stores/StatsStore";
 
 const GAUGE_WEIGHT = gql`
   query gaugeVotesByUser($user: String) {
@@ -183,9 +188,16 @@ const GaugeWeightVote = () => {
   const [users, setUsers] = useState("");
   const [open, setOpen] = useState(false);
   const [selectedGauge, setSelectedGauge] = useState(" ");
+  const [outcomeWeights, setOutcomeWeights] = useState([]);
+  const [oldAPY, setOldAPY] = useState();
+  const [newAPY, setNewAPY] = useState();
+  const [nextTime, setNextTime] = useState();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
+
+  const WEEK = 604800;
+  let pointsSum = [[]];
   // States
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
@@ -389,12 +401,16 @@ const GaugeWeightVote = () => {
       let futureWeightTemp = Object.keys(gaugesNames).map((gauge, i) => ({
         id: gaugesNames[gauge],
         name: gaugesNames[gauge],
-        y: gaugeWeights[i] ? (gaugeWeights[i] * 10e9 * 100) / totalWeight : 0,
+        y: gaugeWeights[i]
+          ? (gaugeWeights[i] * 10e9 * 100) / totalWeight
+          : 0,
       }));
       console.log("GaugeWeights: ", gaugeWeights);
 
       console.log("Future weights: ", futureWeightTemp);
       setFutureWeight(futureWeightTemp);
+
+      setNextTime(((Date.now() / 1000 + WEEK) / WEEK) * WEEK);
     };
 
     fetchData();
@@ -560,6 +576,128 @@ const GaugeWeightVote = () => {
   }
 
   console.log("futureWeight jjjj", futureWeight);
+
+  const getWeight = async () => {
+    let t = gaugeControllerFunctions.time_weight(selectedGauge);
+    let pt;
+    await axios
+      .post(`/gaugeController/pointsWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`, {
+        owner: selectedGauge,
+        spender: t,
+      })
+      .then((response) => {
+        console.log("Response from getting points weight: ", response);
+        pt = response.data;
+      })
+      .catch((error) => {
+        console.log("Error from getting points weight: ", error);
+      });
+
+    for (let i = 0; i < 500; i++) {
+      if (t > Date.now() / 1000) {
+        break;
+      }
+      t += WEEK;
+      let d_bias = pt.slope * WEEK;
+      if (pt.bias > d_bias) {
+        pt.bias -= d_bias;
+        let d_slope = await gaugeControllerFunctions.changes_sum(0, t);
+        pt.slope -= d_slope;
+      } else {
+        pt.bias = 0;
+        pt.slope = 0;
+      }
+      pointsSum[0][t] = pt;
+    }
+    return pt.bias;
+  };
+
+  const calculateValuesForGraph = async () => {
+    let slope;
+    await axios
+      .post(`/votingEscrow/getlastUserSlope/${VOTING_ESCROW_CONTRACT_HASH}`, {
+        address: activePublicKey,
+      })
+      .then((response) => {
+        console.log("Response from getting last user slope: ", response);
+        slope = response.data;
+      })
+      .catch((error) => {
+        console.log("Error from getting last user slope", error);
+      });
+
+    let oldWeightBias = await getWeight();
+    let oldSlopes;
+    await axios
+      .post(
+        `/gaugeController/voteUserSlopes/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
+        { owner: activePublicKey, spender: selectedGauge }
+      )
+      .then((response) => {
+        console.log("Response from getting vote user slope: ", response);
+        oldSlopes = response.data;
+      })
+      .catch((error) => {
+        console.log("Error from getting vote user slope: ", error);
+      });
+
+    let oldDT = 0;
+    if (+oldSlopes.end > nextTime) oldDT = +oldSlopes.end - nextTime;
+    let old_bias = +oldSlopes.slope * oldDT;
+    let new_slope = (slope * voteWeightUsed * 100) / 10000;
+    let new_dt = this.lock_end - nextTime; //lock_end will be called from backend as soon as recieved its endpoint
+    let new_bias = new_slope * new_dt;
+
+    //NEW WORK ADDED
+    let point_bias = Math.max(oldWeightBias + new_bias, old_bias) - old_bias;
+
+    statsStore.state.calculatedWeights[selectedGauge] = point_bias;
+
+    // this.piechart = this.$refs.piecharts.chart;
+    // this.piechart.showLoading();
+
+    let total_outcome_weight = Object.values(
+      statsStore.state.calculatedWeights
+    ).reduce((a, b) => +a + +b, 0);
+
+    let outcome_weights = Object.entries(
+      statsStore.state.calculatedWeights
+    ).map(([k, v]) => ({
+      id: k,
+      name: statsStore.state.gaugesNames[k],
+      y: (v * 100) / total_outcome_weight,
+    }));
+
+    // this.outcomeWeights = outcome_weights;
+    setOutcomeWeights(outcome_weights);
+
+    // while (this.piechart.series[0])
+    //   this.piechart.series[0].remove(false, false);
+
+    // this.piechart.addSeries({
+    //   name: "Calculated outcome weights",
+    //   data: outcome_weights,
+    // });
+
+    // this.piechart.hideLoading();
+
+    let currentWeight = statsStore.state.gaugesWeights[selectedGauge];
+    let calculatedWeight = point_bias;
+
+    let change =
+      outcome_weights.find(
+        (v) => v.id.toLowerCase() == selectedGauge.toLowerCase()
+      ).y / statsStore.state.pieGaugeWeights[selectedGauge];
+
+    let old_APY = statsStore.state.currentCRVAPYs[selectedGauge];
+    setOldAPY(old_APY);
+
+    let new_APY = old_APY * change;
+    setNewAPY(new_APY);
+
+    // this.isCalculating = false;
+  };
+
   return (
     <>
       <div className="home-section home-full-height">
@@ -1235,6 +1373,7 @@ const GaugeWeightVote = () => {
                                             color: "white",
                                           }}
                                           onClick={() => {
+                                            calculateValuesForGraph();
                                             handleShowVoteForGaugeWeightModal();
                                           }}
                                         >
@@ -1908,6 +2047,7 @@ const GaugeWeightVote = () => {
           voteForGaugeWeightsMakeDeploy={voteForGaugeWeightsMakeDeploy}
           gauge={gauge}
           votingPowerPercentage={votingPowerPercentage}
+          graphData={outcomeWeights}
         />
       </div>
     </>
