@@ -11,8 +11,6 @@ import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { CasperServiceByJsonRPC, CLPublicKey, RuntimeArgs,CLOption } from "casper-js-sdk";
-import { Some } from "ts-results";
-import {createRecipientAddress} from "../../../../components/JsClients/VESTINGESCROW/src/utils"
 import { Form, Formik } from "formik";
 import { useSnackbar } from "notistack";
 import * as Yup from "yup";
@@ -30,6 +28,7 @@ import VestingTokens from "../../../../components/Charts/VestingTokens";
 import TextInput from "../../../../components/FormsUI/TextInput";
 import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
 import SigningModal from "../../../../components/Modals/SigningModal";
+import ClaimConfirmModal from "../../../../components/Modals/ClaimConfirmModal";
 import HomeBanner from "../Home/HomeBanner";
 import { Button } from "@mui/material";
 import * as helpers from "../../../../components/Utils/Helpers";
@@ -67,16 +66,10 @@ const Vesting = () => {
   const [endTimeVal, setEndTimeVal] = useState();
   const [vestedData, setVestedData] = useState();
   const [unVestedData, setUnVestedData] = useState();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
-
-  // States
-  const [openSigning, setOpenSigning] = useState(false);
-  const handleCloseSigning = () => {
-    setOpenSigning(false);
-  };
-  const handleShowSigning = () => {
-    setOpenSigning(true);
-  };
 
   // Content
   const initialValues = {
@@ -91,73 +84,7 @@ const Vesting = () => {
     console.log("Vesting Address Checking", values);
   };
 
-  async function claimMakeDeploy() {
-    handleShowSigning();
-    const publicKeyHex = localStorage.getItem("Address");
-    // const publicKeyHex = activePublicKey;
-    console.log("Public key: ", publicKeyHex);
-    if (
-      publicKeyHex !== null &&
-      publicKeyHex !== "null" &&
-      publicKeyHex !== undefined
-    ) {
-      const publicKey = CLPublicKey.fromHex(publicKeyHex);
-      const key = createRecipientAddress(publicKey);
-      const paymentAmount = 5000000000;
-      try {
-        console.log("In try block");
-        // const runtimeArgs = RuntimeArgs.fromMap({
-        //   value: CLValueBuilder.u256(convertToStr(lockedAmount)),
-        //   unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
-        // });
-        const runtimeArgs = RuntimeArgs.fromMap({
-          owner: new CLOption(Some(key)),
-        });
-        let contractHashAsByteArray = Uint8Array.from(
-          Buffer.from(VESTING_ESCROW_CONTRACT_HASH, "hex")
-        );
-        console.log("contract hash byte array: ", contractHashAsByteArray);
-        let entryPoint = "claim";
-        // Set contract installation deploy (unsigned).
-        let deploy = await makeDeploy(
-          publicKey,
-          contractHashAsByteArray,
-          entryPoint,
-          runtimeArgs,
-          paymentAmount
-        );
-        console.log("make deploy: ", deploy);
-        try {
-          console.log("In other try block");
-          let signedDeploy = await signdeploywithcaspersigner(
-            deploy,
-            publicKeyHex
-          );
-          let result = await putdeploy(signedDeploy, enqueueSnackbar);
-          console.log("result", result);
-
-          handleCloseSigning();
-          let variant = "success";
-          enqueueSnackbar("Funds Claimed Successfully", { variant })
-
-
-        } catch(error) {
-          console.log("claim make deploy error",error);
-          handleCloseSigning();
-          let variant = "Error";
-          enqueueSnackbar("Unable to Claim Funds", { variant })
-        }
-      } catch {
-        handleCloseSigning();
-        let variant = "Error";
-        enqueueSnackbar("Something Went Wrong", { variant });
-      }
-    } else {
-      handleCloseSigning();
-      let variant = "error";
-      enqueueSnackbar("Connect to Wallet Please", { variant });
-    }
-  }
+  
 
 
   // USE EFFECT
@@ -540,7 +467,8 @@ const Vesting = () => {
                                 variant="contained"
                                 size="large"
                                 style={{ backgroundColor: "#5300e8", color: "white" }}
-                                onClick={() => { claimMakeDeploy() }}
+                                // onClick={() => { claimMakeDeploy() }}
+                                onClick = {()=>setOpen(true)}
                               // onClick={() => { claimMakeDeploy(vestingAddress) }}
                               >
                                 Claim
@@ -558,7 +486,13 @@ const Vesting = () => {
             </div>
           </div>
         </div>
-        <SigningModal show={openSigning} />
+       
+        <ClaimConfirmModal
+            show={open}
+            hide={handleClose}
+            setOpen={setOpen} 
+            balance = {balanceFormat}
+        />
       </div>
     </>
   );
