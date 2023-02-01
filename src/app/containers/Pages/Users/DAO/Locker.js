@@ -29,14 +29,19 @@ import { useSnackbar } from "notistack";
 import { useEffect } from "react";
 import { ERC20_CRV_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
+import {VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { Container } from "@mui/material";
 // CONTENT
 
 const DAO_POWER = gql`
   query {
-    daoPowersByTimestamp {
+    daoPowersByBlock{
+      id
+      block
+      timestamp
       totalPower
-    }
+  }
+
   }
 `;
 
@@ -89,7 +94,9 @@ const Locker = () => {
   const [vPower, setVPower] = useState();
   const [lastEvent, setLastEvent] = useState();
   const [lockerChartData, setLockerChartData] = useState();
-
+  const [callsData,setCallsData] = useState();
+  const [totalSupply,setTotalSupply]= useState();
+  const [daoPowerChart,setDaoPowerChart] = useState([]);
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
     setOpenSigning(false);
@@ -106,7 +113,7 @@ const Locker = () => {
   console.log("this is error of voting escrow gql: ", error);
 
   if (data !== undefined) {
-    console.log("daopowerrrr", data.daoPowersByTimestamp);
+    console.log("daopowerrrr", data.daoPowersByBlock);
   }
 
   const voting = useQuery(VOTING_POWER, {
@@ -136,11 +143,28 @@ const Locker = () => {
   // if (votingEscrow.data !== undefined) {
   //   console.log("votingEscrows", votingEscrow.data.votingEscrows);
   // }
+  let param = {unlockTimes: callsData};
+
+useEffect(()=>{
+  axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`,param)
+  .then(response => {
+    // handle the response
+    console.log("response of totalSupply:...",response.data.totalSupplies);
+    setTotalSupply(response.data.totalSupplies)
+  })
+  .catch(error => {
+    // handle the error
+    console.log("error of totalSupply:...",error);
+  });
+},[userBalances])
+
+
+          
 
 
   useEffect(() => {
     charts();
-  }, [votingEscrowData, setVotingEscrowData]);
+  }, [votingEscrowData, setVotingEscrowData,unlockTime]);
   useEffect(() => {
     // resolveData();
     console.log("datadata", data);
@@ -148,8 +172,8 @@ const Locker = () => {
     console.log("votingEscrowvotingEscrow", votingEscrow);
     if (data) {
       // mutate data if you need to
-      console.log("data?.daoPowersByTimestamp", data?.daoPowersByTimestamp);
-      setDaoPower(data?.daoPowersByTimestamp);
+      console.log("data?.daoPowersByBlock", data?.daoPowersByBlock);
+      setDaoPower(data?.daoPowersByBlock);
     }
     if (voting) {
       console.log("voting.data?.votingPower", voting.data?.votingPower);
@@ -168,7 +192,7 @@ const Locker = () => {
     }
     if (userBalances) {
       console.log("userBalances.data?.unlock_time", userBalances.data?.userBalancesByUnlockTime);
-      // setUnlockTime(userBalances.data?.unlock_time);
+       setUnlockTime(userBalances.data?.userBalancesByUnlockTime != undefined ? userBalances.data?.userBalancesByUnlockTime : []);
     }
   }, [data, voting, votingEscrow,userBalances]);
 
@@ -258,22 +282,49 @@ const Locker = () => {
       setLockerChartData(interpolateVotingPower(chartData));
       let finalData = interpolateVotingPower(chartData);
       console.log("final chart data:", finalData);
+      let lastUnlockTime = parseInt(unlockTime[0]?.unlock_time)
+      console.log("lastUnlockTime",lastUnlockTime); 
+      let now = (Date.now() / 1000) | 0
+		  console.log("now time value",now);
+		  let calls = []
+		  let i = 0
+		while(now < lastUnlockTime) {
+			calls.push([now])
+			now += i ** 4 * 86400
+			i++
+		}
+    calls.push([lastUnlockTime]);
+    console.log("calls data",calls);
+    setCallsData(calls);
+    let daopowerdata = daoPower.map(e => [e.timestamp * 1000, e.totalPower / 1e9])
+    for(let m=0;m<calls.length;m++ ){
+      daopowerdata.push([parseInt(calls[m])*1000,(totalSupply[m]/1e9) | 0]);
+    }
+    setDaoPowerChart(daopowerdata);
+    console.log("daopowerdata",daopowerdata);
       //  console.log("final data after splice:",finalData.splice(0,finalData.length-11) );
     }
+    
   };
 
-  useEffect(()=>{
-    let lastUnlockTime = unlockTime[0].unlock_time
-    let now = (Date.now() / 1000) | 0
-		console.log("now time value",now);
-		let calls = []
-		let i = 0
-		// while(now < lastUnlockTime) {
-		// 	calls.push([this.votingEscrow._address, this.votingEscrow.methods.totalSupply(now).encodeABI()])
-		// 	now += i ** 4 * 86400
-		// 	i++
-		// }
-  },[])
+  // useEffect(()=>{
+  //   let lastUnlockTime = parseInt(unlockTime[0]?.unlock_time)
+  //   console.log("lastUnlockTime",lastUnlockTime); 
+  //   let now = (Date.now() / 1000) | 0
+  //   console.log("now time value",now);
+  //   let calls = []
+  //   let i = 0
+  // while(now < lastUnlockTime) {
+  //   console.log("smaller");
+  //   calls.push([now])
+  //   now += i ** 4 * 86400
+  //   i++
+  // }
+  // calls.push([lastUnlockTime]);
+  // console.log("calls data",calls);
+  // setCallsData(calls);
+   
+  // },[unlockTime, setUnlockTime,userBalances]);
   const addVotingPowerProperty = (data) => {
     return data.map((item) => ({
       ...item,
@@ -469,7 +520,7 @@ const Locker = () => {
                                 {/* Chart */}
                                 <div className="row no-gutters justify-content-center w-100">
                                   <div className="col-12">
-                                    <DaoVotingPower chart={lockerChartData} />
+                                    <DaoVotingPower chart={lockerChartData} daoPower={daoPowerChart} />
                                   </div>
                                 </div>
                                 <div className="col-12">
