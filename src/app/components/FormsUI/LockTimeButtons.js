@@ -18,6 +18,8 @@ const LockTimeButtons = ({
   options,
   avatar,
   date,
+  setStartingVPower,
+  lockAmount
 }) => {
   // States
   const { setFieldValue } = useFormikContext() ?? {};
@@ -52,6 +54,7 @@ const LockTimeButtons = ({
       setDateDisplay(
         formatDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))
       );
+      setStartingVPower(lockAmount*0.01)
     } else if (buttonValue === 2) {
       setDate(
         new Date(
@@ -69,6 +72,7 @@ const LockTimeButtons = ({
           )
         )
       );
+      setStartingVPower(lockAmount*0.04)
     } else if (buttonValue === 3) {
       setDate(
         new Date(
@@ -86,6 +90,7 @@ const LockTimeButtons = ({
           )
         )
       );
+      setStartingVPower(lockAmount*0.125)
     } else if (buttonValue === 4) {
       setDate(
         new Date(
@@ -103,6 +108,7 @@ const LockTimeButtons = ({
           )
         )
       );
+      setStartingVPower(lockAmount*0.25)
     } else if (buttonValue === 5) {
       setDate(
         new Date(
@@ -120,6 +126,7 @@ const LockTimeButtons = ({
           )
         )
       );
+      setStartingVPower(lockAmount*0.5)
     } else if (buttonValue === 6) {
       setDate(
         new Date(
@@ -138,8 +145,9 @@ const LockTimeButtons = ({
           )
         )
       );
+      setStartingVPower(lockAmount*1)
     }
-  }, [buttonValue]);
+  }, [buttonValue,lockAmount]);
 
   return (
     <>

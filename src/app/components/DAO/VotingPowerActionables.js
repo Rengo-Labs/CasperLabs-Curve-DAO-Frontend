@@ -56,7 +56,7 @@ const VotingPowerActionables = (props) => {
   const [lockTime, setLockTime] = useState("");
   const [lockAmount, setLockAmount] = useState(0);
   const [openA, setOpenA] = useState(false);
-  const [startingVPower, setStartingVPower] = useState(0.0);
+  const [startingVPower, setStartingVPower] = useState();
   const [CRVLockedBalanceValue,setCRVLockedBalanceValue] = useState();
 
   const [openAllowance, setOpenAllowance] = useState(false);
@@ -66,9 +66,8 @@ const VotingPowerActionables = (props) => {
   const handleShowAllowance = () => {
     setOpenAllowance(true);
   };
-  console.log("props for actionables: ", props, lockAmount);
+  console.log("props for actionables: ", props, lockAmount,startingVPower);
   const [openSigning, setOpenSigning] = useState(false);
-
   // Content
   const initialValues = {
     LockAmount: "",
@@ -316,7 +315,7 @@ const VotingPowerActionables = (props) => {
                         id="daoAmount"
                         label="Lock Amount"
                         onChange={(e) => {
-                          console.log("e", e.target.value);
+                          console.log("dam", e.target.value);
                           if (userCRVBalance >= e.target.value)
                             setLockAmount(e.target.value);
                           else {
@@ -392,6 +391,8 @@ const VotingPowerActionables = (props) => {
                       date={date}
                       setDate={setDate}
                       setDateDisplay={setDateDisplay}
+                      setStartingVPower={setStartingVPower}
+                      lockAmount={lockAmount}
                       
                       // name="LockTimeSelect"
                       // label="Select Lock Time"
@@ -400,7 +401,7 @@ const VotingPowerActionables = (props) => {
                   {/* </div> */}
                   {/* CREATE LOCK BUTTON */}
                   <div className="row no-gutters justify-content-center">
-                    <div className="col-12 col-md-4">
+                    <div className="col-12" style={{marginRight:"8%"}}>
                       <div className="btnWrapper my-4 text-center">
                         {lockAmount * 10 ** 9 > allowance ? (
                           <Button
@@ -418,8 +419,9 @@ const VotingPowerActionables = (props) => {
                         ) : (
                           <Button
                             variant="contained"
+                            
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            style={{ backgroundColor: "#5300e8", color: "white", minWidth:"25%"}}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -519,7 +521,7 @@ const VotingPowerActionables = (props) => {
                         id="daoAmount"
                         label="Lock Amount"
                         onChange={(e) => {
-                          console.log("e", e.target.value);
+                          console.log("dam", e.target.value);
                           if (userCRVBalance >= e.target.value)
                             setLockAmount(e.target.value);
                           else {
@@ -627,6 +629,8 @@ const VotingPowerActionables = (props) => {
                       date={date}
                       setDate={setDate}
                       setDateDisplay={setDateDisplay}
+                      setStartingVPower={setStartingVPower}
+                      lockAmount={lockAmount}
             
                     />
 
@@ -687,7 +691,7 @@ const VotingPowerActionables = (props) => {
                           variant="contained"
                           size="large"
                           style={{ backgroundColor: "#5300e8", color: "white" }}
-                          onClick={() => {
+                          onClick={() => {Your starting 
                             console.log("Action Taken");
                             // props.withdrawMakeDeploy();
                             withdrawMakeDeploy();
