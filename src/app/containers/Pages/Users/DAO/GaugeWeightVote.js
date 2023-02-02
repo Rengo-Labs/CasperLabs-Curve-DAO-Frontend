@@ -499,8 +499,8 @@ const GaugeWeightVote = () => {
       "0x705350c4BcD35c9441419DdD5d2f097d7a55410F",
     ];
 
-    let gaugeController_address = "0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB";
-    let gauge_relative_weight = "0x6207d866000000000000000000000000";
+    let gaugeController_address = GAUGE_CONTROLLER_CONTRACT_HASH;
+    // let gauge_relative_weight = "0x6207d866000000000000000000000000";
 
     let pools = [
       "compound",
@@ -520,10 +520,10 @@ const GaugeWeightVote = () => {
     let btcPrice = prices.bitcoin.usd;
     let CRVprice = prices["curve-dao-token"].usd;
 
-    let weightCalls = decodedGauges.map((gauge) => [
-      gaugeController_address,
-      gauge_relative_weight + gauge.slice(2),
-    ]);
+    // let weightCalls = decodedGauges.map((gauge) => [
+    //   gaugeController_address,
+    //   gauge_relative_weight + gauge.slice(2),
+    // ]);
 
     // let aggCallsWeights = await contract.multicall.methods
     //   .aggregate(weightCalls)
@@ -533,10 +533,25 @@ const GaugeWeightVote = () => {
     //   web3.eth.abi.decodeParameter("uint256", hex) / 1e18,
     // ]);
 
-    let ratesCalls = decodedGauges.map((gauge) => [
-      [gauge, "0x180692d0"],
-      [gauge, "0x17e28089"],
-    ]);
+    let decodedWeights = decodedGauges.map(async (gauge) => {
+      await axios
+        .post(
+          `gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
+          { address: gauge }
+        )
+        .then((response) => {
+          console.log("Response from gauge Relative weight: ", response);
+          return response.data;
+        })
+        .catch((error) => {
+          console.log("Error from gauge relative weight: ", error);
+        });
+    });
+
+    // let ratesCalls = decodedGauges.map((gauge) => [
+    //   [gauge, "0x180692d0"], //inflation_rate
+    //   [gauge, "0x17e28089"], //working_supply
+    // ]);
 
     // let aggRates = await contract.multicall.methods
     //   .aggregate(ratesCalls.flat())
@@ -544,7 +559,13 @@ const GaugeWeightVote = () => {
     // let decodedRate = aggRates[1].map((hex) =>
     //   web3.eth.abi.decodeParameter("uint256", hex)
     // );
-    let decodedRate = [];
+
+    let decodedRate = decodedGauges.map(async (gauge) => {
+      let inflationRate = await gaugeControllerFunctions.inflation_rate(gauge);
+      let workingSupply = await gaugeControllerFunctions.working_supply(gauge);
+      return [inflationRate, workingSupply];
+    });
+    // let decodedRate = [];
 
     let gaugeRates = decodedRate
       .filter((_, i) => i % 2 == 0)
@@ -553,10 +574,10 @@ const GaugeWeightVote = () => {
       .filter((_, i) => i % 2 == 1)
       .map((v) => v / 1e18);
 
-    let virtualPriceCalls = Object.values(this.poolInfo).map((v) => [
-      v.swap,
-      "0xbb7b8b80",
-    ]);
+    // let virtualPriceCalls = Object.values(this.poolInfo).map((v) => [
+    //   v.swap,
+    //   "0xbb7b8b80",
+    // ]);
     // let aggVirtualPrices = await contract.multicall.methods
     //   .aggregate(virtualPriceCalls)
     //   .call();
@@ -566,14 +587,15 @@ const GaugeWeightVote = () => {
     // ]);
 
     let decodedVirtualPrices = [];
-    let decodedWeights = [];
+    // let decodedWeights = [];
 
     let weightData = decodedWeights.map((w, i) => {
-      let pool = Object.values(this.poolInfo).find(
-        (v) =>
-          v.gauge.toLowerCase() ==
-          "0x" + weightCalls[i][1].slice(34).toLowerCase()
-      ).name;
+      let pool;
+      // let pool = Object.values(this.poolInfo).find(
+      //   (v) =>
+      //     v.gauge.toLowerCase() ==
+      //     "0x" + weightCalls[i][1].slice(34).toLowerCase()
+      // ).name;
       let swap_address = poolInfo[pool].swap;
       let virtual_price = decodedVirtualPrices.find(
         (v) => v[0].toLowerCase() == swap_address.toLowerCase()
