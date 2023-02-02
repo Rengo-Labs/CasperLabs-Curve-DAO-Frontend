@@ -68,6 +68,7 @@ import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 import axios from "axios";
 import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
 import * as statsStore from "../../../../components/stores/StatsStore";
+import VotingHistoryTable from "../../../../components/Tables/VotingHistoryTable";
 
 const GAUGE_WEIGHT = gql`
   query gaugeVotesByUser($user: String) {
@@ -1778,7 +1779,16 @@ const GaugeWeightVote = () => {
                             <div className="row no-gutters mt-3">
                               <div className="col-12">
                                 <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 justify-content-center">
-                                  <TableContainer>
+                                  <VotingHistoryTable
+                                    showVotes={showVotes}
+                                    gaugeVoteTime={gaugeVoteTime}
+                                    selectedGauge={selectedGauge}
+                                    handleTableGraph={handleTableGraph}
+                                    gaugeWeightData={gaugeWeightData}
+                                    gaugeWeightVoteData={gaugeWeightVoteData}
+                                  />
+
+                                  {/* <TableContainer>
                                     <Table
                                       aria-label="Gauge Weight Vote History"
                                       style={{ border: "0.6px solid #e0e0e0" }}
@@ -1789,9 +1799,9 @@ const GaugeWeightVote = () => {
                                           paddingLeft: "0.25rem",
                                         }}
                                       >
-                                        <TableRow id="GWVoteHistoryTableSort">
-                                          {/* {votingHistoryCells.map((cell) => ( */}
-                                          <TableCell
+                                        <TableRow id="GWVoteHistoryTableSort"> */}
+                                  {/* {votingHistoryCells.map((cell) => ( */}
+                                  {/* <TableCell
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
@@ -1874,7 +1884,7 @@ const GaugeWeightVote = () => {
                                             <PieChartIcon />
                                           </TableCell>
                                           {/* ))} */}
-                                        </TableRow>
+                                  {/* </TableRow>
                                       </TableHead>
                                       <TableBody id={"GWVoteHistoryTableBody"}>
                                         {showVotes
@@ -1982,9 +1992,9 @@ const GaugeWeightVote = () => {
                                                         }}
                                                         to="/"
                                                         className="tableCellLink font-weight-bold"
-                                                      >
-                                                        {/* {getGaugeAddress(item.gauge)} */}
-                                                        {helpers.shortenAddress(
+                                                      > */}
+                                  {/* {getGaugeAddress(item.gauge)} */}
+                                  {/* {helpers.shortenAddress(
                                                           item.gauge
                                                         )}
                                                       </Link>
@@ -2115,9 +2125,9 @@ const GaugeWeightVote = () => {
                                                       }}
                                                       to="/"
                                                       className="tableCellLink font-weight-bold"
-                                                    >
-                                                      {/* {getGaugeAddress(item.gauge)} */}
-                                                      {helpers.shortenAddress(
+                                                    > */}
+                                  {/* {getGaugeAddress(item.gauge)} */}
+                                  {/* {helpers.shortenAddress(
                                                         item.gauge
                                                       )}
                                                     </Link>
@@ -2202,7 +2212,7 @@ const GaugeWeightVote = () => {
                                         </TableRow>
                                       </TableFooter>
                                     </Table>
-                                  </TableContainer>
+                                  </TableContainer> */}
                                 </div>
                               </div>
                             </div>
