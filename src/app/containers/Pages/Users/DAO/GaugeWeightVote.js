@@ -108,6 +108,17 @@ const GAUGE_VOTES_BY_TIME = gql`
   }
 `;
 
+const GAUGES_BY_ADDRESS = gql`
+  query getGaugesByAddress($gaugeAddress: String) {
+    getGaugesByAddress(gaugeAddress: $gaugeAddress) {
+      id
+      address
+      contractHash
+      packageHash
+    }
+  }
+`;
+
 const selectGaugeOptions = [
   {
     name: "CSPR",
@@ -315,6 +326,15 @@ const GaugeWeightVote = () => {
   //     );
   //   }
   // }, [showVotes]);
+
+  const gauges = useQuery(GAUGES_BY_ADDRESS, {
+    variables: {
+      gaugeAddress: "",
+    },
+  });
+
+  console.log("Error from gauges by address: ", gauges.error);
+  console.log("Data from gauges by address: ", gauges.data.getGaugesByAddress);
 
   const gaugeWeight = useQuery(GAUGE_WEIGHT, {
     variables: {
@@ -1331,13 +1351,13 @@ const GaugeWeightVote = () => {
                                           {/* <MenuItem value={"USDT"}>USDT</MenuItem>
                                         <MenuItem value={"BTC"}>BTC</MenuItem>
                                         <MenuItem value={"CSPR"}>CSPR</MenuItem> */}
-                                          {Object.keys(gaugesNames).map(
+                                          {gauges.data.getGaugesByAddress?.map(
                                             (item, key) => (
                                               <MenuItem key={key} value={item}>
-                                                {gaugesNames[item]}
+                                                {item.name}
                                                 {"-"}
-                                                {item.slice(0, 6)} ...{" "}
-                                                {item.slice(-6)}
+                                                {item.id.slice(0, 6)} ...{" "}
+                                                {item.id.slice(-6)}
                                               </MenuItem>
                                             )
                                           )}
@@ -1778,13 +1798,13 @@ const GaugeWeightVote = () => {
                                       <MenuItem value="Select a Gauge">
                                         <em>Select a Gauge</em>
                                       </MenuItem>
-                                      {Object.keys(gaugesNames).map(
+                                      {gauges.data.getGaugesByAddress?.map(
                                         (item, key) => (
                                           <MenuItem key={key} value={item}>
-                                            {gaugesNames[item]}
+                                            {item.name}
                                             {"-"}
-                                            {item.slice(0, 6)} ...{" "}
-                                            {item.slice(-6)}
+                                            {item.id.slice(0, 6)} ...{" "}
+                                            {item.id.slice(-6)}
                                           </MenuItem>
                                         )
                                       )}
