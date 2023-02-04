@@ -334,7 +334,7 @@ const GaugeWeightVote = () => {
   });
 
   console.log("Error from gauges by address: ", gauges.error);
-  console.log("Data from gauges by address: ", gauges.data.getGaugesByAddress);
+  console.log("Data from gauges by address: ", gauges.data?.getGaugesByAddress);
 
   const gaugeWeight = useQuery(GAUGE_WEIGHT, {
     variables: {
@@ -1351,7 +1351,7 @@ const GaugeWeightVote = () => {
                                           {/* <MenuItem value={"USDT"}>USDT</MenuItem>
                                         <MenuItem value={"BTC"}>BTC</MenuItem>
                                         <MenuItem value={"CSPR"}>CSPR</MenuItem> */}
-                                          {gauges.data.getGaugesByAddress?.map(
+                                          {gauges.data?.getGaugesByAddress?.map(
                                             (item, key) => (
                                               <MenuItem key={key} value={item}>
                                                 {item.name}
@@ -1798,7 +1798,7 @@ const GaugeWeightVote = () => {
                                       <MenuItem value="Select a Gauge">
                                         <em>Select a Gauge</em>
                                       </MenuItem>
-                                      {gauges.data.getGaugesByAddress?.map(
+                                      {gauges.data?.getGaugesByAddress?.map(
                                         (item, key) => (
                                           <MenuItem key={key} value={item}>
                                             {item.name}

@@ -58,7 +58,7 @@ const VotingPowerDAO = (props) => {
   })
   console.log("this is data of voting escrow gql: ", voting.data);
   if (voting.data !== undefined) {
-    console.log("votingPOWER", voting.data.votingPower[0].power);
+    // console.log("votingPOWER", voting.data?.votingPower[0]?.power);
   }
 
 
@@ -103,13 +103,13 @@ const VotingPowerDAO = (props) => {
   }, [localStorage.getItem("Address")]);
 
   const DAOPowerFormat = () => {
-    return daoPower ? helpers.formatNumber(daoPower[0].totalPower / 1e9) : 0;
+    return daoPower ? helpers.formatNumber(daoPower[0]?.totalPower / 1e9) : 0;
   };
 
   const averageLock = () => {
     let crvLocked = 200000;
     return daoPower
-      ? ((4 * daoPower[0].totalPower) / crvLocked).toFixed(2)
+      ? ((4 * daoPower[0]?.totalPower) / crvLocked).toFixed(2)
       : 0;
   };
 
