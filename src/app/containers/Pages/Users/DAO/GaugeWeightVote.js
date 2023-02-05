@@ -69,6 +69,7 @@ import axios from "axios";
 import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
 import * as statsStore from "../../../../components/stores/StatsStore";
 import VotingHistoryTable from "../../../../components/Tables/VotingHistoryTable";
+import * as votingEscrowFunctions from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 
 const GAUGE_WEIGHT = gql`
   query gaugeVotesByUser($user: String) {
@@ -177,8 +178,8 @@ const GaugeWeightVote = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [effectiveDate, setEffectiveDate] = useState("26/05/2022");
-  const [votedThisWeek, setVotedThisWeek] = useState("2,770,259.15");
-  const [totalVeCRV, setTotalVeCRV] = useState("451,949,979.95");
+  const [votedThisWeek, setVotedThisWeek] = useState("");
+  const [totalVeCRV, setTotalVeCRV] = useState("0");
   const [veCRVSupplyVoted, setVeCRVSupplyVoted] = useState("0.61 %");
   const [boostGauge, setBoostGauge] = useState();
   const [voteWeightUsed, setVoteWeightUsed] = useState("0%");
@@ -358,6 +359,60 @@ const GaugeWeightVote = () => {
   // }
 
   useEffect(() => {
+    let balance = votingEscrowFunctions.balanceOf(VOTING_ESCROW_CONTRACT_HASH);
+    axios
+      .post(`/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, {
+        account: activePublicKey,
+      })
+      .then((response) => {
+        console.log("Response from getting locked end: ", response);
+      })
+      .catch((error) => {
+        console.log("Error from getting locked end: ", error);
+      });
+
+    let powerUsed = gaugeControllerFunctions.vote_user_power(
+      GAUGE_CONTROLLER_CONTRACT_HASH,
+      activePublicKey
+    );
+    let totalVeCRV;
+    axios
+      .post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`)
+      .then((response) => {
+        console.log("Response from getting total supply: ", response);
+        totalVeCRV = response.data?.totalSupplies[0];
+        setTotalVeCRV(totalVeCRV);
+      })
+      .catch((error) => {
+        console.log("Error from getting total supply: ", error);
+      });
+
+    // getVotes();  //check for its logic
+    //WORKING FOR GETVOTES FUNCTION AFTER REMOVING QUERIES
+
+    let votes;
+    if (gaugeWeight) {
+      votes = gaugeWeight.data?.gaugeVotesByUser;
+    } else {
+      votes = gaugeVoteTime.data?.gaugeVotesByTime;
+    }
+    console.log("Votesvotesvotes: ", votes);
+    let totalveCRVvote = votes
+      ?.filter((v, i, a) => a.findIndex((t) => t.user === v.user) === i)
+      .reduce((a, b) => +a + +b.veCRV, 0);
+
+    setVotedThisWeek(totalveCRVvote);
+    // if (results.data.myVotes) {
+    //   this.myVoteWeightUsed =
+    //     results.data.myVotes.reduce((a, b) => +a + +b.weight, 0) / 100;
+    // } else {
+    //   this.myVoteWeightUsed =
+    //     results.data.gaugeVotes.reduce((a, b) => +a + +b.weight, 0) / 100;
+    //   console.log(results, this.votes.length, "THE RESULTS");
+    // }
+  }, [gaugeWeight, gaugeVotesByTime]);
+
+  useEffect(() => {
     if (gaugeWeight) {
       console.log("GaugeWeightByUserData", gaugeWeight.data?.gaugeVotesByUser);
       setGaugeWeightData(
@@ -391,55 +446,55 @@ const GaugeWeightVote = () => {
     adddc432b76fabbb9ff5a694b5839065e89764c1e51df8cffdbdc34f8925876c: "susdv2",
     bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38: "sbtc",
   };
-  useEffect(() => {
-    console.log("gaugeWeightData", gaugeWeightData);
-    let totalWeight = gaugeWeightData[0]?.total_weight;
-    //let totalWeight = 200000000000;
-    //let gaugeWeight = gaugeWeightData[0]?.gaugeWeights;
-    //let gaugeWeight = 100000000000;
-    //console.log("gaugeWeight",gaugeWeight);
-    console.log(
-      "gaugesNames",
-      gaugesNames[
-        "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"
-      ]
-    );
-    //let future_weights = gaugeWeight?.map((v, i) => ({ id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], name: gaugesNames["3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735"], y: +v.weight * 1e18 * 100 / totalWeight}))
-    // let future_weights = {
-    //   id: gaugesNames[
-    //     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-    //   ],
-    //   name: gaugesNames[
-    //     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-    //   ],
-    //   y:
-    //     (+gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100) /
-    //     totalWeight,
-    // };
-    // console.log("future_weights:", future_weights);
-    // setFutureWeight(future_weights);
+  // useEffect(() => {
+  //   console.log("gaugeWeightData", gaugeWeightData);
+  //   let totalWeight = gaugeWeightData[0]?.total_weight;
+  //   //let totalWeight = 200000000000;
+  //   //let gaugeWeight = gaugeWeightData[0]?.gaugeWeights;
+  //   //let gaugeWeight = 100000000000;
+  //   //console.log("gaugeWeight",gaugeWeight);
+  //   console.log(
+  //     "gaugesNames",
+  //     gaugesNames[
+  //       "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"
+  //     ]
+  //   );
+  //   //let future_weights = gaugeWeight?.map((v, i) => ({ id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], name: gaugesNames["3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735"], y: +v.weight * 1e18 * 100 / totalWeight}))
+  //   // let future_weights = {
+  //   //   id: gaugesNames[
+  //   //     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
+  //   //   ],
+  //   //   name: gaugesNames[
+  //   //     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
+  //   //   ],
+  //   //   y:
+  //   //     (+gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100) /
+  //   //     totalWeight,
+  //   // };
+  //   // console.log("future_weights:", future_weights);
+  //   // setFutureWeight(future_weights);
 
-    console.log("totalWeight", totalWeight);
+  //   console.log("totalWeight", totalWeight);
 
-    let totalveCRVvote = gaugeWeightData
-      ?.filter((v, i, a) => a.findIndex((t) => t.user === v.user) === i)
-      .reduce((a, b) => +a + +b.veCRV, 0);
-    console.log("totalveCRVvote", totalveCRVvote);
+  //   let totalveCRVvote = gaugeWeightData
+  //     ?.filter((v, i, a) => a.findIndex((t) => t.user === v.user) === i)
+  //     .reduce((a, b) => +a + +b.veCRV, 0);
+  //   console.log("totalveCRVvote", totalveCRVvote);
 
-    const totalveCRVvoteFormat = () => {
-      return helpers.formatNumber(totalveCRVvote / 1e9);
-    };
-    console.log("totalveCRVvoteFormat:...", totalveCRVvoteFormat());
-    setVotedThisWeek(totalveCRVvoteFormat());
+  //   const totalveCRVvoteFormat = () => {
+  //     return helpers.formatNumber(totalveCRVvote / 1e9);
+  //   };
+  //   console.log("totalveCRVvoteFormat:...", totalveCRVvoteFormat());
+  //   setVotedThisWeek(totalveCRVvoteFormat());
 
-    // let changePagination=()=> {
-    //   let perPage= 10;
-    //   let filteredVotes = gaugeWeightData?.slice(page*perPage, page*perPage + perPage)
-    //   console.log("filteredVotes for table:",filteredVotes);
-    //   setFilteredVotes(filteredVotes);
-    // }
-    // changePagination();
-  }, [gaugeWeight, gaugeWeightData]);
+  //   // let changePagination=()=> {
+  //   //   let perPage= 10;
+  //   //   let filteredVotes = gaugeWeightData?.slice(page*perPage, page*perPage + perPage)
+  //   //   console.log("filteredVotes for table:",filteredVotes);
+  //   //   setFilteredVotes(filteredVotes);
+  //   // }
+  //   // changePagination();
+  // }, [gaugeWeight, gaugeWeightData]);
 
   //GETTING DATA FOR GRAPH
   useEffect(() => {
@@ -1679,7 +1734,10 @@ const GaugeWeightVote = () => {
                                         <span className="font-weight-bold">
                                           Percentage veCRV supply voted:&nbsp;
                                         </span>
-                                        {veCRVSupplyVoted}
+                                        {(
+                                          (votedThisWeek * 100) /
+                                          totalVeCRV
+                                        ).toFixed(2)}
                                       </ListItemText>
                                     </ListItem>
                                   </List>

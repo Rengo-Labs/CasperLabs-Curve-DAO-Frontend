@@ -128,6 +128,17 @@ export const gauges = async (contractHash : string, owner: string) => {
   return gauges;
 }
 
+export const vote_user_power = async (contractHash : string, owner: string) => {
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+  //gaugeTypeNames
+  const voteUserPower = await gaugeController.vote_user_power(owner);
+  // console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points total: ${gaugeTypeNames}`);
+ 
+  return voteUserPower;
+}
+
 export const gaugeTypes = async (contractHash : string, owner: string) => {
   // We don't need hash- prefix so i'm removing it
   await gaugeController.setContractHash(contractHash);
