@@ -551,6 +551,7 @@ const GaugeWeightVote = () => {
         // Vue.set(futureCRVAPYs, pool, currentCRVAPYs[pool] * change);
         let tempFutureCRV = futureCRVAPYs;
         tempFutureCRV[pool] = currentCRVAPYs[pool] * change;
+        setFutureCRVAPYs(tempFutureCRV);
         statsStore.state.currentCRVAPYs[
           Object.values(poolInfo).find((v) => v.name == pool).gauge
         ] = currentCRVAPYs[pool] * change;
@@ -608,7 +609,8 @@ const GaugeWeightVote = () => {
     //   web3.eth.abi.decodeParameter("uint256", hex) / 1e18,
     // ]);
 
-    let decodedWeights = decodedGauges.map(async (gauge) => {
+    let decodedWeights = [];
+    decodedGauges.map(async (gauge) => {
       await axios
         .post(
           `gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
@@ -616,13 +618,15 @@ const GaugeWeightVote = () => {
         )
         .then((response) => {
           console.log("Response from gauge Relative weight: ", response);
-          return response.data;
+          // return response.data.gaugeRelativeWeights[0];
+          decodedWeights.push(response.data.gaugeRelativeWeights[0]);
         })
         .catch((error) => {
           console.log("Error from gauge relative weight: ", error);
         });
     });
 
+    console.log("Decode weights: ", decodedWeights);
     // let ratesCalls = decodedGauges.map((gauge) => [
     //   [gauge, "0x180692d0"], //inflation_rate
     //   [gauge, "0x17e28089"], //working_supply
@@ -635,11 +639,16 @@ const GaugeWeightVote = () => {
     //   web3.eth.abi.decodeParameter("uint256", hex)
     // );
 
-    let decodedRate = decodedGauges.map(async (gauge) => {
+    let decodedRate = [];
+    decodedGauges.map(async (gauge) => {
       let inflationRate = await gaugeControllerFunctions.inflation_rate(gauge);
       let workingSupply = await gaugeControllerFunctions.working_supply(gauge);
-      return [inflationRate, workingSupply];
+      console.log("Inflation rate: ", inflationRate);
+      console.log("Working supply: ", workingSupply);
+      decodedRate.push([inflationRate, workingSupply]);
     });
+
+    console.log("decoded rates: ", decodedRate);
     // let decodedRate = [];
 
     let gaugeRates = decodedRate
@@ -690,11 +699,13 @@ const GaugeWeightVote = () => {
       let tempCurrentWeights = currentWeights;
       tempCurrentWeights[pool] = w[1] * 100;
       setCurrentWeights(tempCurrentWeights);
+      console.log("Current weights: ", currentWeights);
 
       // Vue.set(this.currentCRVAPYs, pool, apy);
       let tempCurrentCRV = currentCRVAPYs;
       tempCurrentCRV[pool] = apy;
       setCurrentCRVAPYs(tempCurrentCRV);
+      console.log("Current crv apys: ", currentCRVAPYs);
       //Vue.set(this.CRVAPYs, pool, apy)
     });
   };
@@ -1221,6 +1232,8 @@ const GaugeWeightVote = () => {
                                 <FutureAPYTable
                                   cells={cells}
                                   gaugeWeightVoteData={gaugeWeightVoteData}
+                                  futureCRVAPYs={futureCRVAPYs}
+                                  currentCRVAPYs={currentCRVAPYs}
                                 ></FutureAPYTable>
                               </Container>
                               {/* <TableContainer sx={{ p: 3 }}>
@@ -1439,7 +1452,7 @@ const GaugeWeightVote = () => {
                                   <div className="row no-gutters mt-3">
                                     <div className="col-12">
                                       <div className="btnWrapper">
-                                        <Button
+                                        {/* <Button
                                           variant="contained"
                                           size="large"
                                           style={{
@@ -1453,18 +1466,18 @@ const GaugeWeightVote = () => {
                                           ) : (
                                             <span>Show my allocation</span>
                                           )}
-                                          {/* Hide My Allocation&nbsp; */}
+                                          Hide My Allocation&nbsp;
                                           <span className="ml-4">
                                             <Tooltip title="Your vote allocation from previous votes is remembered. If you want to change it and you have votes allocated to a gauge, you can set its new allocation to 0">
                                               <HelpOutlineIcon />
                                             </Tooltip>
                                           </span>
-                                        </Button>
+                                        </Button> */}
                                       </div>
                                     </div>
                                   </div>
                                   {/* Gauge Weight Reset */}
-                                  {hideAllocation ? null : (
+                                  {!hideAllocation ? null : (
                                     // <div className="row no-gutters mt-3">
                                     //   <div className="col-12">
                                     //     <List>
@@ -1734,10 +1747,12 @@ const GaugeWeightVote = () => {
                                         <span className="font-weight-bold">
                                           Percentage veCRV supply voted:&nbsp;
                                         </span>
-                                        {(
-                                          (votedThisWeek * 100) /
-                                          totalVeCRV
-                                        ).toFixed(2)}
+                                        {votedThisWeek && totalVeCRV
+                                          ? (
+                                              (votedThisWeek * 100) /
+                                              totalVeCRV
+                                            ).toFixed(2)
+                                          : 0}
                                       </ListItemText>
                                     </ListItem>
                                   </List>
