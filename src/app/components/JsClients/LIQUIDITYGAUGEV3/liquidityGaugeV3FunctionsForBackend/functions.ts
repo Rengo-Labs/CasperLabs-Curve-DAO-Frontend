@@ -34,6 +34,19 @@ export const workingBalances = async (contractHash:string,account: string) => {
   
 };
 
+export const balanceOfGauge = async (contractHash:string,account: string) => {
+
+    // We don't need hash- prefix so i'm removing it
+    await liquiditygaugev3.setContractHash(contractHash);
+  
+    //balanceof
+    const balance = await liquiditygaugev3.balanceOf(account);
+    console.log(contractHash +` =... balanceof : ${balance}`);
+  
+    return balance;
+  
+};
+
 
 export const workingSupply = async (contractHash:string) => {
 
@@ -49,7 +62,7 @@ export const workingSupply = async (contractHash:string) => {
 };
 
 
-export const totalSupply = async (contractHash:string) => {
+export const totalSupplyGauge = async (contractHash:string) => {
 
     // We don't need hash- prefix so i'm removing it
     await liquiditygaugev3.setContractHash(contractHash);

@@ -11,7 +11,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 // axios.defaults.withCredentials = true;
 
 const client = new ApolloClient({
-  uri: "http://curvegraphqlbackend-env.eba-69snndvn.us-east-1.elasticbeanstalk.com/graphql",
+  uri: "http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/graphql/graphql",
   //uri:"http://localhost:3000/graphQL",
   cache: new InMemoryCache(),
 });

@@ -37,16 +37,16 @@ class LIQUIDITYGAUGEV3Client {
     ownedTokens: string;
     owners: string;
     paused: string;
-    working_balances: string;
-    period_timestamp: string;
-    integrate_inv_supply: string;
-    integrate_checkpoint_of: string;
-    integrate_inv_supply_of: string;
-    integrate_fraction: string;
-    reward_tokens: string;
-    rewards_receiver: string;
-    reward_integral: string;
-    reward_integral_for: string;
+    workingBalances: string;
+    periodTimestamp: string;
+    integrateInvSupply: string;
+    integrateCheckpointOf: string;
+    integrateInvSupplyOf: string;
+    integrateFraction: string;
+    rewardTokens: string;
+    rewardsReceiver: string;
+    rewardIntegral: string;
+    rewardIntegralFor: string;
     
   };
 
@@ -69,16 +69,16 @@ class LIQUIDITYGAUGEV3Client {
       ownedTokens: "null",
       owners: "null",
       paused: "null",
-      working_balances: "null",
-      period_timestamp: "null",
-      integrate_inv_supply: "null",
-      integrate_checkpoint_of: "null",
-      integrate_inv_supply_of: "null",
-      integrate_fraction: "null",
-      reward_tokens: "null",
-      rewards_receiver: "null",
-      reward_integral: "null",
-      reward_integral_for: "null",
+      workingBalances: "null",
+      periodTimestamp: "null",
+      integrateInvSupply: "null",
+      integrateCheckpointOf: "null",
+      integrateInvSupplyOf: "null",
+      integrateFraction: "null",
+      rewardTokens: "null",
+      rewardsReceiver: "null",
+      rewardIntegral: "null",
+      rewardIntegralFor: "null",
     }; 
   }
 
@@ -711,7 +711,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.working_balances
+        this.namedKeys.workingBalances
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -745,7 +745,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.period_timestamp
+        this.namedKeys.periodTimestamp
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -761,7 +761,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.integrate_inv_supply
+        this.namedKeys.integrateInvSupply
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -777,7 +777,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.integrate_inv_supply_of
+        this.namedKeys.integrateInvSupplyOf
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -793,7 +793,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.integrate_checkpoint_of
+        this.namedKeys.integrateCheckpointOf
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -809,7 +809,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.integrate_fraction
+        this.namedKeys.integrateFraction
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -834,7 +834,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.reward_tokens
+        this.namedKeys.rewardTokens
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -850,7 +850,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.rewards_receiver
+        this.namedKeys.rewardsReceiver
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -866,7 +866,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.reward_integral
+        this.namedKeys.rewardIntegral
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -891,7 +891,7 @@ class LIQUIDITYGAUGEV3Client {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         encodedBytes,
-        this.namedKeys.reward_integral_for
+        this.namedKeys.rewardIntegralFor
       );
 
       const maybeValue = result.value().unwrap();
