@@ -1,5 +1,5 @@
 // REACT
-import React from "react";
+import React, { useEffect } from "react";
 // CUSTOM STYLING
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
@@ -15,7 +15,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Link } from "react-router-dom";
 
-
 // CONTENT
 // const cells = ["Pool", "Base vAPY", "Rewards tAPR", "Volume", "TVL"];
 // const sampleData =
@@ -30,10 +29,17 @@ const FutureAPYTable = (props) => {
   // States
   // Handlers
 
+  useEffect(() => {
+    console.log("Props for future apy table: ", props);
+  });
+
   return (
     <>
-      <TableContainer sx={{ p: 3 }}>
-        <Table aria-label="Gauge Weight Vote">
+      {/* <TableContainer sx={{ p: 3 }}> */}
+        <Table
+          aria-label="Gauge Weight Vote"
+          style={{ border: "0.6px solid #e0e0e0" }}
+        >
           <TableHead
             sx={{
               backgroundColor: "#e7ebf0",
@@ -46,7 +52,7 @@ const FutureAPYTable = (props) => {
                   sx={{
                     border: 0,
                     fontWeight: "bold",
-                    fontSize: "1.25rem",
+                    fontSize: "1rem",
                     textAlign: "center",
                   }}
                 >
@@ -61,54 +67,54 @@ const FutureAPYTable = (props) => {
                 <TableRow>
                   <TableCell
                     key={item.index}
-                    sx={{ textAlign: "center" }}
+                    sx={{ textAlign: "center", border: "0.6px solid #e0e0e0" }}
                   >
-                    <Link
+                    {/* <Link
                       to="/pool/buy-and-sell"
                       className="tableCellLink"
-                    >
-                      {item.indexNo}
-                    </Link>
+                    > */}
+                    {item.indexNo}
+                    {/* </Link> */}
                   </TableCell>
                   <TableCell
                     key={item.index}
-                    sx={{ textAlign: "center" }}
+                    sx={{ textAlign: "center", border: "0.6px solid #e0e0e0" }}
                   >
-                    <Link
+                    {/* <Link
                       to="/pool/buy-and-sell"
                       className="tableCellLink"
-                    >
-                      {item.pool}
-                    </Link>
+                    > */}
+                    {item.pool}
+                    {/* </Link> */}
                   </TableCell>
                   <TableCell
                     key={item.index}
-                    sx={{ textAlign: "center" }}
+                    sx={{ textAlign: "center", border: "0.6px solid #e0e0e0" }}
                   >
-                    <Link
+                    {/* <Link
                       to="/pool/buy-and-sell"
                       className="tableCellLink"
-                    >
-                      {item.currentCrv}
-                    </Link>
+                    > */}
+                    {item.currentCrv}
+                    {/* </Link> */}
                   </TableCell>
                   <TableCell
                     key={item.index}
-                    sx={{ textAlign: "center" }}
+                    sx={{ textAlign: "center", border: "0.6px solid #e0e0e0" }}
                   >
-                    <Link
+                    {/* <Link
                       to="/pool/buy-and-sell"
                       className="tableCellLink"
-                    >
-                      {item.futureCrv}
-                    </Link>
+                    > */}
+                    {item.futureCrv}
+                    {/* </Link> */}
                   </TableCell>
                 </TableRow>
               );
             })}
           </TableBody>
         </Table>
-      </TableContainer>
+      {/* </TableContainer> */}
     </>
   );
 };

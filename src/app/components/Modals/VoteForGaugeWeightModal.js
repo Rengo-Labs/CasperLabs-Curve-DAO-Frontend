@@ -58,7 +58,7 @@ function VoteForGaugeWeightModal(props) {
                       </span>
                     </Typography>
                   </div>
-                  {/* <GaugeRelativeWeight /> */}
+                  <GaugeRelativeWeight chart={props.graphData} />
                 </div>
               </div>
             </Paper>

@@ -45,6 +45,8 @@ class GaugeControllerClient {
     points_total : string,
     points_type_weight: string,
     time_type_weight :string,
+    inflation_rate :string,
+    working_supply :string,
   };
 
   private isListening = false;
@@ -73,7 +75,9 @@ class GaugeControllerClient {
       changes_sum : "null",
       points_total : "null",
       points_type_weight : "null",
-      time_type_weight : "null"
+      time_type_weight : "null",
+      inflation_rate : "null",
+      working_supply : "null",
     }; 
   }
 
@@ -107,6 +111,8 @@ class GaugeControllerClient {
       "points_total",
       "points_type_weight",
       "time_type_weight",
+      "inflation_rate",
+      "working_supply",
       `${this.contractName}_package_hash`,
       `${this.contractName}_package_hash_wrapped`,
       `${this.contractName}_contract_hash`,
@@ -676,6 +682,24 @@ class GaugeControllerClient {
       return "0";
     }
 
+  }
+
+  public async inflation_rate() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["inflation_rate"]
+    );
+    return result.value();
+  }
+
+  public async working_supply() {
+    const result = await contractSimpleGetter(
+      this.nodeAddress,
+      this.contractHash,
+      ["working_supply"]
+    );
+    return result.value();
   }
 
   public async time_type_weight(owner: string) {
