@@ -123,7 +123,7 @@ const Locker = () => {
   });
   console.log("this is data of voting escrow gql: ", voting.data);
   if (voting.data !== undefined) {
-    console.log("votingPOWER", voting.data.votingPower[0].power);
+    console.log("votingPOWER", voting?.data);
   }
 
   const votingEscrow = useQuery(VOTING_ESCROW);
