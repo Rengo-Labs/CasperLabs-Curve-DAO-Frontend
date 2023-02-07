@@ -25,11 +25,11 @@ export function formatDateToHumanChart(timestamp) {
     return [
                 d.getFullYear(),
                 `${(d.getMonth()+1).toString().padStart(2, '0')}`,
-                d.getDate().toString().padStart(2, '0'),
+                d.getDate().toString().padStart(2, '0')].join('/')+' '+
                
-                // [`${d.getHours()}`.padStart(2, '0'),
-                // `${d.getMinutes()}`.padStart(2, '0'),
-                // `${d.getSeconds()}`.padStart(2, '0'),
+                [`${d.getHours()}`.padStart(2, '0'),
+                `${d.getMinutes()}`.padStart(2, '0'),
+                `${d.getSeconds()}`.padStart(2, '0'),
             ]
             .join(':');
     }

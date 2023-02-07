@@ -1,5 +1,5 @@
 // REACT
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 // CUSTOM STYLING
 import "../../assets/css/SelectInput.css";
 // BOOTSTRAP
@@ -8,7 +8,7 @@ import "../../assets/css/bootstrap.min.css";
 import { StyledEngineProvider } from "@mui/styled-engine";
 // FORMIK
 import { useField, useFormikContext } from "formik";
-import { Avatar, MenuItem, TextField,Button } from "@mui/material";
+import { Avatar, MenuItem, TextField, Button, Grid } from "@mui/material";
 
 const LockTimeButtons = ({
   icon,
@@ -18,8 +18,9 @@ const LockTimeButtons = ({
   options,
   avatar,
   date,
+  setStartingVPower,
+  lockAmount
 }) => {
-
   // States
   const { setFieldValue } = useFormikContext() ?? {};
   const [field, meta] = useField(name);
@@ -41,173 +42,220 @@ const LockTimeButtons = ({
     ].join("-");
   }
 
-useEffect(()=>{
-    if (buttonValue ===1) {
-        //   console.log("evt.target", evt.target.value);
-          console.log(
-            "currentDate.getTime()",
-            formatDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))
-          );
-          console.log("date", currentDate.getDate() + 7);
-          setDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000));
-          setDateDisplay(
-            formatDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))
-          );
-        } else if (buttonValue===2) {
-          setDate(
-            new Date(
-              currentDate.getFullYear(),
-              currentDate.getMonth() + 1,
-              currentDate.getDate()
-            )
-          );
-          setDateDisplay(
-            formatDate(
-              new Date(
-                currentDate.getFullYear(),
-                currentDate.getMonth() + 1,
-                currentDate.getDate()
-              )
-            )
-          );
-        } else if (buttonValue===3) {
-          setDate(
-            new Date(
-              currentDate.getFullYear(),
-              currentDate.getMonth() + 3,
-              currentDate.getDate()
-            )
-          );
-          setDateDisplay(
-            formatDate(
-              new Date(
-                currentDate.getFullYear(),
-                currentDate.getMonth() + 3,
-                currentDate.getDate()
-              )
-            )
-          );
-        } else if (buttonValue===4) {
-          setDate(
-            new Date(
-              currentDate.getFullYear(),
-              currentDate.getMonth() + 6,
-              currentDate.getDate()
-            )
-          );
-          setDateDisplay(
-            formatDate(
-              new Date(
-                currentDate.getFullYear(),
-                currentDate.getMonth() + 6,
-                currentDate.getDate()
-              )
-            )
-          );
-        } else if (buttonValue===5) {
-          setDate(
-            new Date(
-              currentDate.getFullYear() + 1,
-              currentDate.getMonth(),
-              currentDate.getDate()
-            )
-          );
-          setDateDisplay(
-            formatDate(
-              new Date(
-                currentDate.getFullYear() + 1,
-                currentDate.getMonth(),
-                currentDate.getDate()
-              )
-            )
-          );
-        } else if (buttonValue===6) {
-          setDate(
-            new Date(
-              currentDate.getFullYear() + 4,
-              currentDate.getMonth(),
-              currentDate.getDate()
-            )
-          );
-          console.log("date value...",date);
-          setDateDisplay(
-            formatDate(
-              new Date(
-                currentDate.getFullYear() + 4,
-                currentDate.getMonth(),
-                currentDate.getDate()
-              )
-            )
-          );
-        }
-},[buttonValue])
+  useEffect(() => {
+    if (buttonValue === 1) {
+      //   console.log("evt.target", evt.target.value);
+      console.log(
+        "currentDate.getTime()",
+        formatDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))
+      );
+      console.log("date", currentDate.getDate() + 7);
+      setDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000));
+      setDateDisplay(
+        formatDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))
+      );
+      setStartingVPower(lockAmount*0.01)
+    } else if (buttonValue === 2) {
+      setDate(
+        new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          currentDate.getDate()
+        )
+      );
+      setDateDisplay(
+        formatDate(
+          new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() + 1,
+            currentDate.getDate()
+          )
+        )
+      );
+      setStartingVPower(lockAmount*0.04)
+    } else if (buttonValue === 3) {
+      setDate(
+        new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 3,
+          currentDate.getDate()
+        )
+      );
+      setDateDisplay(
+        formatDate(
+          new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() + 3,
+            currentDate.getDate()
+          )
+        )
+      );
+      setStartingVPower(lockAmount*0.125)
+    } else if (buttonValue === 4) {
+      setDate(
+        new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 6,
+          currentDate.getDate()
+        )
+      );
+      setDateDisplay(
+        formatDate(
+          new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() + 6,
+            currentDate.getDate()
+          )
+        )
+      );
+      setStartingVPower(lockAmount*0.25)
+    } else if (buttonValue === 5) {
+      setDate(
+        new Date(
+          currentDate.getFullYear() + 1,
+          currentDate.getMonth(),
+          currentDate.getDate()
+        )
+      );
+      setDateDisplay(
+        formatDate(
+          new Date(
+            currentDate.getFullYear() + 1,
+            currentDate.getMonth(),
+            currentDate.getDate()
+          )
+        )
+      );
+      setStartingVPower(lockAmount*0.5)
+    } else if (buttonValue === 6) {
+      setDate(
+        new Date(
+          currentDate.getFullYear() + 4,
+          currentDate.getMonth(),
+          currentDate.getDate()
+        )
+      );
+      console.log("date value...", date);
+      setDateDisplay(
+        formatDate(
+          new Date(
+            currentDate.getFullYear() + 4,
+            currentDate.getMonth(),
+            currentDate.getDate()
+          )
+        )
+      );
+      setStartingVPower(lockAmount*1)
+    }
+  }, [buttonValue,lockAmount]);
 
   return (
     <>
-          <div className="btnWrapper my-4 text-center d-flex justify-content-between mr-5">
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                                setbuttonValue(1)
-                            }}
-                          >
-                            1 week
-                          </Button>
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                                setbuttonValue(2)
-                            }}
-                          >
-                            1 month
-                          </Button>
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                                setbuttonValue(3)
-                            }}
-                          >
-                            3 months
-                          </Button>
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                                setbuttonValue(4)
-                            }}
-                          >
-                            6 months
-                          </Button>
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                                setbuttonValue(5)
-                            }}
-                          >
-                            1 year
-                          </Button>
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                                setbuttonValue(6)
-                                console.log("setbuttonValue",buttonValue);
-                            }}
-                          >
-                            4 years
-                          </Button>
-                      </div>
-    
+      {/* <div className="btnWrapper my-4 text-center d-flex justify-content-between mr-5"> */}
+      <Grid container spacing={1} style={{ marginTop: "20px" }}>
+        <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
+          <Button
+            variant="contained"
+            size="large"
+            style={{
+              backgroundColor: "#5300e8",
+              color: "white",
+              minWidth: "75%",
+            }}
+            onClick={() => {
+              setbuttonValue(1);
+            }}
+          >
+            1 week
+          </Button>
+        </Grid>
+
+        {/* </div> */}
+
+        <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
+          <Button
+            variant="contained"
+            size="large"
+            style={{
+              backgroundColor: "#5300e8",
+              color: "white",
+              minWidth: "75%",
+            }}
+            onClick={() => {
+              setbuttonValue(2);
+            }}
+          >
+            1 month
+          </Button>
+        </Grid>
+        <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
+          <Button
+            variant="contained"
+            size="large"
+            style={{
+              backgroundColor: "#5300e8",
+              color: "white",
+              minWidth: "75%",
+            }}
+            onClick={() => {
+              setbuttonValue(3);
+            }}
+          >
+            3 months
+          </Button>
+        </Grid>
+        <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
+          <Button
+            variant="contained"
+            size="large"
+            style={{
+              backgroundColor: "#5300e8",
+              color: "white",
+              minWidth: "75%",
+            }}
+            onClick={() => {
+              setbuttonValue(4);
+            }}
+          >
+            6 months
+          </Button>
+        </Grid>
+        <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
+          <Button
+            variant="contained"
+            size="large"
+            style={{
+              backgroundColor: "#5300e8",
+              color: "white",
+              minWidth: "75%",
+            }}
+            onClick={() => {
+              setbuttonValue(5);
+            }}
+          >
+            1 year
+          </Button>
+        </Grid>
+        <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
+          <Button
+            variant="contained"
+            size="large"
+            style={{
+              backgroundColor: "#5300e8",
+              color: "white",
+              minWidth: "75%",
+            }}
+            onClick={() => {
+              setbuttonValue(6);
+              console.log("setbuttonValue", buttonValue);
+            }}
+          >
+            4 years
+          </Button>
+        </Grid>
+      </Grid>
+
+      {/* </div> */}
     </>
   );
 };
