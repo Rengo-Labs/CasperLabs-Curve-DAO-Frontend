@@ -23,6 +23,9 @@ import {
 } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 import { UserCheckpointMakeDeploy } from "../MakeDeployFunctions/UserCheckpointMakeDeploy";
 import * as liquidityGaugeV3Functions from "../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
+import * as gaugeControllerFunctions from "../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
+import * as minterFunctions from "../../components/JsClients/MINTER/minterFunctionsForBackend/functions";
+import axios from "axios";
 
 export let state = {
   gaugeController: null,
@@ -98,7 +101,9 @@ export async function getState(activePublicKey) {
   // state.minter = new contract.web3.eth.Contract(daoabis.minter_abi, '0xd061D61a4d941c39E5453435B6345Dc261C2fcE0')
 
   // state.n_gauges = +(await state.gaugeController.methods.n_gauges().call()) //ask about this from contract developer
-  state.n_gauges = +(await n_gauges(GAUGE_CONTROLLER_CONTRACT_HASH));
+  state.n_gauges = +(await gaugeControllerFunctions.n_gauges(
+    GAUGE_CONTROLLER_CONTRACT_HASH
+  ));
 
   // let swap_token = new contract.web3.eth.Contract(ERC20_abi, state.pools.susdv2.swap_token)
 
@@ -130,100 +135,47 @@ export async function getState(activePublicKey) {
       };
     });
   let decodedGauges = state.n_gauges.map(async (gauge) => {
-    await gauges(state.gaugeController._address, gauge);
+    await gaugeControllerFunctions.gauges(
+      state.gaugeController._address,
+      gauge
+    );
   });
 
   // let example_gauge = new contract.web3.eth.Contract(daoabis.liquiditygauge_abi, decodedGauges[0])
 
-  // let calls1 = decodedGauges.flatMap(gauge => [
-  // 	[gauge, example_gauge.methods.lp_token().encodeABI()],
-  // 	[state.gaugeController._address, state.gaugeController.methods.gauge_types(gauge).encodeABI()],
-  // 	[gauge, example_gauge.methods.balanceOf(contract.default_account).encodeABI()],
-  // 	[gauge, example_gauge.methods.claimable_tokens(contract.default_account).encodeABI()],
-  // 	[state.minter._address, state.minter.methods.minted(contract.default_account, gauge).encodeABI()],
+  let gaugeTypes = decodedGauges.map(async (gauge) => {
+    return await gaugeControllerFunctions.gaugeTypes(
+      GAUGE_CONTROLLER_CONTRACT_HASH,
+      gauge
+    );
+  });
 
-  // ])
+  let gaugeTypesNames = gaugeTypes.map(async (type) => {
+    return await gaugeControllerFunctions.gauge_type_names(
+      GAUGE_CONTROLLER_CONTRACT_HASH,
+      type
+    );
+  });
 
-  //This will be remain as it is unless confirmed
-  let aggcalls1;
-  // try {
-  // 	aggcalls1 = await contract.multicall.methods.aggregate(calls1).call()
-  // }
-  // catch(err) {
-  // 	console.error(err)
-  // 	state.synthsUnavailable = true
-
-  // 	calls1[33] = calls[3]
-  // 	calls1[38] = calls[3]
-  // 	aggcalls1 = await contract.multicall.methods.aggregate(calls1).call()
-  // 	aggcalls[1][33] = "0x0000000000000000000000000000000000000000000000000000000000000000"
-  // 	aggcalls[1][38] = "0x0000000000000000000000000000000000000000000000000000000000000000"
-
-  // }
-
-  // let gaugeTypes = aggcalls1[1].filter((_, i) => i % 5 == 1).map(hex => +web3.eth.abi.decodeParameter('uint256', hex))
-  // gaugeTypes = [...new Set(gaugeTypes)]
-
-  let gaugeTypes = decodedGauges.flatMap(async (gauge) => [
-    [await lpToken(LIQUIDITY_GAUGE_V3_CONTRACT_HASH)],
-    [await gaugeTypes(GAUGE_CONTROLLER_CONTRACT_HASH, gauge)],
-    [
-      await balanceOf(
-        gauge,
-        Buffer.from(
-          CLPublicKey.fromHex(activePublicKey).toAccountHash()
-        ).toString("hex")
+  let decodedGaugesLP = decodedGauges.map(async (gauge, i) => {
+    return {
+      gauge: decodedGauges[i],
+      swap_token: await liquidityGaugeV3Functions.lpToken(
+        LIQUIDITY_GAUGE_V3_CONTRACT_HASH
       ),
-    ],
-    // [await claimableTokens(gauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex"))],
-    [
-      await getMinted(
+      type: gaugeTypes[i],
+      typeName: gaugeTypesNames[i],
+      // claimable_tokens: await liquidityGaugeV3Functions.claimable_tokens()
+      minted: await minterFunctions.minted(
         MINTER_CONTRACT_HASH,
-        Buffer.from(
-          CLPublicKey.fromHex(activePublicKey).toAccountHash()
-        ).toString("hex"),
-        Buffer.from(
-          CLPublicKey.fromHex(activePublicKey).toAccountHash()
-        ).toString("hex")
+        activePublicKey,
+        gauge
       ),
-    ],
-  ]);
+    };
+  });
 
-  // calls = gaugeTypes.map(type => [state.gaugeController._address, state.gaugeController.methods.gauge_type_names(type).encodeABI()])
-  let calls = gaugeTypes.map(async (type) => [
-    state.gaugeController._address,
-    await gauge_type_names(GAUGE_CONTROLLER_CONTRACT_HASH, type),
-  ]);
-  // aggcalls = await contract.multicall.methods.aggregate(calls).call()
-  // let gaugeTypesNames = aggcalls[1].map((hex, i) => ({type: gaugeTypes[i], name: web3.eth.abi.decodeParameter('string', hex)}))
-  let gaugeTypesNames = gaugeTypes.map((hex, i) => ({
-    type: gaugeTypes[i],
-    name: gaugeTypes[i].name,
-  })); //assuming name will be returned from blockchain
-
-  // let decodedGaugeLP = aggcalls1[1].filter((_, i) => i % 5 == 0).map((hex, i) => ({
-  // gauge: decodedGauges[i],
-  // swap_token: web3.eth.abi.decodeParameter('address', hex),
-  // type: web3.eth.abi.decodeParameter('uint256', aggcalls1[1][i*5+1]),
-  // typeName: Object.values(gaugeTypesNames).find(v => v.type == +web3.eth.abi.decodeParameter('uint256', aggcalls1[1][i*5+1])).name,
-  // claimable_tokens: web3.eth.abi.decodeParameter('uint256', aggcalls1[1][i*5+3]),
-  // minted: web3.eth.abi.decodeParameter('uint256', aggcalls1[1][i*5+4]),
-  // })) //discuss about this because all of this work is decodeing abis
-
-  let decodedGaugeLP = decodedGauges.map(async (gauge, i) => ({
-    gauge: gauge,
-    swap_token: await liquidityGaugeV3Functions.lpToken(
-      LIQUIDITY_GAUGE_V3_CONTRACT_HASH
-    ),
-    type: gaugeTypes[i],
-    typeName: Object.values(gaugeTypesNames).find(
-      (v) => v.type == +gaugeTypes[i]
-    ).name,
-    claimable_tokens: gaugeTypes[i],
-    minted: gaugeTypes[i],
-  }));
-
-  Object.values(decodedGaugeLP).forEach((gauge, i) => {
+  //CHECK THIS PART
+  Object.values(decodedGaugesLP).forEach((gauge, i) => {
     let poolgauge = Object.values(state.pools).find(
       (pool) => pool.swap_token.toLowerCase() == gauge.swap_token.toLowerCase()
     );
@@ -235,10 +187,11 @@ export async function getState(activePublicKey) {
   });
 
   let gaugeBalances = decodedGauges.map(async (gauge, i) => ({
-    gauge: gaugeTypes[i],
-    balance: await liquidityGaugeV3Functions.balanceOf(gauge),
+    gauge: gauge,
+    balance: await liquidityGaugeV3Functions.balanceOf(gauge), //CONFIRM WHOSE BALANCE HAS TO GET
   }));
 
+  //CONFIRM ABOUT THIS PART
   state.mypools = decodedBalances.map((v) => {
     let poolInfo = Object.values(state.pools).find(
       (pool) => pool.swap_token.toLowerCase() == v.swap_token.toLowerCase()
@@ -274,54 +227,46 @@ export async function getState(activePublicKey) {
   let btcPrice = prices.bitcoin.usd;
   let CRVprice = prices["curve-dao-token"].usd;
 
-  // let weightCalls = decodedGauges.map(gauge => [state.gaugeController._address, state.gaugeController.methods.gauge_relative_weight(gauge).encodeABI()])
-  // let weightCalls = decodedGauges.map(gauge => [state.gaugeController._address, state.gaugeController.methods.gauge_relative_weight(gauge).encodeABI()]) //no function exists for this
-  let weightCalls = [];
-  //console.log(weightCalls, "WEIGHT CALLS")
+  let decodedWeights = decodedGauges.map(async (gauge) => {
+    return await axios
+      .post(
+        `gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
+        { address: gauge }
+      )
+      .then((response) => {
+        console.log("Response from getting gauge Relative weight: ", response);
+        return response.data.gaugeRelativeWeights[0];
+      })
+      .catch((error) => {
+        console.log("Error from getting gauge relative weight: ", error);
+      });
+  });
 
-  // let aggCallsWeights = await contract.multicall.methods.aggregate(weightCalls).call()
-  // let decodedWeights = aggCallsWeights[1].map((hex, i) => [weightCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18]) //will be replace after confirming function
+  let gaugeRates = decodedGauges.map(async (gauge) => {
+    return await liquidityGaugeV3Functions.inflationRate(
+      LIQUIDITY_GAUGE_V3_CONTRACT_HASH
+    );
+  });
 
-  let aggCallsWeights = [];
-  let decodeWeights = [];
+  let workingSupplies = decodedGauges(async (gauge) => {
+    return await liquidityGaugeV3Functions.workingSupply(
+      LIQUIDITY_GAUGE_V3_CONTRACT_HASH
+    );
+  });
 
-  //console.log(decodedWeights, "DECODED WEIGHTS")
+  let totalSupplies = decodedGauges.map(async (gauge) => {
+    return await liquidityGaugeV3Functions.totalSupply(
+      LIQUIDITY_GAUGE_V3_CONTRACT_HASH
+    );
+  });
 
-  // let ratesCalls = decodedGauges.map(gauge => [
-  // 	[gauge, example_gauge.methods.inflation_rate().encodeABI()],
-  // 	[gauge, example_gauge.methods.working_supply().encodeABI()],
-  // 	[gauge, example_gauge.methods.totalSupply().encodeABI()],
-  // 	[gauge, example_gauge.methods.working_balances(contract.default_account).encodeABI()],
-  // ])
+  let workingBalances = decodedGauges.map(async (gauge) => {
+    return await liquidityGaugeV3Functions.workingBalances(
+      LIQUIDITY_GAUGE_V3_CONTRACT_HASH,
+      activePublicKey
+    );
+  });
 
-  let ratesCalls = decodedGauges.map(async (gauge) => [
-    await inflationRate(gauge),
-    await workingSupply(gauge),
-    await totalSupply(gauge),
-    await workingBalances(
-      gauge,
-      Buffer.from(
-        CLPublicKey.fromHex(activePublicKey).toAccountHash()
-      ).toString("hex")
-    ),
-  ]);
-
-  console.log(ratesCalls, "RATES CALLS");
-
-  // let aggRates = await contract.multicall.methods.aggregate(ratesCalls.flat()).call()
-  // let decodedRate = aggRates[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
-  // let gaugeRates = decodedRate.filter((_, i) => i % 4 == 0).map(v => v / 1e18)
-  let gaugeRates = ratesCalls.filter((_, i) => i % 4 == 0).map((v) => v / 1e9);
-  // let workingSupplies = decodedRate.filter((_, i) => i % 4 == 1).map(v => v / 1e18)
-  let workingSupplies = ratesCalls
-    .filter((_, i) => i % 4 == 1)
-    .map((v) => v / 1e9);
-  // let totalSupplies = decodedRate.filter((_, i) => i % 4 == 2).map(v => v / 1e18)
-  let totalSupplies = ratesCalls
-    .filter((_, i) => i % 4 == 2)
-    .map((v) => v / 1e9);
-  // let workingBalances = decodedRate.filter((_, i) => i % 4 == 3).map(v => v)
-  let workingBalances = ratesCalls.filter((_, i) => i % 4 == 3).map((v) => v);
 
   // let example_pool = new web3.eth.Contract(swap_abi, '0xA5407eAE9Ba41422680e2e00537571bcC53efBfD')
 
@@ -334,9 +279,11 @@ export async function getState(activePublicKey) {
   // let aggVirtualPrices = await contract.multicall.methods.aggregate(virtualPriceCalls).call()
   // let decodedVirtualPrices = aggVirtualPrices[1].map((hex, i) => [virtualPriceCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18])
 
-  let decodedWeights = [];
+  // let decodedWeights = [];
   let decodedVirtualPrices = [];
+  let weightCalls = [];
 
+  //LETTING IT AS IT IS UNLESS DON'T GETTING DATA
   window.gauges = {};
   let weightData = decodedWeights.map((w, i) => {
     let pool = state.mypools.find(
@@ -345,9 +292,13 @@ export async function getState(activePublicKey) {
         "0x" + weightCalls[i][1].slice(34).toLowerCase()
     ).name;
     let swap_address = state.pools[pool].swap;
-    let virtual_price = decodedVirtualPrices.find(
-      (v) => v[0].toLowerCase() == swap_address.toLowerCase()
-    )[1];
+    
+    //HOTFIX FOR VIRTUAL PRICE 
+    let virtual_price = 20;
+    
+    // decodedVirtualPrices.find(
+    //   (v) => v[0].toLowerCase() == swap_address.toLowerCase()
+    // )[1];
     let _working_supply = workingSupplies[i];
     let totalSupply = totalSupplies[i];
     if (["ren", "sbtc"].includes(pool)) {
