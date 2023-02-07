@@ -6,6 +6,8 @@ import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/style.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
+//GraphQl
+import { gql, useQuery } from "@apollo/client";
 // COMPONENTS
 import TextInput from "../../../../components/FormsUI/TextInput";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
@@ -31,7 +33,7 @@ import { CLPublicKey } from "casper-js-sdk";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
-import { periodTimestamp, workingBalances, workingSupply } from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
+import { periodTimestamp, workingBalances, workingSupply,balanceOfGauge,totalSupplyGauge } from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
 import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 import { Button } from "@mui/material";
 
@@ -62,6 +64,14 @@ try {
 }
 
 const year = 365*24*60*60;
+
+const GAUGES_BY_ADDRESS= gql`
+query{
+  getGaugesByAddress{
+    id, address, contractHash, packageHash, name
+  }
+}
+`;
 
 // COMPONENT FUNCTION
 const Calc = () => {
@@ -94,9 +104,37 @@ const Calc = () => {
   const [maxDepositPerVeCRV, setMaxDepositPerVeCRV] = useState();
   const [period, setPeriod] = useState(1 + "Year");
   const [toLockCRV, setToLockCRV] = useState(0);
+  const [gauges,setGauges] = useState();
+  const [selectedGauge,setSelectedGauge]=useState();
 
   // Content
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+  let gaugesNames= [
+    {address:"0x7ca5b0a2910B33e9759DC7dDB0413949071D7575",name:"compound"},
+    {address:"0xBC89cd85491d81C6AD2954E6d0362Ee29fCa8F53",name: 'usdt'},
+    {address:"0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1",name: 'y'},
+    {address:"0x69Fb7c45726cfE2baDeE8317005d3F94bE838840",name: 'busd'},
+    {address:"0x64E3C23bfc40722d3B649844055F1D51c1ac041d",name: 'pax'},
+    {address:"0xB1F2cdeC61db658F091671F5f199635aEF202CAC",name: 'ren'},
+    {address:"0xA90996896660DEcC6E997655E065b23788857849",name: 'susdv2'},
+    {address:"0x705350c4BcD35c9441419DdD5d2f097d7a55410F",name: 'sbtc'}
+  ]
+
+  //Queries
+  const gaugesByAddress = useQuery(GAUGES_BY_ADDRESS);
+  console.log("this is gaugesByAddress: ",gaugesByAddress.data?.getGaugesByAddress);
+  console.log("this is error of gaugesByAddress: ",gaugesByAddress.error);
+
+  useEffect(() => {
+    // resolveData();
+    if (gaugesByAddress) {
+      console.log("gaugesByAddress.data?.getGaugesByAddress", gaugesByAddress.data?.getGaugesByAddress);
+      setGauges(gaugesByAddress.data?.getGaugesByAddress)
+
+    }
+
+  }, [gaugesByAddress]);
 
   const initialValues = {
     SelectGaugeCalc: "",
@@ -108,8 +146,8 @@ const Calc = () => {
   };
   const validationSchema = Yup.object().shape({
     SelectGaugeCalc: Yup.string().required("Required"),
-    CalcDeposits: Yup.number().required("Required"),
-    PoolLiquidityCalc: Yup.number().required("Required"),
+    // CalcDeposits: Yup.number().required("Required"),
+    // PoolLiquidityCalc: Yup.number().required("Required"),
     MyCRVCalc: Yup.number().required("Required"),
     // GaugeLockPeriodCalc: Yup.string().required("Required"),
     TotalveCRVCalc: Yup.number().required("Required"),
@@ -153,6 +191,7 @@ const Calc = () => {
       if(activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
         setGaugeCRV(await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
         setMyVeCRV(await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
+        setTotalVeCRV(await totalSupply(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
       }
     }
     updateBalance();
@@ -189,7 +228,7 @@ const Calc = () => {
     setMinVeCRVForBoost(minveCRV);
 
     // let [_, maxBoostPossible] = await this.update_liquidity_limit(null, null, this.minveCRV)
-    let [_, maxBoostPossible] = await this.update_liquidity_limit(null, null, minveCRV);
+    let [_, maxBoostPossible] = await updateLiquidityLimit(null, null, minveCRV);
     // this.maxBoostPossible = maxBoostPossible
     setMaxPossibleBoost(maxBoostPossible);
   }
@@ -211,24 +250,29 @@ const Calc = () => {
     // let decoded = aggcalls[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
     let decoded = "";
     // let voting_balance = +decoded[0]
-    let voting_balance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    // let voting_balance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
     // let voting_total = +decoded[1] - +voting_balance
-    let voting_total = await totalSupply(VOTING_ESCROW_CONTRACT_HASH);
+    // let voting_total = await totalSupply(VOTING_ESCROW_CONTRACT_HASH);
     // let period_timestamp = +decoded[2]
-    let period_timestamp = await periodTimestamp(boostGauge.address, "0");
+    // let period_timestamp = await periodTimestamp(boostGauge.address, "0");
     // let working_balances = +decoded[3]
-    let working_balances = await workingBalances(boostGauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    let working_balances = await workingBalances(selectedGauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
     // let working_supply = +decoded[4]
-    let working_supply = await workingSupply(boostGauge.address);
+    // let working_balances = await workingBalances(LIQUIDITY_GAUGE_V3_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    // let working_balances = 100000000000;
+    // console.log("working_balances",working_balances);
+    let working_supply = await workingSupply(selectedGauge);
+    // let working_supply = 80000000000;
+    console.log("workingBalance",working_balances,working_supply);
     // let L = +this.poolLiquidity*1e18 + l
     let L = +poolLiquidity*1e9 + l
 
 
-    if(new_voting_balance) {
-      voting_balance = new_voting_balance * 1e9
-    }
+    // if(new_voting_balance) {
+    //   voting_balance = new_voting_balance * 1e9
+    // }
 
-    voting_total += voting_balance
+    // voting_total += voting_balance
 
 
     let TOKENLESS_PRODUCTION = 40
@@ -255,13 +299,19 @@ const Calc = () => {
     // let limCalc = (l * TOKENLESS_PRODUCTION / 100 + (this.poolLiquidity + l) * veCRV / this.totalveCRV * (100 - TOKENLESS_PRODUCTION) / 100)
     // boost = limCalc
     // 		/ (working_supply + limCalc - old_bal)
+    console.log("allVariables",(lim / _working_supply) / (noboost_lim / noboost_supply));
 
     return [_working_supply, (lim / _working_supply) / (noboost_lim / noboost_supply)]
   }
 
   const updateGaugeBalanceAndPoolLiquidity = async () => {
     // setGaugeDeposits(await balanceOf(boostGauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
-    // setPoolLiquidity(await totalSupply(boostGauge.address));
+    //  setPoolLiquidity(await totalSupplyGauge(selectedGauge));
+   let liqidityGaugeBalance =  await balanceOfGauge(selectedGauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+   let gaugeTotalSupply = await totalSupplyGauge(selectedGauge)
+   setGaugeDeposits(liqidityGaugeBalance)
+   setPoolLiquidity(gaugeTotalSupply);
+  //  console.log("gaugeTotalSupply",gaugeTotalSupply);
   }
 
   const onSubmitCalc = async (values, props) => {
@@ -272,7 +322,9 @@ const Calc = () => {
   const calculate = async () => {
     // IMPLEMENTING SAME AS IN CURVE REPO
     let [_, boost] = await updateLiquidityLimit();
+    console.log("boost here",boost);
     setCrvBoost(boost);
+    calcTrigger();
   }
 
   const calcTrigger = async () => {
@@ -285,6 +337,7 @@ const Calc = () => {
     // return (this.minveCRV / ((this.minveCRVperiod / year) / 4)).toFixed(2)
     setToLockCRV((minVeCRVForBoost / ((period / year) / 4)).toFixed(2));
   }
+  // console.log("selectedGauge",selectedGauge);
 
   return (
     <>
@@ -363,8 +416,8 @@ const Calc = () => {
                                       )}
                                     /> */}
                                     <Autocomplete 
-                                      options={selectGaugeOptions}
-                                      getOptionLabel={(option) => option.name }
+                                      options={gauges}
+                                      getOptionLabel={(option) => { setSelectedGauge(option.contractHash);return option.name} }
                                       clearOnEscape
                                       renderInput={(params) => (
                                         <TextField {...params} label="Select a gauge" variant="standard" />
@@ -395,7 +448,7 @@ const Calc = () => {
                                           console.log("Gauge deposit: ", e.target.value);
                                           setGaugeDeposits(e.target.value);
                                           //calling this function because of watchers
-                                          // calcTrigger();
+                                           calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -429,7 +482,7 @@ const Calc = () => {
                                         onChange={(e) => {
                                           setPoolLiquidity(e.target.value);
                                           //calling this function because of watchers
-                                          // calcTrigger();
+                                           calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -610,8 +663,8 @@ const Calc = () => {
                                           color: "white",
                                         }}
                                         type="submit"
-                                        onClick={() =>
-                                          console.log("Calc Submitted")
+                                        onClick={
+                                          calculate
                                         }
                                       >
                                         Calculate
@@ -648,9 +701,9 @@ const Calc = () => {
                                 </List>
                               </div>
                               {gaugeDeposits > 0 ? (
-                                <div>
-                                  This is {toLockCRV} for a 
-                                  <div className="col-12 col-md-6">
+                                <div className="col-12 col-md-6">
+                                  This is {toLockCRV} CRV for a 
+                                  <div className="">
                                     {/* <SelectInput
                                       setDate={setDate}
                                       setDateDisplay={setDateDisplay}
@@ -687,7 +740,7 @@ const Calc = () => {
                               <Divider />
                             </div>
                             {/* Gauge Selection Info Heading*/}
-                            <div className="row no-gutters mt-4">
+                            {/* <div className="row no-gutters mt-4">
                               <div className="col-12 text-center py-3">
                                 <Typography
                                   variant="h4"
@@ -701,7 +754,7 @@ const Calc = () => {
                               </div>
                             </div>
                             {/* Gauge Selection Info */}
-                            <div className="row no-gutters mt-3">
+                           {/* <div className="row no-gutters mt-3">
                               <div className="col-12 col-md-6">
                                 <List>
                                   <ListItem disablePadding>
@@ -731,7 +784,7 @@ const Calc = () => {
                                   </ListItem>
                                 </List>
                               </div>
-                            </div>
+                            </div> */}
                           </div>
                         </Paper>
                       </Box>

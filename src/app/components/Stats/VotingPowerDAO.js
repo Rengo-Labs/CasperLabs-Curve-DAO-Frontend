@@ -1,5 +1,6 @@
 // REACT
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 // CUSTOM STYLES
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
@@ -40,6 +41,7 @@ const VotingPowerDAO = (props) => {
   const [CRVBalance, setCRVBalance] = useState(0);
   const [daoPower, setDaoPower] = useState();
   const [votingPower, setVotingPower] = useState();
+  const [crvStats,setCrvStats] = useState();
   // Handlers
 
   // Queries
@@ -102,6 +104,22 @@ const VotingPowerDAO = (props) => {
     }
   }, [localStorage.getItem("Address")]);
 
+
+  let publicKey = localStorage.getItem("Address");
+  let accountHash = Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex");
+  useEffect(()=>{
+    axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
+    .then(response => {
+      // handle the response
+      console.log("response of crvStats:...",response.data.data);
+      setCrvStats(response.data.data)
+    })
+    .catch(error => {
+      // handle the error
+      console.log("error of crvStats:...",error);
+    });
+  },[localStorage.getItem("Address")])
+
   const DAOPowerFormat = () => {
     return daoPower ? helpers.formatNumber(daoPower[0]?.totalPower / 1e9) : 0;
   };
@@ -116,6 +134,13 @@ const VotingPowerDAO = (props) => {
   const myLockedCRVFormat = () => {
     return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
   };
+
+  const CRVLockedFormat=()=> {
+    return helpers.formatNumber(crvStats?.CRVLOCKED / 1e9)
+  }
+  console.log("CRVLockedFormat",CRVLockedFormat());
+  let CRVLockedPercentage = (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
+  console.log("CRVLockedPercentage",CRVLockedPercentage);
 
   return (
     <>
@@ -137,7 +162,7 @@ const VotingPowerDAO = (props) => {
                     }}
                     gutterBottom
                   >
-                    288,283,619.93 (33.47%)
+                    {CRVLockedFormat()}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -195,7 +220,7 @@ const VotingPowerDAO = (props) => {
                     }}
                     gutterBottom
                   >
-                    12.22%
+                    {CRVLockedPercentage}%
                   </Typography>
                 }
                 aria-controls="panel1bh-content"

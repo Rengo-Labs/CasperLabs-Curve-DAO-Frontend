@@ -6,16 +6,18 @@ import ApexChart from "react-apexcharts";
 
 let seriesDataX=[];
 let seriesDataY=[];
+let daoPowerX=[];
+let daoPowerY=[];
 
   
 
 // COMPONENT CLASS
-const DaoVotingPower = ({chart}) => {
+const DaoVotingPower = ({chart,daoPower}) => {
   // States
 
   // Content
 
-
+console.log("daoPower in chart",daoPower,chart);
 if(chart!==undefined){
   let chartData = chart.splice(0,chart.length-11) 
 
@@ -52,9 +54,35 @@ const time  = seriesDataX.map((i)=>{
 }
 console.log("axisData",axisData);
 
+
+if(daoPower!==undefined){
+ 
+  for (let i=0;i<daoPower.length;i++){
+     daoPowerX.push(daoPower[i][0])
+     daoPowerY.push(daoPower[i][1]) 
+  }
+}
+
+ console.log("dataXdao:",daoPowerX);
+ console.log("dataYdao:",daoPowerY);
+
+const daoTime  = daoPowerX.map((i)=>{
+  return helpers.formatDateToHumanChart(i);
+})
+
+
+ let daoPowerData = [];
+ for (var i=0; i<daoPower.length; i++) {
+  daoPowerData[i] = {
+      x: daoTime[i],
+      y: daoPowerY[i],
+  };
+}
+console.log("daoPowerData",daoPowerData,daoPowerY.length);
+
   let series = [
     {
-      name: "DAO Voting Power",
+      name: "MY Voting Power",
       type: "line",
       data: axisData
         //seriesDataX
@@ -120,7 +148,7 @@ console.log("axisData",axisData);
     {
       name: "DAO Voting Power",
       type: "line",
-      data:  axisData
+      data:  daoPowerData
           //seriesDataX
         // {
         //   x: new Date("2022-05-12"),
@@ -200,7 +228,7 @@ console.log("axisData",axisData);
 
   let seriesLine = [
     {
-      name: "DAO Voting Power",
+      name: "MY Voting Power",
       type: "line",
       data: 
         axisData
@@ -241,7 +269,7 @@ console.log("axisData",axisData);
      {
       name: "DAO Voting Power",
       type: "line",
-      data: axisData
+      data: daoPowerData
     //     {
     //       x: new Date("2022-05-12"),
     //       y: [1831.43],
@@ -289,8 +317,8 @@ console.log("axisData",axisData);
       selection: {
         enabled: true,
         xaxis: {
-          min: new Date("13 May 2021").getTime(),
-          max: new Date().getTime(),
+          min: new Date("29 Nov 2022 11:38:20").getTime(),
+          max: new Date("29 NOV 2022 11:41:14").getTime(),
         },
       },
       // toolbar: {

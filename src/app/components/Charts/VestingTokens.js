@@ -299,8 +299,8 @@ console.log("unvestedData",unvestedData);
       selection: {
         enabled: true,
         xaxis: {
-          min: new Date("13 Mar 2023").getTime(),
-          max: new Date("26 Dec 2023").getTime(),
+          min: new Date("29 May 2023 ").getTime(),
+          max: new Date("23 Aug 2023").getTime(),
         },
       },
       // toolbar: {
