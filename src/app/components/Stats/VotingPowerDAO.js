@@ -41,7 +41,7 @@ const VotingPowerDAO = (props) => {
   const [CRVBalance, setCRVBalance] = useState(0);
   const [daoPower, setDaoPower] = useState();
   const [votingPower, setVotingPower] = useState();
-  const [crvStats,setCrvStats] = useState();
+  const [crvStats, setCrvStats] = useState();
   // Handlers
 
   // Queries
@@ -50,7 +50,7 @@ const VotingPowerDAO = (props) => {
   console.log("this is error of voting escrow gql: ", error);
 
   if (data !== undefined) {
-    console.log("daopowerrrr", data.daoPowersByTimestamp);
+    console.log("daopowerrrr", data?.daoPowersByTimestamp);
   }
 
   const voting = useQuery(VOTING_POWER, {
@@ -58,10 +58,10 @@ const VotingPowerDAO = (props) => {
       id: "e1431ecb9f20f2a6e6571886b1e2f9dec49ebc6b2d3d640a53530abafba9bfa1",
     },
   })
-  console.log("this is data of voting escrow gql: ", voting.data);
-  if (voting.data !== undefined) {
-    // console.log("votingPOWER", voting.data?.votingPower[0]?.power);
-  }
+  console.log("this is data of voting escrow gql: ", voting?.data);
+  // if (voting.data !== undefined) {
+  //   // console.log("votingPOWER", voting.data?.votingPower[0]?.power);
+  // }
 
 
   useEffect(() => {
@@ -75,11 +75,12 @@ const VotingPowerDAO = (props) => {
 
     }
     if (voting) {
-      console.log("voting.data?.votingPower", voting.data?.votingPower);
+      console.log("voting.data?.votingPower", voting?.data?.votingPower);
       setVotingPower(voting.data?.votingPower)
     }
 
   }, [data, voting]);
+
   useEffect(() => {
     let controller = new AbortController();
     let publicKeyHex = localStorage.getItem("Address");
@@ -105,20 +106,28 @@ const VotingPowerDAO = (props) => {
   }, [localStorage.getItem("Address")]);
 
 
-  let publicKey = localStorage.getItem("Address");
-  let accountHash = Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex");
-  useEffect(()=>{
-    axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
-    .then(response => {
-      // handle the response
-      console.log("response of crvStats:...",response.data.data);
-      setCrvStats(response.data.data)
-    })
-    .catch(error => {
-      // handle the error
-      console.log("error of crvStats:...",error);
-    });
-  },[localStorage.getItem("Address")])
+  useEffect(() => {
+
+    let publicKeyHex = localStorage.getItem("Address");
+
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      let accountHash = Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex");
+      axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
+        .then(response => {
+          // handle the response
+          console.log("response of crvStats:...", response.data.data);
+          setCrvStats(response.data.data)
+        })
+        .catch(error => {
+          // handle the error
+          console.log("error of crvStats:...", error);
+        });
+    }
+  }, [localStorage.getItem("Address")])
 
   const DAOPowerFormat = () => {
     return daoPower ? helpers.formatNumber(daoPower[0]?.totalPower / 1e9) : 0;
@@ -135,12 +144,12 @@ const VotingPowerDAO = (props) => {
     return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
   };
 
-  const CRVLockedFormat=()=> {
+  const CRVLockedFormat = () => {
     return helpers.formatNumber(crvStats?.CRVLOCKED / 1e9)
   }
-  console.log("CRVLockedFormat",CRVLockedFormat());
+  console.log("CRVLockedFormat", CRVLockedFormat());
   let CRVLockedPercentage = (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
-  console.log("CRVLockedPercentage",CRVLockedPercentage);
+  console.log("CRVLockedPercentage", CRVLockedPercentage);
 
   return (
     <>
