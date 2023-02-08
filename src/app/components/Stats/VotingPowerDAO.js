@@ -41,7 +41,10 @@ const VotingPowerDAO = (props) => {
   const [CRVBalance, setCRVBalance] = useState(0);
   const [daoPower, setDaoPower] = useState();
   const [votingPower, setVotingPower] = useState();
-  const [crvStats, setCrvStats] = useState();
+  const [crvStats, setCrvStats] = useState({
+    CRVLOCKED: 0,
+    supply: 0
+  });
   // Handlers
 
   // Queries
@@ -71,12 +74,12 @@ const VotingPowerDAO = (props) => {
     if (data) {
       // mutate data if you need to
       console.log("data?.daoPowersByTimestamp", data?.daoPowersByTimestamp);
-      setDaoPower(data?.daoPowersByTimestamp)
+      setDaoPower(data?.daoPowersByTimestamp ? data?.daoPowersByTimestamp : 0)
 
     }
     if (voting) {
       console.log("voting.data?.votingPower", voting?.data?.votingPower);
-      setVotingPower(voting.data?.votingPower)
+      setVotingPower(voting.data?.votingPower ? voting.data?.votingPower : 0)
     }
 
   }, [data, voting]);
@@ -116,7 +119,7 @@ const VotingPowerDAO = (props) => {
       publicKeyHex !== undefined
     ) {
       let accountHash = Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex");
-      axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
+      axios.post(`votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
         .then(response => {
           // handle the response
           console.log("response of crvStats:...", response.data.data);
@@ -136,7 +139,7 @@ const VotingPowerDAO = (props) => {
   const averageLock = () => {
     let crvLocked = 200000;
     return daoPower
-      ? ((4 * daoPower[0]?.totalPower) / crvLocked).toFixed(2)
+      ? isNaN(((4 * daoPower[0]?.totalPower) / crvLocked).toFixed(2)) ? 0 : ((4 * daoPower[0]?.totalPower) / crvLocked).toFixed(2)
       : 0;
   };
 
@@ -148,7 +151,7 @@ const VotingPowerDAO = (props) => {
     return helpers.formatNumber(crvStats?.CRVLOCKED / 1e9)
   }
   console.log("CRVLockedFormat", CRVLockedFormat());
-  let CRVLockedPercentage = (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
+  let CRVLockedPercentage = isNaN((crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)) ? 0 : (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
   console.log("CRVLockedPercentage", CRVLockedPercentage);
 
   return (

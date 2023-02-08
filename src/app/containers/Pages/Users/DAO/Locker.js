@@ -146,7 +146,7 @@ const Locker = () => {
   let param = {unlockTimes: callsData};
 
 useEffect(()=>{
-  axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`,param)
+  axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`,param)
   .then(response => {
     // handle the response
     console.log("response of totalSupply:...",response.data.totalSupplies);

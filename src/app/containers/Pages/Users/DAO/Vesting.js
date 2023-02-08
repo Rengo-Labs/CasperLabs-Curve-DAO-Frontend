@@ -140,7 +140,7 @@ const Vesting = () => {
         console.log("accountHash.......",account); 
         let data = { account:Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex") }
 
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/balanceOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+        axios.post(`/vestingEscrow/balanceOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
           .then(response => {
             // handle the response
             console.log("response of balance of:...",response.data);
@@ -151,7 +151,7 @@ const Vesting = () => {
             console.log("error of balance of:...",error);
           });
 
-          axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/vestedOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+          axios.post(`/vestingEscrow/vestedOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
           .then(response => {
             // handle the response
             console.log("response of vested of:...",response.data);
@@ -162,7 +162,7 @@ const Vesting = () => {
             console.log("error of balance of:...",error);
           });
 
-          axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/lockedOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+          axios.post(`/vestingEscrow/lockedOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
           .then(response => {
             // handle the response
             console.log("response of locked of:...",response.data);
