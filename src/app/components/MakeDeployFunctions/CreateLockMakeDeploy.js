@@ -39,7 +39,7 @@ export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSign
     publicKeyHex !== undefined
   ) {
     const publicKey = CLPublicKey.fromHex(publicKeyHex);
-    const paymentAmount = 5000000000;
+    const paymentAmount = 50000000000;
     try {
       const runtimeArgs = RuntimeArgs.fromMap({
         value: CLValueBuilder.u256(convertToStr(lockedAmount)),

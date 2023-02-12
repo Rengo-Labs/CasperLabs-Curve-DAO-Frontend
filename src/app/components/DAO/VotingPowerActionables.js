@@ -151,6 +151,10 @@ const VotingPowerActionables = (props) => {
       controller.abort();
     }
   }, [localStorage.getItem("Address")]);
+
+
+
+  
   return (
     <>
       <Formik

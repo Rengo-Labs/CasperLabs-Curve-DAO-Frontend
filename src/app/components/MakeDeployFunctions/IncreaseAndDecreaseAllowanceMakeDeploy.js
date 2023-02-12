@@ -4,16 +4,14 @@ import { putdeploy } from "../../components/blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../../components/blockchain/RecipientAddress/RecipientAddress";
 import { signdeploywithcaspersigner } from "../../components/blockchain/SignDeploy/SignDeploy";
 import { convertToStr } from "../../components/ConvertToString/ConvertToString";
+import { ERC20_CRV_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { ERC20_CRV_PACKAGE_HASH, VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
+import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 
 export async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleCloseAllowance, setOpenSigning, enqueueSnackbar, getAllowance) {
   // CREATING REQUIRED VARIABLES
-  let torus;
-  const allowance = 0;
-
-  let selectedWallet = localStorage.getItem("selectedWallet")
   let activePublicKey = localStorage.getItem("Address")
 
 
@@ -33,16 +31,20 @@ export async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleClose
     const erc20CrvPackageHash = new CLByteArray(
       Uint8Array.from(Buffer.from(ERC20_CRV_PACKAGE_HASH, "hex"))
     );
-    const paymentAmount = 5000000000;
+    let contractHashAsByteArray = Uint8Array.from(
+      Buffer.from(ERC20_CRV_CONTRACT_HASH, "hex")
+    );
+    const paymentAmount = 50000000000;
     const runtimeArgs = RuntimeArgs.fromMap({
-      package_hash: CLValueBuilder.key(erc20CrvPackageHash),
       spender: createRecipientAddress(spenderByteArray),
       amount: CLValueBuilder.u256(convertToStr(amount)),
-      entrypoint: CLValueBuilder.string("increase_allowance"),
     });
-
-    let deploy = await makeERC20CRVDeployWasm(
+    let entryPoint = "increase_allowance";
+    // Set contract installation deploy (unsigned).
+    let deploy = await makeDeploy(
       publicKey,
+      contractHashAsByteArray,
+      entryPoint,
       runtimeArgs,
       paymentAmount
     );

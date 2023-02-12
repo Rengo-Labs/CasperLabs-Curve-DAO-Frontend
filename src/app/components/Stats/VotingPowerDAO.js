@@ -16,7 +16,7 @@ import { CLPublicKey } from "casper-js-sdk";
 import curveLogo from "../../assets/img/Logo.png";
 import * as helpers from "../../assets/js/helpers";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
-import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import { balanceOf, totalSupply } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 
 const DAO_POWER = gql`
 query {
@@ -39,12 +39,16 @@ const VotingPowerDAO = (props) => {
   // States
   const [CRVLockedBalance, setCRVLockedBalance] = useState();
   const [CRVBalance, setCRVBalance] = useState(0);
-  const [daoPower, setDaoPower] = useState();
+  const [daoPower, setDaoPower] = useState(0);
   const [votingPower, setVotingPower] = useState();
   const [crvStats, setCrvStats] = useState({
     CRVLOCKED: 0,
     supply: 0
   });
+  const [crvLocked, setCrvLocked] = useState(0);
+  let [activePublicKey, setActivePublicKey] = useState(
+    localStorage.getItem("Address")
+  );
   // Handlers
 
   // Queries
@@ -55,13 +59,13 @@ const VotingPowerDAO = (props) => {
   if (data !== undefined) {
     console.log("daopowerrrr", data?.daoPowersByTimestamp);
   }
-
+  console.log("activePublicKey", activePublicKey);
   const voting = useQuery(VOTING_POWER, {
     variables: {
-      id: "e1431ecb9f20f2a6e6571886b1e2f9dec49ebc6b2d3d640a53530abafba9bfa1",
+      id: activePublicKey && activePublicKey != "null" ? Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex") : null,
     },
   })
-  console.log("this is data of voting escrow gql: ", voting?.data);
+  // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString()", Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"), voting);
   // if (voting.data !== undefined) {
   //   // console.log("votingPOWER", voting.data?.votingPower[0]?.power);
   // }
@@ -71,12 +75,12 @@ const VotingPowerDAO = (props) => {
     // resolveData();
     console.log("datadata", data);
     console.log("votingvoting", voting);
-    if (data) {
-      // mutate data if you need to
-      console.log("data?.daoPowersByTimestamp", data?.daoPowersByTimestamp);
-      setDaoPower(data?.daoPowersByTimestamp ? data?.daoPowersByTimestamp : 0)
+    // if (data) {
+    //   // mutate data if you need to
+    //   console.log("data?.daoPowersByTimestamp", data?.daoPowersByTimestamp);
+    //   setDaoPower(data?.daoPowersByTimestamp ? data?.daoPowersByTimestamp : 0)
 
-    }
+    // }
     if (voting) {
       console.log("voting.data?.votingPower", voting?.data?.votingPower);
       setVotingPower(voting.data?.votingPower ? voting.data?.votingPower : 0)
@@ -84,6 +88,15 @@ const VotingPowerDAO = (props) => {
 
   }, [data, voting]);
 
+
+  useEffect(() => {
+    async function fetchData() {
+      let veCRVTotalSupply = await totalSupply(ERC20_CRV_CONTRACT_HASH);
+      setDaoPower(parseFloat(veCRVTotalSupply))
+      console.log("veCRVTotalSupply", parseFloat(veCRVTotalSupply));
+    }
+    fetchData();
+  }, [])
   useEffect(() => {
     let controller = new AbortController();
     let publicKeyHex = localStorage.getItem("Address");
@@ -96,7 +109,7 @@ const VotingPowerDAO = (props) => {
         let CRVLockBalance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
         // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString(hex)", Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
         let CRVBalance = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
-        // console.log("CRV Locked Balance: ", CRVLockBalance);
+        console.log("CRV Locked Balance: ", CRVLockBalance);
         console.log("CRV Balance: ", CRVBalance);
         setCRVLockedBalance(CRVLockBalance);
         setCRVBalance(CRVBalance);
@@ -124,6 +137,7 @@ const VotingPowerDAO = (props) => {
           // handle the response
           console.log("response of crvStats:...", response.data.data);
           setCrvStats(response.data.data)
+          setCrvLocked(response.data.data.CRVLOCKED)
         })
         .catch(error => {
           // handle the error
@@ -133,22 +147,19 @@ const VotingPowerDAO = (props) => {
   }, [localStorage.getItem("Address")])
 
   const DAOPowerFormat = () => {
-    return daoPower ? helpers.formatNumber(daoPower[0]?.totalPower / 1e9) : 0;
+    return helpers.formatNumber(daoPower / 1e9);
   };
 
   const averageLock = () => {
-    let crvLocked = 200000;
-    return daoPower
-      ? isNaN(((4 * daoPower[0]?.totalPower) / crvLocked).toFixed(2)) ? 0 : ((4 * daoPower[0]?.totalPower) / crvLocked).toFixed(2)
-      : 0;
+    return ((4 * daoPower) / crvLocked).toFixed(2)
   };
 
-  const myLockedCRVFormat = () => {
-    return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
-  };
+  // const myLockedCRVFormat = () => {
+  //   return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
+  // };
 
   const CRVLockedFormat = () => {
-    return helpers.formatNumber(crvStats?.CRVLOCKED / 1e9)
+    return helpers.formatNumber(crvLocked / 1e9)
   }
   console.log("CRVLockedFormat", CRVLockedFormat());
   let CRVLockedPercentage = isNaN((crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)) ? 0 : (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
@@ -188,7 +199,7 @@ const VotingPowerDAO = (props) => {
                 />
               </AccordionSummary>
             </Accordion>
-            <Accordion
+            {/* <Accordion
               style={{
                 borderRadius: "0px 0px 0px 0px ",
               }}
@@ -216,7 +227,7 @@ const VotingPowerDAO = (props) => {
                   title={"Percentage of total CRV Locked excluding voting escrow:"}
                 />
               </AccordionSummary>
-            </Accordion>
+            </Accordion> */}
             <Accordion
               style={{
                 borderRadius: "0px 0px 15px 15px ",
@@ -266,7 +277,7 @@ const VotingPowerDAO = (props) => {
                     }}
                     gutterBottom
                   >
-                    {DAOPowerFormat() ? DAOPowerFormat() : 0}
+                    {DAOPowerFormat()}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
