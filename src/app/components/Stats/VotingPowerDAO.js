@@ -21,7 +21,6 @@ import {
 } from "../blockchain/Hashes/ContractHashes";
 import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 import * as erc20CrvFunctions from "../JsClients/ERC20CRV/erc20crvFunctions/functions";
-import axios from "axios";
 
 const DAO_POWER = gql`
   query {

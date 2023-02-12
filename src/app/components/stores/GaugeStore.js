@@ -11,11 +11,7 @@ import {
   gaugeTypes,
   gauge_type_names,
 } from "../JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
-import {
-  inflationRate,
-  lpToken,
-  workingSupply,
-} from "../JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
+
 import { getMinted } from "../JsClients/MINTER/minterFunctionsForBackend/functions";
 import {
   balanceOf,
@@ -255,7 +251,7 @@ export async function getState(activePublicKey) {
   });
 
   let totalSupplies = decodedGauges.map(async (gauge) => {
-    return await liquidityGaugeV3Functions.totalSupply(
+    return await liquidityGaugeV3Functions.totalSupplyGauge(
       LIQUIDITY_GAUGE_V3_CONTRACT_HASH
     );
   });
