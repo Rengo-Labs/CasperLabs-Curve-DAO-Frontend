@@ -6,25 +6,24 @@ import ApexChart from "react-apexcharts";
 // CONTENT
 
 // COMPONENT FUNCTION
-const GaugeRelativeWeight = ({chart}) => {
-
-  console.log("chart data in chart screen..",chart);
+const GaugeRelativeWeight = ({ chart }) => {
+  console.log("chart data in chart screen..", chart);
 
   // States
 
-  let seriesY=[];
-  let labelData=[];
+  let seriesY = [];
+  let labelData = [];
 
-  for (let i=0;i<chart.length;i++){
-    seriesY.push(chart[i].y)
-    labelData.push(chart[i].name)
-     }
+  for (let i = 0; i < chart.length; i++) {
+    seriesY.push(chart[i].y);
+    labelData.push(chart[i].name);
+  }
 
-//   if(chart){
-//     seriesY.push(chart[0]?.y)
-//     labelData.push(chart[0]?.name)
-//  }
- console.log("seriesY",seriesY);
+  //   if(chart){
+  //     seriesY.push(chart[0]?.y)
+  //     labelData.push(chart[0]?.name)
+  //  }
+  console.log("seriesY", seriesY);
   // Content
   const options = {
     chart: {
@@ -37,13 +36,12 @@ const GaugeRelativeWeight = ({chart}) => {
         enabled: true,
       },
     },
-    series: seriesY
+    series: seriesY,
     // [
     //   5, 4, 5, 2, 1, 6, 3, 4, 2, 1, 3, 5, 6, 1, 2, 4, 1, 3, 5, 1, 1, 2, 1, 3, 2,
     //   1, 4, 2, 1, 5,
     // ]
-    ,
-    labels:labelData
+    labels: labelData,
     // [
     //   "CSPR",
     //   "USDT",
@@ -76,7 +74,6 @@ const GaugeRelativeWeight = ({chart}) => {
     //   "google",
     //   "tip",
     // ]
-    ,
     plotOptions: {
       donut: {
         size: "15px",

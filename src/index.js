@@ -1,58 +1,29 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import * as serviceWorker from "./serviceWorker";
-import App from "./app/containers/App/Application";
-import axios from "axios";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-// import 'bootstrap/dist/css/bootstrap.css'; // or include from a CDN
-// import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
+import axios from "axios";
 
-// axios.defaults.withCredentials = true;
+import "./index.css";
+import App from "./app/containers/App/Application";
+
+import * as serviceWorker from "./serviceWorker";
 
 const client = new ApolloClient({
-  uri: "http://curvegraphqlbackend-env.eba-69snndvn.us-east-1.elasticbeanstalk.com/graphql",
-  //uri:"http://localhost:3000/graphQL",
-  cache: new InMemoryCache(),
+uri: process.env.REACT_APP_BACKEND_SERVER_ADDRESS
+? process.env.REACT_APP_BACKEND_SERVER_ADDRESS
+: "http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/graphql",
+cache: new InMemoryCache(),
 });
 
-if (process.env.REACT_APP_BACKEND_SERVER_ADDRESS)
-  axios.defaults.baseURL = `${process.env.REACT_APP_BACKEND_SERVER_ADDRESS}`;
-// else axios.defaults.baseURL = `http://localhost:3000`;
-else
-  axios.defaults.baseURL = `http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/`;
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_SERVER_ADDRESS
+? process.env.REACT_APP_BACKEND_SERVER_ADDRESS
+: "http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-
 root.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>,
+<ApolloProvider client={client}>
+<App />
+</ApolloProvider>
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-
-// import React from "react";
-// import ReactDOM from "react-dom";
-// // import { BrowserRouter, Route, Switch } from "react-router-dom";
-// import "./index.css";
-// import * as serviceWorker from "./serviceWorker";
-// import { BrowserRouter } from "react-router-dom";
-// // import ErrorScreen from "./components/ErrorScreen";
-// // import AdminDashboard from "./components/AdminDashboard";
-// import App from "./App";
-
-// ReactDOM.render(
-//     <React.StrictMode>
-//         <App />
-//     </React.StrictMode>,
-//     document.getElementById('root')
-// );
-
-// // If you want your app to work offline and load faster, you can change
-// // unregister() to register() below. Note this comes with some pitfalls.
-// // Learn more about service workers: https://bit.ly/CRA-PWA
-// serviceWorker.unregister();

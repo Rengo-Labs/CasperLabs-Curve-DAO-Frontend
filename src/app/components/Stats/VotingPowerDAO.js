@@ -1,5 +1,6 @@
 // REACT
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 // CUSTOM STYLES
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
@@ -49,6 +50,7 @@ const VotingPowerDAO = (props) => {
   const [votingPower, setVotingPower] = useState(0);
   const [totalCRVLocked, setTotalCRVLocked] = useState(0);
   const [totalCRVLockedPercent, setTotalCRVLockedPercent] = useState(0);
+  const [crvStats, setCrvStats] = useState();
   // Handlers
 
   // Queries
@@ -57,7 +59,7 @@ const VotingPowerDAO = (props) => {
   console.log("this is error of voting escrow gql: ", error);
 
   if (data !== undefined) {
-    console.log("daopowerrrr", data.daoPowersByTimestamp[0].totalPower);
+    console.log("daopowerrrr", data?.daoPowersByTimestamp);
   }
 
   const voting = useQuery(VOTING_POWER, {
@@ -69,11 +71,11 @@ const VotingPowerDAO = (props) => {
             ).toString("hex")
           : null,
     },
-  });
-  console.log("this is data of voting escrow gql: ", voting.data);
-  if (voting.data !== undefined) {
-    console.log("votingPOWER", voting?.data?.votingPower[0]?.power);
-  }
+  })
+  console.log("this is data of voting escrow gql: ", voting?.data);
+  // if (voting.data !== undefined) {
+  //   // console.log("votingPOWER", voting.data?.votingPower[0]?.power);
+  // }
 
   useEffect(() => {
     // resolveData();
@@ -128,8 +130,32 @@ const VotingPowerDAO = (props) => {
     };
   }, [localStorage.getItem("Address")]);
 
+
+  useEffect(() => {
+
+    let publicKeyHex = localStorage.getItem("Address");
+
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      let accountHash = Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex");
+      axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
+        .then(response => {
+          // handle the response
+          console.log("response of crvStats:...", response.data.data);
+          setCrvStats(response.data.data)
+        })
+        .catch(error => {
+          // handle the error
+          console.log("error of crvStats:...", error);
+        });
+    }
+  }, [localStorage.getItem("Address")])
+
   const DAOPowerFormat = () => {
-    return daoPower ? helpers.formatNumber(daoPower[0].totalPower / 1e9) : 0;
+    return daoPower ? helpers.formatNumber(daoPower[0]?.totalPower / 1e9) : 0;
   };
 
   const averageLock = () => {
@@ -164,6 +190,12 @@ const VotingPowerDAO = (props) => {
         console.log("Error from getting crv stats: ", error);
       });
   };
+  const CRVLockedFormat = () => {
+    return helpers.formatNumber(crvStats?.CRVLOCKED / 1e9)
+  }
+  console.log("CRVLockedFormat", CRVLockedFormat());
+  let CRVLockedPercentage = (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
+  console.log("CRVLockedPercentage", CRVLockedPercentage);
 
   return (
     <>

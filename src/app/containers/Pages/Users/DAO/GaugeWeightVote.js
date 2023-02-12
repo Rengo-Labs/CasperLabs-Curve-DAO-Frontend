@@ -37,6 +37,7 @@ import {
   Alert,
   Avatar,
   Button,
+  Container,
   TableFooter,
   TablePagination,
 } from "@mui/material";
@@ -52,7 +53,10 @@ import clock from "../../../../assets/img/clock.png";
 import cspr from "../../../../assets/img/cspr.png";
 import usdt from "../../../../assets/img/usdt.png";
 import wbtc from "../../../../assets/img/wbtc.png";
-import { GAUGE_CONTROLLER_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
+import {
+  GAUGE_CONTROLLER_CONTRACT_HASH,
+  VOTING_ESCROW_CONTRACT_HASH,
+} from "../../../../components/blockchain/Hashes/ContractHashes";
 import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
 import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../../../../components/blockchain/RecipientAddress/RecipientAddress";
@@ -61,6 +65,11 @@ import SigningModal from "../../../../components/Modals/SigningModal";
 import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeWeightModal";
 import TablePaginationActions from "../../../../components/pagination/TablePaginationActions";
 import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
+import axios from "axios";
+import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
+import * as statsStore from "../../../../components/stores/StatsStore";
+import VotingHistoryTable from "../../../../components/Tables/VotingHistoryTable";
+import * as votingEscrowFunctions from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 
 const GAUGE_WEIGHT = gql`
   query gaugeVotesByUser($user: String) {
@@ -96,6 +105,17 @@ const GAUGE_VOTES_BY_TIME = gql`
       total_weight
       veCRV
       totalveCRV
+    }
+  }
+`;
+
+const GAUGES_BY_ADDRESS = gql`
+  query getGaugesByAddress($gaugeAddress: String) {
+    getGaugesByAddress(gaugeAddress: $gaugeAddress) {
+      id
+      address
+      contractHash
+      packageHash
     }
   }
 `;
@@ -158,8 +178,8 @@ const GaugeWeightVote = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [effectiveDate, setEffectiveDate] = useState("26/05/2022");
-  const [votedThisWeek, setVotedThisWeek] = useState("2,770,259.15");
-  const [totalVeCRV, setTotalVeCRV] = useState("451,949,979.95");
+  const [votedThisWeek, setVotedThisWeek] = useState("");
+  const [totalVeCRV, setTotalVeCRV] = useState("0");
   const [veCRVSupplyVoted, setVeCRVSupplyVoted] = useState("0.61 %");
   const [boostGauge, setBoostGauge] = useState();
   const [voteWeightUsed, setVoteWeightUsed] = useState("0%");
@@ -180,10 +200,74 @@ const GaugeWeightVote = () => {
   const [showVotes, setShowVotes] = useState(true);
   const [users, setUsers] = useState("");
   const [open, setOpen] = useState(false);
-  const [selectedGauge, setSelectedGauge] = "";
+  const [selectedGauge, setSelectedGauge] = useState(" ");
+  const [outcomeWeights, setOutcomeWeights] = useState([]);
+  const [oldAPY, setOldAPY] = useState();
+  const [newAPY, setNewAPY] = useState();
+  const [currentCRVAPYs, setCurrentCRVAPYs] = useState({});
+  const [futureCRVAPYs, setFutureCRVAPYs] = useState({});
+  const [currentWeights, setCurrentWeights] = useState({});
+  const [futureWeights, setFutureWeights] = useState({});
+  const [nextTime, setNextTime] = useState();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
+
+  const WEEK = 604800;
+  let pointsSum = [[]];
+
+  //TEMPORARY VARIABLE TO AVOID ERRORS
+  const poolInfo = {
+    compound: {
+      swap: "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56",
+      swap_token: "0x845838DF265Dcd2c412A1Dc9e959c7d08537f8a2",
+      name: "compound",
+      gauge: "0x7ca5b0a2910B33e9759DC7dDB0413949071D7575",
+    },
+    usdt: {
+      swap: "0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C",
+      swap_token: "0x9fC689CCaDa600B6DF723D9E47D84d76664a1F23",
+      name: "usdt",
+      gauge: "0xBC89cd85491d81C6AD2954E6d0362Ee29fCa8F53",
+    },
+    y: {
+      swap: "0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51",
+      swap_token: "0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8",
+      name: "y",
+      gauge: "0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1",
+    },
+    busd: {
+      swap: "0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27",
+      swap_token: "0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B",
+      name: "busd",
+      gauge: "0x69Fb7c45726cfE2baDeE8317005d3F94bE838840",
+    },
+    susdv2: {
+      swap: "0xA5407eAE9Ba41422680e2e00537571bcC53efBfD",
+      swap_token: "0xC25a3A3b969415c80451098fa907EC722572917F",
+      name: "susdv2",
+      gauge: "0xA90996896660DEcC6E997655E065b23788857849",
+    },
+    pax: {
+      swap: "0x06364f10B501e868329afBc005b3492902d6C763",
+      swap_token: "0xD905e2eaeBe188fc92179b6350807D8bd91Db0D8",
+      name: "pax",
+      gauge: "0x64E3C23bfc40722d3B649844055F1D51c1ac041d",
+    },
+    ren: {
+      swap: "0x93054188d876f558f4a66B2EF1d97d16eDf0895B",
+      swap_token: "0x49849C98ae39Fff122806C06791Fa73784FB3675",
+      name: "ren",
+      gauge: "0xB1F2cdeC61db658F091671F5f199635aEF202CAC",
+    },
+    sbtc: {
+      swap: "0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714",
+      swap_token: "0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3",
+      name: "sbtc",
+      gauge: "0x705350c4BcD35c9441419DdD5d2f097d7a55410F",
+    },
+  };
+
   // States
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
@@ -209,9 +293,9 @@ const GaugeWeightVote = () => {
 
     setSelectedGauge(event.target.value);
 
-    this.outcomeWeights = [];
-    this.oldAPY = null;
-    this.newAPY = null;
+    // this.outcomeWeights = [];
+    // this.oldAPY = null;
+    // this.newAPY = null;
 
     // this.last_user_vote = await this.gaugeController.methods
     //   .last_user_vote(contract.default_account, this.selectedGauge)
@@ -231,6 +315,27 @@ const GaugeWeightVote = () => {
       setUsers(activePublicKey);
     }
   }, [activePublicKey]);
+
+  // useEffect(() => {
+  //   if (showVotes) {
+  //     setUsers(
+  //       "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1"
+  //     );
+  //   } else {
+  //     setUsers(
+  //       "24a56544c522eca7fba93fb7a6cef83e086706fd87b2f344f5c3dad3603d11f1"
+  //     );
+  //   }
+  // }, [showVotes]);
+
+  const gauges = useQuery(GAUGES_BY_ADDRESS, {
+    variables: {
+      gaugeAddress: "",
+    },
+  });
+
+  console.log("Error from gauges by address: ", gauges.error);
+  console.log("Data from gauges by address: ", gauges.data?.getGaugesByAddress);
 
   const gaugeWeight = useQuery(GAUGE_WEIGHT, {
     variables: {
@@ -252,6 +357,60 @@ const GaugeWeightVote = () => {
   // if (gaugeWeight.data !== undefined) {
   //   console.log("gaugeWeight", gaugeWeight.data.gaugeVotesByUser);
   // }
+
+  useEffect(() => {
+    let balance = votingEscrowFunctions.balanceOf(VOTING_ESCROW_CONTRACT_HASH);
+    axios
+      .post(`/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, {
+        account: activePublicKey,
+      })
+      .then((response) => {
+        console.log("Response from getting locked end: ", response);
+      })
+      .catch((error) => {
+        console.log("Error from getting locked end: ", error);
+      });
+
+    let powerUsed = gaugeControllerFunctions.vote_user_power(
+      GAUGE_CONTROLLER_CONTRACT_HASH,
+      activePublicKey
+    );
+    let totalVeCRV;
+    axios
+      .post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`)
+      .then((response) => {
+        console.log("Response from getting total supply: ", response);
+        totalVeCRV = response.data?.totalSupplies[0];
+        setTotalVeCRV(totalVeCRV);
+      })
+      .catch((error) => {
+        console.log("Error from getting total supply: ", error);
+      });
+
+    // getVotes();  //check for its logic
+    //WORKING FOR GETVOTES FUNCTION AFTER REMOVING QUERIES
+
+    let votes;
+    if (gaugeWeight) {
+      votes = gaugeWeight.data?.gaugeVotesByUser;
+    } else {
+      votes = gaugeVoteTime.data?.gaugeVotesByTime;
+    }
+    console.log("Votesvotesvotes: ", votes);
+    let totalveCRVvote = votes
+      ?.filter((v, i, a) => a.findIndex((t) => t.user === v.user) === i)
+      .reduce((a, b) => +a + +b.veCRV, 0);
+
+    setVotedThisWeek(totalveCRVvote);
+    // if (results.data.myVotes) {
+    //   this.myVoteWeightUsed =
+    //     results.data.myVotes.reduce((a, b) => +a + +b.weight, 0) / 100;
+    // } else {
+    //   this.myVoteWeightUsed =
+    //     results.data.gaugeVotes.reduce((a, b) => +a + +b.weight, 0) / 100;
+    //   console.log(results, this.votes.length, "THE RESULTS");
+    // }
+  }, [gaugeWeight, gaugeVotesByTime]);
 
   useEffect(() => {
     if (gaugeWeight) {
@@ -287,69 +446,280 @@ const GaugeWeightVote = () => {
     adddc432b76fabbb9ff5a694b5839065e89764c1e51df8cffdbdc34f8925876c: "susdv2",
     bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38: "sbtc",
   };
+  // useEffect(() => {
+  //   console.log("gaugeWeightData", gaugeWeightData);
+  //   let totalWeight = gaugeWeightData[0]?.total_weight;
+  //   //let totalWeight = 200000000000;
+  //   //let gaugeWeight = gaugeWeightData[0]?.gaugeWeights;
+  //   //let gaugeWeight = 100000000000;
+  //   //console.log("gaugeWeight",gaugeWeight);
+  //   console.log(
+  //     "gaugesNames",
+  //     gaugesNames[
+  //       "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"
+  //     ]
+  //   );
+  //   //let future_weights = gaugeWeight?.map((v, i) => ({ id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], name: gaugesNames["3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735"], y: +v.weight * 1e18 * 100 / totalWeight}))
+  //   // let future_weights = {
+  //   //   id: gaugesNames[
+  //   //     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
+  //   //   ],
+  //   //   name: gaugesNames[
+  //   //     "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
+  //   //   ],
+  //   //   y:
+  //   //     (+gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100) /
+  //   //     totalWeight,
+  //   // };
+  //   // console.log("future_weights:", future_weights);
+  //   // setFutureWeight(future_weights);
+
+  //   console.log("totalWeight", totalWeight);
+
+  //   let totalveCRVvote = gaugeWeightData
+  //     ?.filter((v, i, a) => a.findIndex((t) => t.user === v.user) === i)
+  //     .reduce((a, b) => +a + +b.veCRV, 0);
+  //   console.log("totalveCRVvote", totalveCRVvote);
+
+  //   const totalveCRVvoteFormat = () => {
+  //     return helpers.formatNumber(totalveCRVvote / 1e9);
+  //   };
+  //   console.log("totalveCRVvoteFormat:...", totalveCRVvoteFormat());
+  //   setVotedThisWeek(totalveCRVvoteFormat());
+
+  //   // let changePagination=()=> {
+  //   //   let perPage= 10;
+  //   //   let filteredVotes = gaugeWeightData?.slice(page*perPage, page*perPage + perPage)
+  //   //   console.log("filteredVotes for table:",filteredVotes);
+  //   //   setFilteredVotes(filteredVotes);
+  //   // }
+  //   // changePagination();
+  // }, [gaugeWeight, gaugeWeightData]);
+
+  //GETTING DATA FOR GRAPH
   useEffect(() => {
-    console.log("gaugeWeightData", gaugeWeightData);
-    let totalWeight = gaugeWeightData[0]?.total_weight;
-    //let totalWeight = 200000000000;
-    //let gaugeWeight = gaugeWeightData[0]?.gaugeWeights;
-    //let gaugeWeight = 100000000000;
-    //console.log("gaugeWeight",gaugeWeight);
-    console.log(
-      "gaugesNames",
-      gaugesNames[
-        "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"
-      ]
+    let totalWeight;
+    let gaugeWeights = [];
+    const fetchData = async () => {
+      //GETTING TOTAL WEIGHT
+      await axios
+        .post(
+          `/gaugeController/getTotalWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`
+        )
+        .then((response) => {
+          console.log("Response from getting total weight: ", response);
+          totalWeight = parseFloat(response.data.totalWeight);
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+        });
+
+      //GETTING GAUGE WEIGHT
+      Object.keys(gaugesNames).map(async (gauge) => [
+        GAUGE_CONTROLLER_CONTRACT_HASH,
+        await axios
+          .post(
+            `/gaugeController/getGaugeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
+            { address: `${gauge}` }
+          )
+          .then((response) => {
+            console.log("Response from get Gauge Weight: ", response);
+            gaugeWeights.push(response.data.gaugeWeight);
+          })
+          .catch((error) => {
+            console.log("Error from get gauge weight: ", error);
+          }),
+      ]);
+
+      let futureWeightTemp = Object.keys(gaugesNames).map((gauge, i) => ({
+        id: gaugesNames[gauge],
+        name: gaugesNames[gauge],
+        y: gaugeWeights[i] ? (gaugeWeights[i] * 10e9 * 100) / totalWeight : 0,
+      }));
+      console.log("GaugeWeights: ", gaugeWeights);
+
+      console.log("Future weights: ", futureWeightTemp);
+      setFutureWeight(futureWeightTemp);
+
+      setNextTime(((Date.now() / 1000 + WEEK) / WEEK) * WEEK);
+
+      //SETTING DATA FOR TABLE
+      getCRVAPY();
+      for (let pool of Object.keys(currentCRVAPYs)) {
+        let change = futureWeights[pool] / currentWeights[pool];
+        if (!isFinite(change)) change = 0;
+        // Vue.set(futureCRVAPYs, pool, currentCRVAPYs[pool] * change);
+        let tempFutureCRV = futureCRVAPYs;
+        tempFutureCRV[pool] = currentCRVAPYs[pool] * change;
+        setFutureCRVAPYs(tempFutureCRV);
+        statsStore.state.currentCRVAPYs[
+          Object.values(poolInfo).find((v) => v.name == pool).gauge
+        ] = currentCRVAPYs[pool] * change;
+      }
+    };
+
+    fetchData();
+    console.log("After getting data from backend");
+  }, []);
+
+  const getCRVAPY = async () => {
+    //TEMPORARY VALUES TO OVERCOME ERRORS
+    let decodedGauges = [
+      "0x7ca5b0a2910B33e9759DC7dDB0413949071D7575",
+      "0xBC89cd85491d81C6AD2954E6d0362Ee29fCa8F53",
+      "0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1",
+      "0x69Fb7c45726cfE2baDeE8317005d3F94bE838840",
+      "0x64E3C23bfc40722d3B649844055F1D51c1ac041d",
+      "0xB1F2cdeC61db658F091671F5f199635aEF202CAC",
+      "0xA90996896660DEcC6E997655E065b23788857849",
+      "0x705350c4BcD35c9441419DdD5d2f097d7a55410F",
+    ];
+
+    let gaugeController_address = GAUGE_CONTROLLER_CONTRACT_HASH;
+    // let gauge_relative_weight = "0x6207d866000000000000000000000000";
+
+    let pools = [
+      "compound",
+      "usdt",
+      "iearn",
+      "busd",
+      "susdv2",
+      "pax",
+      "ren",
+      "sbtc",
+    ];
+
+    let prices = await fetch(
+      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,curve-dao-token&vs_currencies=usd"
     );
-    //let future_weights = gaugeWeight?.map((v, i) => ({ id: gaugesNames["bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"], name: gaugesNames["3de805e07efbc2cd9c5d323ab4fe5f2f0c1c5da33aec527d73de34a1fc9d3735"], y: +v.weight * 1e18 * 100 / totalWeight}))
-    let future_weights = {
-      id: gaugesNames[
-        "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-      ],
-      name: gaugesNames[
-        "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-      ],
-      y:
-        (+gaugeWeightData[0]?.gaugeWeights[0]?.weight * 1e9 * 100) /
-        totalWeight,
-    };
-    console.log("future_weights:", future_weights);
-    setFutureWeight(future_weights);
+    prices = await prices.json();
+    let btcPrice = prices.bitcoin.usd;
+    let CRVprice = prices["curve-dao-token"].usd;
 
-    console.log("totalWeight", totalWeight);
+    // let weightCalls = decodedGauges.map((gauge) => [
+    //   gaugeController_address,
+    //   gauge_relative_weight + gauge.slice(2),
+    // ]);
 
-    let totalveCRVvote = gaugeWeightData
-      ?.filter((v, i, a) => a.findIndex((t) => t.user === v.user) === i)
-      .reduce((a, b) => +a + +b.veCRV, 0);
-    console.log("totalveCRVvote", totalveCRVvote);
+    // let aggCallsWeights = await contract.multicall.methods
+    //   .aggregate(weightCalls)
+    //   .call();
+    // let decodedWeights = aggCallsWeights[1].map((hex, i) => [
+    //   weightCalls[i][0],
+    //   web3.eth.abi.decodeParameter("uint256", hex) / 1e18,
+    // ]);
 
-    const totalveCRVvoteFormat = () => {
-      return helpers.formatNumber(totalveCRVvote / 1e9);
-    };
-    console.log("totalveCRVvoteFormat:...", totalveCRVvoteFormat());
-    setVotedThisWeek(totalveCRVvoteFormat());
+    let decodedWeights = [];
+    decodedGauges.map(async (gauge) => {
+      await axios
+        .post(
+          `gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
+          { address: gauge }
+        )
+        .then((response) => {
+          console.log("Response from gauge Relative weight: ", response);
+          // return response.data.gaugeRelativeWeights[0];
+          decodedWeights.push(response.data.gaugeRelativeWeights[0]);
+        })
+        .catch((error) => {
+          console.log("Error from gauge relative weight: ", error);
+        });
+    });
 
-    // let changePagination=()=> {
-    //   let perPage= 10;
-    //   let filteredVotes = gaugeWeightData?.slice(page*perPage, page*perPage + perPage)
-    //   console.log("filteredVotes for table:",filteredVotes);
-    //   setFilteredVotes(filteredVotes);
-    // }
-    // changePagination();
-  }, [gaugeWeight, gaugeWeightData]);
+    console.log("Decode weights: ", decodedWeights);
+    // let ratesCalls = decodedGauges.map((gauge) => [
+    //   [gauge, "0x180692d0"], //inflation_rate
+    //   [gauge, "0x17e28089"], //working_supply
+    // ]);
+
+    // let aggRates = await contract.multicall.methods
+    //   .aggregate(ratesCalls.flat())
+    //   .call();
+    // let decodedRate = aggRates[1].map((hex) =>
+    //   web3.eth.abi.decodeParameter("uint256", hex)
+    // );
+
+    let decodedRate = [];
+    decodedGauges.map(async (gauge) => {
+      let inflationRate = await gaugeControllerFunctions.inflation_rate(gauge);
+      let workingSupply = await gaugeControllerFunctions.working_supply(gauge);
+      console.log("Inflation rate: ", inflationRate);
+      console.log("Working supply: ", workingSupply);
+      decodedRate.push([inflationRate, workingSupply]);
+    });
+
+    console.log("decoded rates: ", decodedRate);
+    // let decodedRate = [];
+
+    let gaugeRates = decodedRate
+      .filter((_, i) => i % 2 == 0)
+      .map((v) => v / 1e18);
+    let workingSupplies = decodedRate
+      .filter((_, i) => i % 2 == 1)
+      .map((v) => v / 1e18);
+
+    // let virtualPriceCalls = Object.values(this.poolInfo).map((v) => [
+    //   v.swap,
+    //   "0xbb7b8b80",
+    // ]);
+    // let aggVirtualPrices = await contract.multicall.methods
+    //   .aggregate(virtualPriceCalls)
+    //   .call();
+    // let decodedVirtualPrices = aggVirtualPrices[1].map((hex, i) => [
+    //   virtualPriceCalls[i][0],
+    //   web3.eth.abi.decodeParameter("uint256", hex) / 1e18,
+    // ]);
+
+    let decodedVirtualPrices = [];
+    // let decodedWeights = [];
+
+    let weightData = decodedWeights.map((w, i) => {
+      let pool;
+      // let pool = Object.values(this.poolInfo).find(
+      //   (v) =>
+      //     v.gauge.toLowerCase() ==
+      //     "0x" + weightCalls[i][1].slice(34).toLowerCase()
+      // ).name;
+      let swap_address = poolInfo[pool].swap;
+      let virtual_price = decodedVirtualPrices.find(
+        (v) => v[0].toLowerCase() == swap_address.toLowerCase()
+      )[1];
+      let _working_supply = workingSupplies[i];
+      if (["ren", "sbtc"].includes(pool)) _working_supply *= btcPrice;
+      let rate =
+        (((gaugeRates[i] * w[1] * 31536000) / _working_supply) * 0.4) /
+        virtual_price;
+      let apy = rate * CRVprice * 100;
+      if (isNaN(apy)) apy = 0;
+      Object.values(this.poolInfo).find(
+        (v) => v.name == pool
+      ).gauge_relative_weight = w[1];
+
+      // Vue.set(this.currentWeights, pool, w[1] * 100);
+      let tempCurrentWeights = currentWeights;
+      tempCurrentWeights[pool] = w[1] * 100;
+      setCurrentWeights(tempCurrentWeights);
+      console.log("Current weights: ", currentWeights);
+
+      // Vue.set(this.currentCRVAPYs, pool, apy);
+      let tempCurrentCRV = currentCRVAPYs;
+      tempCurrentCRV[pool] = apy;
+      setCurrentCRVAPYs(tempCurrentCRV);
+      console.log("Current crv apys: ", currentCRVAPYs);
+      //Vue.set(this.CRVAPYs, pool, apy)
+    });
+  };
 
   const handleTableGraph = (vote) => {
+    console.log("Vote in handle table graph: ", vote);
     //this.showModal = true
 
     let total_weight = vote?.total_weight;
 
     //let future_weights = vote.gaugeWeights?.map((v, i) => ({ id: gaugesNames[v.gauge], name: gaugesNames[v.gauge], y: +v.weight * 1e9 * 100 / total_weight}))
     let future_weights = vote?.gaugeWeights?.map((v, i) => ({
-      id: gaugesNames[
-        "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-      ],
-      name: gaugesNames[
-        "bd175245e5a7fddcf1248eee5b0ee6b88aeda94bc8bbb4766a42baf5b360cc38"
-      ],
+      id: gaugesNames[v.gauge],
+      name: gaugesNames[v.gauge],
       y: (+v.weight * 1e9 * 100) / total_weight,
     }));
 
@@ -499,6 +869,128 @@ const GaugeWeightVote = () => {
   }
 
   console.log("futureWeight jjjj", futureWeight);
+
+  const getWeight = async () => {
+    let t = gaugeControllerFunctions.time_weight(selectedGauge);
+    let pt;
+    await axios
+      .post(`/gaugeController/pointsWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`, {
+        owner: selectedGauge,
+        spender: t,
+      })
+      .then((response) => {
+        console.log("Response from getting points weight: ", response);
+        pt = response.data;
+      })
+      .catch((error) => {
+        console.log("Error from getting points weight: ", error);
+      });
+
+    for (let i = 0; i < 500; i++) {
+      if (t > Date.now() / 1000) {
+        break;
+      }
+      t += WEEK;
+      let d_bias = pt.slope * WEEK;
+      if (pt.bias > d_bias) {
+        pt.bias -= d_bias;
+        let d_slope = await gaugeControllerFunctions.changes_sum(0, t);
+        pt.slope -= d_slope;
+      } else {
+        pt.bias = 0;
+        pt.slope = 0;
+      }
+      pointsSum[0][t] = pt;
+    }
+    return pt.bias;
+  };
+
+  const calculateValuesForGraph = async () => {
+    let slope;
+    await axios
+      .post(`/votingEscrow/getlastUserSlope/${VOTING_ESCROW_CONTRACT_HASH}`, {
+        address: activePublicKey,
+      })
+      .then((response) => {
+        console.log("Response from getting last user slope: ", response);
+        slope = response.data;
+      })
+      .catch((error) => {
+        console.log("Error from getting last user slope", error);
+      });
+
+    let oldWeightBias = await getWeight();
+    let oldSlopes;
+    await axios
+      .post(
+        `/gaugeController/voteUserSlopes/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
+        { owner: activePublicKey, spender: selectedGauge }
+      )
+      .then((response) => {
+        console.log("Response from getting vote user slope: ", response);
+        oldSlopes = response.data;
+      })
+      .catch((error) => {
+        console.log("Error from getting vote user slope: ", error);
+      });
+
+    let oldDT = 0;
+    if (+oldSlopes.end > nextTime) oldDT = +oldSlopes.end - nextTime;
+    let old_bias = +oldSlopes.slope * oldDT;
+    let new_slope = (slope * voteWeightUsed * 100) / 10000;
+    let new_dt = this.lock_end - nextTime; //lock_end will be called from backend as soon as recieved its endpoint
+    let new_bias = new_slope * new_dt;
+
+    //NEW WORK ADDED
+    let point_bias = Math.max(oldWeightBias + new_bias, old_bias) - old_bias;
+
+    statsStore.state.calculatedWeights[selectedGauge] = point_bias;
+
+    // this.piechart = this.$refs.piecharts.chart;
+    // this.piechart.showLoading();
+
+    let total_outcome_weight = Object.values(
+      statsStore.state.calculatedWeights
+    ).reduce((a, b) => +a + +b, 0);
+
+    let outcome_weights = Object.entries(
+      statsStore.state.calculatedWeights
+    ).map(([k, v]) => ({
+      id: k,
+      name: statsStore.state.gaugesNames[k],
+      y: (v * 100) / total_outcome_weight,
+    }));
+
+    // this.outcomeWeights = outcome_weights;
+    setOutcomeWeights(outcome_weights);
+
+    // while (this.piechart.series[0])
+    //   this.piechart.series[0].remove(false, false);
+
+    // this.piechart.addSeries({
+    //   name: "Calculated outcome weights",
+    //   data: outcome_weights,
+    // });
+
+    // this.piechart.hideLoading();
+
+    let currentWeight = statsStore.state.gaugesWeights[selectedGauge];
+    let calculatedWeight = point_bias;
+
+    let change =
+      outcome_weights.find(
+        (v) => v.id.toLowerCase() == selectedGauge.toLowerCase()
+      ).y / statsStore.state.pieGaugeWeights[selectedGauge];
+
+    let old_APY = statsStore.state.currentCRVAPYs[selectedGauge];
+    setOldAPY(old_APY);
+
+    let new_APY = old_APY * change;
+    setNewAPY(new_APY);
+
+    // this.isCalculating = false;
+  };
+
   return (
     <>
       <div className="home-section home-full-height">
@@ -522,7 +1014,7 @@ const GaugeWeightVote = () => {
               <fieldset>
                 <legend>Gauge Weight Voting</legend>
                 <div className="row no-gutters justify-content-center">
-                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-6">
+                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-10">
                     <div className="row no-gutters justify-content-center">
                       {/* Gauge Weight Voting info */}
                       <Box
@@ -688,9 +1180,13 @@ const GaugeWeightVote = () => {
                             <div className="row no-gutters justify-content-center">
                               <div className="col-12 text-center py-3">
                                 <Typography
-                                  variant="h4"
+                                  variant="h6"
                                   gutterBottom
                                   component="div"
+                                  style={{
+                                    marginLeft: "20%",
+                                    marginRight: "20%",
+                                  }}
                                 >
                                   <span className="font-weight-bold">
                                     Proposed future gauge weight changes taking
@@ -716,9 +1212,13 @@ const GaugeWeightVote = () => {
                             <div className="row no-gutters mt-3">
                               <div className="col-12 text-center py-3">
                                 <Typography
-                                  variant="h4"
+                                  variant="h6"
                                   gutterBottom
                                   component="div"
+                                  style={{
+                                    marginLeft: "20%",
+                                    marginRight: "20%",
+                                  }}
                                 >
                                   <span className="font-weight-bold">
                                     Proposed future CRV APYs taking effect on{" "}
@@ -727,11 +1227,15 @@ const GaugeWeightVote = () => {
                                 </Typography>
                               </div>
                             </div>
-                            <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 justify-content-center">
-                              <FutureAPYTable
-                                cells={cells}
-                                gaugeWeightVoteData={gaugeWeightVoteData}
-                              ></FutureAPYTable>
+                            <div className="row no-gutters justify-content-center">
+                              <Container>
+                                <FutureAPYTable
+                                  cells={cells}
+                                  gaugeWeightVoteData={gaugeWeightVoteData}
+                                  futureCRVAPYs={futureCRVAPYs}
+                                  currentCRVAPYs={currentCRVAPYs}
+                                ></FutureAPYTable>
+                              </Container>
                               {/* <TableContainer sx={{ p: 3 }}>
                                 <Table aria-label="Gauge Weight Vote">
                                   <TableHead
@@ -856,15 +1360,15 @@ const GaugeWeightVote = () => {
                               </div>
                             </div>
                             {/* Select gauge and Vote Weight % */}
-
-                            <Formik
-                              initialValues={initialValues}
-                              validationSchema={validationSchema}
-                              // onSubmit={onSubmitGaugeWeightVote}
-                            >
-                              <Form>
-                                <div className="row no-gutters justify-content-center">
-                                  {/* <div className="col-12 col-md-6">
+                            <Container>
+                              <Formik
+                                initialValues={initialValues}
+                                validationSchema={validationSchema}
+                                // onSubmit={onSubmitGaugeWeightVote}
+                              >
+                                <Form>
+                                  <div className="row no-gutters justify-content-center">
+                                    {/* <div className="col-12 col-md-6">
                                     <SelectInput
                                       name="SelectGaugeToken"
                                       label="Select a Gauge"
@@ -886,273 +1390,297 @@ const GaugeWeightVote = () => {
                                         return item.pool;
                                       })
                                     )} */}
-                                  {/* <SelectInput
+                                    {/* <SelectInput
                                       name="SelectGaugeToken"
                                       label="Select a Gauge"
                                       options={selectGaugeOptions}
                                     /> */}
-                                  {/* </div> */}
-                                  <div className="col-12 col-md-6">
-                                    <FormControl
-                                      variant="filled"
-                                      sx={{ m: 1, minWidth: 120 }}
-                                    >
-                                      <InputLabel id="select-gauge-label">
-                                        Select a Gauge
-                                      </InputLabel>
-                                      <Select
-                                        labelId="select-gauge-label"
-                                        id="gauge-select"
-                                        value={weightGauge}
-                                        onChange={handleWeightGaugeChange}
+                                    {/* </div> */}
+                                    <div className="col-12 col-md-6">
+                                      <FormControl
+                                        variant="filled"
+                                        sx={{
+                                          m: 1,
+                                          minWidth: 120,
+                                        }}
                                       >
-                                        <MenuItem value="Select a Gauge">
-                                          <em>Select a Gauge</em>
-                                        </MenuItem>
-                                        {/* <MenuItem value={"USDT"}>USDT</MenuItem>
+                                        <InputLabel id="select-gauge-label">
+                                          Select a Gauge
+                                        </InputLabel>
+                                        <Select
+                                          labelId="select-gauge-label"
+                                          id="gauge-select"
+                                          // value={weightGauge}
+                                          onChange={handleWeightGaugeChange}
+                                        >
+                                          <MenuItem value="Select a Gauge">
+                                            <em>Select a Gauge</em>
+                                          </MenuItem>
+                                          {/* <MenuItem value={"USDT"}>USDT</MenuItem>
                                         <MenuItem value={"BTC"}>BTC</MenuItem>
                                         <MenuItem value={"CSPR"}>CSPR</MenuItem> */}
-                                        {weightGauges.map((gauge, key) => {
-                                          return (
-                                            <MenuItem key={key}>
-                                              {gauge}
-                                            </MenuItem>
-                                          );
-                                        })}
-                                      </Select>
-                                    </FormControl>
-                                  </div>
-                                  <div className="col-12 col-md-6 mt-2 mt-md-0">
-                                    <List>
-                                      <ListItem
-                                        disablePadding
-                                        sx={{ textAlign: "center" }}
-                                      >
-                                        <ListItemText>
-                                          <span className="font-weight-bold">
-                                            Vote Weight % used:&nbsp;
-                                          </span>
-                                          {voteWeightUsed}
-                                        </ListItemText>
-                                      </ListItem>
-                                    </List>
-                                  </div>
-                                </div>
-                                {/* Hide allocation button */}
-                                <div className="row no-gutters mt-3">
-                                  <div className="col-12">
-                                    <div className="btnWrapper">
-                                      <Button
-                                        variant="contained"
-                                        size="large"
-                                        style={{
-                                          backgroundColor: "#5300e8",
-                                          color: "white",
-                                        }}
-                                        onClick={handleChangeAllocation}
-                                      >
-                                        {!hideAllocation ? (
-                                          <span>Hide my allocation</span>
-                                        ) : (
-                                          <span>Show my allocation</span>
-                                        )}
-                                        {/* Hide My Allocation&nbsp; */}
-                                        <span className="ml-4">
-                                          <Tooltip title="Your vote allocation from previous votes is remembered. If you want to change it and you have votes allocated to a gauge, you can set its new allocation to 0">
-                                            <HelpOutlineIcon />
-                                          </Tooltip>
-                                        </span>
-                                      </Button>
+                                          {gauges.data?.getGaugesByAddress?.map(
+                                            (item, key) => (
+                                              <MenuItem key={key} value={item}>
+                                                {item.name}
+                                                {"-"}
+                                                {item.id.slice(0, 6)} ...{" "}
+                                                {item.id.slice(-6)}
+                                              </MenuItem>
+                                            )
+                                          )}
+                                        </Select>
+                                      </FormControl>
+                                    </div>
+                                    <div className="col-12 col-md-6 mt-2 mt-md-0">
+                                      <List>
+                                        <ListItem
+                                          disablePadding
+                                          sx={{ textAlign: "center" }}
+                                        >
+                                          <ListItemText>
+                                            <span className="font-weight-bold">
+                                              Vote Weight % used:&nbsp;
+                                            </span>
+                                            {voteWeightUsed}
+                                          </ListItemText>
+                                        </ListItem>
+                                      </List>
                                     </div>
                                   </div>
-                                </div>
-                                {/* Gauge Weight Reset */}
-                                {hideAllocation ? null : (
-                                  // <div className="row no-gutters mt-3">
-                                  //   <div className="col-12">
-                                  //     <List>
-                                  //       <ListItem disablePadding>
-                                  //         <ListItemText>
-                                  //           <span className="font-weight-bold">
-                                  //             Gauge
-                                  //           </span>
-                                  //         </ListItemText>
-                                  //       </ListItem>
-                                  //       <ListItem disablePadding>
-                                  //         <ListItemText>
-                                  //           <span className="font-weight-bold">
-                                  //             Weight
-                                  //           </span>
-                                  //         </ListItemText>
-                                  //       </ListItem>
-                                  //       <ListItem disablePadding>
-                                  //         <ListItemText>
-                                  //           <span className="font-weight-bold">
-                                  //             Reset
-                                  //           </span>
-                                  //         </ListItemText>
-                                  //       </ListItem>
-                                  //     </List>
-                                  //   </div>
-                                  // </div>
-                                  <div>
-                                    <TableContainer
-                                      sx={{ p: 3, overflow: "hidden" }}
-                                    >
-                                      <Table aria-label="Gauge Weight Vote History">
-                                        <TableHead
-                                          sx={{
-                                            backgroundColor: "#e7ebf0",
-                                            paddingLeft: "0.25rem",
-                                          }}
-                                        >
-                                          <TableRow id="GWVoteHistoryTableSort">
-                                            {weightCells.map((cell) => (
-                                              <TableCell
-                                                sx={{
-                                                  border: 0,
-                                                  fontWeight: "bold",
-                                                  fontSize: "1.25rem",
-                                                  textAlign: "center",
-                                                }}
-                                              >
-                                                {cell}
-                                              </TableCell>
-                                            ))}
-                                          </TableRow>
-                                        </TableHead>
-                                        <TableBody
-                                          id={"GWVoteHistoryTableBody"}
-                                        >
-                                          {selectedWeightGauge.map((gauge) => {
-                                            return (
-                                              <TableRow>
-                                                <TableCell
-                                                  sx={{ textAlign: "center" }}
-                                                >
-                                                  gauge.name
-                                                </TableCell>
-                                                <TableCell
-                                                  sx={{ textAlign: "center" }}
-                                                >
-                                                  gauge.weight
-                                                </TableCell>
-                                                <TableCell
-                                                  sx={{ textAlign: "center" }}
-                                                >
-                                                  <div className="btnWrapper">
-                                                    <Button
-                                                      variant="contained"
-                                                      size="large"
-                                                      style={{
-                                                        backgroundColor:
-                                                          "#5300e8",
-                                                        color: "white",
-                                                      }}
-                                                      onClick={
-                                                        handleResetButton
-                                                      }
-                                                    >
-                                                      Reset
-                                                    </Button>
-                                                  </div>
-                                                </TableCell>
-                                              </TableRow>
-                                            );
-                                          })}
-                                        </TableBody>
-                                        <TableFooter></TableFooter>
-                                      </Table>
-                                    </TableContainer>
-                                  </div>
-                                )}
-                                {/* Vote Weight */}
-                                <div className="row no-gutters mt-3">
-                                  <div className="col-12">
-                                    <div className="row no-gutters align-items-center">
-                                      <Typography variant="h6" component={"h6"}>
-                                        <span
+                                  {/* Hide allocation button */}
+                                  <div className="row no-gutters mt-3">
+                                    <div className="col-12">
+                                      <div className="btnWrapper">
+                                        {/* <Button
+                                          variant="contained"
+                                          size="large"
                                           style={{
-                                            fontWeight: "bold",
-                                            color: "#000",
+                                            backgroundColor: "#5300e8",
+                                            color: "white",
                                           }}
+                                          onClick={handleChangeAllocation}
                                         >
-                                          Vote Weight:&nbsp;
-                                        </span>
-                                      </Typography>
-                                      <Box
-                                        component="form"
-                                        noValidate
-                                        autoComplete="off"
+                                          {!hideAllocation ? (
+                                            <span>Hide my allocation</span>
+                                          ) : (
+                                            <span>Show my allocation</span>
+                                          )}
+                                          Hide My Allocation&nbsp;
+                                          <span className="ml-4">
+                                            <Tooltip title="Your vote allocation from previous votes is remembered. If you want to change it and you have votes allocated to a gauge, you can set its new allocation to 0">
+                                              <HelpOutlineIcon />
+                                            </Tooltip>
+                                          </span>
+                                        </Button> */}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  {/* Gauge Weight Reset */}
+                                  {!hideAllocation ? null : (
+                                    // <div className="row no-gutters mt-3">
+                                    //   <div className="col-12">
+                                    //     <List>
+                                    //       <ListItem disablePadding>
+                                    //         <ListItemText>
+                                    //           <span className="font-weight-bold">
+                                    //             Gauge
+                                    //           </span>
+                                    //         </ListItemText>
+                                    //       </ListItem>
+                                    //       <ListItem disablePadding>
+                                    //         <ListItemText>
+                                    //           <span className="font-weight-bold">
+                                    //             Weight
+                                    //           </span>
+                                    //         </ListItemText>
+                                    //       </ListItem>
+                                    //       <ListItem disablePadding>
+                                    //         <ListItemText>
+                                    //           <span className="font-weight-bold">
+                                    //             Reset
+                                    //           </span>
+                                    //         </ListItemText>
+                                    //       </ListItem>
+                                    //     </List>
+                                    //   </div>
+                                    // </div>
+                                    <div>
+                                      <TableContainer
+                                        sx={{
+                                          overflow: "hidden",
+                                          marginTop: 3,
+                                          marginBottom: 3,
+                                        }}
                                       >
-                                        <TextInput
-                                          id="gaugeVotingPower"
-                                          label="Vote Weight Percentage"
-                                          variant="filled"
-                                          name="GaugeVotePower"
-                                          type="number"
-                                          value={votingPowerPercentage}
-                                          onChange={(e) => {
-                                            if (
-                                              e.target.value <= 100 &&
-                                              e.target.value >= 0
-                                            )
-                                              setVotingPowerPercentage(
-                                                e.target.value
-                                              );
-                                          }}
-                                        />
-                                      </Box>
+                                        <Table aria-label="Gauge Weight Vote History">
+                                          <TableHead
+                                            sx={{
+                                              backgroundColor: "#e7ebf0",
+                                              paddingLeft: "0.25rem",
+                                            }}
+                                          >
+                                            <TableRow id="GWVoteHistoryTableSort">
+                                              {weightCells.map((cell) => (
+                                                <TableCell
+                                                  sx={{
+                                                    border: 0,
+                                                    fontWeight: "bold",
+                                                    fontSize: "1.25rem",
+                                                    textAlign: "center",
+                                                  }}
+                                                >
+                                                  {cell}
+                                                </TableCell>
+                                              ))}
+                                            </TableRow>
+                                          </TableHead>
+                                          <TableBody
+                                            id={"GWVoteHistoryTableBody"}
+                                          >
+                                            {selectedWeightGauge.map(
+                                              (gauge) => {
+                                                return (
+                                                  <TableRow>
+                                                    <TableCell
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      gauge.name
+                                                    </TableCell>
+                                                    <TableCell
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      gauge.weight
+                                                    </TableCell>
+                                                    <TableCell
+                                                      sx={{
+                                                        textAlign: "center",
+                                                      }}
+                                                    >
+                                                      <div className="btnWrapper">
+                                                        <Button
+                                                          variant="contained"
+                                                          size="large"
+                                                          style={{
+                                                            backgroundColor:
+                                                              "#5300e8",
+                                                            color: "white",
+                                                          }}
+                                                          onClick={
+                                                            handleResetButton
+                                                          }
+                                                        >
+                                                          Reset
+                                                        </Button>
+                                                      </div>
+                                                    </TableCell>
+                                                  </TableRow>
+                                                );
+                                              }
+                                            )}
+                                          </TableBody>
+                                          <TableFooter></TableFooter>
+                                        </Table>
+                                      </TableContainer>
+                                    </div>
+                                  )}
+                                  {/* Vote Weight */}
+                                  <div className="row no-gutters mt-3">
+                                    <div className="col-12">
+                                      <div className="row no-gutters align-items-center">
+                                        <Typography
+                                          variant="h6"
+                                          component={"h6"}
+                                        >
+                                          <span
+                                            style={{
+                                              fontWeight: "bold",
+                                              color: "#000",
+                                            }}
+                                          >
+                                            Vote Weight:&nbsp;
+                                          </span>
+                                        </Typography>
+                                        <Box
+                                          component="form"
+                                          noValidate
+                                          autoComplete="off"
+                                        >
+                                          <TextInput
+                                            id="gaugeVotingPower"
+                                            label="Vote Weight Percentage"
+                                            variant="filled"
+                                            name="GaugeVotePower"
+                                            type="number"
+                                            value={votingPowerPercentage}
+                                            onChange={(e) => {
+                                              if (
+                                                e.target.value <= 100 &&
+                                                e.target.value >= 0
+                                              )
+                                                setVotingPowerPercentage(
+                                                  e.target.value
+                                                );
+                                            }}
+                                          />
+                                        </Box>
+                                        <Typography
+                                          variant="body1"
+                                          component={"div"}
+                                        >
+                                          <span>% (of your voting power)</span>
+                                        </Typography>
+                                      </div>
+                                    </div>
+                                    <div className="col-12">
                                       <Typography
                                         variant="body1"
                                         component={"div"}
                                       >
-                                        <span>% (of your voting power)</span>
+                                        <span>
+                                          {votingPowerNumber} (
+                                          {votingPowerPercentage}) of your
+                                          voting power will be allocated to this
+                                          gauge.
+                                        </span>
                                       </Typography>
                                     </div>
                                   </div>
-                                  <div className="col-12">
-                                    <Typography
-                                      variant="body1"
-                                      component={"div"}
-                                    >
-                                      <span>
-                                        {votingPowerNumber} (
-                                        {votingPowerPercentage}) of your voting
-                                        power will be allocated to this gauge.
-                                      </span>
-                                    </Typography>
-                                  </div>
-                                </div>
-                                {/* Gas Priority Fee */}
-                                {/* <div className="row no-gutters mt-3">
+                                  {/* Gas Priority Fee */}
+                                  {/* <div className="row no-gutters mt-3">
                                   <div className="col-12">
                                     <GasPriorityFee />
                                   </div>
                                 </div> */}
-                                {/* Submit Button */}
-                                <div className="row no-gutters mt-3 justify-content-center">
-                                  <div className="col-12">
-                                    <div className="btnWrapper text-center">
-                                      <Button
-                                        variant="contained"
-                                        size="large"
-                                        style={{
-                                          backgroundColor: "#5300e8",
-                                          color: "white",
-                                        }}
-                                        onClick={() => {
-                                          handleShowVoteForGaugeWeightModal();
-                                        }}
-                                      >
-                                        Submit
-                                      </Button>
-                                      {/* <button type="submit">Submit</button> */}
+                                  {/* Submit Button */}
+                                  <div className="row no-gutters mt-3 justify-content-center">
+                                    <div className="col-12">
+                                      <div className="btnWrapper text-center">
+                                        <Button
+                                          variant="contained"
+                                          size="large"
+                                          style={{
+                                            backgroundColor: "#5300e8",
+                                            color: "white",
+                                          }}
+                                          onClick={() => {
+                                            calculateValuesForGraph();
+                                            handleShowVoteForGaugeWeightModal();
+                                          }}
+                                        >
+                                          Submit
+                                        </Button>
+                                        {/* <button type="submit">Submit</button> */}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </Form>
-                            </Formik>
+                                </Form>
+                              </Formik>
+                            </Container>
                           </div>
                         </Paper>
                       </Box>
@@ -1170,9 +1698,13 @@ const GaugeWeightVote = () => {
                             <div className="row no-gutters mt-3">
                               <div className="col-12 text-center py-3">
                                 <Typography
-                                  variant="h4"
+                                  variant="h5"
                                   gutterBottom
                                   component="div"
+                                  style={{
+                                    marginLeft: "20%",
+                                    marginRight: "20%",
+                                  }}
                                 >
                                   <span className="font-weight-bold">
                                     Weight Voting History
@@ -1181,40 +1713,55 @@ const GaugeWeightVote = () => {
                               </div>
                             </div>
                             {/* history stats */}
-                            <div className="row no-gutters">
-                              <div className="col-12 text-center text-md-left">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Voted this week:&nbsp;
-                                      </span>
-                                      {votedThisWeek}&nbsp;veCRV
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Total veCRV:&nbsp;
-                                      </span>
-                                      {totalVeCRV}
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Percentage veCRV supply voted:&nbsp;
-                                      </span>
-                                      {veCRVSupplyVoted}
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
+                            <Container>
+                              <div className="row no-gutters">
+                                <div className="col-12 text-center text-md-left">
+                                  <List>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Voted this week:&nbsp;
+                                        </span>
+                                        {/* <Typography
+                                          variant="paragraph"
+                                          style={{
+                                            display: "inline-block",
+                                            fontWeight: "bold",
+                                          }}
+                                        >
+                                          Voted this week:&nbsp;
+                                        </Typography> */}
+                                        {votedThisWeek}&nbsp;veCRV
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Total veCRV:&nbsp;
+                                        </span>
+                                        {totalVeCRV}
+                                      </ListItemText>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                      <ListItemText>
+                                        <span className="font-weight-bold">
+                                          Percentage veCRV supply voted:&nbsp;
+                                        </span>
+                                        {votedThisWeek && totalVeCRV
+                                          ? (
+                                              (votedThisWeek * 100) /
+                                              totalVeCRV
+                                            ).toFixed(2)
+                                          : 0}
+                                      </ListItemText>
+                                    </ListItem>
+                                  </List>
+                                </div>
                               </div>
-                            </div>
-                            <div className="row no-gutters justify-content-center mt-2">
-                              <div className="col-12 col-md-8">
-                                <div className="row no-gutters w-100">
-                                  {/* <div className="col-12 col-md-6 col-lg-7 text-center w-100 px-2">
+                              <div className="row no-gutters justify-content-center mt-2">
+                                <div className="col-12 col-md-8">
+                                  <div className="row no-gutters w-100">
+                                    {/* <div className="col-12 col-md-6 col-lg-7 text-center w-100 px-2">
                                     <div className="btnWrapper">
                                       <Button
                                         onClick={() => {
@@ -1233,124 +1780,147 @@ const GaugeWeightVote = () => {
                                       </Button>
                                     </div>
                                   </div> */}
-                                  <div className="col-12 col-md-12 col-lg-12 text-center w-100 px-2">
-                                    <div className="btnWrapper">
-                                      {showVotes ? (
-                                        <Button
-                                          onClick={() => {
-                                            if (
-                                              activePublicKey !== null &&
-                                              activePublicKey !== undefined &&
-                                              activePublicKey !== "null"
-                                            ) {
-                                              setShowVotes(false);
-                                            } else {
-                                              let variant = "error";
-                                              enqueueSnackbar(
-                                                "Signer Not Connected",
-                                                { variant }
+                                    <div className="col-12 col-md-12 col-lg-12 text-center w-100 px-2">
+                                      <div className="btnWrapper">
+                                        {showVotes ? (
+                                          <Button
+                                            onClick={() => {
+                                              if (
+                                                activePublicKey !== null &&
+                                                activePublicKey !== undefined &&
+                                                activePublicKey !== "null"
+                                              ) {
+                                                setShowVotes(false);
+                                              } else {
+                                                let variant = "error";
+                                                enqueueSnackbar(
+                                                  "Signer Not Connected",
+                                                  { variant }
+                                                );
+                                              }
+                                              console.log(
+                                                "showVotes",
+                                                showVotes
                                               );
-                                            }
-                                            console.log("showVotes", showVotes);
-                                          }}
-                                          variant="contained"
-                                          size="large"
-                                          style={{
-                                            backgroundColor: "#5300e8",
-                                            color: "white",
-                                            width: "100%",
-                                          }}
-                                        >
-                                          Show My Votes
-                                        </Button>
-                                      ) : (
-                                        <Button
-                                          onClick={() => {
-                                            setShowVotes(true);
-                                            console.log("showVotes", showVotes);
-                                          }}
-                                          variant="contained"
-                                          size="large"
-                                          style={{
-                                            backgroundColor: "#5300e8",
-                                            color: "white",
-                                            width: "100%",
-                                          }}
-                                        >
-                                          Show All Votes
-                                        </Button>
-                                      )}
+                                            }}
+                                            variant="contained"
+                                            size="large"
+                                            style={{
+                                              backgroundColor: "#5300e8",
+                                              color: "white",
+                                              width: "100%",
+                                            }}
+                                          >
+                                            Show My Votes
+                                          </Button>
+                                        ) : (
+                                          <Button
+                                            onClick={() => {
+                                              setShowVotes(true);
+                                              console.log(
+                                                "showVotes",
+                                                showVotes
+                                              );
+                                            }}
+                                            variant="contained"
+                                            size="large"
+                                            style={{
+                                              backgroundColor: "#5300e8",
+                                              color: "white",
+                                              width: "100%",
+                                            }}
+                                          >
+                                            Show All Votes
+                                          </Button>
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="row no-gutters mt-3 justify-content-center">
-                              <div className="col-12">
-                                <Typography variant="h6" component={"h6"}>
-                                  <span
-                                    style={{
-                                      color: "#000",
-                                      fontWeight: "bold",
-                                    }}
+                              <div className="row no-gutters mt-3 justify-content-center">
+                                <div className="col-12">
+                                  <Typography variant="h6" component={"h6"}>
+                                    <span
+                                      style={{
+                                        color: "#000",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      Filter By:
+                                    </span>
+                                  </Typography>
+                                </div>
+                                <div className="col-12 col-md-6">
+                                  <FormControl
+                                    variant="filled"
+                                    sx={{ m: 1, minWidth: 120 }}
                                   >
-                                    Filter By:
-                                  </span>
-                                </Typography>
+                                    <InputLabel id="select-gauge-label">
+                                      Select a Gauge
+                                    </InputLabel>
+                                    <Select
+                                      labelId="select-gauge-label"
+                                      id="gauge-select"
+                                      // value={selectedGauge}
+                                      onChange={(event) => {
+                                        console.log("Event: ", event);
+                                        handleSelectedGauge(event);
+                                      }}
+                                    >
+                                      <MenuItem value="Select a Gauge">
+                                        <em>Select a Gauge</em>
+                                      </MenuItem>
+                                      {gauges.data?.getGaugesByAddress?.map(
+                                        (item, key) => (
+                                          <MenuItem key={key} value={item}>
+                                            {item.name}
+                                            {"-"}
+                                            {item.id.slice(0, 6)} ...{" "}
+                                            {item.id.slice(-6)}
+                                          </MenuItem>
+                                        )
+                                      )}
+                                    </Select>
+                                  </FormControl>
+                                </div>
+
+                                <div className="w-100 my-3 mt-5">
+                                  <Divider />
+                                </div>
                               </div>
-                              <div className="col-12 col-md-6">
-                                <FormControl
-                                  variant="filled"
-                                  sx={{ m: 1, minWidth: 120 }}
-                                >
-                                  <InputLabel id="select-gauge-label">
-                                    Select a Gauge
-                                  </InputLabel>
-                                  <Select
-                                    labelId="select-gauge-label"
-                                    id="gauge-select"
-                                    value={boostGauge}
-                                    onChange={(event) => {
-                                      handleSelectedGauge(event);
-                                    }}
-                                  >
-                                    <MenuItem value="Select a Gauge">
-                                      <em>Select a Gauge</em>
-                                    </MenuItem>
-                                    {Object.keys(gaugesNames).map(
-                                      (item, key) => (
-                                        <MenuItem key={key} value={item}>
-                                          {gaugesNames[item]} {item.slice(0, 6)}{" "}
-                                          ... {item.slice(-6)}
-                                        </MenuItem>
-                                      )
-                                    )}
-                                  </Select>
-                                </FormControl>
-                              </div>
-                              <div className="w-100 my-3 mt-5">
-                                <Divider />
-                              </div>
-                            </div>
+                            </Container>
                             {/* Table */}
                             <div className="row no-gutters mt-3">
                               <div className="col-12">
                                 <div className="row no-gutters px-4 px-xl-3 pb-3 pb-xl-2 justify-content-center">
-                                  <TableContainer sx={{ p: 3 }}>
-                                    <Table aria-label="Gauge Weight Vote History">
+                                  <VotingHistoryTable
+                                    showVotes={showVotes}
+                                    gaugeVoteTime={gaugeVoteTime}
+                                    selectedGauge={selectedGauge}
+                                    handleTableGraph={handleTableGraph}
+                                    gaugeWeightData={gaugeWeightData}
+                                    gaugeWeightVoteData={gaugeWeightVoteData}
+                                  />
+
+                                  {/* <TableContainer>
+                                    <Table
+                                      aria-label="Gauge Weight Vote History"
+                                      style={{ border: "0.6px solid #e0e0e0" }}
+                                    >
                                       <TableHead
                                         sx={{
                                           backgroundColor: "#e7ebf0",
                                           paddingLeft: "0.25rem",
                                         }}
                                       >
-                                        <TableRow id="GWVoteHistoryTableSort">
-                                          {/* {votingHistoryCells.map((cell) => ( */}
-                                          <TableCell
+                                        <TableRow id="GWVoteHistoryTableSort"> */}
+                                  {/* {votingHistoryCells.map((cell) => ( */}
+                                  {/* <TableCell
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
-                                              fontSize: "1.25rem",
+                                              fontSize: "1rem",
                                               textAlign: "center",
                                             }}
                                           >
@@ -1360,7 +1930,7 @@ const GaugeWeightVote = () => {
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
-                                              fontSize: "1.25rem",
+                                              fontSize: "1rem",
                                               textAlign: "center",
                                             }}
                                           >
@@ -1370,7 +1940,7 @@ const GaugeWeightVote = () => {
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
-                                              fontSize: "1.25rem",
+                                              fontSize: "1rem",
                                               textAlign: "center",
                                             }}
                                           >
@@ -1380,7 +1950,7 @@ const GaugeWeightVote = () => {
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
-                                              fontSize: "1.25rem",
+                                              fontSize: "1rem",
                                               textAlign: "center",
                                             }}
                                           >
@@ -1390,7 +1960,7 @@ const GaugeWeightVote = () => {
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
-                                              fontSize: "1.25rem",
+                                              fontSize: "1rem",
                                               textAlign: "center",
                                             }}
                                           >
@@ -1400,7 +1970,7 @@ const GaugeWeightVote = () => {
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
-                                              fontSize: "1.25rem",
+                                              fontSize: "1rem",
                                               textAlign: "center",
                                             }}
                                           >
@@ -1410,7 +1980,7 @@ const GaugeWeightVote = () => {
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
-                                              fontSize: "1.25rem",
+                                              fontSize: "1rem",
                                               textAlign: "center",
                                             }}
                                           >
@@ -1422,14 +1992,14 @@ const GaugeWeightVote = () => {
                                             sx={{
                                               border: 0,
                                               fontWeight: "bold",
-                                              fontSize: "1.25rem",
+                                              fontSize: "1rem",
                                               textAlign: "center",
                                             }}
                                           >
                                             <PieChartIcon />
                                           </TableCell>
                                           {/* ))} */}
-                                        </TableRow>
+                                  {/* </TableRow>
                                       </TableHead>
                                       <TableBody id={"GWVoteHistoryTableBody"}>
                                         {showVotes
@@ -1438,6 +2008,22 @@ const GaugeWeightVote = () => {
                                                 page * rowsPerPage,
                                                 page * rowsPerPage + rowsPerPage
                                               )
+                                              .filter((value) => {
+                                                if (
+                                                  selectedGauge !==
+                                                    "Select a Gauge" &&
+                                                  selectedGauge !== " "
+                                                ) {
+                                                  if (
+                                                    selectedGauge ===
+                                                    value.gauge
+                                                  ) {
+                                                    return value;
+                                                  }
+                                                } else {
+                                                  return value;
+                                                }
+                                              })
                                               .map((item, key) => {
                                                 console.log("In votes by time");
                                                 return (
@@ -1446,12 +2032,18 @@ const GaugeWeightVote = () => {
                                                       //key={item.index}
                                                       sx={{
                                                         textAlign: "center",
+                                                        justifyContent:
+                                                          "center",
                                                       }}
                                                     >
                                                       <Tooltip
                                                         title={item.time}
                                                       >
                                                         <Avatar
+                                                          sx={{
+                                                            height: "20px",
+                                                            width: "20px",
+                                                          }}
                                                           src={clock}
                                                           aria-label="clock"
                                                         />
@@ -1461,6 +2053,8 @@ const GaugeWeightVote = () => {
                                                       //key={item.user}
                                                       sx={{
                                                         textAlign: "center",
+                                                        border:
+                                                          "0.6px solid #e0e0e0",
                                                       }}
                                                     >
                                                       <Link
@@ -1479,6 +2073,8 @@ const GaugeWeightVote = () => {
                                                       //key={item.index}
                                                       sx={{
                                                         textAlign: "center",
+                                                        border:
+                                                          "0.6px solid #e0e0e0",
                                                       }}
                                                     >
                                                       {(
@@ -1489,6 +2085,8 @@ const GaugeWeightVote = () => {
                                                       //key={item.index}
                                                       sx={{
                                                         textAlign: "center",
+                                                        border:
+                                                          "0.6px solid #e0e0e0",
                                                       }}
                                                     >
                                                       {helpers.formatNumber(
@@ -1499,6 +2097,8 @@ const GaugeWeightVote = () => {
                                                       //key={item.index}
                                                       sx={{
                                                         textAlign: "center",
+                                                        border:
+                                                          "0.6px solid #e0e0e0",
                                                       }}
                                                     >
                                                       <Link
@@ -1507,9 +2107,9 @@ const GaugeWeightVote = () => {
                                                         }}
                                                         to="/"
                                                         className="tableCellLink font-weight-bold"
-                                                      >
-                                                        {/* {getGaugeAddress(item.gauge)} */}
-                                                        {helpers.shortenAddress(
+                                                      > */}
+                                  {/* {getGaugeAddress(item.gauge)} */}
+                                  {/* {helpers.shortenAddress(
                                                           item.gauge
                                                         )}
                                                       </Link>
@@ -1518,6 +2118,8 @@ const GaugeWeightVote = () => {
                                                       //key={item.index}
                                                       sx={{
                                                         textAlign: "center",
+                                                        border:
+                                                          "0.6px solid #e0e0e0",
                                                       }}
                                                     >
                                                       <Link
@@ -1534,6 +2136,8 @@ const GaugeWeightVote = () => {
                                                       //key={item.index}
                                                       sx={{
                                                         textAlign: "center",
+                                                        border:
+                                                          "0.6px solid #e0e0e0",
                                                       }}
                                                     >
                                                       {(
@@ -1571,6 +2175,10 @@ const GaugeWeightVote = () => {
                                                   >
                                                     <Tooltip title={item.time}>
                                                       <Avatar
+                                                        sx={{
+                                                          height: "20px",
+                                                          width: "20px",
+                                                        }}
                                                         src={clock}
                                                         aria-label="clock"
                                                       />
@@ -1583,6 +2191,8 @@ const GaugeWeightVote = () => {
                                                     <Link
                                                       style={{
                                                         color: "#5300E8",
+                                                        border:
+                                                          "0.6px solid #e0e0e0",
                                                       }}
                                                       to="/"
                                                       className="tableCellLink font-weight-bold"
@@ -1594,7 +2204,11 @@ const GaugeWeightVote = () => {
                                                   </TableCell>
                                                   <TableCell
                                                     //key={item.index}
-                                                    sx={{ textAlign: "center" }}
+                                                    sx={{
+                                                      textAlign: "center",
+                                                      border:
+                                                        "0.6px solid #e0e0e0",
+                                                    }}
                                                   >
                                                     {(item.veCRV / 1e9).toFixed(
                                                       2
@@ -1602,7 +2216,11 @@ const GaugeWeightVote = () => {
                                                   </TableCell>
                                                   <TableCell
                                                     //key={item.index}
-                                                    sx={{ textAlign: "center" }}
+                                                    sx={{
+                                                      textAlign: "center",
+                                                      border:
+                                                        "0.6px solid #e0e0e0",
+                                                    }}
                                                   >
                                                     {helpers.formatNumber(
                                                       item.totalveCRV / 1e9
@@ -1610,7 +2228,11 @@ const GaugeWeightVote = () => {
                                                   </TableCell>
                                                   <TableCell
                                                     //key={item.index}
-                                                    sx={{ textAlign: "center" }}
+                                                    sx={{
+                                                      textAlign: "center",
+                                                      border:
+                                                        "0.6px solid #e0e0e0",
+                                                    }}
                                                   >
                                                     <Link
                                                       style={{
@@ -1618,16 +2240,20 @@ const GaugeWeightVote = () => {
                                                       }}
                                                       to="/"
                                                       className="tableCellLink font-weight-bold"
-                                                    >
-                                                      {/* {getGaugeAddress(item.gauge)} */}
-                                                      {helpers.shortenAddress(
+                                                    > */}
+                                  {/* {getGaugeAddress(item.gauge)} */}
+                                  {/* {helpers.shortenAddress(
                                                         item.gauge
                                                       )}
                                                     </Link>
                                                   </TableCell>
                                                   <TableCell
                                                     //key={item.index}
-                                                    sx={{ textAlign: "center" }}
+                                                    sx={{
+                                                      textAlign: "center",
+                                                      border:
+                                                        "0.6px solid #e0e0e0",
+                                                    }}
                                                   >
                                                     <Link
                                                       style={{
@@ -1641,7 +2267,11 @@ const GaugeWeightVote = () => {
                                                   </TableCell>
                                                   <TableCell
                                                     //key={item.index}
-                                                    sx={{ textAlign: "center" }}
+                                                    sx={{
+                                                      textAlign: "center",
+                                                      border:
+                                                        "0.6px solid #e0e0e0",
+                                                    }}
                                                   >
                                                     {(
                                                       item.total_weight / 1e9
@@ -1697,7 +2327,7 @@ const GaugeWeightVote = () => {
                                         </TableRow>
                                       </TableFooter>
                                     </Table>
-                                  </TableContainer>
+                                  </TableContainer> */}
                                 </div>
                               </div>
                             </div>
@@ -1721,11 +2351,12 @@ const GaugeWeightVote = () => {
         <VoteForGaugeWeightModal
           show={openVoteForGaugeWeightModal}
           handleClose={handleCloseVoteForGaugeWeightModal}
-          cells={cells}
-          gaugeWeightVoteData={gaugeWeightVoteData}
+          cells={cells} //table headings
+          gaugeWeightVoteData={gaugeWeightVoteData} //table data
           voteForGaugeWeightsMakeDeploy={voteForGaugeWeightsMakeDeploy}
           gauge={gauge}
           votingPowerPercentage={votingPowerPercentage}
+          graphData={outcomeWeights}
         />
       </div>
     </>

@@ -31,15 +31,17 @@ const WeightVotingHistory = ({data,show,close,setOpen}) => {
 
 
 
-  console.log("data in weight voting history:",data[0]?.name);
+  console.log("data in weight voting history:",data);
   // States
   let seriesY=[];
   let labelData=[];
 
  if(data){
-    seriesY.push(data[0]?.y)
+  data.map((object) => {
+    seriesY.push(object?.y)
     console.log("seriesY",seriesY);
-    labelData.push(data[0]?.name)
+    labelData.push(object?.name)
+  })
  }
 
 console.log("seriesY",seriesY);

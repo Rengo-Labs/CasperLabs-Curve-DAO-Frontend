@@ -38,6 +38,30 @@ export const points_weight = async (contractHash : string ,owner : string, spend
  return pointsWeight;
 }
 
+export const time_weight = async (contractHash : string ,owner : string) => {
+ 
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+ //timeWeight
+ const timeWeight = await gaugeController.time_weight(owner);
+//  console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points type weight: ${pointsWeight}`);
+
+ return timeWeight;
+}
+
+export const changes_sum = async (contractHash : string ,owner : string, spender: string) => {
+ 
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+ //timeWeight
+ const changesSum = await gaugeController.changes_sum(owner, spender);
+//  console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points type weight: ${pointsWeight}`);
+
+ return changesSum;
+}
+
 export const points_total = async (contractHash : string, owner : string) => {
   // We don't need hash- prefix so i'm removing it
   await gaugeController.setContractHash(contractHash);
@@ -71,6 +95,28 @@ export const n_gauges = async (contractHash : string) => {
   return nGauges;
 }
 
+export const working_supply = async (contractHash : string) => {
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+  //gaugeTypeNames
+  const workingSupply = await gaugeController.working_supply();
+  // console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points total: ${gaugeTypeNames}`);
+ 
+  return workingSupply;
+}
+
+export const inflation_rate = async (contractHash : string) => {
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+  //gaugeTypeNames
+  const inflationRate = await gaugeController.inflation_rate();
+  // console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points total: ${gaugeTypeNames}`);
+ 
+  return inflationRate;
+}
+
 export const gauges = async (contractHash : string, owner: string) => {
   // We don't need hash- prefix so i'm removing it
   await gaugeController.setContractHash(contractHash);
@@ -80,6 +126,17 @@ export const gauges = async (contractHash : string, owner: string) => {
   // console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points total: ${gaugeTypeNames}`);
  
   return gauges;
+}
+
+export const vote_user_power = async (contractHash : string, owner: string) => {
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+  //gaugeTypeNames
+  const voteUserPower = await gaugeController.vote_user_power(owner);
+  // console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points total: ${gaugeTypeNames}`);
+ 
+  return voteUserPower;
 }
 
 export const gaugeTypes = async (contractHash : string, owner: string) => {
