@@ -29,7 +29,7 @@ import { useSnackbar } from "notistack";
 import { useEffect } from "react";
 import { ERC20_CRV_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
-import {VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
+import { VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { Container } from "@mui/material";
 // CONTENT
 
@@ -94,9 +94,9 @@ const Locker = () => {
   const [vPower, setVPower] = useState();
   const [lastEvent, setLastEvent] = useState();
   const [lockerChartData, setLockerChartData] = useState();
-  const [callsData,setCallsData] = useState();
-  const [totalSupply,setTotalSupply]= useState();
-  const [daoPowerChart,setDaoPowerChart] = useState([]);
+  const [callsData, setCallsData] = useState();
+  const [totalSupply, setTotalSupply] = useState();
+  const [daoPowerChart, setDaoPowerChart] = useState([]);
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
     setOpenSigning(false);
@@ -143,28 +143,28 @@ const Locker = () => {
   // if (votingEscrow.data !== undefined) {
   //   console.log("votingEscrows", votingEscrow.data.votingEscrows);
   // }
-  let param = {unlockTimes: callsData};
+  let param = { unlockTimes: callsData };
 
-useEffect(()=>{
-  axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`,param)
-  .then(response => {
-    // handle the response
-    console.log("response of totalSupply:...",response.data.totalSupplies);
-    setTotalSupply(response.data.totalSupplies)
-  })
-  .catch(error => {
-    // handle the error
-    console.log("error of totalSupply:...",error);
-  });
-},[userBalances])
+  useEffect(() => {
+    axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, param)
+      .then(response => {
+        // handle the response
+        console.log("response of totalSupply:...", response.data.totalSupplies);
+        setTotalSupply(response.data.totalSupplies)
+      })
+      .catch(error => {
+        // handle the error
+        console.log("error of totalSupply:...", error);
+      });
+  }, [userBalances])
 
 
-          
+
 
 
   useEffect(() => {
     charts();
-  }, [votingEscrowData, setVotingEscrowData,unlockTime]);
+  }, [votingEscrowData, setVotingEscrowData, unlockTime]);
   useEffect(() => {
     // resolveData();
     console.log("datadata", data);
@@ -192,9 +192,9 @@ useEffect(()=>{
     }
     if (userBalances) {
       console.log("userBalances.data?.unlock_time", userBalances.data?.userBalancesByUnlockTime);
-       setUnlockTime(userBalances.data?.userBalancesByUnlockTime != undefined ? userBalances.data?.userBalancesByUnlockTime : []);
+      setUnlockTime(userBalances.data?.userBalancesByUnlockTime != undefined ? userBalances.data?.userBalancesByUnlockTime : []);
     }
-  }, [data, voting, votingEscrow,userBalances]);
+  }, [data, voting, votingEscrow, userBalances]);
 
   function interpolateVotingPower(chartData) {
     let origEvents = votingEscrowData.slice();
@@ -265,8 +265,8 @@ useEffect(()=>{
       setLastEvent(lastEvent);
       let lastData = [
         lastEvent.locktime *
-          //365
-          1000,
+        //365
+        1000,
         0,
       ];
       chartData.push(lastData);
@@ -283,28 +283,28 @@ useEffect(()=>{
       let finalData = interpolateVotingPower(chartData);
       console.log("final chart data:", finalData);
       let lastUnlockTime = parseInt(unlockTime[0]?.unlock_time)
-      console.log("lastUnlockTime",lastUnlockTime); 
+      console.log("lastUnlockTime", lastUnlockTime);
       let now = (Date.now() / 1000) | 0
-		  console.log("now time value",now);
-		  let calls = []
-		  let i = 0
-		while(now < lastUnlockTime) {
-			calls.push([now])
-			now += i ** 4 * 86400
-			i++
-		}
-    calls.push([lastUnlockTime]);
-    console.log("calls data",calls);
-    setCallsData(calls);
-    let daopowerdata = daoPower.map(e => [e.timestamp * 1000, e.totalPower / 1e9])
-    for(let m=0;m<calls.length;m++ ){
-      daopowerdata.push([parseInt(calls[m])*1000,(totalSupply[m]/1e9) | 0]);
-    }
-    setDaoPowerChart(daopowerdata);
-    console.log("daopowerdata",daopowerdata);
+      console.log("now time value", now);
+      let calls = []
+      let i = 0
+      while (now < lastUnlockTime) {
+        calls.push([now])
+        now += i ** 4 * 86400
+        i++
+      }
+      calls.push([lastUnlockTime]);
+      console.log("calls data", calls);
+      setCallsData(calls);
+      let daopowerdata = daoPower.map(e => [e.timestamp * 1000, e.totalPower / 1e9])
+      for (let m = 0; m < calls.length; m++) {
+        daopowerdata.push([parseInt(calls[m]) * 1000, totalSupply ? (totalSupply[m] / 1e9) : 0]);
+      }
+      setDaoPowerChart(daopowerdata);
+      console.log("daopowerdata", daopowerdata);
       //  console.log("final data after splice:",finalData.splice(0,finalData.length-11) );
     }
-    
+
   };
 
   // useEffect(()=>{
@@ -323,7 +323,7 @@ useEffect(()=>{
   // calls.push([lastUnlockTime]);
   // console.log("calls data",calls);
   // setCallsData(calls);
-   
+
   // },[unlockTime, setUnlockTime,userBalances]);
   const addVotingPowerProperty = (data) => {
     return data.map((item) => ({
