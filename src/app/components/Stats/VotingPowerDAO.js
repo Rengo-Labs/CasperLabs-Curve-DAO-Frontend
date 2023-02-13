@@ -66,8 +66,8 @@ const VotingPowerDAO = (props) => {
       id:
         activePublicKey && activePublicKey != "null"
           ? Buffer.from(
-              CLPublicKey.fromHex(activePublicKey).toAccountHash()
-            ).toString("hex")
+            CLPublicKey.fromHex(activePublicKey).toAccountHash()
+          ).toString("hex")
           : null,
     },
   })
@@ -87,7 +87,7 @@ const VotingPowerDAO = (props) => {
     }
     if (voting.data) {
       console.log("voting.data?.votingPower", voting.data?.votingPower);
-      setVotingPower(voting.data?.votingPower[0]?.power);
+      setVotingPower(voting.data?.votingPower ? voting.data?.votingPower[0]?.power : 0);
     }
   }, [data, voting]);
 
@@ -396,7 +396,7 @@ const VotingPowerDAO = (props) => {
                     <Avatar src={curveLogo} aria-label="curve-logo-avatar" />
                   }
                   title={"My CRV Locked:"}
-                  // subheader={tokenB.symbol}
+                // subheader={tokenB.symbol}
                 />
               </AccordionSummary>
             </Accordion>

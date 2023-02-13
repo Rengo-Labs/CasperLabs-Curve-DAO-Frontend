@@ -18,7 +18,7 @@ import "../../../../assets/css/bootstrap.min.css";
 import "../../../../assets/css/common.css";
 import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/style.css";
-import { VESTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
+import { VESTING_ESCROW_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
 import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
 import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
@@ -145,10 +145,10 @@ const Vesting = () => {
         console.log("accountHash.......", account);
         let data = { account: Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex") }
 
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/balanceOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             // handle the response
-            console.log("response of balance of:...", response.data);
+            console.log("votingEscrow response of balance of:...", response.data);
             setBalanceOf(response.data.balance)
           })
           .catch(error => {
