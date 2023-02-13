@@ -16,7 +16,7 @@ export async function withdrawMakeDeploy(setOpenSigning, enqueueSnackbar) {
 
 
   // handleShowSigning();
-  setOpenSigning(false);
+  setOpenSigning(true);
   // const publicKeyHex = activePublicKey;
   const publicKeyHex = localStorage.getItem("Address");
   console.log("Withdraw function public keys: ", publicKeyHex);
@@ -26,7 +26,7 @@ export async function withdrawMakeDeploy(setOpenSigning, enqueueSnackbar) {
     publicKeyHex !== undefined
   ) {
     const publicKey = CLPublicKey.fromHex(publicKeyHex);
-    const paymentAmount = 5000000000;
+    const paymentAmount = 50000000000;
     try {
       const runtimeArgs = RuntimeArgs.fromMap({
       });
