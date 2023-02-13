@@ -76,3 +76,15 @@ const minter = new MINTERClient(
   
     return result;
   };
+
+  export const minted = async (contractHash: string, owner: string, spender: string) => {
+  
+    // We don't need hash- prefix so i'm removing it
+    await minter.setContractHash(contractHash);
+  
+    //minted
+    const result = await minter.minted(owner, spender);
+    console.log(contractHash +` =... mint : ${result}`);
+  
+    return result;
+  };

@@ -15,32 +15,40 @@ import Typography from "@mui/material/Typography";
 import { CLPublicKey } from "casper-js-sdk";
 import curveLogo from "../../assets/img/Logo.png";
 import * as helpers from "../../assets/js/helpers";
-import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
-import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import {
+  ERC20_CRV_CONTRACT_HASH,
+  VOTING_ESCROW_CONTRACT_HASH,
+} from "../blockchain/Hashes/ContractHashes";
+import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import * as erc20CrvFunctions from "../JsClients/ERC20CRV/erc20crvFunctions/functions";
 
 const DAO_POWER = gql`
-query {
-  daoPowersByTimestamp{    	
-    totalPower
+  query {
+    daoPowersByTimestamp {
+      totalPower
+    }
   }
-}
 `;
 
 const VOTING_POWER = gql`
-query  votingPower($id: String){
-    votingPower(id : $id){
+  query votingPower($id: String) {
+    votingPower(id: $id) {
       power
-     }
-}
+    }
+  }
 `;
 
 // COMPONENT FUNCTION
 const VotingPowerDAO = (props) => {
+  const activePublicKey = localStorage.getItem("Address");
+
   // States
   const [CRVLockedBalance, setCRVLockedBalance] = useState();
   const [CRVBalance, setCRVBalance] = useState(0);
   const [daoPower, setDaoPower] = useState();
-  const [votingPower, setVotingPower] = useState();
+  const [votingPower, setVotingPower] = useState(0);
+  const [totalCRVLocked, setTotalCRVLocked] = useState(0);
+  const [totalCRVLockedPercent, setTotalCRVLockedPercent] = useState(0);
   const [crvStats, setCrvStats] = useState();
   // Handlers
 
@@ -55,14 +63,18 @@ const VotingPowerDAO = (props) => {
 
   const voting = useQuery(VOTING_POWER, {
     variables: {
-      id: "e1431ecb9f20f2a6e6571886b1e2f9dec49ebc6b2d3d640a53530abafba9bfa1",
+      id:
+        activePublicKey && activePublicKey != "null"
+          ? Buffer.from(
+              CLPublicKey.fromHex(activePublicKey).toAccountHash()
+            ).toString("hex")
+          : null,
     },
   })
   console.log("this is data of voting escrow gql: ", voting?.data);
   // if (voting.data !== undefined) {
   //   // console.log("votingPOWER", voting.data?.votingPower[0]?.power);
   // }
-
 
   useEffect(() => {
     // resolveData();
@@ -71,14 +83,12 @@ const VotingPowerDAO = (props) => {
     if (data) {
       // mutate data if you need to
       console.log("data?.daoPowersByTimestamp", data?.daoPowersByTimestamp);
-      setDaoPower(data?.daoPowersByTimestamp)
-
+      setDaoPower(data?.daoPowersByTimestamp);
     }
-    if (voting) {
-      console.log("voting.data?.votingPower", voting?.data?.votingPower);
-      setVotingPower(voting.data?.votingPower)
+    if (voting.data) {
+      console.log("voting.data?.votingPower", voting.data?.votingPower);
+      setVotingPower(voting.data?.votingPower[0]?.power);
     }
-
   }, [data, voting]);
 
   useEffect(() => {
@@ -90,19 +100,33 @@ const VotingPowerDAO = (props) => {
       publicKeyHex !== undefined
     ) {
       async function fetchData() {
-        let CRVLockBalance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        let CRVLockBalance = await votingEscrowFunctions.balanceOf(
+          VOTING_ESCROW_CONTRACT_HASH,
+          Buffer.from(
+            CLPublicKey.fromHex(publicKeyHex).toAccountHash()
+          ).toString("hex")
+        );
         // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString(hex)", Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
-        let CRVBalance = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        let CRVBalance = await erc20CrvFunctions.balanceOf(
+          ERC20_CRV_CONTRACT_HASH,
+          Buffer.from(
+            CLPublicKey.fromHex(publicKeyHex).toAccountHash()
+          ).toString("hex")
+        );
         // console.log("CRV Locked Balance: ", CRVLockBalance);
         console.log("CRV Balance: ", CRVBalance);
+        console.log("My crv locked: ", CRVLockBalance);
         setCRVLockedBalance(CRVLockBalance);
         setCRVBalance(CRVBalance);
+
+        //FOR CRV STATS
+        loadChart(publicKeyHex);
       }
       fetchData();
     }
     return () => {
       controller.abort();
-    }
+    };
   }, [localStorage.getItem("Address")]);
 
 
@@ -134,16 +158,37 @@ const VotingPowerDAO = (props) => {
   };
 
   const averageLock = () => {
-    let crvLocked = 200000;
-    return daoPower
-      ? ((4 * daoPower[0]?.totalPower) / crvLocked).toFixed(2)
-      : 0;
+    // let crvLocked = 200000;
+    // console.log("Avrage lock time: ", daoPower);
+    if (totalCRVLocked === 0) {
+      return daoPower ? ((4 * daoPower) / totalCRVLocked).toFixed(2) : 0;
+    }
+    return 0;
   };
 
   const myLockedCRVFormat = () => {
     return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
   };
 
+  const loadChart = async (activePublicKey) => {
+    console.log("Active public ket in load charts: ", activePublicKey);
+    axios
+      .post(
+        `/votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${activePublicKey}`
+      )
+      .then((response) => {
+        console.log("Response from getting crv stats: ", response);
+        setTotalCRVLocked(response.data.data.CRVLOCKED);
+        setTotalCRVLockedPercent(
+          response.data.data.supply
+            ? (response.data.data.CRVLocked * 100) / response.data.data.supply
+            : 0
+        );
+      })
+      .catch((error) => {
+        console.log("Error from getting crv stats: ", error);
+      });
+  };
   const CRVLockedFormat = () => {
     return helpers.formatNumber(crvStats?.CRVLOCKED / 1e9)
   }
@@ -171,18 +216,13 @@ const VotingPowerDAO = (props) => {
                     }}
                     gutterBottom
                   >
-                    {CRVLockedFormat()}
+                    {totalCRVLocked}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
                 id="panel1bh-header"
               >
-                <CardHeader
-                  avatar={
-                    <></>
-                  }
-                  title={"Total CRV vote-locked:"}
-                />
+                <CardHeader avatar={<></>} title={"Total CRV vote-locked:"} />
               </AccordionSummary>
             </Accordion>
             <Accordion
@@ -207,10 +247,10 @@ const VotingPowerDAO = (props) => {
                 id="panel1bh-header"
               >
                 <CardHeader
-                  avatar={
-                    <></>
+                  avatar={<></>}
+                  title={
+                    "Percentage of total CRV Locked excluding voting escrow:"
                   }
-                  title={"Percentage of total CRV Locked excluding voting escrow:"}
                 />
               </AccordionSummary>
             </Accordion>
@@ -229,16 +269,14 @@ const VotingPowerDAO = (props) => {
                     }}
                     gutterBottom
                   >
-                    {CRVLockedPercentage}%
+                    {totalCRVLockedPercent}%
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
                 id="panel1bh-header"
               >
                 <CardHeader
-                  avatar={
-                    <></>
-                  }
+                  avatar={<></>}
                   title={"Percentage of total CRV Locked:"}
                 />
               </AccordionSummary>
@@ -269,12 +307,7 @@ const VotingPowerDAO = (props) => {
                 aria-controls="panel1bh-content"
                 id="panel1bh-header"
               >
-                <CardHeader
-                  avatar={
-                    <></>
-                  }
-                  title={"Total veCRV:"}
-                />
+                <CardHeader avatar={<></>} title={"Total veCRV:"} />
               </AccordionSummary>
             </Accordion>
             <Accordion
@@ -292,19 +325,13 @@ const VotingPowerDAO = (props) => {
                     }}
                     gutterBottom
                   >
-                    {averageLock() ?
-                      `${averageLock()} years` : "0 years"}
+                    {averageLock() ? `${averageLock()} years` : "0 years"}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
                 id="panel1bh-header"
               >
-                <CardHeader
-                  avatar={
-                    <></>
-                  }
-                  title={"Average lock time:"}
-                />
+                <CardHeader avatar={<></>} title={"Average lock time:"} />
               </AccordionSummary>
             </Accordion>
           </div>
@@ -312,7 +339,6 @@ const VotingPowerDAO = (props) => {
             <Divider />
           </div>
           <div className="mt-2">
-
             <Accordion
               style={{
                 borderRadius: "15px 15px 0px 0px ",
@@ -329,7 +355,7 @@ const VotingPowerDAO = (props) => {
                     gutterBottom
                   >
                     {/* 0.00 */}
-                    {CRVBalance ? CRVBalance / 10 ** 9 : 0.00}
+                    {CRVBalance ? CRVBalance / 10 ** 9 : 0.0}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -337,10 +363,7 @@ const VotingPowerDAO = (props) => {
               >
                 <CardHeader
                   avatar={
-                    <Avatar
-                      src={curveLogo}
-                      aria-label="curve-logo-avatar"
-                    />
+                    <Avatar src={curveLogo} aria-label="curve-logo-avatar" />
                   }
                   title={"CRV Balance:"}
                 />
@@ -362,7 +385,7 @@ const VotingPowerDAO = (props) => {
                     gutterBottom
                   >
                     {/* 0 */}
-                    {CRVLockedBalance ? CRVLockedBalance : 0}
+                    {votingPower ? votingPower / 1e9 : 0}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"
@@ -370,17 +393,13 @@ const VotingPowerDAO = (props) => {
               >
                 <CardHeader
                   avatar={
-                    <Avatar
-                      src={curveLogo}
-                      aria-label="curve-logo-avatar"
-                    />
+                    <Avatar src={curveLogo} aria-label="curve-logo-avatar" />
                   }
                   title={"My CRV Locked:"}
-                // subheader={tokenB.symbol}
+                  // subheader={tokenB.symbol}
                 />
               </AccordionSummary>
             </Accordion>
-
           </div>
         </div>
       </div>
