@@ -28,6 +28,7 @@ import { useSnackbar } from 'notistack';
 import { ERC20_CRV_CONTRACT_HASH, } from '../../../../components/blockchain/Hashes/ContractHashes';
 import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
 import { gauges, pools } from "../../../../components/Charts/ChartHelper/ChartHelpers";
+import Gauge from "../../../../components/Gauge/Gauge";
 // CONTENT
 
 // COMPONENT FUNCTION
@@ -229,36 +230,38 @@ const Minter = () => {
                       </Box>
                       {/* GAUGE */}
                       {gauges.map((gauge) => (
-                        <Box
-                          sx={{
-                            width: "100%",
-                          }}
-                          className="mt-4"
-                        >
-                          <Paper elevation={4}>
-                            <div className="py-5 px-4">
-                              {/* Heading */}
-                              <div className="col-12">
-                                <Typography
-                                  variant="h5"
-                                  gutterBottom
-                                  component="div"
-                                  fontWeight={900}
-                                >
-                                  {gauge.name}
-                                  {/* CRV APY: "Some value" */}
-                                </Typography>
-                              </div>
-                              {/* Pool Info */}
-                              <div className="col-12">
-                                {/* <PoolInfo /> */}
-                                <div className="w-100 my-3">
-                                  <Divider />
-                                </div>
-                              </div>
-                            </div>
-                          </Paper>
-                        </Box>
+                        <Gauge gauge={gauge} />
+                        // <Box
+                        //   sx={{
+                        //     width: "100%",
+                        //   }}
+                        //   className="mt-4"
+                        // >
+                        //   <Paper elevation={4}>
+                        //     <div className="py-5 px-4">
+                        //       {/* Heading */}
+                        //       <div className="col-12">
+                        //         <Typography
+                        //           variant="h5"
+                        //           gutterBottom
+                        //           component="div"
+                        //           fontWeight={900}
+                        //         >
+                        //           {gauge.name}
+                        //           {/* CRV APY: "Some value" */}
+                        //         </Typography>
+                        //       </div>
+                        //       {/* Pool Info */}
+                        //       <div className="col-12">
+                        //         {/* <PoolInfo /> */}
+                        //         Gauge Relative weight: 
+                        //         <div className="w-100 my-3">
+                        //           <Divider />
+                        //         </div>
+                        //       </div>
+                        //     </div>
+                        //   </Paper>
+                        // </Box>
                       ))}
                     </div>
                   </div>

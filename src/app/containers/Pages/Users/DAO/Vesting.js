@@ -10,7 +10,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { CasperServiceByJsonRPC, CLPublicKey, RuntimeArgs,CLOption } from "casper-js-sdk";
+import { CasperServiceByJsonRPC, CLPublicKey, RuntimeArgs, CLOption } from "casper-js-sdk";
 import { Form, Formik } from "formik";
 import { useSnackbar } from "notistack";
 import * as Yup from "yup";
@@ -18,7 +18,7 @@ import "../../../../assets/css/bootstrap.min.css";
 import "../../../../assets/css/common.css";
 import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/style.css";
-import { VESTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
+import { VESTING_ESCROW_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
 import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
 import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
@@ -84,7 +84,7 @@ const Vesting = () => {
     console.log("Vesting Address Checking", values);
   };
 
-  
+
 
 
   // USE EFFECT
@@ -126,106 +126,111 @@ const Vesting = () => {
     // this.total_claimed = decoded[6]
 
     let publicKey = localStorage.getItem("Address");
+    const getTimes = async () => {
+      setStartTimeVal(await startTime(VESTING_ESCROW_CONTRACT_HASH));
+      console.log("await endTime(VESTING_ESCROW_CONTRACT_HASH)", await endTime(VESTING_ESCROW_CONTRACT_HASH));
+      setEndTimeVal(await endTime(VESTING_ESCROW_CONTRACT_HASH));
+    }
 
-    if (publicKey !== null && 
-        publicKey !== undefined &&
-        publicKey !== "null"
+    if (publicKey !== null &&
+      publicKey !== undefined &&
+      publicKey !== "null"
     ) {
-      
+
       const getValues = async () => { //needs to import all of these functions
         // setVestedOf(await vestedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
         // setBalanceOf(await balanceOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
         // setLockedOf(await lockedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
         let account = Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex");
-        console.log("accountHash.......",account); 
-        let data = { account:Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex") }
+        console.log("accountHash.......", account);
+        let data = { account: Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex") }
 
-        axios.post(`/vestingEscrow/balanceOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             // handle the response
-            console.log("response of balance of:...",response.data);
+            console.log("votingEscrow response of balance of:...", response.data);
             setBalanceOf(response.data.balance)
           })
           .catch(error => {
             // handle the error
-            console.log("error of balance of:...",error);
+            console.log("error of balance of:...", error);
           });
 
-          axios.post(`/vestingEscrow/vestedOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/vestedOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             // handle the response
-            console.log("response of vested of:...",response.data);
+            console.log("response of vested of:...", response.data);
             setVestedOf(response.data.vestedOf)
           })
           .catch(error => {
             // handle the error
-            console.log("error of balance of:...",error);
+            console.log("error of balance of:...", error);
           });
 
-          axios.post(`/vestingEscrow/lockedOf/${VESTING_ESCROW_CONTRACT_HASH}`,data)
+        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/lockedOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             // handle the response
-            console.log("response of locked of:...",response.data);
+            console.log("response of locked of:...", response.data);
             setLockedOf(response.data.lockedOf)
           })
           .catch(error => {
             // handle the error
-            console.log("error of balance of:...",error);
+            console.log("error of balance of:...", error);
           });
-        
-         let initialLockValues = await initialLocked(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex"));
-         let totalClaimedValue = await totalClaimed(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex"));
-       
-        setStartTimeVal(await startTime(VESTING_ESCROW_CONTRACT_HASH));
-        setEndTimeVal(await endTime(VESTING_ESCROW_CONTRACT_HASH));
-        if(initialLockValues==0){
+
+        let initialLockValues = await initialLocked(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex"));
+        let totalClaimedValue = await totalClaimed(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex"));
+
+
+        if (initialLockValues == 0) {
           setInitialLockedval(10000000000000)
-         }
-         else{
-         setInitialLockedval(initialLockValues);
-         }
-         if(totalClaimedValue==0){
+        }
+        else {
+          setInitialLockedval(initialLockValues);
+        }
+        if (totalClaimedValue == 0) {
           setTotalClaimedVal(20000000000000)
-         }
-         else{
+        }
+        else {
           setTotalClaimedVal(totalClaimedValue);
-         }
-         console.log("initial locked:...",initialLockedval);
-        console.log("starttime value:...",startTimeVal);
-        console.log("end time value:...",endTimeVal);
-         console.log("total claimed val:...",totalClaimedVal);
+        }
+        console.log("initial locked:...", initialLockedval);
+        console.log("starttime value:...", startTimeVal);
+        console.log("end time value:...", endTimeVal);
+        console.log("total claimed val:...", totalClaimedVal);
       }
-  
+
       getValues();
       //console.log("initial locked:...",initialLock);
 
-  
-      if(+initialLocked == 0) {
+
+      if (+initialLocked == 0) {
         //this.notVested = true
         //return;
       }
-  
-      
+
+
     }
+    getTimes()
   }, [localStorage.getItem("Address")]);
 
   useEffect(() => {
-    console.log("start and end time before vested",parseInt(startTimeVal),parseInt(endTimeVal));
-      let vestedTime = +parseInt(endTimeVal) - +parseInt(startTimeVal)
+    console.log("start and end time before vested", parseInt(startTimeVal), parseInt(endTimeVal));
+    let vestedTime = +parseInt(endTimeVal) - +parseInt(startTimeVal)
 
-      console.log("vested time...",vestedTime);
-      let vested = []
-      let releasedAmount = initialLockedval / 1e9 / (vestedTime / 86400)
-      for(let i = 0; i < (vestedTime) / 86400; i+=1000) {
-        let time = (+startTimeVal + i*86400) *1;
-          vested.push([ time,i*releasedAmount])
-      }
-      let unvested =vested.map(([k, v]) => [k, initialLockedval / 1e9 - v]);
-      console.log("vestedData....",vested.length);
-      console.log("unvestedData....",unvested);
-      setUnVestedData(unvested);
-      setVestedData(vested);
-  }, [startTimeVal,endTimeVal]);
+    console.log("vested time...", vestedTime);
+    let vested = []
+    let releasedAmount = initialLockedval / 1e9 / (vestedTime / 86400)
+    for (let i = 0; i < (vestedTime) / 86400; i += 1000) {
+      let time = (+startTimeVal + i * 86400) * 1;
+      vested.push([time, i * releasedAmount])
+    }
+    let unvested = vested.map(([k, v]) => [k, initialLockedval / 1e9 - v]);
+    console.log("vestedData....", vested.length);
+    console.log("unvestedData....", unvested);
+    setUnVestedData(unvested);
+    setVestedData(vested);
+  }, [startTimeVal, endTimeVal]);
 
 
   //COMPUTED
@@ -263,7 +268,7 @@ const Vesting = () => {
   //   return helpers.formatDateToHuman(this.start_time)
   // },
   const startTimeFormat = useMemo(() => {
-    console.log("StartTime value....",startTimeVal);
+    console.log("StartTime value....", startTimeVal);
     return helpers.formatDateToHuman(startTimeVal);
   }, [startTimeVal]);
   // endTimeFormat() {
@@ -278,8 +283,8 @@ const Vesting = () => {
   // gasPriceWei() {
   //     return gasPriceStore.state.gasPriceWei
   // },
-  console.log("initial locked values:...",initialLockedval);
-  console.log("total cl values:...",totalClaimedVal);
+  console.log("initial locked values:...", initialLockedval);
+  console.log("total cl values:...", totalClaimedVal);
 
   return (
     <>
@@ -377,23 +382,33 @@ const Vesting = () => {
                                       {initialLockedFormat}
                                     </ListItemText>
                                   </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Start Lock Time:&nbsp;
-                                      </span>
-                                      {/* {startLockTime} */}
-                                      {startTimeFormat}
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        End Lock Time:&nbsp;
-                                      </span>
-                                      {endTimeFormat}
-                                    </ListItemText>
-                                  </ListItem>
+                                  {
+                                    startTimeFormat ?
+                                      <ListItem disablePadding>
+                                        <ListItemText>
+                                          <span className="font-weight-bold">
+                                            Start Lock Time:&nbsp;
+                                          </span>
+                                          {/* {startLockTime} */}
+                                          {startTimeFormat}
+                                        </ListItemText>
+                                      </ListItem>
+                                      : null
+                                  }
+                                  {
+                                    endTimeFormat ?
+                                      <ListItem disablePadding>
+                                        <ListItemText>
+                                          <span className="font-weight-bold">
+                                            End Lock Time:&nbsp;
+                                          </span>
+                                          {endTimeFormat}
+                                        </ListItemText>
+                                      </ListItem>
+                                      : null
+                                  }
+
+
                                 </List>
                               </div>
                             </div>
@@ -468,7 +483,7 @@ const Vesting = () => {
                                 size="large"
                                 style={{ backgroundColor: "#5300e8", color: "white" }}
                                 // onClick={() => { claimMakeDeploy() }}
-                                onClick = {()=>setOpen(true)}
+                                onClick={() => setOpen(true)}
                               // onClick={() => { claimMakeDeploy(vestingAddress) }}
                               >
                                 Claim
@@ -486,12 +501,12 @@ const Vesting = () => {
             </div>
           </div>
         </div>
-       
+
         <ClaimConfirmModal
-            show={open}
-            hide={handleClose}
-            setOpen={setOpen} 
-            balance = {balanceFormat}
+          show={open}
+          hide={handleClose}
+          setOpen={setOpen}
+          balance={balanceFormat}
         />
       </div>
     </>

@@ -34,7 +34,7 @@ export const workingBalances = async (contractHash:string,account: string) => {
   
 };
 
-export const balanceOfGauge = async (contractHash:string,account: string) => {
+export const balanceOf = async (contractHash:string,account: string) => {
 
     // We don't need hash- prefix so i'm removing it
     await liquiditygaugev3.setContractHash(contractHash);

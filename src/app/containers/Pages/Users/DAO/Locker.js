@@ -146,7 +146,7 @@ const Locker = () => {
   let param = { unlockTimes: callsData };
 
   useEffect(() => {
-    axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, param)
+    axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, param)
       .then(response => {
         // handle the response
         console.log("response of totalSupply:...", response.data.totalSupplies);
@@ -296,9 +296,7 @@ const Locker = () => {
       calls.push([lastUnlockTime]);
       console.log("calls data", calls);
       setCallsData(calls);
-      let daopowerdata = daoPower.map(e => [e.timestamp * 1000, e.totalPower / 1e9])
-      console.log("daopowerdata", daopowerdata);
-      console.log("totalSupply", totalSupply);
+      let daopowerdata = daoPower ? daoPower.map(e => [e.timestamp * 1000, e.totalPower / 1e9]) : []
       for (let m = 0; m < calls.length; m++) {
         daopowerdata.push([parseInt(calls[m]) * 1000, totalSupply ? (totalSupply[m] / 1e9) : 0]);
       }
