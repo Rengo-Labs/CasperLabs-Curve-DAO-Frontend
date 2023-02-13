@@ -40,16 +40,22 @@ const VOTING_POWER = gql`
 
 // COMPONENT FUNCTION
 const VotingPowerDAO = (props) => {
-  const activePublicKey = localStorage.getItem("Address");
 
   // States
   const [CRVLockedBalance, setCRVLockedBalance] = useState();
   const [CRVBalance, setCRVBalance] = useState(0);
-  const [daoPower, setDaoPower] = useState();
-  const [votingPower, setVotingPower] = useState(0);
+  const [daoPower, setDaoPower] = useState(0);
+  const [votingPower, setVotingPower] = useState();
+  const [crvStats, setCrvStats] = useState({
+    CRVLOCKED: 0,
+    supply: 0
+  });
+  const [crvLocked, setCrvLocked] = useState(0);
+  let [activePublicKey, setActivePublicKey] = useState(
+    localStorage.getItem("Address")
+  );
   const [totalCRVLocked, setTotalCRVLocked] = useState(0);
   const [totalCRVLockedPercent, setTotalCRVLockedPercent] = useState(0);
-  const [crvStats, setCrvStats] = useState();
   // Handlers
 
   // Queries
@@ -60,7 +66,7 @@ const VotingPowerDAO = (props) => {
   if (data !== undefined) {
     console.log("daopowerrrr", data?.daoPowersByTimestamp);
   }
-
+  console.log("activePublicKey", activePublicKey);
   const voting = useQuery(VOTING_POWER, {
     variables: {
       id:
@@ -71,7 +77,7 @@ const VotingPowerDAO = (props) => {
           : null,
     },
   })
-  console.log("this is data of voting escrow gql: ", voting?.data);
+  // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString()", Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"), voting);
   // if (voting.data !== undefined) {
   //   // console.log("votingPOWER", voting.data?.votingPower[0]?.power);
   // }
@@ -91,6 +97,15 @@ const VotingPowerDAO = (props) => {
     }
   }, [data, voting]);
 
+
+  useEffect(() => {
+    async function fetchData() {
+      let veCRVTotalSupply = await totalSupply(ERC20_CRV_CONTRACT_HASH);
+      setDaoPower(parseFloat(veCRVTotalSupply))
+      console.log("veCRVTotalSupply", parseFloat(veCRVTotalSupply));
+    }
+    fetchData();
+  }, [])
   useEffect(() => {
     let controller = new AbortController();
     let publicKeyHex = localStorage.getItem("Address");
@@ -140,11 +155,12 @@ const VotingPowerDAO = (props) => {
       publicKeyHex !== undefined
     ) {
       let accountHash = Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex");
-      axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
+      axios.post(`votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
         .then(response => {
           // handle the response
           console.log("response of crvStats:...", response.data.data);
           setCrvStats(response.data.data)
+          setCrvLocked(response.data.data.CRVLOCKED)
         })
         .catch(error => {
           // handle the error
@@ -154,7 +170,7 @@ const VotingPowerDAO = (props) => {
   }, [localStorage.getItem("Address")])
 
   const DAOPowerFormat = () => {
-    return daoPower ? helpers.formatNumber(daoPower[0]?.totalPower / 1e9) : 0;
+    return helpers.formatNumber(daoPower / 1e9);
   };
 
   const averageLock = () => {
@@ -166,9 +182,9 @@ const VotingPowerDAO = (props) => {
     return 0;
   };
 
-  const myLockedCRVFormat = () => {
-    return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
-  };
+  // const myLockedCRVFormat = () => {
+  //   return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
+  // };
 
   const loadChart = async (activePublicKey) => {
     console.log("Active public ket in load charts: ", activePublicKey);
@@ -190,10 +206,10 @@ const VotingPowerDAO = (props) => {
       });
   };
   const CRVLockedFormat = () => {
-    return helpers.formatNumber(crvStats?.CRVLOCKED / 1e9)
+    return helpers.formatNumber(crvLocked / 1e9)
   }
   console.log("CRVLockedFormat", CRVLockedFormat());
-  let CRVLockedPercentage = (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
+  let CRVLockedPercentage = isNaN((crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)) ? 0 : (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
   console.log("CRVLockedPercentage", CRVLockedPercentage);
 
   return (
@@ -225,7 +241,7 @@ const VotingPowerDAO = (props) => {
                 <CardHeader avatar={<></>} title={"Total CRV vote-locked:"} />
               </AccordionSummary>
             </Accordion>
-            <Accordion
+            {/* <Accordion
               style={{
                 borderRadius: "0px 0px 0px 0px ",
               }}
@@ -253,7 +269,7 @@ const VotingPowerDAO = (props) => {
                   }
                 />
               </AccordionSummary>
-            </Accordion>
+            </Accordion> */}
             <Accordion
               style={{
                 borderRadius: "0px 0px 15px 15px ",
@@ -301,7 +317,7 @@ const VotingPowerDAO = (props) => {
                     }}
                     gutterBottom
                   >
-                    {DAOPowerFormat() ? DAOPowerFormat() : 0}
+                    {DAOPowerFormat()}
                   </Typography>
                 }
                 aria-controls="panel1bh-content"

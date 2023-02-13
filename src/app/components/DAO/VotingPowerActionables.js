@@ -151,6 +151,10 @@ const VotingPowerActionables = (props) => {
       controller.abort();
     }
   }, [localStorage.getItem("Address")]);
+
+
+
+  
   return (
     <>
       <Formik
@@ -162,126 +166,7 @@ const VotingPowerActionables = (props) => {
           {/* WITHDRAWAL CHECK */}
           {new Date().getTime() < 1668038400000 ? (
             <>
-              {/* <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between"> */}
-              {/* <div className="col-12 col-lg-5">
-                    <TextInput
-                      id="daoAmount"
-                      label="Lock Amount"
-                      disabled={true}
-                      onChange={(e) => {
-                        console.log("e", e.target.value);
-                        if (userCRVBalance >= e.target.value)
-                          setLockAmount(e.target.value);
-                        else {
-                          setLockAmount(userCRVBalance);
-                        }
-                      }}
-                      value={lockAmount}
-                      variant="filled"
-                      type="number"
-                      name="LockAmount"
-                      sx={{ width: "100%" }}
-                    />
-                  </div> */}
-              {/* Max Button */}
-              {/* <div className="col-12 col-lg-5 mt-3 mt-lg-0">
-                    <div className="row no-gutters align-items-center">
-                      <div className="col-12 col-lg-8">
-                        <Button
-                          disabled
-                          variant="contained"
-                          size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
-                          onClick={() => {
-                            setLockAmount(userCRVBalance);
-                          }}
-                        >
-                          Max
-                        </Button>
-                      </div>
-                      <div className="col-12 col-lg-4">
-                        <Typography
-                          variant="body1"
-                          gutterBottom
-                          component="span"
-                          fontWeight={900}
-                          sx={{ padding: "10px", fontSize: "1.5rem", opacity: "0.65" }}
-                        >
-                          {userCRVBalance}
-                        </Typography>
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
-              {/* ADD BUTTON */}
-              {/* <div className="row no-gutters justify-content-center">
-                  <div className="col-12 col-md-4">
-                    <div className="btnWrapper my-4 text-center">
-                      <Button
-                        disabled
-                        variant="contained"
-                        size="large"
-                        style={{ backgroundColor: "#5300e8", color: "white" }}
-                        onClick={() => {
-                          console.log("Action Taken");
-                          // props.createLockMakeDeploy(lockAmount, date);
-                          increaseAmountMakeDeploy(lockAmount);
-                        }}
-                      >
-                        Add
-                      </Button>
-                    </div>
-                  </div>
-                </div> */}
-              {/* Lock Time */}
-              {/* <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
-                  <div className="col-12 col-lg-5 px-0">
-                    <DateTimePicker
-                      disabled
-                      onChange={(e) => {
-                        console.log("e.value", e.target.value);
-                        console.log("new Date(e.target.value)", new Date(e.target.value));
-                        setDate(new Date(e.target.value));
-                        setDateDisplay(e.target.value);
-                      }}
-                      value={dateDisplay}
-                      name="LockTimePicker"
-                      label="Choose Lock Time"
-                      sx={{ width: "100%" }}
-                    />
-                  </div> */}
-              {/* Lock Time Dropdown */}
-              {/* <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
-                    <SelectInput
-                      disabled
-                      setDate={setDate}
-                      setDateDisplay={setDateDisplay}
-                      name="LockTimeSelect"
-                      label="Select Lock Time"
-                      options={lockTimeOptions.map((item) => item.name)}
-                    />
-                  </div>
-                </div> */}
-              {/* INCREASE TIME */}
-              {/* <div className="row no-gutters justify-content-center">
-                  <div className="col-12 col-md-4">
-                    <div className="btnWrapper my-4 text-center">
-                      <Button
-                        disabled
-                        variant="contained"
-                        size="large"
-                        style={{ backgroundColor: "#5300e8", color: "white" }}
-                        onClick={() => {
-                          console.log("Action Taken");
-                          // props.createLockMakeDeploy(lockAmount, date);
-                          increaseUnlockTimeMakeDeploy(date);
-                        }}
-                      >
-                        Increase Time
-                      </Button>
-                    </div>
-                  </div>
-                </div> */}
+             
               {/* WITHDRAWAL BUTTON */}
               <div className="row no-gutters justify-content-center">
                 <div className="col-12 col-md-4">
@@ -374,16 +259,7 @@ const VotingPowerActionables = (props) => {
                         sx={{ width: "100%" }}
                       />
                     </div>
-                    {/* Lock Time Dropdown */}
-                    {/* <div className="col-12 col-lg-5 text-lg-right dao-form-width mt-3 mt-lg-0">
-                      <SelectInput
-                        setDate={setDate}
-                        setDateDisplay={setDateDisplay}
-                        name="LockTimeSelect"
-                        label="Select Lock Time"
-                        options={lockTimeOptions.map((item) => item.name)}
-                      />
-                    </div> */}
+                    
                   </div>
                   {/* TIME BUTTONS */}
                   {/* <div className=""> */}
