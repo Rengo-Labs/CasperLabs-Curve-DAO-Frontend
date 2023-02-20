@@ -118,16 +118,20 @@ const Locker = () => {
 
   const voting = useQuery(VOTING_POWER, {
     variables: {
-      id: "e1431ecb9f20f2a6e6571886b1e2f9dec49ebc6b2d3d640a53530abafba9bfa1",
+      id: activePublicKey && activePublicKey != "null"
+        ? Buffer.from(
+          CLPublicKey.fromHex(activePublicKey).toAccountHash()
+        ).toString("hex")
+        : null,
     },
   });
-  console.log("this is data of voting escrow gql: ", voting.data);
+  console.log("this is data of voting escrow gql : ", voting.data);
   if (voting.data !== undefined) {
     console.log("votingPOWER", voting?.data);
   }
 
-  const votingEscrow = useQuery(VOTING_ESCROW);
-  console.log("this is chartData: ", votingEscrow.data?.votingEscrows);
+  const votingEscrow = useQuery(VOTING_ESCROW, { fetchPolicy: "no-cache", });
+  console.log("this is chartData: ", votingEscrow);
   console.log("this is error of voting escrow gql: ", votingEscrow.error);
 
   if (votingEscrow.data !== undefined) {
@@ -146,6 +150,7 @@ const Locker = () => {
   let param = { unlockTimes: callsData };
 
   useEffect(() => {
+
     axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, param)
       .then(response => {
         // handle the response
@@ -156,7 +161,7 @@ const Locker = () => {
         // handle the error
         console.log("error of totalSupply:...", error);
       });
-  }, [userBalances])
+  }, [])
 
 
 
@@ -164,12 +169,12 @@ const Locker = () => {
 
   useEffect(() => {
     charts();
-  }, [votingEscrowData, setVotingEscrowData, unlockTime]);
+  }, [votingEscrowData, unlockTime]);
   useEffect(() => {
     // resolveData();
-    console.log("datadata", data);
-    console.log("votingvoting", voting);
-    console.log("votingEscrowvotingEscrow", votingEscrow);
+    // console.log("datadata", data);
+    // console.log("votingvoting", voting);
+    // console.log("votingEscrowvotingEscrow", votingEscrow);
     if (data) {
       // mutate data if you need to
       console.log("data?.daoPowersByBlock", data?.daoPowersByBlock);
@@ -191,114 +196,146 @@ const Locker = () => {
       );
     }
     if (userBalances) {
-      console.log("userBalances.data?.unlock_time", userBalances.data?.userBalancesByUnlockTime);
+      // console.log("userBalances.data?.unlock_time", userBalances.data?.userBalancesByUnlockTime);
       setUnlockTime(userBalances.data?.userBalancesByUnlockTime != undefined ? userBalances.data?.userBalancesByUnlockTime : []);
     }
   }, [data, voting, votingEscrow, userBalances]);
 
   function interpolateVotingPower(chartData) {
     let origEvents = votingEscrowData.slice();
-    //console.log(origEvents, "ORIG EVENTS")
+    // console.log(origEvents, "ORIG EVENTS")
     let newChartData = [];
-    console.log(chartData.slice(), "CHARTDATA LENGTH");
+    // console.log(chartData.slice(), "CHARTDATA LENGTH");
     for (let j = 1; j < chartData.length; j++) {
       let v = chartData[j];
       let prev = chartData[j - 1];
       newChartData.push(prev);
-      //console.log("newChartData:",newChartData);
+      // console.log("newChartData:", newChartData);
       let startTimestamp = prev[0];
       let startAmount = prev[1];
       let endTimestamp = v[0];
       let endAmount = v[1];
       let diff = endTimestamp - startTimestamp;
+      // console.log("diff", diff);
       let diffAmount = endAmount - startAmount;
       let amountLocked = origEvents[j - 1].totalPower;
+      // console.log("amountLocked", amountLocked);
       let numPoints = 10;
+      // console.log("chartData.length", chartData.length);
       if (chartData.length > 1) {
         for (let i = 0; i < numPoints; i++) {
           //console.log(origEvents[j-1].totalPower, i, "TOTAL POWER")
-          let currentTimestamp = startTimestamp + i * (diff / numPoints);
+          let currentTimestamp = startTimestamp / 1 + i * (diff / numPoints);
+          // console.log("startTimestamp", startTimestamp);
+          // console.log("i * (diff / numPoints)", i * (diff / numPoints));
+          // console.log("currentTimestamp", currentTimestamp);
           //console.log(amountLocked, currentTimestamp, this.events[j-1].locktime * 1000, "AMOUNTS")
           let amount = helpers.calcVotingPower(
             amountLocked,
             currentTimestamp,
-            votingEscrowData[j - 1].locktime * 1000
+            votingEscrowData[j - 1].locktime
           );
           //console.log(amount, "THE AMOUNT")
           if (
             votingEscrowData.find(
-              (e) => e.timestamp === currentTimestamp / 1000
+              (e) => e.timestamp === currentTimestamp
             ) === undefined
           ) {
             votingEscrowData.splice(j, 0, {
               type: "decrease",
-              timestamp: currentTimestamp / 1000,
-              locktime: votingEscrowData[j].locktime,
+              timestamp: parseInt(currentTimestamp),
+              locktime: parseInt(votingEscrowData[j].locktime),
             });
           }
-          //console.log(amount, "THE AMOUNT")
-          newChartData.push([currentTimestamp, amount]);
+          // console.log("votingEscrowDatavotingEscrowData", votingEscrowData);
+          // console.log(amount, "THE AMOUNT")
+          newChartData.push([parseInt(currentTimestamp), amount]);
         }
       }
       newChartData.push(v);
     }
     newChartData.push(chartData[chartData.length - 1]);
+    console.log("newChartData", newChartData);
     return newChartData;
   }
 
-  const charts = () => {
-    console.log(
-      "votingEscrowDatavotingEscrowDatavotingEscrowDatavotingEscrowData",
-      votingEscrowData
-    );
+  const charts = async () => {
+    // console.log(
+    //   "votingEscrowDatavotingEscrowDatavotingEscrowDatavotingEscrowData",
+    //   votingEscrowData
+    // );
     let events = votingEscrowData;
     if (events.length > 0) {
       events = addVotingPowerProperty(events);
-      console.log("eventseventsevents", events);
+      // console.log("eventseventsevents", events);
 
       var chartData = events.map((event, i) => [
-        event.timestamp * 1000,
+        event.timestamp / 1,
         event.votingPower,
       ]);
-      console.log("chartDatachartDatachartData", chartData);
+      // console.log("chartDatachartDatachartData", chartData);
       let lastEvent = events[events.length - 1];
       setLastEvent(lastEvent);
       let lastData = [
-        lastEvent.locktime *
-        //365
-        1000,
+        lastEvent.locktime / 1,
         0,
       ];
       chartData.push(lastData);
-      //console.log("before pushing",votingEscrowData);
+      console.log("before pushing", votingEscrowData);
       votingEscrowData = Object.assign([], votingEscrowData);
       votingEscrowData.push({
         ...votingEscrowData[votingEscrowData.length - 1],
         value: 0,
         votingPower: 0,
       });
-      //console.log("after pushing",votingEscrowData);
-      //chartData = interpolateVotingPower(chartData)
-      setLockerChartData(interpolateVotingPower(chartData));
-      let finalData = interpolateVotingPower(chartData);
+      console.log("after pushing", votingEscrowData);
+      chartData = interpolateVotingPower(chartData)
+
+      setLockerChartData(chartData);
+      let finalData = chartData;
       console.log("final chart data:", finalData);
       let lastUnlockTime = parseInt(unlockTime[0]?.unlock_time)
       console.log("lastUnlockTime", lastUnlockTime);
-      let now = (Date.now() / 1000) | 0
-      console.log("now time value", now);
-      let calls = []
+      let now = Date.now()
+      // console.log("now time value", now);
+      // let calls = []
       let i = 0
+      // console.log("nownow", now);
+      let unlockTimes = []
+      // console.log("lastUnlockTimelastUnlockTime", lastUnlockTime);
       while (now < lastUnlockTime) {
-        calls.push([now])
+        unlockTimes.push(now);
+        // let data = { unlockTimes: [now] };
+        // let res = await axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+
+        // // handle the response
+        // console.log("response of unlockTimes totalSupply:...", res.data.totalSupplies);
+
+        // calls.push(res.data.totalSupplies[0])
+        // console.log("now", now);
+        // console.log("i ** 4 * 86400", i ** 4 * 86400);
+        // console.log("i", i);
         now += i ** 4 * 86400
         i++
       }
-      calls.push([lastUnlockTime]);
+      unlockTimes.push(lastUnlockTime)
+      let data = { unlockTimes };
+      console.log("datadata", data);
+      let res = await axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+
+      // handle the response
+      console.log("response of unlockTimes totalSupply:...", res.data.totalSupplies);
+
+
+      setCallsData(res.data.totalSupplies);
+      let calls = res.data.totalSupplies;
       console.log("calls data", calls);
-      setCallsData(calls);
-      let daopowerdata = daoPower ? daoPower.map(e => [e.timestamp * 1000, e.totalPower / 1e9]) : []
+      console.log("unlockTimes", unlockTimes);
+      console.log("daoPower", daoPower);
+      let daopowerdata = daoPower ? daoPower.map(e => [e.timestamp / 1, e.totalPower / 1e9]) : []
+      // console.log("totalSupply", totalSupply);
       for (let m = 0; m < calls.length; m++) {
-        daopowerdata.push([parseInt(calls[m]) * 1000, totalSupply ? (totalSupply[m] / 1e9) : 0]);
+        daopowerdata.push([unlockTimes[m], calls[m] / 1e9]);
       }
       setDaoPowerChart(daopowerdata);
       console.log("daopowerdata", daopowerdata);
@@ -332,9 +369,8 @@ const Locker = () => {
         helpers.calcVotingPower(
           item.totalPower,
           item.timestamp,
-          //365
           item.locktime
-        ) * 1000,
+        ),
     }));
   };
 

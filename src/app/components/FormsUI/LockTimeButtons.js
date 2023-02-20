@@ -54,7 +54,7 @@ const LockTimeButtons = ({
       setDateDisplay(
         formatDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))
       );
-      setStartingVPower(lockAmount*0.01)
+      setStartingVPower(lockAmount * 7 / 1460)
     } else if (buttonValue === 2) {
       setDate(
         new Date(
@@ -72,7 +72,7 @@ const LockTimeButtons = ({
           )
         )
       );
-      setStartingVPower(lockAmount*0.04)
+      setStartingVPower(lockAmount * 30.33 / 1460)
     } else if (buttonValue === 3) {
       setDate(
         new Date(
@@ -90,7 +90,7 @@ const LockTimeButtons = ({
           )
         )
       );
-      setStartingVPower(lockAmount*0.125)
+      setStartingVPower(lockAmount * 91.25 / 1460)
     } else if (buttonValue === 4) {
       setDate(
         new Date(
@@ -108,7 +108,7 @@ const LockTimeButtons = ({
           )
         )
       );
-      setStartingVPower(lockAmount*0.25)
+      setStartingVPower(lockAmount * 182.52 / 1460)
     } else if (buttonValue === 5) {
       setDate(
         new Date(
@@ -126,7 +126,7 @@ const LockTimeButtons = ({
           )
         )
       );
-      setStartingVPower(lockAmount*0.5)
+      setStartingVPower(lockAmount * 365 / 1460)
     } else if (buttonValue === 6) {
       setDate(
         new Date(
@@ -145,9 +145,9 @@ const LockTimeButtons = ({
           )
         )
       );
-      setStartingVPower(lockAmount*1)
+      setStartingVPower(lockAmount * 1460 / 1460)
     }
-  }, [buttonValue,lockAmount]);
+  }, [buttonValue, lockAmount]);
 
   return (
     <>

@@ -40,21 +40,7 @@ export async function UserCheckpointMakeDeploy(activePublicKey, setOpenSigning, 
             entrypoint: CLValueBuilder.string("user_checkpoint"),
             addr: activePublicKey,
             package_hash: LIQUIDITY_GAUGE_V3_CONTRACT_HASH
-            // router_hash: new CLKey(new CLByteArray(Uint8Array.from(Buffer.from(ROUTER_PACKAGE_HASH, "hex")))),
-            // token: new CLKey(_token),
-            // liquidity: CLValueBuilder.u256(convertToStr((liquidity * value) / 100)),
-            // amount_cspr_min: CLValueBuilder.u256(
-            //     convertToStr(
-            //         Number(cspr_Amount - (cspr_Amount * slippage) / 100).toFixed(9)
-            //     )
-            // ),
-            // amount_token_min: CLValueBuilder.u256(
-            //     convertToStr(
-            //         Number(token_Amount - (token_Amount * slippage) / 100).toFixed(9)
-            //     )
-            // ),
-            // to: createRecipientAddress(publicKey),
-            // deadline: CLValueBuilder.u256(deadline),
+           
         });
         console.log("runtimeArgs", runtimeArgs);
         // let contractHashAsByteArray = Uint8Array.from(Buffer.from(caller, "hex"));
