@@ -82,7 +82,7 @@ const DaoVotingPower = ({ chart, daoPower }) => {
 
   let series = [
     {
-      name: "MY Voting Power",
+      name: "My Voting Power",
       type: "line",
       data: axisData
       //seriesDataX
@@ -228,7 +228,7 @@ const DaoVotingPower = ({ chart, daoPower }) => {
 
   let seriesLine = [
     {
-      name: "MY Voting Power",
+      name: "My Voting Power",
       type: "line",
       data:
         axisData

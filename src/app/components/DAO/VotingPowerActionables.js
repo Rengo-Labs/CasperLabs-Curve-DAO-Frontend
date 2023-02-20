@@ -9,9 +9,8 @@ import "../../assets/css/style.css";
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
 import DateTimePicker from "../FormsUI/DateTimePicker";
-import SelectInput from "../FormsUI/SelectInput";
-import TextInput from "../FormsUI/TextInput";
 import LockTimeButtons from "../FormsUI/LockTimeButtons";
+import TextInput from "../FormsUI/TextInput";
 // MATERIAL UI ICONS
 // MATERIAL UI
 import Paper from "@mui/material/Paper";
@@ -20,19 +19,17 @@ import Typography from "@mui/material/Typography";
 import { Form, Formik } from "formik";
 import AllowanceModal from "../Modals/AllowanceModal";
 // CONTEXT
-import Axios from "axios";
+import { Alert, Button } from "@mui/material";
+import { default as Axios, default as axios } from "axios";
 import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from "notistack";
+import * as helpers from "../../assets/js/helpers";
 import { AppContext } from "../../containers/App/Application";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
-import SigningModal from "../Modals/SigningModal";
-import { Alert, Button } from "@mui/material";
 import { VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
-import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
-import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 import * as erc20CrvFunctions from "../JsClients/ERC20CRV/erc20crvFunctions/functions";
-import axios from "axios";
-import * as helpers from "../../assets/js/helpers";
+import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import SigningModal from "../Modals/SigningModal";
 // CONTENT
 
 const lockTimeOptionsJSON =
@@ -63,7 +60,7 @@ const VotingPowerActionables = (props) => {
   const [vecrvBalance, setVecrvBalance] = useState(0);
   const [lockTime, setLockTime] = useState(Date.now())
   const [lockEnd, setLockEnd] = useState(Date.now())
-  const [increaseLock, setIncreaseLock] = useState(0)
+  const [increaseLock, setIncreaseLock] = useState(Date.now())
   const [deposit, setDeposit] = useState(0)
   const [CRVBalance, setCRVBalance] = useState(0);
   const [DAOPower, setDaoPower] = useState(0);
@@ -224,7 +221,7 @@ const VotingPowerActionables = (props) => {
     fetchData();
   }, [])
   useEffect(() => {
-    setIncreaseLock(new Date((lockTime + 604800) * 1000))
+    setIncreaseLock(new Date((lockTime + 604800 * 1000)))
     if (lockTime == 0) {
       setLockTime(Date.now() / 1000)
       setIncreaseLock(new Date(Date.now() + 604800 * 1000))
@@ -244,8 +241,11 @@ const VotingPowerActionables = (props) => {
   function newVotingPower() {
     let lockTime = Date.parse(increaseLock)
     let _deposit = deposit
-
-    return _deposit * ((lockTime - Date.now()) / 1000) / (86400 * 365) / (4) + (vecrvBalance / 1e9)
+    console.log("lockTime", lockTime);
+    console.log("_deposit", _deposit);
+    console.log("vecrvBalance", vecrvBalance);
+    console.log("_deposit * ((lockTime - Date.now()) / 1000) / (86400 * 365) / (4) + (vecrvBalance / 1e9)", (_deposit / 1e9) * ((lockTime - Date.now()) / 1000) / (86400 * 365) / (4) + (vecrvBalance / 1e9));
+    return (_deposit / 1e9) * ((lockTime - Date.now()) / 1000) / (86400 * 365) / (4) + (vecrvBalance / 1e9)
   }
   function setMaxBalance() {
     setDeposit(CRVBalance.div(1e9).toString())
