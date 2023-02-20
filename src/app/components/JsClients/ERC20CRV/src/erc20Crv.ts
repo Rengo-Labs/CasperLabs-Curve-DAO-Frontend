@@ -120,13 +120,37 @@ class ERC20CRVClient {
 
   public async balanceOf(account: string) {
     try {
+      const key = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(account, "hex"))));
+      const keyBytes = CLValueParsers.toBytes(key).unwrap();
+      const itemKey = Buffer.from(keyBytes).toString("base64");
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
-        account,
-        this.namedKeys.balances
+        itemKey,
+        this.namedKeys!.balances
       );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
+      return result.value();
+
+    } catch (error) {
+      return "0";
+    }
+    
+  }
+
+  public async balanceOfContract(contractHash: string) {
+    try {
+      const _contractHash = new CLByteArray(
+        Uint8Array.from(Buffer.from(contractHash, "hex"))
+      );
+      const key = createRecipientAddress(_contractHash);
+      const keyBytes = CLValueParsers.toBytes(key).unwrap();
+      const itemKey = Buffer.from(keyBytes).toString("base64");
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        itemKey,
+        this.namedKeys!.balances
+      );
+      return result.value();
+
     } catch (error) {
       return "0";
     }

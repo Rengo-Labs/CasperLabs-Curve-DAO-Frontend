@@ -30,7 +30,7 @@ export async function increaseUnlockTimeMakeDeploy(unlockTime, setOpenSigning, e
     publicKeyHex !== undefined
   ) {
     const publicKey = CLPublicKey.fromHex(publicKeyHex);
-    const paymentAmount = 5000000000;
+    const paymentAmount = 100000000000;
     try {
       const runtimeArgs = RuntimeArgs.fromMap({
         unlock_time: CLValueBuilder.u256(unlockTime.getTime()),

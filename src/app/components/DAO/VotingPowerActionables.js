@@ -29,7 +29,10 @@ import SigningModal from "../Modals/SigningModal";
 import { Alert, Button } from "@mui/material";
 import { VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 import { balanceOf } from "../JsClients/VOTINGESCROW/QueryHelper/functions";
-
+import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/functions";
+import * as erc20CrvFunctions from "../JsClients/ERC20CRV/erc20crvFunctions/functions";
+import axios from "axios";
+import * as helpers from "../../assets/js/helpers";
 // CONTENT
 
 const lockTimeOptionsJSON =
@@ -53,11 +56,19 @@ const VotingPowerActionables = (props) => {
   const [CRVLockedBalance, setCRVLockedBalance] = useState(0);
   const [dateDisplay, setDateDisplay] = useState();
   const [date, setDate] = useState();
-  const [lockTime, setLockTime] = useState("");
   const [lockAmount, setLockAmount] = useState(0);
   const [openA, setOpenA] = useState(false);
   const [startingVPower, setStartingVPower] = useState();
-  const [CRVLockedBalanceValue,setCRVLockedBalanceValue] = useState();
+  const [CRVLockedBalanceValue, setCRVLockedBalanceValue] = useState();
+  const [vecrvBalance, setVecrvBalance] = useState(0);
+  const [lockTime, setLockTime] = useState(Date.now())
+  const [lockEnd, setLockEnd] = useState(Date.now())
+  const [increaseLock, setIncreaseLock] = useState(0)
+  const [deposit, setDeposit] = useState(0)
+  const [CRVBalance, setCRVBalance] = useState(0);
+  const [DAOPower, setDaoPower] = useState(0);
+  const [CRVLocked, setCRVLocked] = useState(0);
+
 
   const [openAllowance, setOpenAllowance] = useState(false);
   const handleCloseAllowance = () => {
@@ -66,7 +77,7 @@ const VotingPowerActionables = (props) => {
   const handleShowAllowance = () => {
     setOpenAllowance(true);
   };
-  console.log("props for actionables: ", props, lockAmount,startingVPower);
+  console.log("props for actionables: ", props, lockAmount, startingVPower);
   const [openSigning, setOpenSigning] = useState(false);
   // Content
   const initialValues = {
@@ -98,7 +109,7 @@ const VotingPowerActionables = (props) => {
     let activePublicKey = localStorage.getItem("Address")
     if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined)
       getAllowance()
-  });
+  }, []);
 
   const getAllowance = () => {
     let activePublicKey = localStorage.getItem("Address");
@@ -137,9 +148,9 @@ const VotingPowerActionables = (props) => {
       publicKeyHex !== undefined
     ) {
       async function fetchData() {
-        let CRVLockBalance = await balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        let CRVLockBalance = await votingEscrowFunctions.balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
         // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString(hex)", Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
-        let CRVBalance = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
+        let CRVBalance = await erc20CrvFunctions.balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
         console.log("CRV Locked Balance: ", CRVLockBalance);
         console.log("CRV Balance: ", CRVBalance);
         setCRVLockedBalanceValue(CRVLockBalance);
@@ -154,7 +165,94 @@ const VotingPowerActionables = (props) => {
 
 
 
-  
+  useEffect(() => {
+    let controller = new AbortController();
+
+    let publicKeyHex = localStorage.getItem("Address");
+    if (
+      publicKeyHex !== null &&
+      publicKeyHex !== "null" &&
+      publicKeyHex !== undefined
+    ) {
+      async function fetchData() {
+        let data = { account: Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex") }
+        console.log("data", data);
+        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+          .then(response => {
+            // handle the response
+            console.log("votingEscrow response of balance of:...", response.data);
+            setVecrvBalance(response.data.balances[0])
+          })
+          .catch(error => {
+            // handle the error
+            console.log("error of balance of:...", error);
+          });
+        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+          .then(response => {
+            // handle the response
+            console.log("votingEscrow response of lockedEnd:...", response.data);
+            setLockTime(response.data.lockedEnd.end)
+            setLockEnd(response.data.lockedEnd.end)
+          })
+          .catch(error => {
+            // handle the error
+            console.log("error of balance of:...", error);
+          });
+        let CRVBalance = await erc20CrvFunctions.balanceOf(
+          ERC20_CRV_CONTRACT_HASH,
+          Buffer.from(
+            CLPublicKey.fromHex(publicKeyHex).toAccountHash()
+          ).toString("hex")
+        );
+        setCRVBalance(CRVBalance)
+        setDeposit((CRVBalance / 10 ** 9).toFixed(0, 1))
+
+      }
+      fetchData()
+    }
+
+    return () => {
+      controller.abort();
+    };
+  }, [])
+  useEffect(() => {
+    async function fetchData() {
+      let veCRVTotalSupply = await votingEscrowFunctions.totalSupply(ERC20_CRV_CONTRACT_HASH);
+      setDaoPower(parseFloat(veCRVTotalSupply))
+      console.log("veCRVTotalSupply", parseFloat(veCRVTotalSupply));
+    }
+    fetchData();
+  }, [])
+  useEffect(() => {
+    setIncreaseLock(new Date((lockTime + 604800) * 1000))
+    if (lockTime == 0) {
+      setLockTime(Date.now() / 1000)
+      setIncreaseLock(new Date(Date.now() + 604800 * 1000))
+
+    }
+    if (Date.parse(increaseLock) > Date.now() + 126144000 * 1000) {
+      setIncreaseLock(new Date())
+    }
+  }, [])
+  const DAOPowerFormat = () => {
+    return helpers.formatNumber(DAOPower / 1e9);
+  };
+
+  const averageLock = () => {
+    return DAOPower ? (4 * DAOPower / CRVLocked).toFixed(2) : 0;
+  };
+  function newVotingPower() {
+    let lockTime = Date.parse(increaseLock)
+    let _deposit = deposit
+
+    return _deposit * ((lockTime - Date.now()) / 1000) / (86400 * 365) / (4) + (vecrvBalance / 1e9)
+  }
+  function setMaxBalance() {
+    setDeposit(CRVBalance.div(1e9).toString())
+  }
+  function hasEndedLock() {
+    return lockEnd > 0 && Date.now() > lockEnd
+  }
   return (
     <>
       <Formik
@@ -164,9 +262,8 @@ const VotingPowerActionables = (props) => {
       >
         <Form>
           {/* WITHDRAWAL CHECK */}
-          {new Date().getTime() < 1668038400000 ? (
+          {hasEndedLock() ? (
             <>
-             
               {/* WITHDRAWAL BUTTON */}
               <div className="row no-gutters justify-content-center">
                 <div className="col-12 col-md-4">
@@ -190,7 +287,7 @@ const VotingPowerActionables = (props) => {
           ) : (
             <div>
               {/* Set Amount */}
-              {props.userLockedCRVBalance === 0 ? (
+              {userCRVBalance === 0 ? (
                 // TRUE CONDITION WORK
                 <>
                   <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
@@ -200,14 +297,19 @@ const VotingPowerActionables = (props) => {
                         id="daoAmount"
                         label="Lock Amount"
                         onChange={(e) => {
-                          console.log("dam", e.target.value);
+                          // console.log("dam", e.target.value);
+                          console.log("event", e);
+                          console.log("e.srcElement", e.srcElement);
+                          console.log("e.target.value", e.target.value);
+
                           if (userCRVBalance >= e.target.value)
                             setLockAmount(e.target.value);
                           else {
-                            setLockAmount(userCRVBalance);
+                            // setLockAmount(userCRVBalance);
+                            setLockAmount(e.target.value);
                           }
                         }}
-                        value={lockAmount}
+                        value={Number(lockAmount).toString()}
                         variant="filled"
                         type="number"
                         name="LockAmount"
@@ -259,25 +361,25 @@ const VotingPowerActionables = (props) => {
                         sx={{ width: "100%" }}
                       />
                     </div>
-                    
+
                   </div>
                   {/* TIME BUTTONS */}
                   {/* <div className=""> */}
-                    <LockTimeButtons
-                      date={date}
-                      setDate={setDate}
-                      setDateDisplay={setDateDisplay}
-                      setStartingVPower={setStartingVPower}
-                      lockAmount={lockAmount}
-                      
-                      // name="LockTimeSelect"
-                      // label="Select Lock Time"
-                      // options={lockTimeOptions.map((item) => item.name)}
-                    />
+                  <LockTimeButtons
+                    date={date}
+                    setDate={setDate}
+                    setDateDisplay={setDateDisplay}
+                    setStartingVPower={setStartingVPower}
+                    lockAmount={lockAmount}
+
+                  // name="LockTimeSelect"
+                  // label="Select Lock Time"
+                  // options={lockTimeOptions.map((item) => item.name)}
+                  />
                   {/* </div> */}
                   {/* CREATE LOCK BUTTON */}
                   <div className="row no-gutters justify-content-center">
-                    <div className="col-12" style={{marginRight:"8%"}}>
+                    <div className="col-12" style={{ marginRight: "8%" }}>
                       <div className="btnWrapper my-4 text-center">
                         {lockAmount * 10 ** 9 > allowance ? (
                           <Button
@@ -295,9 +397,9 @@ const VotingPowerActionables = (props) => {
                         ) : (
                           <Button
                             variant="contained"
-                            
+
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white", minWidth:"25%"}}
+                            style={{ backgroundColor: "#5300e8", color: "white", minWidth: "25%" }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -313,82 +415,7 @@ const VotingPowerActionables = (props) => {
                 </>
               ) : (
                 // FALSE CONDIIION WORK
-                // <div>
-                //   <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
 
-                //     <div className="col-12 col-lg-6">
-                //       <DateTimePicker
-                //         onChange={(e) => {
-                //           console.log("e.value", e.target.value);
-                //           console.log("new Date(e.target.value)", new Date(e.target.value));
-                //           setDate(new Date(e.target.value));
-                //           setDateDisplay(e.target.value);
-                //         }}
-                //         value={dateDisplay}
-                //         name="LockTimePicker"
-                //         label="Choose Lock Time"
-                //         sx={{ width: "100%" }}
-                //       />
-                //     </div>
-                //     {/* Max Button */}
-                //     <div className="col-12 col-lg-6">
-                //       <div className="row no-gutters align-items-center">
-                //         <Button
-                //           variant="contained"
-                //           size="large"
-                //           fullWidth
-                //           style={{ backgroundColor: "#5300e8", color: "white" }}
-                //           onClick={() => {
-                //             setLockAmount(userCRVBalance);
-                //           }}
-                //         >
-                //           Increase Lock Time
-                //         </Button>
-
-                //       </div>
-                //     </div>
-                //   </div>
-                //   <br />
-                //   <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
-
-                //     <div className="col-12 col-lg-6">
-                //       <TextInput
-                //         id="daoAmount"
-                //         label="Lock Amount"
-                //         onChange={(e) => {
-                //           console.log("e", e.target.value);
-                //           if (userCRVBalance >= e.target.value)
-                //             setLockAmount(e.target.value);
-                //           else {
-                //             setLockAmount(userCRVBalance);
-                //           }
-                //         }}
-                //         value={lockAmount}
-                //         variant="filled"
-                //         type="number"
-                //         name="LockAmount"
-                //         sx={{ width: "100%" }}
-                //       />
-                //     </div>
-                //     {/* Max Button */}
-                //     <div className="col-12 col-lg-6">
-                //       <div className="row no-gutters align-items-center">
-                //         <Button
-                //           variant="contained"
-                //           size="large"
-                //           fullWidth
-                //           style={{ backgroundColor: "#5300e8", color: "white" }}
-                //           onClick={() => {
-                //             setLockAmount(userCRVBalance);
-                //           }}
-                //         >
-                //           Increase Lock Amount
-                //         </Button>
-
-                //       </div>
-                //     </div>
-                //   </div>
-                // </div>
                 <>
                   <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
 
@@ -507,7 +534,7 @@ const VotingPowerActionables = (props) => {
                       setDateDisplay={setDateDisplay}
                       setStartingVPower={setStartingVPower}
                       lockAmount={lockAmount}
-            
+
                     />
 
                   </div>
@@ -614,7 +641,7 @@ const VotingPowerActionables = (props) => {
         </div>
       </div >
       {/* DAO Proposal Requirements */}
-      < div className="no-gutters mt-4 justify-content-center align-items-center" >
+      {newVotingPower() < 2500 ? < div className="no-gutters mt-4 justify-content-center align-items-center" >
         <Alert severity="info">
           You need at least 2500 veCRV to be able to create a &nbsp;
           <span
@@ -626,7 +653,13 @@ const VotingPowerActionables = (props) => {
             </Link>
           </span>
         </Alert>
-      </div >
+      </div > : null}
+      {hasEndedLock() ? < div className="no-gutters mt-4 justify-content-center align-items-center" >
+        <Alert severity="info">
+          Your lock ended, you can withdraw your CRV
+        </Alert>
+      </div > : null}
+
       {/* Gas Priority Fee */}
       {/* <div className="row no-gutters mt-4">
         <div className="col-12">

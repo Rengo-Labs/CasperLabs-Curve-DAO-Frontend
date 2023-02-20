@@ -96,9 +96,10 @@ export const contractDictionaryGetter = async (
   seedUref: string,
 ) => {
   const stateRootHash = await getStateRootHash(nodeAddress);
+  console.log("stateRootHash", stateRootHash);
 
   const client = new CasperServiceByJsonRPC(nodeAddress);
-
+  console.log("clientclient", client);
   const storedValue = await client.getDictionaryItemByURef(
     stateRootHash,
     dictionaryItemKey,
