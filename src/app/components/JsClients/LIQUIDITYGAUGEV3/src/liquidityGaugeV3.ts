@@ -636,16 +636,17 @@ class LIQUIDITYGAUGEV3Client {
     return result.value();
   }
 
-  public async balanceOf(owner: string) {
+public async balanceOf(account: string) {
     try {
-      
+      const key = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(account, "hex"))));
+      const keyBytes = CLValueParsers.toBytes(key).unwrap();
+      const itemKey = Buffer.from(keyBytes).toString("base64");
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
-        owner,
-        this.namedKeys.balances
+        itemKey,
+        this.namedKeys!.balances
       );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
+      return result.value();
 
     } catch (error) {
       return "0";
