@@ -32,3 +32,23 @@ Border: #9E9E9E
 Border-Active: #5300E8
 
 */
+
+.lockerButton{
+    margin-right: 100px;
+    
+}
+
+.increaseTime{
+    margin-left: 15%
+}
+
+@media screen and (max-width: 1000px) {
+    .lockerButton {
+        margin-right: 0;
+        
+        
+    }
+    .increaseTime{
+        margin-left: 0
+    }
+  }

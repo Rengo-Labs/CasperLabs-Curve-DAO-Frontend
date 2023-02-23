@@ -602,12 +602,50 @@ const Calc = () => {
                                       </FormControl>
                                     </div>
                                   </div>
+
+                                </div>
+                                <div className="row no-gutters mt-2 ">
+                                  {/* Total veCRV */}
+                                  <div className="col-6 mt-3 align-items-center">
+                                    <div className="">
+                                      <Box
+                                        component="form"
+                                        noValidate
+                                        autoComplete="off"
+                                      >
+                                        <TextInput
+                                          id="total-vecrv"
+                                          label="Total veCRV:"
+                                          variant="filled"
+                                          name="TotalveCRVCalc"
+                                          value={totalVeCRV}
+                                          onChange={(e) => {
+                                            setTotalVeCRV(e.target.value);
+                                            //calling this function because of watchers
+                                            // calcTrigger();
+                                          }}
+                                        />
+                                      </Box>
+                                      <div className="row no-gutters">
+                                        <div className="col-12 col-lg-6 text-left p-2 py-3">
+                                          <Typography
+                                            variant="body1"
+                                            component={"div"}
+                                          >
+                                            <span className="font-weight-bold">
+                                              Boost:&nbsp;
+                                            </span>
+                                            {crvBoost}x
+                                          </Typography>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
                                   {!gaugeVeCRV ? (
-                                    <div className="row no-gutters mt-2 w-100">
-                                      <div className="col-12">
-                                        <div className="row no-gutters justify-content-md-end">
-                                          <div className="col-12 col-md-6">
-                                            {/* <SelectInput
+                                    <div className="col-6">
+                                      <div className="mt-4">
+                                        <div className="">
+                                          {/* <SelectInput
                                               setDate={setDate}
                                               setDateDisplay={setDateDisplay}
                                               name="GaugeLockPeriodCalc"
@@ -622,70 +660,47 @@ const Calc = () => {
                                                 updateLockedVeCRV();
                                               }}
                                             /> */}
-                                            <Autocomplete
-                                              options={lockPeriods}
-                                              getOptionLabel={(option) => {
-                                                // console.log("Option: ", option);
-                                                return option.name
-                                              }}
-                                              clearOnEscape
-                                              renderInput={(params) => (
-                                                <TextField
-                                                  {...params}
-                                                  label="Select Lock Period"
-                                                  variant="standard"
-                                                />
-                                              )}
-                                              onChange={async (event, newValue) => {
-                                                console.log("New Value: ", newValue);
-                                                handleGaugeLockChange(event, newValue);
-                                              }}
-                                            // value={lockPeriodName}
-                                            />
-                                          </div>
+                                          <Autocomplete
+                                            options={lockPeriods}
+                                            getOptionLabel={(option) => {
+                                              // console.log("Option: ", option);
+                                              return option.name
+                                            }}
+                                            clearOnEscape
+                                            renderInput={(params) => (
+                                              <TextField
+                                                {...params}
+                                                label="Select Lock Periodoo"
+                                                variant="standard"
+                                              />
+                                            )}
+                                            onChange={async (event, newValue) => {
+                                              console.log("New Value: ", newValue);
+                                              handleGaugeLockChange(event, newValue);
+                                            }}
+                                          // value={lockPeriodName}
+                                          />
                                         </div>
-                                        <div className="row no-gutters justify-content-end">
-                                          <div className="col-12 col-md-6 text-right align-self-center p-2 py-3">
-                                            <Typography
-                                              variant="body1"
-                                              component={"div"}
-                                            >
-                                              <span className="font-weight-bold">
-                                                {/* {lockedVeCRV}&nbsp; */}
-                                                {veCRV()}&nbsp;
-                                              </span>
-                                              veCRV
-                                            </Typography>
-                                          </div>
+                                      </div>
+                                      <div className="row no-gutters justify-content-end">
+                                        <div className="col-12 col-md-6 text-right align-self-center p-2 py-3">
+                                          <Typography
+                                            variant="body1"
+                                            component={"div"}
+                                          >
+                                            <span className="font-weight-bold">
+                                              {/* {lockedVeCRV}&nbsp; */}
+                                              {veCRV()}&nbsp;
+                                            </span>
+                                            veCRV
+                                          </Typography>
                                         </div>
                                       </div>
                                     </div>
+
                                   ) : null}
                                 </div>
-                                {/* Total veCRV */}
-                                <div className="row no-gutters mt-3 align-items-center">
-                                  <div className="col-12 col-md-6">
-                                    <Box
-                                      component="form"
-                                      noValidate
-                                      autoComplete="off"
-                                    >
-                                      <TextInput
-                                        id="total-vecrv"
-                                        label="Total veCRV:"
-                                        variant="filled"
-                                        name="TotalveCRVCalc"
-                                        value={totalveCRV}
-                                        onChange={(e) => {
-                                          setTotalveCRV(e.target.value);
-                                          //calling this function because of watchers
-                                          // calcTrigger();
-                                        }}
-                                      />
-                                    </Box>
 
-                                  </div>
-                                </div>
                                 {/* Button */}
 
                                 <div className="row no-gutters justify-content-center">
@@ -761,7 +776,7 @@ const Calc = () => {
                                 <div className="col-12 col-md-6">
                                   This is {toLockCRV} CRV for a
                                   <div className="">
-                                  
+
                                     <Autocomplete
                                       options={lockPeriods}
                                       getOptionLabel={(option) => option.name}
