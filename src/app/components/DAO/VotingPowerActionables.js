@@ -290,7 +290,7 @@ const VotingPowerActionables = (props) => {
               {userCRVBalance === 0 ? (
                 // TRUE CONDITION WORK
                 <>
-                  <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
+                  <div className="row no-gutters align-items-center ">
 
                     <div className="col-12 col-lg-5">
                       <TextInput
@@ -317,9 +317,9 @@ const VotingPowerActionables = (props) => {
                       />
                     </div>
                     {/* Max Button */}
-                    <div className="col-12 col-lg-5 mt-3 mt-lg-0">
-                      <div className="row no-gutters align-items-center">
-                        <div className="col-12 col-lg-5">
+                    <div className="col-12 col-lg-5 mt-3 mt-lg-0 ml-lg-4 ">
+                      <div className="d-flex justify-content-lg-end justify-content-sm-center align-items-center ">
+                        <div className="">
                           <Button
                             variant="contained"
                             size="large"
@@ -331,7 +331,7 @@ const VotingPowerActionables = (props) => {
                             Max
                           </Button>
                         </div>
-                        <div className="col-12 col-lg-4">
+                        <div className="">
                           <Typography
                             variant="body1"
                             gutterBottom
@@ -365,21 +365,24 @@ const VotingPowerActionables = (props) => {
                   </div>
                   {/* TIME BUTTONS */}
                   {/* <div className=""> */}
-                  <LockTimeButtons
-                    date={date}
-                    setDate={setDate}
-                    setDateDisplay={setDateDisplay}
-                    setStartingVPower={setStartingVPower}
-                    lockAmount={lockAmount}
-
-                  // name="LockTimeSelect"
-                  // label="Select Lock Time"
-                  // options={lockTimeOptions.map((item) => item.name)}
-                  />
+                  
                   {/* </div> */}
                   {/* CREATE LOCK BUTTON */}
-                  <div className="row no-gutters justify-content-center">
-                    <div className="col-12" style={{ marginRight: "8%" }}>
+                  <div className="row no-gutters">
+                    <div className="col-md-12 col-lg-6">
+                      <LockTimeButtons
+                      date={date}
+                      setDate={setDate}
+                      setDateDisplay={setDateDisplay}
+                      setStartingVPower={setStartingVPower}
+                      lockAmount={lockAmount}
+
+                      // name="LockTimeSelect"
+                      // label="Select Lock Time"
+                      // options={lockTimeOptions.map((item) => item.name)}
+                      />
+                    </div>
+                    <div className="col-md-12 col-lg-6">
                       <div className="btnWrapper my-4 text-center">
                         {lockAmount * 10 ** 9 > allowance ? (
                           <Button
@@ -417,9 +420,7 @@ const VotingPowerActionables = (props) => {
                 // FALSE CONDIIION WORK
 
                 <>
-                  <div className="row no-gutters align-items-center justify-content-center justify-content-lg-between">
-
-                    <div className="col-12 col-lg-5">
+                 <div className="w-50">
                       <TextInput
                         id="daoAmount"
                         label="Lock Amount"
@@ -438,10 +439,13 @@ const VotingPowerActionables = (props) => {
                         sx={{ width: "100%" }}
                       />
                     </div>
+                  
+
+                   
                     {/* Max Button */}
-                    <div className="col-12 col-lg-5 mt-3 mt-lg-0">
-                      <div className="row no-gutters align-items-center">
-                        <div className="col-12 col-lg-8">
+                    <div className=" mt-2 d-flex justify-content-lg-between ">
+                      <div className="d-flex  align-items-center "> 
+                        <div className="">
                           <Button
                             variant="contained"
                             size="large"
@@ -453,7 +457,7 @@ const VotingPowerActionables = (props) => {
                             Max
                           </Button>
                         </div>
-                        <div className="col-12 col-lg-4">
+                        <div className="">
                           <Typography
                             variant="body1"
                             gutterBottom
@@ -465,17 +469,14 @@ const VotingPowerActionables = (props) => {
                           </Typography>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  {/* ADD BUTTON */}
-                  <div className="row no-gutters justify-content-center">
-                    <div className="col-12 col-md-4">
-                      <div className="btnWrapper my-4 text-center">
+                      <div className="">
+                    <div className="mr-3">
+                      <div className="btnWrapper my-4 text-center lockerButton ">
                         {lockAmount * 10 ** 9 > allowance ? (
                           <Button
                             variant="contained"
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            style={{ backgroundColor: "#5300e8", color: "white",width:"250px"  }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -488,7 +489,7 @@ const VotingPowerActionables = (props) => {
                           <Button
                             variant="contained"
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            style={{ backgroundColor: "#5300e8", color: "white",width:"250px" }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -502,9 +503,13 @@ const VotingPowerActionables = (props) => {
                       </div>
                     </div>
                   </div>
+                    
+                  </div>
+                  {/* ADD BUTTON */}
+                  
                   {/* Lock Time */}
                   <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
-                    <div className="col-12 col-lg-5 px-0">
+                    <div className="col-12 col-lg-6 px-0">
                       <DateTimePicker
                         onChange={(e) => {
                           console.log("e.value", e.target.value);
@@ -528,6 +533,11 @@ const VotingPowerActionables = (props) => {
                         options={lockTimeOptions.map((item) => item.name)}
                       />
                     </div> */}
+                    
+
+                  </div>
+                  <div className="row no-gutters ">
+                    <div className="col-md-12 col-lg-6">
                     <LockTimeButtons
                       date={date}
                       setDate={setDate}
@@ -536,15 +546,13 @@ const VotingPowerActionables = (props) => {
                       lockAmount={lockAmount}
 
                     />
-
-                  </div>
-                  <div className="row no-gutters justify-content-center">
-                    <div className="col-12 col-md-4">
-                      <div className="btnWrapper my-4 text-center">
+                    </div>
+                    <div className="col-md-12 col-lg-6">
+                      <div className="btnWrapper my-4 text-center increaseTime">
                         <Button
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#5300e8", color: "white", width:"250px", }}
                           onClick={() => {
                             console.log("Action Taken");
                             // props.createLockMakeDeploy(lockAmount, date);
@@ -555,6 +563,7 @@ const VotingPowerActionables = (props) => {
                         </Button>
                       </div>
                     </div>
+
                   </div>
                 </>
 
