@@ -96,6 +96,7 @@ export const contractDictionaryGetter = async (
   seedUref: string,
 ) => {
   const stateRootHash = await getStateRootHash(nodeAddress);
+  console.log("seedUref", seedUref);
 
   const client = new CasperServiceByJsonRPC(nodeAddress);
 
@@ -111,7 +112,6 @@ export const contractDictionaryGetter = async (
     throw Error("Invalid stored value");
   }
 };
-
 
 export const contractHashToByteArray = (contractHash: string) =>
   Uint8Array.from(Buffer.from(contractHash, "hex"));

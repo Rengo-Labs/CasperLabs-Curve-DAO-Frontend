@@ -16,21 +16,22 @@ import {
   Keys,
   RuntimeArgs,
   CLOption,
-  ToBytes
+  ToBytes,
+  encodeBase16
 } from "casper-js-sdk";
 import { Some, None } from "ts-results";
 import * as blake from "blakejs";
 import { concat } from "@ethersproject/bytes";
 import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
-import {createRecipientAddress } from "./utils";
+import { createRecipientAddress } from "./utils";
 
 class LIQUIDITYGAUGEV3Client {
   private contractName: string = "liquiditygaugev3";
-  private contractHash: string= "liquiditygaugev3";
-  private contractPackageHash: string= "liquiditygaugev3";
+  private contractHash: string = "liquiditygaugev3";
+  private contractPackageHash: string = "liquiditygaugev3";
   private namedKeys: {
-    balances:string
+    balances: string
     metadata: string;
     nonces: string;
     allowances: string;
@@ -47,7 +48,7 @@ class LIQUIDITYGAUGEV3Client {
     rewardsReceiver: string;
     rewardIntegral: string;
     rewardIntegralFor: string;
-    
+
   };
 
   private isListening = false;
@@ -58,11 +59,10 @@ class LIQUIDITYGAUGEV3Client {
     private nodeAddress: string,
     private chainName: string,
     private eventStreamAddress?: string,
-    
-  ) 
-  {
-    this.namedKeys= {
-      balances:"null",
+
+  ) {
+    this.namedKeys = {
+      balances: "null",
       metadata: "null",
       nonces: "null",
       allowances: "null",
@@ -79,7 +79,7 @@ class LIQUIDITYGAUGEV3Client {
       rewardsReceiver: "null",
       rewardIntegral: "null",
       rewardIntegralFor: "null",
-    }; 
+    };
   }
 
   // public async install(
@@ -92,11 +92,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _lpAddr = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(lpAddr, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(lpAddr, "hex"))
+  // 	);
   //   const _minter = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(minter, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(minter, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     lp_addr: utils.createRecipientAddress(_lpAddr),
   //     minter: utils.createRecipientAddress(_minter),
@@ -129,8 +129,8 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -162,11 +162,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const _addr = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(addr, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(addr, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -197,8 +197,8 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -228,8 +228,8 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -261,11 +261,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const _token = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(token, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(token, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -299,11 +299,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const _token = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(token, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(token, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -337,11 +337,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const _token = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(token, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(token, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -375,11 +375,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const _recipient = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(recipient, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(recipient, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -414,11 +414,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const _recipient = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(recipient, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(recipient, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -453,11 +453,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const _spender = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(spender, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(spender, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -491,11 +491,11 @@ class LIQUIDITYGAUGEV3Client {
   //   wasmPath: string
   // ) {
   //   const _packageHash = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(packageHash, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(packageHash, "hex"))
+  // 	);
   //   const _spender = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(spender, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(spender, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     entrypoint: CLValueBuilder.string(entrypointName),
   //     package_hash: utils.createRecipientAddress(_packageHash),
@@ -606,7 +606,9 @@ class LIQUIDITYGAUGEV3Client {
       this.contractHash,
       ["lp_token"]
     );
-    return result.value();
+    console.log("encodeBase16(result.value())", encodeBase16(result.value().data));
+
+    return  encodeBase16(result.value().data);
   }
 
   public async controller() {
@@ -636,7 +638,7 @@ class LIQUIDITYGAUGEV3Client {
     return result.value();
   }
 
-public async balanceOf(account: string) {
+  public async balanceOf(account: string) {
     try {
       const key = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(account, "hex"))));
       const keyBytes = CLValueParsers.toBytes(key).unwrap();
@@ -651,7 +653,7 @@ public async balanceOf(account: string) {
     } catch (error) {
       return "0";
     }
-    
+
   }
 
   public async totalSupply() {
@@ -663,13 +665,13 @@ public async balanceOf(account: string) {
     return result.value();
   }
 
-  public async allowances(owner:string, spender:string) {
+  public async allowances(owner: string, spender: string) {
     try {
       const _spender = new CLByteArray(
         Uint8Array.from(Buffer.from(spender, "hex"))
       );
 
-      const _owner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const _owner = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
       const key_spender = createRecipientAddress(_spender);
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(key_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
@@ -708,7 +710,7 @@ public async balanceOf(account: string) {
 
   public async workingBalances(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -742,7 +744,7 @@ public async balanceOf(account: string) {
 
   public async periodTimestamp(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -758,7 +760,7 @@ public async balanceOf(account: string) {
 
   public async integrateInvSupply(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -774,7 +776,7 @@ public async balanceOf(account: string) {
 
   public async integrateInvSupplyOf(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -790,7 +792,7 @@ public async balanceOf(account: string) {
 
   public async integrateCheckpointOf(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -806,7 +808,7 @@ public async balanceOf(account: string) {
 
   public async integrateFraction(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -831,7 +833,7 @@ public async balanceOf(account: string) {
 
   public async rewardTokens(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -847,7 +849,7 @@ public async balanceOf(account: string) {
 
   public async rewardsReceiver(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -863,7 +865,7 @@ public async balanceOf(account: string) {
 
   public async rewardIntegral(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -877,13 +879,13 @@ public async balanceOf(account: string) {
     }
   }
 
-  public async rewardIntegralFor(owner:string, spender:string) {
+  public async rewardIntegralFor(owner: string, spender: string) {
     try {
       const _spender = new CLByteArray(
         Uint8Array.from(Buffer.from(spender, "hex"))
       );
 
-      const _owner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const _owner = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
       const key_spender = createRecipientAddress(_spender);
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(key_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
@@ -937,8 +939,8 @@ public async balanceOf(account: string) {
   //   paymentAmount: string
   // ) {
   //    const _receiver = new CLByteArray(
-	// 	 	Uint8Array.from(Buffer.from(receiver, "hex"))
-	// 	 );
+  // 	 	Uint8Array.from(Buffer.from(receiver, "hex"))
+  // 	 );
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     receiver: utils.createRecipientAddress(_receiver),
   //   });
@@ -953,7 +955,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -967,8 +969,8 @@ public async balanceOf(account: string) {
   //   paymentAmount: string
   // ) {
   //   const _receiver = new CLByteArray(
-	// 		Uint8Array.from(Buffer.from(receiver, "hex"))
-	// 	);
+  // 		Uint8Array.from(Buffer.from(receiver, "hex"))
+  // 	);
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     addr: new CLOption(Some(utils.createRecipientAddress(addr))),
   //     receiver: new CLOption(Some(utils.createRecipientAddress(_receiver)))
@@ -985,7 +987,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -999,8 +1001,8 @@ public async balanceOf(account: string) {
   //   paymentAmount: string
   // ) {
   //   // const _addr = new CLByteArray(
-	// 	// 	Uint8Array.from(Buffer.from(addr, "hex"))
-	// 	// );
+  // 	// 	Uint8Array.from(Buffer.from(addr, "hex"))
+  // 	// );
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     //addr: utils.createRecipientAddress(_addr),
   //     addr: utils.createRecipientAddress(addr),
@@ -1016,7 +1018,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -1047,7 +1049,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -1075,7 +1077,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -1089,8 +1091,8 @@ public async balanceOf(account: string) {
   //   paymentAmount: string
   // ) {
   //    const _spender = new CLByteArray(
-	// 	 	Uint8Array.from(Buffer.from(spender, "hex"))
-	// 	 );
+  // 	 	Uint8Array.from(Buffer.from(spender, "hex"))
+  // 	 );
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     spender: utils.createRecipientAddress(_spender),
   //     amount:CLValueBuilder.u256(amount), 
@@ -1106,7 +1108,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -1121,8 +1123,8 @@ public async balanceOf(account: string) {
   //   paymentAmount: string
   // ) {
   //    const _rewardContract = new CLByteArray(
-	// 	 	Uint8Array.from(Buffer.from(rewardContract, "hex"))
-	// 	 );
+  // 	 	Uint8Array.from(Buffer.from(rewardContract, "hex"))
+  // 	 );
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     reward_contract: utils.createRecipientAddress(_rewardContract),
   //     claim_sig:CLValueBuilder.string(claimSig),
@@ -1140,7 +1142,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -1166,7 +1168,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -1180,8 +1182,8 @@ public async balanceOf(account: string) {
   //   paymentAmount: string
   // ) {
   //   // const _addr = new CLByteArray(
-	// 	// 	Uint8Array.from(Buffer.from(addr, "hex"))
-	// 	// );
+  // 	// 	Uint8Array.from(Buffer.from(addr, "hex"))
+  // 	// );
   //   const runtimeArgs = RuntimeArgs.fromMap({
   //     //addr: utils.createRecipientAddress(_addr),
   //     addr: utils.createRecipientAddress(addr),
@@ -1197,7 +1199,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");
@@ -1221,7 +1223,7 @@ public async balanceOf(account: string) {
   //   });
 
   //   if (deployHash !== null) {
-      
+
   //     return deployHash;
   //   } else {
   //     throw Error("Invalid Deploy");

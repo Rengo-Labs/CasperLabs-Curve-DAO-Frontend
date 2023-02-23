@@ -16,6 +16,8 @@ import {
   Keys,
   RuntimeArgs,
   CLOption,
+  encodeBase16,
+  decodeBase16
 } from "casper-js-sdk";
 import { Some, None } from "ts-results";
 import * as blake from "blakejs";
@@ -23,30 +25,30 @@ import { concat } from "@ethersproject/bytes";
 import { GAUGECONTROLLEREVENTS } from "./constants";
 import * as utils from "./utils";
 import { RecipientType, IPendingDeploy } from "./types";
-import {createRecipientAddress } from "./utils";
+import { createRecipientAddress } from "./utils";
 
 class GaugeControllerClient {
   private contractName: string = "erc20";
-  private contractHash: string= "erc20";
-  private contractPackageHash: string= "erc20";
+  private contractHash: string = "erc20";
+  private contractPackageHash: string = "erc20";
   private namedKeys: {
-    gauge_types_ : string,
-    gauge_type_names : string,
-    vote_user_slopes : string,
-    vote_user_power : string,
-    last_user_vote : string,
-    points_weight : string,
-    changes_weight : string,
-    time_weight : string,
-    gauges : string,
-    time_sum : string,
-    points_sum : string,
-    changes_sum : string,
-    points_total : string,
+    gaugeTypes_: string,
+    gaugeTypeNames: string,
+    vote_user_slopes: string,
+    vote_user_power: string,
+    last_user_vote: string,
+    points_weight: string,
+    changes_weight: string,
+    time_weight: string,
+    gauges: string,
+    time_sum: string,
+    points_sum: string,
+    changes_sum: string,
+    points_total: string,
     points_type_weight: string,
-    time_type_weight :string,
-    inflation_rate :string,
-    working_supply :string,
+    time_type_weight: string,
+    inflation_rate: string,
+    working_supply: string,
   };
 
   private isListening = false;
@@ -57,28 +59,27 @@ class GaugeControllerClient {
     private nodeAddress: string,
     private chainName: string,
     private eventStreamAddress?: string,
-    
-  ) 
-  {
-    this.namedKeys= {
-      gauge_types_:"null",
-      gauge_type_names : "null",
-      vote_user_slopes : "null",
-      vote_user_power : "null",
-      last_user_vote : "null",
-      points_weight : "null",
-      changes_weight : "null",
-      time_weight : "null",
-      gauges : "null",
-      time_sum : "null",
-      points_sum : "null",
-      changes_sum : "null",
-      points_total : "null",
-      points_type_weight : "null",
-      time_type_weight : "null",
-      inflation_rate : "null",
-      working_supply : "null",
-    }; 
+
+  ) {
+    this.namedKeys = {
+      gaugeTypes_: "null",
+      gaugeTypeNames: "null",
+      vote_user_slopes: "null",
+      vote_user_power: "null",
+      last_user_vote: "null",
+      points_weight: "null",
+      changes_weight: "null",
+      time_weight: "null",
+      gauges: "null",
+      time_sum: "null",
+      points_sum: "null",
+      changes_sum: "null",
+      points_total: "null",
+      points_type_weight: "null",
+      time_type_weight: "null",
+      inflation_rate: "null",
+      working_supply: "null",
+    };
   }
 
   public async setContractHash(hash: string) {
@@ -91,6 +92,8 @@ class GaugeControllerClient {
 
     const { contractPackageHash, namedKeys } = contractData.Contract!;
     this.contractHash = hash;
+    // console.log("namedKeys", namedKeys);
+
     this.contractPackageHash = contractPackageHash.replace(
       "contract-package-wasm",
       ""
@@ -126,16 +129,18 @@ class GaugeControllerClient {
       }
       return acc;
     }, {});
+
+
   }
 
-  public async commit_transfer_ownership(   
+  public async commit_transfer_ownership(
     keys: Keys.AsymmetricKey,
     addr: string,
-    paymentAmount: string){
+    paymentAmount: string) {
 
     const _addr = new CLByteArray(
-			Uint8Array.from(Buffer.from(addr, "hex"))
-		);
+      Uint8Array.from(Buffer.from(addr, "hex"))
+    );
 
     const runtimeArgs = RuntimeArgs.fromMap({
       addr: utils.createRecipientAddress(_addr),
@@ -152,7 +157,7 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -162,7 +167,7 @@ class GaugeControllerClient {
   public async apply_transfer_ownership(
     keys: Keys.AsymmetricKey,
     paymentAmount: string
-  ){
+  ) {
 
     const runtimeArgs = RuntimeArgs.fromMap({
 
@@ -179,21 +184,21 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
     }
   }
 
-  public async checkpoint_gauge(   
+  public async checkpoint_gauge(
     keys: Keys.AsymmetricKey,
     addr: string,
-    paymentAmount: string){
+    paymentAmount: string) {
 
     const _addr = new CLByteArray(
-			Uint8Array.from(Buffer.from(addr, "hex"))
-		);
+      Uint8Array.from(Buffer.from(addr, "hex"))
+    );
 
     const runtimeArgs = RuntimeArgs.fromMap({
       addr: CLValueBuilder.key(_addr),
@@ -210,7 +215,7 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -219,7 +224,7 @@ class GaugeControllerClient {
 
   public async checkpoint(
     keys: Keys.AsymmetricKey,
-    paymentAmount: string){
+    paymentAmount: string) {
 
     const runtimeArgs = RuntimeArgs.fromMap({
     });
@@ -235,22 +240,22 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
     }
   }
 
-  public async change_type_weight(   
+  public async change_type_weight(
     keys: Keys.AsymmetricKey,
     type_id: string,
-    weight : string,
-    paymentAmount: string){
+    weight: string,
+    paymentAmount: string) {
 
     const runtimeArgs = RuntimeArgs.fromMap({
-      type_id : CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(type_id)]),
-      weight : CLValueBuilder.u256(weight),
+      type_id: CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(type_id)]),
+      weight: CLValueBuilder.u256(weight),
     });
 
     const deployHash = await contractCall({
@@ -264,26 +269,26 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
     }
   }
 
-  public async change_gauge_weight(   
+  public async change_gauge_weight(
     keys: Keys.AsymmetricKey,
     addr: string,
-    weight : string,
-    paymentAmount: string){
+    weight: string,
+    paymentAmount: string) {
 
     const _addr = new CLByteArray(
-			Uint8Array.from(Buffer.from(addr, "hex"))
-		);
+      Uint8Array.from(Buffer.from(addr, "hex"))
+    );
 
     const runtimeArgs = RuntimeArgs.fromMap({
       addr: CLValueBuilder.key(_addr),
-      weight : CLValueBuilder.u256(weight)
+      weight: CLValueBuilder.u256(weight)
     });
 
     const deployHash = await contractCall({
@@ -297,22 +302,22 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
     }
   }
-  
-  public async add_type(   
+
+  public async add_type(
     keys: Keys.AsymmetricKey,
     name: string,
-    weight :string,
-    paymentAmount: string){
+    weight: string,
+    paymentAmount: string) {
 
     const runtimeArgs = RuntimeArgs.fromMap({
-    name : CLValueBuilder.string(name),
-    weight : new CLOption(Some(CLValueBuilder.u256(weight)))
+      name: CLValueBuilder.string(name),
+      weight: new CLOption(Some(CLValueBuilder.u256(weight)))
     });
 
     const deployHash = await contractCall({
@@ -326,29 +331,29 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
     }
   }
 
-  public async add_gauge(   
+  public async add_gauge(
     keys: Keys.AsymmetricKey,
     addr: string,
-    gauge_type :string, 
-    weight : string,
+    gauge_type: string,
+    weight: string,
     paymentAmount: string,
-    ){
+  ) {
 
     const _addr = new CLByteArray(
-			Uint8Array.from(Buffer.from(addr, "hex"))
-		);
+      Uint8Array.from(Buffer.from(addr, "hex"))
+    );
 
     const runtimeArgs = RuntimeArgs.fromMap({
       addr: utils.createRecipientAddress(_addr),
-      gauge_type : CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(gauge_type)]),
-      weight : new CLOption(Some(CLValueBuilder.u256(weight)))
+      gauge_type: CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(gauge_type)]),
+      weight: new CLOption(Some(CLValueBuilder.u256(weight)))
     });
 
     const deployHash = await contractCall({
@@ -362,27 +367,27 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
     }
   }
 
-  public async vote_for_gauge_weights(   
+  public async vote_for_gauge_weights(
     keys: Keys.AsymmetricKey,
     gauge_addr: string,
-    user_weight :string, 
+    user_weight: string,
     paymentAmount: string,
-    ){
+  ) {
 
     const _gauge_addr = new CLByteArray(
-			Uint8Array.from(Buffer.from(gauge_addr, "hex"))
-		);
+      Uint8Array.from(Buffer.from(gauge_addr, "hex"))
+    );
 
     const runtimeArgs = RuntimeArgs.fromMap({
       gauge_addr: utils.createRecipientAddress(_gauge_addr),
-      user_weight : CLValueBuilder.u256(user_weight)
+      user_weight: CLValueBuilder.u256(user_weight)
     });
 
     const deployHash = await contractCall({
@@ -396,7 +401,7 @@ class GaugeControllerClient {
     });
 
     if (deployHash !== null) {
-      
+
       return deployHash;
     } else {
       throw Error("Invalid Deploy");
@@ -404,45 +409,53 @@ class GaugeControllerClient {
   }
 
   public async gauge_types_(owner: string) {
-    try {
+    console.log("owner", owner);
 
+    try {
+      // console.log("namedKeys", this.namedKeys);
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.gauge_types_
+        this.namedKeys.gaugeTypes_
       );
       const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
+      // console.log("maybeValue", maybeValue.value());
+
+      return parseFloat(maybeValue.value()[1].data);
 
     } catch (error) {
       return "0";
     }
-    
+
   }
 
-  public async gauge_type_names(owner : string){
-    try {
+  public async gauge_type_names(owner: string) {
+    console.log("this.namedKeys", this.namedKeys);
 
-      const result = await utils.contractDictionaryGetter(
-        this.nodeAddress,
-        owner,
-        this.namedKeys.gauge_type_names
-      );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
+    // try {
 
-    } catch (error) {
-      return "0";
-    }
+    const result = await utils.contractDictionaryGetter(
+      this.nodeAddress,
+      owner,
+      this.namedKeys.gaugeTypeNames
+    );
+    const maybeValue = result.value().unwrap();
+    // console.log("maybeValue", maybeValue);
+
+    return maybeValue.value().toString();
+
+    // } catch (error) {
+    //   return "0";
+    // }
   }
 
-  public async vote_user_slopes(owner:string, spender:string) {
+  public async vote_user_slopes(owner: string, spender: string) {
     try {
       const _spender = new CLByteArray(
         Uint8Array.from(Buffer.from(spender, "hex"))
       );
 
-      const _owner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const _owner = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
       const key_spender = createRecipientAddress(_spender);
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(key_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
@@ -462,9 +475,9 @@ class GaugeControllerClient {
 
   }
 
-  public async vote_user_power(owner : string){
+  public async vote_user_power(owner: string) {
     try {
-      
+
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
@@ -478,13 +491,13 @@ class GaugeControllerClient {
     }
   }
 
-  public async last_user_vote(owner:string, spender:string) {
+  public async last_user_vote(owner: string, spender: string) {
     try {
       const _spender = new CLByteArray(
         Uint8Array.from(Buffer.from(spender, "hex"))
       );
 
-      const _owner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const _owner = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
       const key_spender = createRecipientAddress(_spender);
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(key_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
@@ -504,11 +517,11 @@ class GaugeControllerClient {
 
   }
 
-  public async points_weight(owner:string, spender:string) {
+  public async points_weight(owner: string, spender: string) {
     try {
       const _spender = CLValueBuilder.u256(spender);
 
-      const _owner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const _owner = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
       const encodedBytes = Buffer.from(blaked).toString("hex");
@@ -527,11 +540,11 @@ class GaugeControllerClient {
 
   }
 
-  public async changes_weight(owner:string, spender:string) {
+  public async changes_weight(owner: string, spender: string) {
     try {
       const _spender = CLValueBuilder.u256(spender);
 
-      const _owner=new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
+      const _owner = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(owner, "hex"))));
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
       const encodedBytes = Buffer.from(blaked).toString("hex");
@@ -564,11 +577,12 @@ class GaugeControllerClient {
     } catch (error) {
       return "0";
     }
-    
+
   }
 
   public async gauges(owner: string) {
     try {
+      console.log("owner", owner);
 
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
@@ -576,12 +590,15 @@ class GaugeControllerClient {
         this.namedKeys.gauges
       );
       const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
+      // console.log("maybeValue", maybeValue.value());
+      // console.log("maybeValue", encodeBase16(maybeValue.value().data));
+
+      return encodeBase16(maybeValue.value().data);
 
     } catch (error) {
       return "0";
     }
-    
+
   }
 
   public async time_sum(owner: string) {
@@ -598,13 +615,13 @@ class GaugeControllerClient {
     } catch (error) {
       return "0";
     }
-    
+
   }
 
-  public async points_sum(owner:string, spender:string) {
+  public async points_sum(owner: string, spender: string) {
     try {
       const _spender = CLValueBuilder.u256(spender);
-      const _owner= CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(owner)]);
+      const _owner = CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(owner)]);
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
       const encodedBytes = Buffer.from(blaked).toString("hex");
@@ -623,10 +640,10 @@ class GaugeControllerClient {
 
   }
 
-  public async changes_sum(owner:string, spender:string) {
+  public async changes_sum(owner: string, spender: string) {
     try {
       const _spender = CLValueBuilder.u256(spender);
-      const _owner= CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(owner)]);
+      const _owner = CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(owner)]);
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
       const encodedBytes = Buffer.from(blaked).toString("hex");
@@ -659,13 +676,13 @@ class GaugeControllerClient {
     } catch (error) {
       return "0";
     }
-    
+
   }
 
-  public async points_type_weight(owner:string, spender:string) {
+  public async points_type_weight(owner: string, spender: string) {
     try {
       const _spender = CLValueBuilder.u256(spender);
-      const _owner= CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(owner)]);
+      const _owner = CLValueBuilder.tuple2([CLValueBuilder.bool(true), CLValueBuilder.u128(owner)]);
       const finalBytes = concat([CLValueParsers.toBytes(_owner).unwrap(), CLValueParsers.toBytes(_spender).unwrap()]);
       const blaked = blake.blake2b(finalBytes, undefined, 32);
       const encodedBytes = Buffer.from(blaked).toString("hex");
@@ -716,7 +733,7 @@ class GaugeControllerClient {
     } catch (error) {
       return "0";
     }
-    
+
   }
 
   public async time_total() {
@@ -744,7 +761,7 @@ class GaugeControllerClient {
       ["future_admin"]
     );
     return result.value();
-  }   
+  }
 
   public async token() {
     const result = await contractSimpleGetter(
@@ -753,7 +770,7 @@ class GaugeControllerClient {
       ["token"]
     );
     return result.value();
-  }   
+  }
 
   public async n_gauge_types() {
     const result = await contractSimpleGetter(
@@ -762,7 +779,7 @@ class GaugeControllerClient {
       ["n_gauge_types"]
     );
     return result.value();
-  }   
+  }
 
   public async n_gauges() {
     const result = await contractSimpleGetter(
@@ -771,7 +788,7 @@ class GaugeControllerClient {
       ["n_gauges"]
     );
     return result.value();
-  }   
+  }
 
   public async voting_escrow() {
     const result = await contractSimpleGetter(
@@ -780,7 +797,7 @@ class GaugeControllerClient {
       ["voting_escrow"]
     );
     return result.value();
-  } 
+  }
 
   public async get_hash() {
     const result = await contractSimpleGetter(
@@ -789,7 +806,7 @@ class GaugeControllerClient {
       ["self_contract_hash"]
     );
     return result.value();
-  } 
+  }
 
   public async package_hash() {
     const result = await contractSimpleGetter(
@@ -798,8 +815,8 @@ class GaugeControllerClient {
       ["self_contract_package_hash"]
     );
     return result.value();
-  }   
-  
+  }
+
   public onEvent(
     eventNames: GAUGECONTROLLEREVENTS[],
     callback: (
