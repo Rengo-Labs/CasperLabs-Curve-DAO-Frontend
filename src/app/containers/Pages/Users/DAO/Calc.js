@@ -578,11 +578,49 @@ const Calc = () => {
                                       </FormControl>
                                     </div>
                                   </div>
+                                  
+                                </div>
+                                <div className="row no-gutters mt-2 ">
+                                    {/* Total veCRV */}
+                                <div className="col-6 mt-3 align-items-center">
+                                  <div className="">
+                                    <Box
+                                      component="form"
+                                      noValidate
+                                      autoComplete="off"
+                                    >
+                                      <TextInput
+                                        id="total-vecrv"
+                                        label="Total veCRV:"
+                                        variant="filled"
+                                        name="TotalveCRVCalc"
+                                        value={totalVeCRV}
+                                        onChange={(e) => {
+                                          setTotalVeCRV(e.target.value);
+                                          //calling this function because of watchers
+                                          // calcTrigger();
+                                        }}
+                                      />
+                                    </Box>
+                                    <div className="row no-gutters">
+                                      <div className="col-12 col-lg-6 text-left p-2 py-3">
+                                        <Typography
+                                          variant="body1"
+                                          component={"div"}
+                                        >
+                                          <span className="font-weight-bold">
+                                            Boost:&nbsp;
+                                          </span>
+                                          {crvBoost}x
+                                        </Typography>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                                   {!gaugeVeCRV ? (
-                                    <div className="row no-gutters mt-2 w-100">
-                                      <div className="col-12">
-                                        <div className="row no-gutters justify-content-md-end">
-                                          <div className="col-12 col-md-6">
+                                      <div className="col-6">
+                                        <div className="mt-4">
+                                          <div className="">
                                             {/* <SelectInput
                                               setDate={setDate}
                                               setDateDisplay={setDateDisplay}
@@ -608,7 +646,7 @@ const Calc = () => {
                                               renderInput={(params) => (
                                                 <TextField
                                                   {...params}
-                                                  label="Select Lock Period"
+                                                  label="Select Lock Periodoo"
                                                   variant="standard"
                                                 />
                                               )}
@@ -637,45 +675,10 @@ const Calc = () => {
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
+                                   
                                   ) : null}
-                                </div>
-                                {/* Total veCRV */}
-                                <div className="row no-gutters mt-3 align-items-center">
-                                  <div className="col-12 col-md-6">
-                                    <Box
-                                      component="form"
-                                      noValidate
-                                      autoComplete="off"
-                                    >
-                                      <TextInput
-                                        id="total-vecrv"
-                                        label="Total veCRV:"
-                                        variant="filled"
-                                        name="TotalveCRVCalc"
-                                        value={totalVeCRV}
-                                        onChange={(e) => {
-                                          setTotalVeCRV(e.target.value);
-                                          //calling this function because of watchers
-                                          // calcTrigger();
-                                        }}
-                                      />
-                                    </Box>
-                                    <div className="row no-gutters">
-                                      <div className="col-12 text-right p-2 py-3">
-                                        <Typography
-                                          variant="body1"
-                                          component={"div"}
-                                        >
-                                          <span className="font-weight-bold">
-                                            Boost:&nbsp;
-                                          </span>
-                                          {crvBoost}x
-                                        </Typography>
-                                      </div>
-                                    </div>
                                   </div>
-                                </div>
+                                
                                 {/* Button */}
                                 <div className="row no-gutters justify-content-center">
                                   <div className="col-12 col-md-6 text-center my-3">
