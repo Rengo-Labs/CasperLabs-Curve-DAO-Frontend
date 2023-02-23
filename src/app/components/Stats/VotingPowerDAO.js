@@ -9,7 +9,7 @@ import "../../assets/css/style.css";
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
 import { gql, useQuery } from "@apollo/client";
-import { Accordion, AccordionSummary, Avatar, CardHeader } from "@mui/material";
+import { Grid } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import { CLPublicKey } from "casper-js-sdk";
@@ -21,6 +21,7 @@ import {
 } from "../blockchain/Hashes/ContractHashes";
 import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 import * as erc20CrvFunctions from "../JsClients/ERC20CRV/erc20crvFunctions/functions";
+import VotingPowerDaoCards from "../Cards/VotingPowerDaoCards";
 
 const DAO_POWER = gql`
   query {
@@ -310,211 +311,35 @@ const VotingPowerDAO = (props) => {
 
   return (
     <>
-      <div className="row no-gutters">
-        <div className="col-12 text-center text-md-left">
-          <div>
-            <Accordion
-              style={{
-                borderRadius: "15px 15px 0px 0px ",
-              }}
-              expanded={false}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <Typography
-                    variant="body2"
-                    style={{
-                      color: "#000027",
-                    }}
-                    gutterBottom
-                  >
-                    {CRVLockedFormat()}
-                  </Typography>
-                }
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <CardHeader avatar={<></>} title={"Total CRV vote-locked:"} />
-              </AccordionSummary>
-            </Accordion>
-            {/* <Accordion
-              style={{
-                borderRadius: "0px 0px 0px 0px ",
-              }}
-              expanded={false}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <Typography
-                    variant="body2"
-                    style={{
-                      color: "#000027",
-                    }}
-                    gutterBottom
-                  >
-                    125.47%
-                  </Typography>
-                }
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <CardHeader
-                  avatar={<></>}
-                  title={
-                    "Percentage of total CRV Locked excluding voting escrow:"
-                  }
-                />
-              </AccordionSummary>
-            </Accordion> */}
-            <Accordion
-              style={{
-                borderRadius: "0px 0px 15px 15px ",
-              }}
-              expanded={false}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <Typography
-                    variant="body2"
-                    style={{
-                      color: "#000027",
-                    }}
-                    gutterBottom
-                  >
-                    {CRVLockedPercentage}%
-                  </Typography>
-                }
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <CardHeader
-                  avatar={<></>}
-                  title={"Percentage of total CRV Locked:"}
-                />
-              </AccordionSummary>
-            </Accordion>
-          </div>
-          <div className="w-100 my-4">
-            <Divider />
-          </div>
-          <div className="mt-2">
-            <Accordion
-              style={{
-                borderRadius: "15px 15px 0px 0px ",
-              }}
-              expanded={false}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <Typography
-                    variant="body2"
-                    style={{
-                      color: "#000027",
-                    }}
-                    gutterBottom
-                  >
-                    {DAOPowerFormat()}
-                  </Typography>
-                }
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <CardHeader avatar={<></>} title={"Total veCRV:"} />
-              </AccordionSummary>
-            </Accordion>
-            <Accordion
-              style={{
-                borderRadius: "0px 0px 15px 15px ",
-              }}
-              expanded={false}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <Typography
-                    variant="body2"
-                    style={{
-                      color: "#000027",
-                    }}
-                    gutterBottom
-                  >
-                    {averageLock() ? `${averageLock()} years` : "0 years"}
-                  </Typography>
-                }
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <CardHeader avatar={<></>} title={"Average lock time:"} />
-              </AccordionSummary>
-            </Accordion>
-          </div>
-          <div className="w-100 my-4">
-            <Divider />
-          </div>
-          <div className="mt-2">
-            <Accordion
-              style={{
-                borderRadius: "15px 15px 0px 0px ",
-              }}
-              expanded={false}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <Typography
-                    variant="body2"
-                    style={{
-                      color: "#000027",
-                    }}
-                    gutterBottom
-                  >
-                    {/* 0.00 */}
-                    {CRVBalance ? CRVBalance / 10 ** 9 : 0.0}
-                  </Typography>
-                }
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <CardHeader
-                  avatar={
-                    <Avatar src={curveLogo} aria-label="curve-logo-avatar" />
-                  }
-                  title={"CRV Balance:"}
-                />
-              </AccordionSummary>
-            </Accordion>
-            <Accordion
-              style={{
-                borderRadius: "0px 0px 15px 15px ",
-              }}
-              expanded={false}
-            >
-              <AccordionSummary
-                expandIcon={
-                  <Typography
-                    variant="body2"
-                    style={{
-                      color: "#000027",
-                    }}
-                    gutterBottom
-                  >
-                    {/* 0 */}
-                    {myLockedCRVFormat()}
-                  </Typography>
-                }
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <CardHeader
-                  avatar={
-                    <Avatar src={curveLogo} aria-label="curve-logo-avatar" />
-                  }
-                  title={"My CRV Locked:"}
-                // subheader={tokenB.symbol}
-                />
-              </AccordionSummary>
-            </Accordion>
-          </div>
-        </div>
-      </div>
+    <Grid
+      className="mt-2 mb-5"
+      container
+      spacing={2}
+      justify="center"
+      columnSpacing={3}
+      rowSpacing={5}
+    >
+      <Grid item xs={12} sm={6} md={4}>
+      <VotingPowerDaoCards title={"Total CRV vote-locked:"} value={CRVLockedFormat()}/>
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+      <VotingPowerDaoCards title={"Percentage of total CRV Locked:"} value={`${CRVLockedPercentage}%`}/>
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+      <VotingPowerDaoCards title={"Total veCRV:"} value={DAOPowerFormat()}/>
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+      <VotingPowerDaoCards title={"Average lock time:"}  value={averageLock() ? `${averageLock()} years` : "0 years"}/>
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+      <VotingPowerDaoCards title={"CRV Balance:"} src={curveLogo}  value={CRVBalance ? CRVBalance / 10 ** 9 : 0.0}/>
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
+      <VotingPowerDaoCards title={"My CRV Locked:"} src={curveLogo}  value={myLockedCRVFormat()}/>
+      </Grid>
+    </Grid>
+
+     
     </>
   );
 };
