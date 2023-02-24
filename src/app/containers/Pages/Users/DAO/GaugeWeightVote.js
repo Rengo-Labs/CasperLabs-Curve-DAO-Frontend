@@ -15,7 +15,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
@@ -29,47 +28,39 @@ import WeightVotingHistory from "../../../../components/Charts/WeightVotingHisto
 import TextInput from "../../../../components/FormsUI/TextInput";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import HomeBanner from "../Home/HomeBanner";
-import * as helpers from "../../../../assets/js/helpers";
 
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import PieChartIcon from "@mui/icons-material/PieChart";
 import {
-  Alert,
-  Avatar,
-  Button,
+  Alert, Button,
   Container,
-  TableFooter,
-  TablePagination,
+  TableFooter
 } from "@mui/material";
+import axios from "axios";
 import {
   CLByteArray,
   CLPublicKey,
   CLValueBuilder,
-  RuntimeArgs,
+  RuntimeArgs
 } from "casper-js-sdk";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import clock from "../../../../assets/img/clock.png";
 import cspr from "../../../../assets/img/cspr.png";
 import usdt from "../../../../assets/img/usdt.png";
 import wbtc from "../../../../assets/img/wbtc.png";
 import {
   GAUGE_CONTROLLER_CONTRACT_HASH,
-  VOTING_ESCROW_CONTRACT_HASH,
+  VOTING_ESCROW_CONTRACT_HASH
 } from "../../../../components/blockchain/Hashes/ContractHashes";
 import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
 import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../../../../components/blockchain/RecipientAddress/RecipientAddress";
 import { signdeploywithcaspersigner } from "../../../../components/blockchain/SignDeploy/SignDeploy";
+import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
+import * as votingEscrowFunctions from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 import SigningModal from "../../../../components/Modals/SigningModal";
 import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeWeightModal";
-import TablePaginationActions from "../../../../components/pagination/TablePaginationActions";
-import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
-import axios from "axios";
-import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
 import * as statsStore from "../../../../components/stores/StatsStore";
+import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 import VotingHistoryTable from "../../../../components/Tables/VotingHistoryTable";
-import * as votingEscrowFunctions from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 
 const GAUGE_WEIGHT = gql`
   query gaugeVotesByUser($user: String) {
@@ -116,6 +107,7 @@ const GAUGES_BY_ADDRESS = gql`
       address
       contractHash
       packageHash
+      name
     }
   }
 `;
@@ -143,7 +135,7 @@ const sampleTableData =
 var gaugeWeightVoteData = [];
 try {
   gaugeWeightVoteData = JSON.parse(sampleTableData);
-} catch (expecption) {}
+} catch (expecption) { }
 
 const votingHistoryCells = [
   "Time",
@@ -165,6 +157,9 @@ try {
   console.log("an exception has occured!", expecption);
 }
 
+const WEEK = 604800
+
+const WEIGHT_VOTE_DELAY = 10 * 86400
 // COMPONENT FUNCTION
 const GaugeWeightVote = () => {
   // States
@@ -209,6 +204,13 @@ const GaugeWeightVote = () => {
   const [currentWeights, setCurrentWeights] = useState({});
   const [futureWeights, setFutureWeights] = useState({});
   const [nextTime, setNextTime] = useState();
+  const [lockEnd, setLockEnd] = useState();
+  const [lastUserVote, setLastUserVote] = useState();
+  const [balance, setBalance] = useState(0);
+  const [weight, setWeight] = useState(0);
+  const [powerUsed, setPowerUsed] = useState(0);
+  const [oldSlope, setOldSlope] = useState(0);
+  const [myVoteWeightUsed, setMyVoteWeightUsed] = useState(null);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -990,6 +992,27 @@ const GaugeWeightVote = () => {
 
     // this.isCalculating = false;
   };
+  function lockExpiresSoon() {
+    return lockEnd <= nextTime
+  }
+  function voteIsOften() {
+    return lastUserVote > 0 && lastUserVote + WEIGHT_VOTE_DELAY < Date.now() / 1000
+  }
+  function balanceFormat() {
+    return (balance / 1e9).toFixed(2)
+  }
+  function isInvalidWeight() {
+    return weight <= 0 || weight > 100 || isNaN(weight)
+  }
+  function weightAllocated() {
+    return (weight / 100 * balance / 1e9).toFixed(8)
+  }
+  function tooMuchPower() {
+    if (oldSlope === null) return false
+    let _powerUsed = this.powerUsed
+    _powerUsed = _powerUsed + weight * 100 - +this.oldSlope.power
+    return !(_powerUsed >= 0 || _powerUsed <= 10000)
+  }
 
   return (
     <>
@@ -1051,117 +1074,71 @@ const GaugeWeightVote = () => {
                                     much CRV does each pool get
                                   </Alert>
                                 </div>
-                                {/* <div className="bg-primary text-white p-3 row no-gutters">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    component="div"
-                                  >
-                                    You can vote for gauge weight with your
-                                    veCRV tokens(locked CRV tokens in&nbsp;
-                                    <span className="font-weight-bold">
-                                      <Link
-                                        to={"/locker"}
+                                {balance == 0 ? (
+                                  <div className=" my-2">
+                                    <Alert severity="info">
+                                      You need to have CRV locked in&nbsp;
+                                      <span
+                                        className="font-weight-bold"
                                         style={{
-                                          color: "white",
-                                          textDecoration: "underline",
-                                        }}
-                                      >
-                                        Locker
-                                      </Link>
-                                    </span>
-                                    ). Gauge weights are used to determine how
-                                    much CRV does each pool get
-                                  </Typography>
-                                </div> */}
-                                <div className=" my-2">
-                                  <Alert severity="info">
-                                    Your lock expires soon. You need to lock at
-                                    least for a week in&nbsp;
-                                    <span
-                                      className="font-weight-bold"
-                                      style={{
-                                        borderBottom: "1px dashed white",
-                                        color: "#5300e8",
-                                      }}
-                                    >
-                                      <Link
-                                        to="/"
-                                        style={{
-                                          textDecoration: "none",
+                                          borderBottom: "1px dashed white",
                                           color: "#5300e8",
                                         }}
                                       >
-                                        Locker
-                                      </Link>
-                                    </span>
-                                  </Alert>
-                                </div>
-                                {/* <div className="bg-primary text-white p-3 row no-gutters my-2">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    component="div"
-                                  >
-                                    Your lock expires soon. You need to lock at
-                                    least for a week in&nbsp;
-                                    <span className="font-weight-bold">
-                                      <Link
-                                        to={"/locker"}
+                                        <Link
+                                          to="/locker"
+                                          style={{
+                                            textDecoration: "none",
+                                            color: "#5300e8",
+                                          }}
+                                        >
+                                          Locker
+                                        </Link>
+                                      </span>
+                                      in order to vote for gauge weights
+                                    </Alert>
+                                  </div>
+                                ) : (null)}
+                                {lockExpiresSoon ? (
+                                  <div className=" my-2">
+                                    <Alert severity="info">
+                                      Your lock expires soon. You need to lock at
+                                      least for a week in&nbsp;
+                                      <span
+                                        className="font-weight-bold"
                                         style={{
-                                          color: "white",
-                                          textDecoration: "underline",
-                                        }}
-                                      >
-                                        Locker
-                                      </Link>
-                                    </span>
-                                  </Typography>
-                                </div> */}
-                                <div className=" my-2">
-                                  <Alert severity="info">
-                                    You need to have CRV locked in&nbsp;
-                                    <span
-                                      className="font-weight-bold"
-                                      style={{
-                                        borderBottom: "1px dashed white",
-                                        color: "#5300e8",
-                                      }}
-                                    >
-                                      <Link
-                                        to="/"
-                                        style={{
-                                          textDecoration: "none",
+                                          borderBottom: "1px dashed white",
                                           color: "#5300e8",
                                         }}
                                       >
-                                        Locker
-                                      </Link>
-                                    </span>
-                                    &nbsp;in order to vote for gauge weights
-                                  </Alert>
-                                </div>
-                                {/* <div className="bg-primary text-white p-3 row no-gutters my-2">
-                                  <Typography
-                                    variant="body1"
-                                    gutterBottom
-                                    component="div"
-                                  >
-                                    You need to have CRV locked in&nbsp;
-                                    <span className="font-weight-bold">
-                                      <Link
-                                        to={"/locker"}
-                                        style={{
-                                          color: "white",
-                                          textDecoration: "underline",
-                                        }}
-                                      >
-                                        Locker
-                                      </Link>
-                                    </span>
-                                    &nbsp;in order to vote for gauge weights
-                                  </Typography>
-                                </div> */}
+                                        <Link
+                                          to="/"
+                                          style={{
+                                            textDecoration: "none",
+                                            color: "#5300e8",
+                                          }}
+                                        >
+                                          Locker
+                                        </Link>
+                                      </span>
+                                    </Alert>
+                                  </div>) : (null)}
+
+                                {voteIsOften ? (
+                                  <div className=" my-2">
+                                    <Alert severity="info">
+                                      You can vote only once in 10 days
+                                    </Alert>
+                                  </div>) : (null)}
+
+                                {tooMuchPower ? (
+                                  <div className=" my-2">
+                                    <Alert severity="info">
+                                      You alrady used too much power for this gauge
+                                    </Alert>
+                                  </div>) : (null)}
+
+
                               </div>
                             </div>
                           </div>
@@ -1364,7 +1341,7 @@ const GaugeWeightVote = () => {
                               <Formik
                                 initialValues={initialValues}
                                 validationSchema={validationSchema}
-                                // onSubmit={onSubmitGaugeWeightVote}
+                              // onSubmit={onSubmitGaugeWeightVote}
                               >
                                 <Form>
                                   <div className="row no-gutters justify-content-center">
@@ -1407,6 +1384,7 @@ const GaugeWeightVote = () => {
                                         <InputLabel id="select-gauge-label">
                                           Select a Gauge
                                         </InputLabel>
+                                        
                                         <Select
                                           labelId="select-gauge-label"
                                           id="gauge-select"
@@ -1416,9 +1394,6 @@ const GaugeWeightVote = () => {
                                           <MenuItem value="Select a Gauge">
                                             <em>Select a Gauge</em>
                                           </MenuItem>
-                                          {/* <MenuItem value={"USDT"}>USDT</MenuItem>
-                                        <MenuItem value={"BTC"}>BTC</MenuItem>
-                                        <MenuItem value={"CSPR"}>CSPR</MenuItem> */}
                                           {gauges.data?.getGaugesByAddress?.map(
                                             (item, key) => (
                                               <MenuItem key={key} value={item}>
@@ -1432,21 +1407,22 @@ const GaugeWeightVote = () => {
                                         </Select>
                                       </FormControl>
                                     </div>
-                                    <div className="col-12 col-md-6 mt-2 mt-md-0">
-                                      <List>
-                                        <ListItem
-                                          disablePadding
-                                          sx={{ textAlign: "center" }}
-                                        >
-                                          <ListItemText>
-                                            <span className="font-weight-bold">
-                                              Vote Weight % used:&nbsp;
-                                            </span>
-                                            {voteWeightUsed}
-                                          </ListItemText>
-                                        </ListItem>
-                                      </List>
-                                    </div>
+                                    {myVoteWeightUsed ? (
+                                      <div className="col-12 col-md-6 mt-2 mt-md-0">
+                                        <List>
+                                          <ListItem
+                                            disablePadding
+                                            sx={{ textAlign: "center" }}
+                                          >
+                                            <ListItemText>
+                                              <span className="font-weight-bold">
+                                                Vote Weight % used:&nbsp;
+                                              </span>
+                                              {myVoteWeightUsed && myVoteWeightUsed.toFixed(2)}%
+                                            </ListItemText>
+                                          </ListItem>
+                                        </List>
+                                      </div>) : (null)}
                                   </div>
                                   {/* Hide allocation button */}
                                   <div className="row no-gutters mt-3">
@@ -1593,17 +1569,11 @@ const GaugeWeightVote = () => {
                                     <div className="col-12">
                                       <div className="row no-gutters align-items-center">
                                         <Typography
-                                          variant="h6"
-                                          component={"h6"}
+                                          variant="body1"
+                                          component={"div"}
                                         >
-                                          <span
-                                            style={{
-                                              fontWeight: "bold",
-                                              color: "#000",
-                                            }}
-                                          >
-                                            Vote Weight:&nbsp;
-                                          </span>
+                                          Vote Weight:&nbsp;
+
                                         </Typography>
                                         <Box
                                           component="form"
@@ -1749,9 +1719,9 @@ const GaugeWeightVote = () => {
                                         </span>
                                         {votedThisWeek && totalVeCRV
                                           ? (
-                                              (votedThisWeek * 100) /
-                                              totalVeCRV
-                                            ).toFixed(2)
+                                            (votedThisWeek * 100) /
+                                            totalVeCRV
+                                          ).toFixed(2)
                                           : 0}
                                       </ListItemText>
                                     </ListItem>

@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   Divider,
+  Grid,
   Paper,
   Slider,
   TextField,
@@ -69,36 +70,49 @@ const Gauge = (props) => {
             Minted CRV from this gauge:{" "}
             {props.gauge.minted ? props.gauge.minted : 0}
           </div>
-          <div className="col-12">
-            Balance : {props.gauge.balance ? props.gauge.balance : 0}
-          </div>
-          <div className="col-3">
-            Amount:
-            <TextField
-              value={depositAmount}
-              onChange={(e) => {
-                setDepositAmount(e.target.value);
-              }}
-            />
-          </div>
-          <div className="col-3">
-            <Slider size="small" defaultValue={depositAmount} />
-          </div>
-          <div className="col-12">
-            <Checkbox
-              checked={infiniteApproval}
-              onChange={(e) => {
-                console.log("Infinite approval value: ", e.target.checked);
-                setInfiniteApproval(e.target.checked);
-              }}
-              color="success"
-            />{" "}
-            Infinite Approval?
-          </div>
-          <div className="col-3">
-            <Button variant="contained" onClick={handleDepositClick} fullWidth>
-              Deposit
-            </Button>
+
+
+          <div className="col-12 text-center py-3" >
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+              </Grid>
+              <Grid item xs={4}>
+                <div className="col-12">
+                  Balance : {props.gauge.balance ? props.gauge.balance : 0}
+                </div>
+                <div className="col-12">
+                  Amount:
+                  <TextField
+                    value={depositAmount}
+                    onChange={(e) => {
+                      setDepositAmount(e.target.value);
+                    }}
+                  />
+                </div>
+                <div className="col-12">
+                  <Slider size="small" defaultValue={depositAmount} />
+                </div>
+                <div className="col-12">
+                  <Checkbox
+                    checked={infiniteApproval}
+                    onChange={(e) => {
+                      console.log("Infinite approval value: ", e.target.checked);
+                      setInfiniteApproval(e.target.checked);
+                    }}
+                    color="success"
+                  />{" "}
+                  Infinite Approval?
+                </div>
+                <div className="col-12">
+                  <Button variant="contained" onClick={handleDepositClick} fullWidth>
+                    Deposit
+                  </Button>
+                </div>
+              </Grid>
+              <Grid item xs={4}>
+              </Grid>
+            </Grid>
+
           </div>
 
           {/* //WITHDRAW AMOUNT */}
