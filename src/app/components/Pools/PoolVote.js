@@ -195,13 +195,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => { commitNewFee.length <= 0 || commitAdminFee.length <= 0 ? enqueueSnackbar("Fields are empty") : handleCommitFeeOpen() }}
                         >
                           Submit
@@ -239,13 +239,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => { rampFutureA.length <= 0 || rampFutureTime.length <= 0 ? enqueueSnackbar("Fields are empty") : handleRampAOpen() }}
                         >
                           Submit
@@ -277,13 +277,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => { commitNewOwner.length <= 0 ? enqueueSnackbar("Fields are empty") : handleCommitOpen() }}
                         >
                           Submit
@@ -311,13 +311,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleWithdrawFeesOpen}
                         >
                           Submit
@@ -343,13 +343,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleUnkillMeOpen}
                         >
                           Submit
@@ -375,13 +375,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleApplyOwnershipOpen}
                         >
                           Submit
@@ -409,13 +409,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleRevertOwnershipOpen}
                         >
                           Submit
@@ -441,13 +441,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleApplyFeeOpen}
                         >
                           Submit
@@ -473,13 +473,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleStopRampOpen}
                         >
                           Submit
@@ -507,13 +507,13 @@ const PoolVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleRevertParametersOpen}
                         >
                           Submit

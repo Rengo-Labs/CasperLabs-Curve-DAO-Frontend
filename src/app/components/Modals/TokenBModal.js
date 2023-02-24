@@ -43,7 +43,7 @@ function TokenBModal(props) {
             <Spinner
               animation="border"
               role="status"
-              style={{ color: "#6476bf" }}
+              style={{ color: "#1976d2" }}
             >
               <span className="sr-only">Loading...</span>
             </Spinner>

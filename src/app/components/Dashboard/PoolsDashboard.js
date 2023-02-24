@@ -183,19 +183,19 @@ const PoolsDashboard = () => {
           <ul>
             <li>
               Deposits:{" "}
-              <span style={{ fontWeight: "bold", color: "#5300E8" }}>
+              <span style={{ fontWeight: "bold", color: "#1976d2" }}>
                 $16,339,248,540.19
               </span>
             </li>
             <li>
               Daily Volume:{" "}
-              <span style={{ fontWeight: "bold", color: "#5300E8" }}>
+              <span style={{ fontWeight: "bold", color: "#1976d2" }}>
                 $1,272,296,415
               </span>
             </li>
             <li>
               Crypto Volume Share:{" "}
-              <span style={{ fontWeight: "bold", color: "#5300E8" }}>
+              <span style={{ fontWeight: "bold", color: "#1976d2" }}>
                 24.06%
               </span>
             </li>

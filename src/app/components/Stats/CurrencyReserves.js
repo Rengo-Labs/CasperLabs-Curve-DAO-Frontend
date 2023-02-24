@@ -44,7 +44,7 @@ const CurrencyReserves = () => {
                     variant="h6"
                     gutterBottom
                     component="div"
-                    sx={{ color: "#5300e8" }}
+                    sx={{ color: "#1976d2" }}
                   >
                     Currency Reserves
                   </Typography>
@@ -151,7 +151,7 @@ const CurrencyReserves = () => {
                     variant="h6"
                     gutterBottom
                     component="div"
-                    sx={{ color: "#5300e8" }}
+                    sx={{ color: "#1976d2" }}
                   >
                     CRV Details:
                   </Typography>
@@ -178,7 +178,7 @@ const CurrencyReserves = () => {
                     variant="h6"
                     gutterBottom
                     component="div"
-                    sx={{ color: "#5300e8" }}
+                    sx={{ color: "#1976d2" }}
                   >
                     Price Data
                   </Typography>

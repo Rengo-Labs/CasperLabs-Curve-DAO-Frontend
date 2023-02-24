@@ -38,7 +38,7 @@ function ValueLabelComponent(props) {
 
 const PrettoSlider = styled(Slider)({
     // color: '#52af77',
-    color: 'rgb(83, 0, 232)',
+    color: '#1976d2',
     height: 8,
     '& .MuiSlider-track': {
       border: 'none',
@@ -64,7 +64,7 @@ const PrettoSlider = styled(Slider)({
       height: 32,
       borderRadius: '50% 50% 50% 0',
     //   backgroundColor: '#52af77',
-      backgroundColor: 'rgb(83, 0, 232)',
+      backgroundColor: '#1976d2',
       transformOrigin: 'bottom left',
       transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
       '&:before': { display: 'none' },
@@ -735,7 +735,7 @@ const PoolInfo = (props) => {
                                 <Button
                                     variant='contained'
                                     size='large'
-                                    style={{backgroundColor: "#5300e8", color: "white"}}
+                                    style={{backgroundColor: "#1976d2", color: "white"}}
                                     onClick={() => {
                                         deposit();
                                     }}
@@ -804,7 +804,7 @@ const PoolInfo = (props) => {
                                         <Button
                                             variant='contained'
                                             size='large'
-                                            style={{backgroundColor: "#5300e8", color: "white"}}
+                                            style={{backgroundColor: "#1976d2", color: "white"}}
                                             onClick={() => {
                                                 withdraw();
                                             }}
@@ -824,7 +824,7 @@ const PoolInfo = (props) => {
                             <Button
                                 variant='contained'
                                 size='large'
-                                style={{backgroundColor: "#5300e8", color: "white"}}
+                                style={{backgroundColor: "#1976d2", color: "white"}}
                                 onClick={() => {
                                     claim();
                                 }}
@@ -836,7 +836,7 @@ const PoolInfo = (props) => {
                             <Button
                                 variant='contained'
                                 size='large'
-                                style={{backgroundColor: "#5300e8", color: "white"}}
+                                style={{backgroundColor: "#1976d2", color: "white"}}
                                 onClick={() => {
                                     claimRewards();
                                 }}

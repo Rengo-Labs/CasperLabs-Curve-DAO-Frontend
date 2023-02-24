@@ -271,7 +271,7 @@ const VotingPowerActionables = (props) => {
                     <Button
                       variant="contained"
                       size="large"
-                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                      style={{ backgroundColor: "#1976d2", color: "white" }}
                       onClick={() => {
                         console.log("Action Taken");
                         // props.createLockMakeDeploy(lockAmount, date);
@@ -323,7 +323,7 @@ const VotingPowerActionables = (props) => {
                           <Button
                             variant="contained"
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            style={{ backgroundColor: "#1976d2", color: "white" }}
                             onClick={() => {
                               setLockAmount(userCRVBalance);
                             }}
@@ -365,17 +365,17 @@ const VotingPowerActionables = (props) => {
                   </div>
                   {/* TIME BUTTONS */}
                   {/* <div className=""> */}
-                  
+
                   {/* </div> */}
                   {/* CREATE LOCK BUTTON */}
                   <div className="row no-gutters">
                     <div className="col-md-12 col-lg-6">
                       <LockTimeButtons
-                      date={date}
-                      setDate={setDate}
-                      setDateDisplay={setDateDisplay}
-                      setStartingVPower={setStartingVPower}
-                      lockAmount={lockAmount}
+                        date={date}
+                        setDate={setDate}
+                        setDateDisplay={setDateDisplay}
+                        setStartingVPower={setStartingVPower}
+                        lockAmount={lockAmount}
 
                       // name="LockTimeSelect"
                       // label="Select Lock Time"
@@ -388,7 +388,7 @@ const VotingPowerActionables = (props) => {
                           <Button
                             variant="contained"
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            style={{ backgroundColor: "#1976d2", color: "white" }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -402,7 +402,7 @@ const VotingPowerActionables = (props) => {
                             variant="contained"
 
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white", minWidth: "25%" }}
+                            style={{ backgroundColor: "#1976d2", color: "white", minWidth: "25%" }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -420,93 +420,93 @@ const VotingPowerActionables = (props) => {
                 // FALSE CONDIIION WORK
 
                 <>
-                 <div className="w-50">
-                      <TextInput
-                        id="daoAmount"
-                        label="Lock Amount"
-                        onChange={(e) => {
-                          console.log("dam", e.target.value);
-                          if (userCRVBalance >= e.target.value)
-                            setLockAmount(e.target.value);
-                          else {
-                            setLockAmount(userCRVBalance);
-                          }
-                        }}
-                        value={lockAmount}
-                        variant="filled"
-                        type="number"
-                        name="LockAmount"
-                        sx={{ width: "100%" }}
-                      />
-                    </div>
-                  
+                  <div className="w-50">
+                    <TextInput
+                      id="daoAmount"
+                      label="Lock Amount"
+                      onChange={(e) => {
+                        console.log("dam", e.target.value);
+                        if (userCRVBalance >= e.target.value)
+                          setLockAmount(e.target.value);
+                        else {
+                          setLockAmount(userCRVBalance);
+                        }
+                      }}
+                      value={lockAmount}
+                      variant="filled"
+                      type="number"
+                      name="LockAmount"
+                      sx={{ width: "100%" }}
+                    />
+                  </div>
 
-                   
-                    {/* Max Button */}
-                    <div className=" mt-2 d-flex justify-content-lg-between ">
-                      <div className="d-flex  align-items-center "> 
-                        <div className="">
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                              setLockAmount(userCRVBalance);
-                            }}
-                          >
-                            Max
-                          </Button>
-                        </div>
-                        <div className="">
-                          <Typography
-                            variant="body1"
-                            gutterBottom
-                            component="span"
-                            fontWeight={900}
-                            sx={{ padding: "10px", fontSize: "1.5rem" }}
-                          >
-                            {userCRVBalance}
-                          </Typography>
-                        </div>
+
+
+                  {/* Max Button */}
+                  <div className=" mt-2 d-flex justify-content-lg-between ">
+                    <div className="d-flex  align-items-center ">
+                      <div className="">
+                        <Button
+                          variant="contained"
+                          size="large"
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
+                          onClick={() => {
+                            setLockAmount(userCRVBalance);
+                          }}
+                        >
+                          Max
+                        </Button>
                       </div>
                       <div className="">
-                    <div className="mr-3">
-                      <div className="btnWrapper my-4 text-center lockerButton ">
-                        {lockAmount * 10 ** 9 > allowance ? (
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white",width:"250px"  }}
-                            onClick={() => {
-                              console.log("Action Taken");
-                              // props.createLockMakeDeploy(lockAmount, date);
-                              handleShowAllowance();
-                            }}
-                          >
-                            Increase Allowance
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white",width:"250px" }}
-                            onClick={() => {
-                              console.log("Action Taken");
-                              // props.createLockMakeDeploy(lockAmount, date);
-                              increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
-                            }}
-                          >
-                            Add Amount
-                          </Button>
-                        )}
-
+                        <Typography
+                          variant="body1"
+                          gutterBottom
+                          component="span"
+                          fontWeight={900}
+                          sx={{ padding: "10px", fontSize: "1.5rem" }}
+                        >
+                          {userCRVBalance}
+                        </Typography>
                       </div>
                     </div>
-                  </div>
-                    
+                    <div className="">
+                      <div className="mr-3">
+                        <div className="btnWrapper my-4 text-center lockerButton ">
+                          {lockAmount * 10 ** 9 > allowance ? (
+                            <Button
+                              variant="contained"
+                              size="large"
+                              style={{ backgroundColor: "#1976d2", color: "white", width: "250px" }}
+                              onClick={() => {
+                                console.log("Action Taken");
+                                // props.createLockMakeDeploy(lockAmount, date);
+                                handleShowAllowance();
+                              }}
+                            >
+                              Increase Allowance
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="contained"
+                              size="large"
+                              style={{ backgroundColor: "#1976d2", color: "white", width: "250px" }}
+                              onClick={() => {
+                                console.log("Action Taken");
+                                // props.createLockMakeDeploy(lockAmount, date);
+                                increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
+                              }}
+                            >
+                              Add Amount
+                            </Button>
+                          )}
+
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                   {/* ADD BUTTON */}
-                  
+
                   {/* Lock Time */}
                   <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
                     <div className="col-12 col-lg-6 px-0">
@@ -533,26 +533,26 @@ const VotingPowerActionables = (props) => {
                         options={lockTimeOptions.map((item) => item.name)}
                       />
                     </div> */}
-                    
+
 
                   </div>
                   <div className="row no-gutters ">
                     <div className="col-md-12 col-lg-6">
-                    <LockTimeButtons
-                      date={date}
-                      setDate={setDate}
-                      setDateDisplay={setDateDisplay}
-                      setStartingVPower={setStartingVPower}
-                      lockAmount={lockAmount}
+                      <LockTimeButtons
+                        date={date}
+                        setDate={setDate}
+                        setDateDisplay={setDateDisplay}
+                        setStartingVPower={setStartingVPower}
+                        lockAmount={lockAmount}
 
-                    />
+                      />
                     </div>
                     <div className="col-md-12 col-lg-6">
                       <div className="btnWrapper my-4 text-center increaseTime">
                         <Button
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white", width:"250px", }}
+                          style={{ backgroundColor: "#1976d2", color: "white", width: "250px",  }}
                           onClick={() => {
                             console.log("Action Taken");
                             // props.createLockMakeDeploy(lockAmount, date);
@@ -575,7 +575,7 @@ const VotingPowerActionables = (props) => {
                     <Button
                       variant="contained"
                       size="large"
-                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                      style={{ backgroundColor: "#1976d2", color: "white" }}
                       onClick={() => {
                         console.log("Action Taken");
                         handleShowAllowance();
@@ -589,7 +589,7 @@ const VotingPowerActionables = (props) => {
                         <Button
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {
                             console.log("Action Taken");
                             // props.withdrawMakeDeploy();
@@ -602,7 +602,7 @@ const VotingPowerActionables = (props) => {
                         <Button
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {Your starting 
                             console.log("Action Taken");
                             // props.withdrawMakeDeploy();
@@ -617,7 +617,7 @@ const VotingPowerActionables = (props) => {
                       <Button
                         variant="contained"
                         size="large"
-                        style={{ backgroundColor: "#5300e8", color: "white" }}
+                        style={{ backgroundColor: "#1976d2", color: "white" }}
                         onClick={() => {
                           console.log("Action Taken");
                           // props.createLockMakeDeploy(lockAmount, date);
@@ -655,9 +655,9 @@ const VotingPowerActionables = (props) => {
           You need at least 2500 veCRV to be able to create a &nbsp;
           <span
             className="font-weight-bold"
-            style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+            style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
           >
-            <Link to="/" style={{ textDecoration: "none", color: "#5300e8" }}>
+            <Link to="/" style={{ textDecoration: "none", color: "#1976d2" }}>
               Curve DAO proposal
             </Link>
           </span>

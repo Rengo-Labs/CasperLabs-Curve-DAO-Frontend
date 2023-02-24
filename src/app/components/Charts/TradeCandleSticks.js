@@ -125,7 +125,7 @@ var optionsData = {
   plotOptions: {
     candlestick: {
       colors: {
-        upward: "#5300E8",
+        upward: "#1976d2",
         downward: "#EF6C00",
       },
     },

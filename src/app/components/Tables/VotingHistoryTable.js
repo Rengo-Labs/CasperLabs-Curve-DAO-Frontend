@@ -174,7 +174,7 @@ const VotingHistoryTable = (props) => {
                       >
                         <Link
                           style={{
-                            color: "#5300E8",
+                            color: "#1976d2",
                           }}
                           to="/"
                           className="tableCellLink font-weight-bold"
@@ -209,7 +209,7 @@ const VotingHistoryTable = (props) => {
                       >
                         <Link
                           style={{
-                            color: "#5300E8",
+                            color: "#1976d2",
                           }}
                           to="/"
                           className="tableCellLink font-weight-bold"
@@ -227,7 +227,7 @@ const VotingHistoryTable = (props) => {
                       >
                         <Link
                           style={{
-                            color: "#5300E8",
+                            color: "#1976d2",
                           }}
                           to="/"
                           className="tableCellLink"
@@ -288,7 +288,7 @@ const VotingHistoryTable = (props) => {
                     >
                       <Link
                         style={{
-                          color: "#5300E8",
+                          color: "#1976d2",
                           border: "0.6px solid #e0e0e0",
                         }}
                         to="/"
@@ -324,7 +324,7 @@ const VotingHistoryTable = (props) => {
                     >
                       <Link
                         style={{
-                          color: "#5300E8",
+                          color: "#1976d2",
                         }}
                         to="/"
                         className="tableCellLink font-weight-bold"
@@ -342,7 +342,7 @@ const VotingHistoryTable = (props) => {
                     >
                       <Link
                         style={{
-                          color: "#5300E8",
+                          color: "#1976d2",
                         }}
                         to="/"
                         className="tableCellLink"

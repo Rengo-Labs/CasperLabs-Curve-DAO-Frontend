@@ -66,7 +66,7 @@ const VotingPowerDAO = (props) => {
   const [lockEnd, setLockEnd] = useState(Date.now())
   const [increaseLock, setIncreaseLock] = useState(0)
   const [deposit, setDeposit] = useState(0)
-
+  // localStorage.removeItem("Address")
 
   // Handlers
 
@@ -84,7 +84,7 @@ const VotingPowerDAO = (props) => {
   const voting = useQuery(VOTING_POWER, {
     variables: {
       id:
-        activePublicKey && activePublicKey != "null"
+        activePublicKey && activePublicKey != "null" && activePublicKey != undefined && activePublicKey != null
           ? Buffer.from(
             CLPublicKey.fromHex(activePublicKey).toAccountHash()
           ).toString("hex")
@@ -105,6 +105,7 @@ const VotingPowerDAO = (props) => {
       setMyLockedCRV(voting.data?.votingPower ? voting.data?.votingPower?.power : 0)
       setVotingPower(voting.data?.votingPower ? voting.data?.votingPower?.power : 0);
     }
+    
   }, [data, voting]);
 
 
@@ -256,14 +257,14 @@ const VotingPowerDAO = (props) => {
     if (Date.parse(increaseLock) > Date.now() + 126144000 * 1000) {
       setIncreaseLock(new Date())
     }
-  },[])
+  }, [])
   const DAOPowerFormat = () => {
     return helpers.formatNumber(DAOPower / 1e9);
   };
 
   const averageLock = () => {
-    console.log("CRVLocked",CRVLocked);
-    console.log("DAOPower",DAOPower);
+    console.log("CRVLocked", CRVLocked);
+    console.log("DAOPower", DAOPower);
     return DAOPower ? (4 * DAOPower / CRVLocked).toFixed(2) : 0;
   };
 
@@ -311,35 +312,35 @@ const VotingPowerDAO = (props) => {
 
   return (
     <>
-    <Grid
-      className="mt-2 mb-5"
-      container
-      spacing={2}
-      justify="center"
-      columnSpacing={3}
-      rowSpacing={5}
-    >
-      <Grid item xs={12} sm={6} md={4}>
-      <VotingPowerDaoCards title={"Total CRV vote-locked:"} value={CRVLockedFormat()}/>
+      <Grid
+        className="mt-2 mb-5"
+        container
+        spacing={2}
+        justify="center"
+        columnSpacing={3}
+        rowSpacing={5}
+      >
+        <Grid item xs={12} sm={6} md={4}>
+          <VotingPowerDaoCards title={"Total CRV vote-locked:"} value={CRVLockedFormat()} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <VotingPowerDaoCards title={"Percentage of total CRV Locked:"} value={`${CRVLockedPercentage}%`} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <VotingPowerDaoCards title={"Total veCRV:"} value={DAOPowerFormat()} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <VotingPowerDaoCards title={"Average lock time:"} value={averageLock() ? `${averageLock()} years` : "0 years"} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <VotingPowerDaoCards title={"CRV Balance:"} src={curveLogo} value={CRVBalance ? CRVBalance / 10 ** 9 : 0.0} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <VotingPowerDaoCards title={"My CRV Locked:"} src={curveLogo} value={myLockedCRVFormat()} />
+        </Grid>
       </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-      <VotingPowerDaoCards title={"Percentage of total CRV Locked:"} value={`${CRVLockedPercentage}%`}/>
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-      <VotingPowerDaoCards title={"Total veCRV:"} value={DAOPowerFormat()}/>
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-      <VotingPowerDaoCards title={"Average lock time:"}  value={averageLock() ? `${averageLock()} years` : "0 years"}/>
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-      <VotingPowerDaoCards title={"CRV Balance:"} src={curveLogo}  value={CRVBalance ? CRVBalance / 10 ** 9 : 0.0}/>
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
-      <VotingPowerDaoCards title={"My CRV Locked:"} src={curveLogo}  value={myLockedCRVFormat()}/>
-      </Grid>
-    </Grid>
 
-     
+
     </>
   );
 };

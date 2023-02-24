@@ -193,14 +193,14 @@ const VotingEscrow = () => {
                         className="font-weight-bold"
                         style={{
                           borderBottom: "1px dashed white",
-                          color: "#5300e8",
+                          color: "#1976d2",
                         }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {
                             commitTransfer.length <= 0
                               ? enqueueSnackbar("Field is empty")
@@ -249,14 +249,14 @@ const VotingEscrow = () => {
                         className="font-weight-bold"
                         style={{
                           borderBottom: "1px dashed white",
-                          color: "#5300e8",
+                          color: "#1976d2",
                         }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {
                             commitSmart.length <= 0
                               ? enqueueSnackbar("Field is empty")
@@ -299,14 +299,14 @@ const VotingEscrow = () => {
                         className="font-weight-bold"
                         style={{
                           borderBottom: "1px dashed white",
-                          color: "#5300e8",
+                          color: "#1976d2",
                         }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleApplyOpen}
                         >
                           Submit
@@ -347,14 +347,14 @@ const VotingEscrow = () => {
                         className="font-weight-bold"
                         style={{
                           borderBottom: "1px dashed white",
-                          color: "#5300e8",
+                          color: "#1976d2",
                         }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleWalletOpen}
                         >
                           Submit

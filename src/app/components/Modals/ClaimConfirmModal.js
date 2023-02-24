@@ -121,7 +121,7 @@ async function claimMakeDeploy() {
           <Typography id="modal-modal-title" variant="h5" style={{color:"black",fontWeight:"bold"}} component="h2">
             Confirm claiming {balance} tokens
           </Typography>
-          <Button  onClick={() => { claimMakeDeploy() }} variant="contained" style={{backgroundColor:"#5300E8", fontSize:20}} fullWidth>confirm</Button>
+          <Button  onClick={() => { claimMakeDeploy() }} variant="contained" style={{backgroundColor:"#1976d2", fontSize:20}} fullWidth>confirm</Button>
         </Box>
       </Modal>
       <SigningModal show={openSigning} />

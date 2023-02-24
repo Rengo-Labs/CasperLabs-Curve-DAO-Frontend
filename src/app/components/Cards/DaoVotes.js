@@ -158,7 +158,7 @@ const DaoVotes = (props) => {
             width="w-100"
             polarQestion="Yes"
             percent={props.yes}
-            color="#5300E8"
+            color="#1976d2"
           />
           {/* No */}
           <div className="mb-3">

@@ -232,14 +232,14 @@ const Vesting = () => {
                         className="font-weight-bold"
                         style={{
                           borderBottom: "1px dashed white",
-                          color: "#5300e8",
+                          color: "#1976d2",
                         }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {
                             recipient.length <= 0 ||
                               amount.length <= 0 ||
@@ -292,14 +292,14 @@ const Vesting = () => {
                         className="font-weight-bold"
                         style={{
                           borderBottom: "1px dashed white",
-                          color: "#5300e8",
+                          color: "#1976d2",
                         }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {
                             toggleRecipient.length <= 0
                               ? enqueueSnackbar("Field is empty")
@@ -349,14 +349,14 @@ const Vesting = () => {
                         className="font-weight-bold"
                         style={{
                           borderBottom: "1px dashed white",
-                          color: "#5300e8",
+                          color: "#1976d2",
                         }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {
                             disableRecipient.length <= 0
                               ? enqueueSnackbar("Field is empty")

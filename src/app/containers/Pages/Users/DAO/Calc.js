@@ -670,7 +670,7 @@ const Calc = () => {
                                             renderInput={(params) => (
                                               <TextField
                                                 {...params}
-                                                label="Select Lock Periodoo"
+                                                label="Select Lock Period"
                                                 variant="standard"
                                               />
                                             )}
@@ -711,7 +711,7 @@ const Calc = () => {
                                         variant="contained"
                                         size="large"
                                         style={{
-                                          backgroundColor: "#5300e8",
+                                          backgroundColor: "#1976d2",
                                           color: "white",
                                         }}
                                         type="submit"

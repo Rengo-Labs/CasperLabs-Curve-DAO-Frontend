@@ -1057,14 +1057,14 @@ const GaugeWeightVote = () => {
                                       className="font-weight-bold"
                                       style={{
                                         borderBottom: "1px dashed white",
-                                        color: "#5300e8",
+                                        color: "#1976d2",
                                       }}
                                     >
                                       <Link
                                         to="/"
                                         style={{
                                           textDecoration: "none",
-                                          color: "#5300e8",
+                                          color: "#1976d2",
                                         }}
                                       >
                                         Locker
@@ -1082,14 +1082,14 @@ const GaugeWeightVote = () => {
                                         className="font-weight-bold"
                                         style={{
                                           borderBottom: "1px dashed white",
-                                          color: "#5300e8",
+                                          color: "#1976d2",
                                         }}
                                       >
                                         <Link
                                           to="/locker"
                                           style={{
                                             textDecoration: "none",
-                                            color: "#5300e8",
+                                            color: "#1976d2",
                                           }}
                                         >
                                           Locker
@@ -1108,14 +1108,14 @@ const GaugeWeightVote = () => {
                                         className="font-weight-bold"
                                         style={{
                                           borderBottom: "1px dashed white",
-                                          color: "#5300e8",
+                                          color: "#1976d2",
                                         }}
                                       >
                                         <Link
                                           to="/"
                                           style={{
                                             textDecoration: "none",
-                                            color: "#5300e8",
+                                            color: "#1976d2",
                                           }}
                                         >
                                           Locker
@@ -1432,7 +1432,7 @@ const GaugeWeightVote = () => {
                                           variant="contained"
                                           size="large"
                                           style={{
-                                            backgroundColor: "#5300e8",
+                                            backgroundColor: "#1976d2",
                                             color: "white",
                                           }}
                                           onClick={handleChangeAllocation}
@@ -1543,7 +1543,7 @@ const GaugeWeightVote = () => {
                                                           size="large"
                                                           style={{
                                                             backgroundColor:
-                                                              "#5300e8",
+                                                              "#1976d2",
                                                             color: "white",
                                                           }}
                                                           onClick={
@@ -1634,7 +1634,7 @@ const GaugeWeightVote = () => {
                                           variant="contained"
                                           size="large"
                                           style={{
-                                            backgroundColor: "#5300e8",
+                                            backgroundColor: "#1976d2",
                                             color: "white",
                                           }}
                                           onClick={() => {
@@ -1741,7 +1741,7 @@ const GaugeWeightVote = () => {
                                         variant="contained"
                                         size="large"
                                         style={{
-                                          backgroundColor: "#5300e8",
+                                          backgroundColor: "#1976d2",
                                           color: "white",
                                           width: "100%",
                                         }}
@@ -1776,7 +1776,7 @@ const GaugeWeightVote = () => {
                                             variant="contained"
                                             size="large"
                                             style={{
-                                              backgroundColor: "#5300e8",
+                                              backgroundColor: "#1976d2",
                                               color: "white",
                                               width: "100%",
                                             }}
@@ -1795,7 +1795,7 @@ const GaugeWeightVote = () => {
                                             variant="contained"
                                             size="large"
                                             style={{
-                                              backgroundColor: "#5300e8",
+                                              backgroundColor: "#1976d2",
                                               color: "white",
                                               width: "100%",
                                             }}
@@ -2029,7 +2029,7 @@ const GaugeWeightVote = () => {
                                                     >
                                                       <Link
                                                         style={{
-                                                          color: "#5300E8",
+                                                          color: "#1976d2",
                                                         }}
                                                         to="/"
                                                         className="tableCellLink font-weight-bold"
@@ -2073,7 +2073,7 @@ const GaugeWeightVote = () => {
                                                     >
                                                       <Link
                                                         style={{
-                                                          color: "#5300E8",
+                                                          color: "#1976d2",
                                                         }}
                                                         to="/"
                                                         className="tableCellLink font-weight-bold"
@@ -2094,7 +2094,7 @@ const GaugeWeightVote = () => {
                                                     >
                                                       <Link
                                                         style={{
-                                                          color: "#5300E8",
+                                                          color: "#1976d2",
                                                         }}
                                                         to="/"
                                                         className="tableCellLink"
@@ -2160,7 +2160,7 @@ const GaugeWeightVote = () => {
                                                   >
                                                     <Link
                                                       style={{
-                                                        color: "#5300E8",
+                                                        color: "#1976d2",
                                                         border:
                                                           "0.6px solid #e0e0e0",
                                                       }}
@@ -2206,7 +2206,7 @@ const GaugeWeightVote = () => {
                                                   >
                                                     <Link
                                                       style={{
-                                                        color: "#5300E8",
+                                                        color: "#1976d2",
                                                       }}
                                                       to="/"
                                                       className="tableCellLink font-weight-bold"
@@ -2227,7 +2227,7 @@ const GaugeWeightVote = () => {
                                                   >
                                                     <Link
                                                       style={{
-                                                        color: "#5300E8",
+                                                        color: "#1976d2",
                                                       }}
                                                       to="/"
                                                       className="tableCellLink"

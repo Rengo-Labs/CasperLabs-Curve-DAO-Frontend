@@ -127,7 +127,7 @@ console.log("close:",close);
       >
         <Box sx={style}>
             <ApexChart options={options} series={series} type="donut" width={400} style={{marginLeft:40}} />
-            <Button onClick={()=>setOpen(false)} variant="contained" style={{backgroundColor:"#5300E8"}} fullWidth>Hide</Button>
+            <Button onClick={()=>setOpen(false)} variant="contained" style={{backgroundColor:"#1976d2"}} fullWidth>Hide</Button>
         </Box>
       </Modal>
      

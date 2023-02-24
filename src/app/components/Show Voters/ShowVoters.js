@@ -242,7 +242,7 @@ function ShowVoters(props) {
                             animation="border"
                             role="status"
                             style={{
-                              color: "rgb(83, 0, 232)",
+                              color: "#1976d2",
                             }}
                           ></Spinner>
                         </div>
@@ -365,7 +365,7 @@ function ShowVoters(props) {
                             animation="border"
                             role="status"
                             style={{
-                              color: "rgb(83, 0, 232)",
+                              color: "#1976d2",
                             }}
                           ></Spinner>
                         </div>
