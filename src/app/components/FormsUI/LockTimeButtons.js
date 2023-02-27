@@ -152,10 +152,10 @@ const LockTimeButtons = ({
   return (
     <>
       {/* <div className="btnWrapper my-4 text-center d-flex justify-content-between mr-5"> */}
-      <Grid container spacing={1} style={{ marginTop: "20px" }}>
+      <Grid container spacing={1} style={{ marginTop: "20px" }} className="ml-1">
         <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
           <Button
-            variant="contained"
+            // variant="contained"
             size="large"
             style={{
               backgroundColor: "#1976d2",
@@ -174,7 +174,7 @@ const LockTimeButtons = ({
 
         <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
           <Button
-            variant="contained"
+            // variant="contained"
             size="large"
             style={{
               backgroundColor: "#1976d2",
@@ -190,7 +190,7 @@ const LockTimeButtons = ({
         </Grid>
         <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
           <Button
-            variant="contained"
+            // variant="contained"
             size="large"
             style={{
               backgroundColor: "#1976d2",
@@ -206,7 +206,7 @@ const LockTimeButtons = ({
         </Grid>
         <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
           <Button
-            variant="contained"
+            // variant="contained"
             size="large"
             style={{
               backgroundColor: "#1976d2",
@@ -222,7 +222,7 @@ const LockTimeButtons = ({
         </Grid>
         <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
           <Button
-            variant="contained"
+            // variant="contained"
             size="large"
             style={{
               backgroundColor: "#1976d2",
@@ -238,7 +238,7 @@ const LockTimeButtons = ({
         </Grid>
         <Grid item xl={4} lg={4} md={4} sm={6} xs={12}>
           <Button
-            variant="contained"
+            // variant="contained"
             size="large"
             style={{
               backgroundColor: "#1976d2",

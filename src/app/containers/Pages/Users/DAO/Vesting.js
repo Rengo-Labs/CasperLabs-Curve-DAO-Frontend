@@ -308,7 +308,7 @@ const Vesting = () => {
             <div className="curve-content-banks">
               <fieldset>
                 <div className="row no-gutters justify-content-center">
-                  <div className="curve-content-wrapper col-12 col-lg-12 col-xl-6">
+                  <div className="curve-content-wrapper col-12 col-lg-12 col-xl-10">
                     <div className="row no-gutters justify-content-center">
                       <Box
                         sx={{

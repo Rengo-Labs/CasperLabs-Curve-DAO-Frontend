@@ -105,7 +105,7 @@ const VotingPowerDAO = (props) => {
       setMyLockedCRV(voting.data?.votingPower ? voting.data?.votingPower?.power : 0)
       setVotingPower(voting.data?.votingPower ? voting.data?.votingPower?.power : 0);
     }
-    
+
   }, [data, voting]);
 
 
@@ -318,25 +318,25 @@ const VotingPowerDAO = (props) => {
         spacing={2}
         justify="center"
         columnSpacing={3}
-        rowSpacing={5}
+        rowSpacing={3}
       >
         <Grid item xs={12} sm={6} md={4}>
-          <VotingPowerDaoCards title={"Total CRV vote-locked:"} value={CRVLockedFormat()} />
+          <VotingPowerDaoCards title={"Total CRV vote-locked"} value={CRVLockedFormat()} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <VotingPowerDaoCards title={"Percentage of total CRV Locked:"} value={`${CRVLockedPercentage}%`} />
+          <VotingPowerDaoCards title={"Percentage of total CRV Locked"} value={`${CRVLockedPercentage}%`} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <VotingPowerDaoCards title={"Total veCRV:"} value={DAOPowerFormat()} />
+          <VotingPowerDaoCards title={"Total veCRV"} value={DAOPowerFormat()} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <VotingPowerDaoCards title={"Average lock time:"} value={averageLock() ? `${averageLock()} years` : "0 years"} />
+          <VotingPowerDaoCards title={"Average lock time"} value={averageLock() ? `${averageLock()} years` : "0 years"} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <VotingPowerDaoCards title={"CRV Balance:"} src={curveLogo} value={CRVBalance ? CRVBalance / 10 ** 9 : 0.0} />
+          <VotingPowerDaoCards title={"CRV Balance"} src={curveLogo} value={CRVBalance ? CRVBalance / 10 ** 9 : 0.0} />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <VotingPowerDaoCards title={"My CRV Locked:"} src={curveLogo} value={myLockedCRVFormat()} />
+          <VotingPowerDaoCards title={"My CRV Locked"} src={curveLogo} value={myLockedCRVFormat()} />
         </Grid>
       </Grid>
 
