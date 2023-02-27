@@ -406,7 +406,7 @@ const VotingPowerActionables = (props) => {
                             // variant="contained"
                             className="w-100"
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white", }}
+                            style={{ backgroundColor: "#1976d2", color: "white", }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -452,7 +452,7 @@ const VotingPowerActionables = (props) => {
                         <Button
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {
                             setLockAmount(userCRVBalance);
                           }}
@@ -482,7 +482,7 @@ const VotingPowerActionables = (props) => {
                               className="w-100"
                               variant="contained"
                               size="large"
-                              style={{ backgroundColor: "#5300e8", color: "white" }}
+                              style={{ backgroundColor: "#1976d2", color: "white" }}
                               onClick={() => {
                                 console.log("Action Taken");
                                 // props.createLockMakeDeploy(lockAmount, date);
@@ -496,7 +496,7 @@ const VotingPowerActionables = (props) => {
                               className="w-100"
                               variant="contained"
                               size="large"
-                              style={{ backgroundColor: "#5300e8", color: "white" }}
+                              style={{ backgroundColor: "#1976d2", color: "white" }}
                               onClick={() => {
                                 console.log("Action Taken");
                                 // props.createLockMakeDeploy(lockAmount, date);
@@ -560,7 +560,7 @@ const VotingPowerActionables = (props) => {
                           className="w-100"
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white", }}
+                          style={{ backgroundColor: "#1976d2", color: "white", }}
                           onClick={() => {
                             console.log("Action Taken");
                             // props.createLockMakeDeploy(lockAmount, date);
