@@ -7,33 +7,28 @@ import "../../../../assets/css/style.css";
 // BOOTSTRAP
 import "../../../../assets/css/bootstrap.min.css";
 // COMPONENTS
-import GaugeRelativeWeight from "../../../../components/Charts/GaugeRelativeWeight";
-import GaugeAllocationChart from "../../../../components/Charts/GaugeRelativeWeight";
-import DaoInfoMessage from "../../../../components/DAO/DaoInfoMessage";
+import { default as GaugeAllocationChart, default as GaugeRelativeWeight } from "../../../../components/Charts/GaugeRelativeWeight";
 import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
 import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
 import HomeBanner from "../Home/HomeBanner";
-import * as gaugeStore from "../../../../components/stores/GaugeStore";
 // MATERIAL UI
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 // CASPER SDK
-import Axios from "axios";
-import PoolInfo from "../../../../components/Stats/PoolInfo";
-import { CLPublicKey, encodeBase16 } from "casper-js-sdk";
-import { useSnackbar } from 'notistack';
-import { ERC20_CRV_CONTRACT_HASH, GAUGE_CONTROLLER_CONTRACT_HASH, } from '../../../../components/blockchain/Hashes/ContractHashes';
-import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
-import { gauges, pools } from "../../../../components/Charts/ChartHelper/ChartHelpers";
-import Gauge from "../../../../components/Gauge/Gauge";
+import { gql } from "@apollo/client";
 import { Alert, Button, Checkbox, FormControlLabel, FormGroup, Grid } from "@mui/material";
-import { gql, useQuery } from "@apollo/client";
+import { default as Axios, default as axios } from "axios";
+import { CLPublicKey } from "casper-js-sdk";
+import { useSnackbar } from 'notistack';
+import { ERC20_CRV_CONTRACT_HASH, GAUGE_CONTROLLER_CONTRACT_HASH } from '../../../../components/blockchain/Hashes/ContractHashes';
+import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
+import { gauges } from "../../../../components/Charts/ChartHelper/ChartHelpers";
+import Gauge from "../../../../components/Gauge/Gauge";
 import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
 import * as LiquidityGaugeV3 from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
-import axios from "axios";
 // CONTENT
 
 const GAUGES_BY_ADDRESS = gql`
@@ -62,6 +57,12 @@ const Minter = () => {
   const [claimFromGauges, setClaimFromGauges] = useState([]);
   const [gaugesNeedApply, setGaugesNeedApply] = useState([]);
   const [nGauges, setNGauges] = useState(0);
+  const [pools, setPools] = useState([]);
+  const [myPools, setMyPools] = useState([]);
+  const [boosts, setBoosts] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [totalGaugeBalance, setTotalGaugeBalance] = useState(0);
+
 
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
@@ -94,20 +95,24 @@ const Minter = () => {
 
   useEffect(() => {
     let gauge_relative_weight = 100;
+    console.log("poolspoolspoolspools", pools);
     let gaugeSum = Object.values(pools).reduce((a, b) => +a + +gauge_relative_weight, 0)
     console.log("gaugeSum...", gaugeSum);
     let piegauges = Object.values(pools).map(v => ({ name: v.name, y: gauge_relative_weight / gaugeSum }))
     console.log("piegauges...", piegauges);
-    let highest = piegauges.map(data => data.y).indexOf(Math.max(...piegauges.map(data => data.y)))
-    piegauges[highest].sliced = true;
-    piegauges[highest].selected = true;
-    console.log("piegauges final...", piegauges);
-    setGaugeRelativeWeightChart(piegauges);
+    if (piegauges.length > 0) {
+      let highest = piegauges.map(data => data.y).indexOf(Math.max(...piegauges.map(data => data.y)))
+      console.log("highest", highest);
+      piegauges[highest].sliced = true;
+      piegauges[highest].selected = true;
+      console.log("piegauges final...", piegauges);
+      setGaugeRelativeWeightChart(piegauges);
+    }
     // if (!_gauges.error) {
     //   setMyGauges(_gauges.data?.getGaugesByAddress)
     // }
 
-  }, [])
+  }, [pools])
 
   useEffect(() => {
 
@@ -167,6 +172,7 @@ const Minter = () => {
           // // );
           // // console.log("claimableToken", claimableToken);
           // // claimableTokens.push(claimableToken)
+
         }));
         console.log("pools", pools);
         console.log("gaugeBalances", gaugeBalances);
@@ -245,6 +251,74 @@ const Minter = () => {
         let btcPrice = prices.bitcoin.usd
         let CRVprice = prices['curve-dao-token'].usd
         console.log("CRVprice", CRVprice);
+        let gaugeParams = {
+          address: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"),
+          timestamps: []
+        }
+        let decodedWeights = [];
+        await Promise.all(decodedGauges.map(async (gauge) => {
+          let res2 = await axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/gaugeController/gaugeRelativeWeight/${gauge}`, gaugeParams)
+          console.log("res2", res2);
+          decodedWeights.push(res2.data.gaugeRelativeWeights[0] / 1e9)
+        }));
+        console.log("decodedWeights,", decodedWeights);
+        let gaugeRates = []
+        let workingSupplies = []
+        let totalSupplies = []
+        let workingBalances = []
+        await Promise.all(gaugesContractHashes.map(async (gauge) => {
+          let inflationRate = await LiquidityGaugeV3.inflationRate(
+            gauge
+          );
+          console.log("inflationRate", parseFloat(inflationRate) / 1e9);
+          gaugeRates.push(inflationRate)
+
+          let workingSupply = await LiquidityGaugeV3.workingSupply(
+            gauge
+          );
+          console.log("workingSupply", workingSupply);
+          workingSupplies.push(parseFloat(workingSupply) / 1e9)
+          let totalSupplyGauge = await LiquidityGaugeV3.totalSupplyGauge(
+            gauge
+          );
+          console.log("totalSupplyGauge", parseFloat(totalSupplyGauge));
+          totalSupplies.push(parseFloat(totalSupplyGauge) / 1e9)
+
+
+          let workingBalance = await LiquidityGaugeV3.workingBalances(
+            gauge,
+            Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")
+          );
+          console.log("workingBalances", parseFloat(workingBalance));
+          workingBalances.push(parseFloat(workingBalance))
+
+          decodedWeights.map((w, i) => {
+            mypools[i].workingSupply = workingSupplies[i];
+            mypools[i].originalSupply = totalSupplies[i];
+            mypools[i].currentWorkingBalance = workingBalances[i];
+
+            // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
+            // let rate = (gaugeRates[i] * w[1] * 31536000 / workingSupplies[i] * 0.4) / virtual_price
+            // let apy = rate * CRVprice * 100
+            // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
+            mypools[i].gauge_relative_weight = w[1];
+          })
+
+        }));
+        let _totalBalance = mypools.reduce((a, b) => +a + +b.balance, 0)
+        setTotalBalance(_totalBalance)
+        let _totalGaugeBalance = mypools.reduce((a, b) => +a + +b.gaugeBalance, 0)
+        setTotalGaugeBalance(_totalGaugeBalance)
+        let _boosts = []
+        for (let pool of mypools) {
+          if (+pool.gaugeBalanace == 0) continue
+          pool.previousWorkingBalance = pool.currentWorkingBalance
+          _boosts[pool.name] = pool.currentWorkingBalance / (0.4 * pool.gaugeBalance)
+        }
+        setMyPools(mypools);
+        setPools(pools);
+        setBoosts(boosts);
+
       }
       fetchData();
     }

@@ -98,7 +98,7 @@ export const inflationRate = async (contractHash: string) => {
 
     //balanceof
     const inflationRate = await liquiditygaugev3.inflationRate();
-    console.log(contractHash + ` =... lpToken : ${inflationRate}`);
+    console.log(contractHash + ` =... inflationRate : ${inflationRate}`);
 
     return inflationRate;
 
