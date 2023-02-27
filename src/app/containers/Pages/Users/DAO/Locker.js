@@ -497,7 +497,7 @@ const Locker = () => {
             <div className="curve-content-banks">
               <fieldset>
                 <div className="row no-gutters justify-content-center">
-                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-8">
+                  <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-10">
                     <div className="row no-gutters justify-content-center">
                       {/* Voting Power */}
                       <Box
