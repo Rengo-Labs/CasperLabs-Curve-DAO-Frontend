@@ -36,7 +36,7 @@ const FutureAPYTable = (props) => {
   return (
     <>
       <table class="table table-striped ">
-        <thead class="thead-dark">
+        <thead class="thead-light">
           <tr>
             {props.cells.map((cell) => (
                 <th style={{ border: 0,

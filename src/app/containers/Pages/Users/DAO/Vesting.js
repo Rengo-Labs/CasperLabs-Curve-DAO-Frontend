@@ -271,6 +271,7 @@ const Vesting = () => {
     console.log("StartTime value....", startTimeVal);
     return helpers.formatDateToHuman(startTimeVal);
   }, [startTimeVal]);
+  console.log("StartTime value format....", startTimeFormat);
   // endTimeFormat() {
   //   return helpers.formatDateToHuman(this.end_time)
   // },
@@ -390,7 +391,7 @@ const Vesting = () => {
                                             Start Lock Time:&nbsp;
                                           </span>
                                           {/* {startLockTime} */}
-                                          {startTimeFormat}
+                                          {startTimeFormat=== "NaN/NaN/NaN NaN:NaN:NaN"? 0:startTimeFormat}
                                         </ListItemText>
                                       </ListItem>
                                       : null
@@ -402,7 +403,7 @@ const Vesting = () => {
                                           <span className="font-weight-bold">
                                             End Lock Time:&nbsp;
                                           </span>
-                                          {endTimeFormat}
+                                          {endTimeFormat==="NaN/NaN/NaN NaN:NaN:NaN"?0:endTimeFormat}
                                         </ListItemText>
                                       </ListItem>
                                       : null

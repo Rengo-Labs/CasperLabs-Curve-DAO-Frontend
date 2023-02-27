@@ -35,7 +35,7 @@ const VotingHistoryTable = (props) => {
     // <TableContainer>
       <table className="table table-bordered table-striped" aria-label="Gauge Weight Vote History">
         <thead 
-          className="thead-dark"
+          className="thead-light"
           style={{
             backgroundColor: "#e7ebf0",
             paddingLeft: "0.25rem",

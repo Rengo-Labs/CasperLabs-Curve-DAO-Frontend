@@ -446,7 +446,7 @@ const VotingPowerActionables = (props) => {
 
 
                   {/* Max Button */}
-                  <Grid container spacing={2}>
+                  <Grid container spacing={5}>
                     <Grid item sx={12} sm={6}>
                       <div className="d-flex  align-items-center mt-4" >
                         <Button
