@@ -272,7 +272,7 @@ const VotingPowerActionables = (props) => {
                     <Button
                       variant="contained"
                       size="large"
-                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                      style={{ backgroundColor: "#1976d2", color: "white" }}
                       onClick={() => {
                         console.log("Action Taken");
                         // props.createLockMakeDeploy(lockAmount, date);
@@ -324,7 +324,7 @@ const VotingPowerActionables = (props) => {
                           <Button
                             variant="contained"
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            style={{ backgroundColor: "#1976d2", color: "white" }}
                             onClick={() => {
                               setLockAmount(userCRVBalance);
                             }}
@@ -366,18 +366,18 @@ const VotingPowerActionables = (props) => {
                   </div>
                   {/* TIME BUTTONS */}
                   {/* <div className=""> */}
-                  
+
                   {/* </div> */}
                   {/* CREATE LOCK BUTTON */}
                   <Grid container spacing={0}>
                     <Grid item xs={12} sm={6}>
                       <LockTimeButtons
-                      
-                      date={date}
-                      setDate={setDate}
-                      setDateDisplay={setDateDisplay}
-                      setStartingVPower={setStartingVPower}
-                      lockAmount={lockAmount}
+
+                        date={date}
+                        setDate={setDate}
+                        setDateDisplay={setDateDisplay}
+                        setStartingVPower={setStartingVPower}
+                        lockAmount={lockAmount}
 
                       // name="LockTimeSelect"
                       // label="Select Lock Time"
@@ -392,7 +392,7 @@ const VotingPowerActionables = (props) => {
                             // variant="contained"
                             className="w-100"
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
+                            style={{ backgroundColor: "#1976d2", color: "white" }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -406,7 +406,7 @@ const VotingPowerActionables = (props) => {
                             // variant="contained"
                             className="w-100"
                             size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white",  }}
+                            style={{ backgroundColor: "#1976d2", color: "white", }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -424,43 +424,42 @@ const VotingPowerActionables = (props) => {
                 // FALSE CONDIIION WORK
 
                 <>
-                 <div className="w-50">
-                      <TextInput
-                        id="daoAmount"
-                        label="Lock Amount"
-                        onChange={(e) => {
-                          console.log("dam", e.target.value);
-                          if (userCRVBalance >= e.target.value)
-                            setLockAmount(e.target.value);
-                          else {
-                            setLockAmount(userCRVBalance);
-                          }
-                        }}
-                        value={lockAmount}
-                        variant="filled"
-                        type="number"
-                        name="LockAmount"
-                        sx={{ width: "100%" }}
-                      />
-                    </div>
-                  
+                  <div className="w-50">
+                    <TextInput
+                      id="daoAmount"
+                      label="Lock Amount"
+                      onChange={(e) => {
+                        console.log("dam", e.target.value);
+                        if (userCRVBalance >= e.target.value)
+                          setLockAmount(e.target.value);
+                        else {
+                          setLockAmount(userCRVBalance);
+                        }
+                      }}
+                      value={lockAmount}
+                      variant="filled"
+                      type="number"
+                      name="LockAmount"
+                      sx={{ width: "100%" }}
+                    />
+                  </div>
 
-                   
-                    {/* Max Button */}
-                    <Grid container spacing={2}>
-                      <Grid item sx={12} sm={6}> 
-                        <div className="d-flex  align-items-center mt-4" >
-                          <Button
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                              setLockAmount(userCRVBalance);
-                            }}
-                          >
-                            Max
-                          </Button>
-                        
+
+                  {/* Max Button */}
+                  <Grid container spacing={2}>
+                    <Grid item sx={12} sm={6}>
+                      <div className="d-flex  align-items-center mt-4" >
+                        <Button
+                          variant="contained"
+                          size="large"
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
+                          onClick={() => {
+                            setLockAmount(userCRVBalance);
+                          }}
+                        >
+                          Max
+                        </Button>
+
                         <div className="">
                           <Typography
                             variant="body1"
@@ -472,49 +471,48 @@ const VotingPowerActionables = (props) => {
                             {userCRVBalance}
                           </Typography>
                         </div>
-                        </div>
-                      </Grid>
-                      <Grid item sm={1}></Grid>
-                      <Grid item xs={12} sm={3.4}>
-                    <div className="mr-3">
-                      <div className=" my-4 text-center ">
-                        {lockAmount * 10 ** 9 > allowance ? (
-                          <Button
-                            className="w-100"
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                              console.log("Action Taken");
-                              // props.createLockMakeDeploy(lockAmount, date);
-                              handleShowAllowance();
-                            }}
-                          >
-                            Increase Allowance
-                          </Button>
-                        ) : (
-                          <Button
-                          className="w-100"
-                            variant="contained"
-                            size="large"
-                            style={{ backgroundColor: "#5300e8", color: "white" }}
-                            onClick={() => {
-                              console.log("Action Taken");
-                              // props.createLockMakeDeploy(lockAmount, date);
-                              increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
-                            }}
-                          >
-                            Add Amount
-                          </Button>
-                        )}
-
                       </div>
-                    </div>
-                  </Grid>
-                    
+                    </Grid>
+                    <Grid item sm={1}></Grid>
+                    <Grid item xs={12} sm={3.4}>
+                      <div className="mr-3">
+                        <div className=" my-4 text-center ">
+                          {lockAmount * 10 ** 9 > allowance ? (
+                            <Button
+                              className="w-100"
+                              variant="contained"
+                              size="large"
+                              style={{ backgroundColor: "#1976d2", color: "white" }}
+                              onClick={() => {
+                                console.log("Action Taken");
+                                // props.createLockMakeDeploy(lockAmount, date);
+                                handleShowAllowance();
+                              }}
+                            >
+                              Increase Allowance
+                            </Button>
+                          ) : (
+                            <Button
+                              className="w-100"
+                              variant="contained"
+                              size="large"
+                              style={{ backgroundColor: "#1976d2", color: "white" }}
+                              onClick={() => {
+                                console.log("Action Taken");
+                                // props.createLockMakeDeploy(lockAmount, date);
+                                increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
+                              }}
+                            >
+                              Add Amount
+                            </Button>
+                          )}
+
+                        </div>
+                      </div>
+                    </Grid>
                   </Grid>
                   {/* ADD BUTTON */}
-                  
+
                   {/* Lock Time */}
                   <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
                     <div className="col-12 col-lg-6 px-0">
@@ -541,19 +539,19 @@ const VotingPowerActionables = (props) => {
                         options={lockTimeOptions.map((item) => item.name)}
                       />
                     </div> */}
-                    
+
 
                   </div>
                   <Grid container spacing={0}>
                     <Grid item xs={12} sm={6}>
-                    <LockTimeButtons
-                      date={date}
-                      setDate={setDate}
-                      setDateDisplay={setDateDisplay}
-                      setStartingVPower={setStartingVPower}
-                      lockAmount={lockAmount}
+                      <LockTimeButtons
+                        date={date}
+                        setDate={setDate}
+                        setDateDisplay={setDateDisplay}
+                        setStartingVPower={setStartingVPower}
+                        lockAmount={lockAmount}
 
-                    />
+                      />
                     </Grid>
                     <Grid item sm={1.2}></Grid>
                     <Grid item xs={12} sm={3}>
@@ -562,7 +560,7 @@ const VotingPowerActionables = (props) => {
                           className="w-100"
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white", }}
+                          style={{ backgroundColor: "#1976d2", color: "white", }}
                           onClick={() => {
                             console.log("Action Taken");
                             // props.createLockMakeDeploy(lockAmount, date);
@@ -585,7 +583,7 @@ const VotingPowerActionables = (props) => {
                     <Button
                       variant="contained"
                       size="large"
-                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                      style={{ backgroundColor: "#1976d2", color: "white" }}
                       onClick={() => {
                         console.log("Action Taken");
                         handleShowAllowance();
@@ -599,7 +597,7 @@ const VotingPowerActionables = (props) => {
                         <Button
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {
                             console.log("Action Taken");
                             // props.withdrawMakeDeploy();
@@ -612,7 +610,7 @@ const VotingPowerActionables = (props) => {
                         <Button
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => {Your starting 
                             console.log("Action Taken");
                             // props.withdrawMakeDeploy();
@@ -627,7 +625,7 @@ const VotingPowerActionables = (props) => {
                       <Button
                         variant="contained"
                         size="large"
-                        style={{ backgroundColor: "#5300e8", color: "white" }}
+                        style={{ backgroundColor: "#1976d2", color: "white" }}
                         onClick={() => {
                           console.log("Action Taken");
                           // props.createLockMakeDeploy(lockAmount, date);
@@ -660,24 +658,28 @@ const VotingPowerActionables = (props) => {
         </div>
       </div >
       {/* DAO Proposal Requirements */}
-      {newVotingPower() < 2500 ? < div className="no-gutters mt-4 justify-content-center align-items-center" >
-        <Alert severity="info">
-          You need at least 2500 veCRV to be able to create a &nbsp;
-          <span
-            className="font-weight-bold"
-            style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
-          >
-            <Link to="/" style={{ textDecoration: "none", color: "#5300e8" }}>
-              Curve DAO proposal
-            </Link>
-          </span>
-        </Alert>
-      </div > : null}
-      {hasEndedLock() ? < div className="no-gutters mt-4 justify-content-center align-items-center" >
-        <Alert severity="info">
-          Your lock ended, you can withdraw your CRV
-        </Alert>
-      </div > : null}
+      {
+        newVotingPower() < 2500 ? < div className="no-gutters mt-4 justify-content-center align-items-center" >
+          <Alert severity="info">
+            You need at least 2500 veCRV to be able to create a &nbsp;
+            <span
+              className="font-weight-bold"
+              style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
+            >
+              <Link to="/" style={{ textDecoration: "none", color: "#1976d2" }}>
+                Curve DAO proposal
+              </Link>
+            </span>
+          </Alert>
+        </div > : null
+      }
+      {
+        hasEndedLock() ? < div className="no-gutters mt-4 justify-content-center align-items-center" >
+          <Alert severity="info">
+            Your lock ended, you can withdraw your CRV
+          </Alert>
+        </div > : null
+      }
 
       {/* Gas Priority Fee */}
       {/* <div className="row no-gutters mt-4">

@@ -178,11 +178,11 @@ function HeaderDAO(props) {
   }
 
   const selectedStyling = {
-    border: "2px solid '#5300e8'",
+    border: "2px solid '#1976d2'",
     padding: "0.625rem 1rem",
     // borderRadius: "5px",
     color: "#FFF",
-    backgroundColor: "#5300e8",
+    backgroundColor: "#1976d2",
   };
   const defaultStyling = {
     padding: "0.625rem 1rem",
@@ -241,7 +241,7 @@ function HeaderDAO(props) {
           <a
             id="mobile_btn"
             href="/"
-            style={{ color: "#5300e8" }}
+            style={{ color: "#1976d2" }}
             onClick={(e) => {
               e.preventDefault();
               setMenuOpenedClass("menu-opened");
@@ -254,7 +254,7 @@ function HeaderDAO(props) {
             </span>
           </a>
           <Link
-            style={{ color: "#5300e8" }}
+            style={{ color: "#1976d2" }}
             to="/"
             className="navbar-brand logo"
           >
@@ -267,7 +267,7 @@ function HeaderDAO(props) {
             <a
               id="menu_close"
               className="menu-close"
-              style={{ color: "#5300e8" }}
+              style={{ color: "#1976d2" }}
               href="/"
               onClick={(e) => {
                 e.preventDefault();
@@ -305,7 +305,7 @@ function HeaderDAO(props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className=" align-items-center justify-content-center text-center"
-                  style={{ color: "#5300e8" }}
+                  style={{ color: "#1976d2" }}
                 >
                   <span style={{ cursor: "pointer" }}>
                     {localStorage.getItem("Address").slice(0, 10)}. . .
@@ -324,7 +324,7 @@ function HeaderDAO(props) {
                 <a
                   href="#"
                   className=" align-items-center justify-content-center text-center"
-                  style={{ color: "#5300e8" }}
+                  style={{ color: "#1976d2" }}
                 >
                   Connect to Wallet
                 </a>
@@ -341,7 +341,7 @@ function HeaderDAO(props) {
                 <a
                   href="#"
                   className=" align-items-center justify-content-center text-center"
-                  style={{ color: "#5300e8" }}
+                  style={{ color: "#1976d2" }}
                 >
                   Connect to Wallet
                 </a>
@@ -360,7 +360,7 @@ function HeaderDAO(props) {
                 <a
                   href="#"
                   className=" align-items-center justify-content-center text-center"
-                  style={{ color: "#5300e8" }}
+                  style={{ color: "#1976d2" }}
                 >
                   <span style={{ cursor: "pointer" }}>Disconnect</span>
                 </a>
@@ -371,7 +371,7 @@ function HeaderDAO(props) {
               <Link
                 to="/dao-home"
                 className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
+                style={{ color: "#1976d2" }}
               >
                 <span style={selectedNavStyle.Home}>Home</span>
               </Link>
@@ -380,7 +380,7 @@ function HeaderDAO(props) {
               <Link
                 to="/gw-vote"
                 className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
+                style={{ color: "#1976d2" }}
               >
                 <span style={selectedNavStyle.GaugeWeightVote}>
                   Gauge Weight Vote
@@ -391,7 +391,7 @@ function HeaderDAO(props) {
               <Link
                 to="/calc"
                 className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
+                style={{ color: "#1976d2" }}
               >
                 <span style={selectedNavStyle.Calc}>Calc</span>
               </Link>
@@ -400,7 +400,7 @@ function HeaderDAO(props) {
               <Link
                 to="/locker"
                 className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
+                style={{ color: "#1976d2" }}
               >
                 <span style={selectedNavStyle.Locker}>Locker</span>
               </Link>
@@ -409,7 +409,7 @@ function HeaderDAO(props) {
               <Link
                 to="/minter"
                 className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
+                style={{ color: "#1976d2" }}
               >
                 <span style={selectedNavStyle.Minter}>Minter</span>
               </Link>
@@ -418,7 +418,7 @@ function HeaderDAO(props) {
               <Link
                 to="/vesting"
                 className=" align-items-center justify-content-center text-center"
-                style={{ color: "#5300e8" }}
+                style={{ color: "#1976d2" }}
               >
                 <span style={selectedNavStyle.Vesting}>Vesting</span>
               </Link>
@@ -447,7 +447,7 @@ function HeaderDAO(props) {
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "#5300e8" }}
+                style={{ color: "#1976d2" }}
               >
                 <span style={{ cursor: "pointer" }}>
                   {localStorage.getItem("Address").substr(0, 10)}. . .
@@ -458,8 +458,8 @@ function HeaderDAO(props) {
                 <Button
                   style={{
                     borderRadius: "8px",
-                    backgroundColor: "#5300e8",
-                    borderColor: "#5300e8",
+                    backgroundColor: "#1976d2",
+                    borderColor: "#1976d2",
                   }}
                   variant="primary"
                   className="fade-in-text"
@@ -480,8 +480,8 @@ function HeaderDAO(props) {
                 <Button
                   style={{
                     borderRadius: "8px",
-                    backgroundColor: "#5300e8",
-                    borderColor: "#5300e8",
+                    backgroundColor: "#1976d2",
+                    borderColor: "#1976d2",
                   }}
                   variant="primary"
                   className="fade-in-text"
@@ -501,7 +501,7 @@ function HeaderDAO(props) {
               localStorage.getItem("Address") !== null &&
               localStorage.getItem("Address") !== "null" ? (
               <span
-                style={{ cursor: "pointer", color: "#5300e8" }}
+                style={{ cursor: "pointer", color: "#1976d2" }}
                 onClick={() => {
                   Disconnect();
                 }}

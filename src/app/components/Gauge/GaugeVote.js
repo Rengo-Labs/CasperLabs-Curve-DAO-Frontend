@@ -176,13 +176,13 @@ const GaugeVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => { commitAddr.length <= 0 ? enqueueSnackbar("Field is empty") : handleCommitOpen() }}
                         >
                           Submit
@@ -220,13 +220,13 @@ const GaugeVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => { addName.length <= 0 || addWeight.length <= 0 ? enqueueSnackbar("Fields are empty") : handleAddOpen() }}
                         >
                           Submit
@@ -275,13 +275,13 @@ const GaugeVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => { addGaugeAddr.length <= 0 || addGaugeWeight.length <= 0 || addGaugeType.length <= 0 ? enqueueSnackbar("Fields are empty") : handleGaugeOpen() }}
                         >
                           Submit
@@ -326,13 +326,13 @@ const GaugeVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => { changeTypeId.length <= 0 || changeTypeWeight.length <= 0 ? enqueueSnackbar("Fields are empty") : handleTypeOpen() }}
                         >
                           Submit
@@ -375,13 +375,13 @@ const GaugeVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={() => { changeGaugeAddr.length <= 0 || changeGaugeWeight.length <= 0 ? enqueueSnackbar("Fields are empty") : handleChangeOpen() }}
                         >
                           Submit
@@ -407,13 +407,13 @@ const GaugeVote = () => {
                     >
                       <span
                         className="font-weight-bold"
-                        style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                        style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                       >
                         <Button
                           fullWidth
                           variant="contained"
                           size="large"
-                          style={{ backgroundColor: "#5300e8", color: "white" }}
+                          style={{ backgroundColor: "#1976d2", color: "white" }}
                           onClick={handleApplyOpen}
                         >
                           Submit

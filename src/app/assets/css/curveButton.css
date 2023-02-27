@@ -1,6 +1,6 @@
 .btnWrapper button {
-    border: 1px solid #5300e8;
-    background-color:#5300e8;
+    border: 1px solid #1976d2;
+    background-color:#1976d2;
     color: white;
     padding: 0.625rem 1.25rem;
 }
@@ -17,7 +17,7 @@
 /*
 
  --- COLORS ---
-Primary: #5300E8
+Primary: #1976d2
 Secondary: #714CFE
 Error: #B71C1C
 Warning: #EF6C00
@@ -29,7 +29,7 @@ Text: #000
 Text-Green: #00cc52
 Box-Shadow: rgb(0 0 0 / 0.5)
 Border: #9E9E9E
-Border-Active: #5300E8
+Border-Active: #1976d2
 
 */
 

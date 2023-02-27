@@ -199,7 +199,7 @@ const DaoVotingPower = ({ chart, daoPower }) => {
         enabled: true,
       },
     },
-    colors: ["#00cc52", "#5300E8"],
+    colors: ["#00cc52", "#1976d2"],
     stroke: {
       width: 3,
       curve: "smooth",
@@ -329,7 +329,7 @@ const DaoVotingPower = ({ chart, daoPower }) => {
       //   enabled: true,
       // },
     },
-    colors: ["#00cc52", "#5300E8"],
+    colors: ["#00cc52", "#1976d2"],
     fill: {
       type: "gradient",
       gradient: {

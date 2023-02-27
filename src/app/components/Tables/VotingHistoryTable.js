@@ -172,7 +172,7 @@ const VotingHistoryTable = (props) => {
                       >
                         <Link
                           style={{
-                            color: "#5300E8",
+                            color: "#1976d2",
                           }}
                           to="/"
                           className="tdLink font-weight-bold"
@@ -207,7 +207,7 @@ const VotingHistoryTable = (props) => {
                       >
                         <Link
                           style={{
-                            color: "#5300E8",
+                            color: "#1976d2",
                           }}
                           to="/"
                           className="tdLink font-weight-bold"
@@ -225,7 +225,7 @@ const VotingHistoryTable = (props) => {
                       >
                         <Link
                           style={{
-                            color: "#5300E8",
+                            color: "#1976d2",
                           }}
                           to="/"
                           className="tdLink"
@@ -286,7 +286,7 @@ const VotingHistoryTable = (props) => {
                     >
                       <Link
                         style={{
-                          color: "#5300E8",
+                          color: "#1976d2",
                           border: "0.6px solid #e0e0e0",
                         }}
                         to="/"
@@ -322,7 +322,7 @@ const VotingHistoryTable = (props) => {
                     >
                       <Link
                         style={{
-                          color: "#5300E8",
+                          color: "#1976d2",
                         }}
                         to="/"
                         className="tdLink font-weight-bold"
@@ -340,7 +340,7 @@ const VotingHistoryTable = (props) => {
                     >
                       <Link
                         style={{
-                          color: "#5300E8",
+                          color: "#1976d2",
                         }}
                         to="/"
                         className="tdLink"

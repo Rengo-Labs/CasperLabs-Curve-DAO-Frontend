@@ -59,13 +59,13 @@ const EmergencyMember = () => {
                                 >
                                 <span
                                     className="font-weight-bold"
-                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                                     >
                                     <Button
                                       fullWidth
                                       variant="contained"
                                       size="large"
-                                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                                      style={{ backgroundColor: "#1976d2", color: "white" }}
                                       onClick={handleMintOpen}
                                     >
                                       Submit
@@ -101,13 +101,13 @@ const EmergencyMember = () => {
                                 >
                                 <span
                                     className="font-weight-bold"
-                                    style={{ borderBottom: "1px dashed white", color: "#5300e8" }}
+                                    style={{ borderBottom: "1px dashed white", color: "#1976d2" }}
                                     >
                                     <Button
                                       fullWidth
                                       variant="contained"
                                       size="large"
-                                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                                      style={{ backgroundColor: "#1976d2", color: "white" }}
                                       onClick={handleBurnOpen}
                                     >
                                       Submit

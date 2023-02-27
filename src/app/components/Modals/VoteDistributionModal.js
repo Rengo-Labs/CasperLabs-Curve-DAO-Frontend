@@ -73,7 +73,7 @@ function VoteDistributionModal(props) {
               fullWidth
               variant="contained"
               size="large"
-              style={{ backgroundColor: "#5300e8", color: "white" }}
+              style={{ backgroundColor: "#1976d2", color: "white" }}
               onClick={props.close}
             >
               Close Chart

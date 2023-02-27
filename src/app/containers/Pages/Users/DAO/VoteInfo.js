@@ -215,7 +215,7 @@ function VoteInfo(props) {
                       width="w-25"
                       polarQestion="Yes"
                       percent={voteById ? voteByIdObj.yep : "0"}
-                      color="#5300E8"
+                      color="#1976d2"
                     />
                     <Typography className="mb-2">
                       {voteById ? voteByIdObj.yep : "0"}
@@ -247,7 +247,7 @@ function VoteInfo(props) {
                     <Button
                       variant="contained"
                       size="small"
-                      style={{ backgroundColor: "#5300e8", color: "white" }}
+                      style={{ backgroundColor: "#1976d2", color: "white" }}
                       onClick={() => setShowVoters(!showVoters)}
                     >
                       {!showVoters ? "Show Voters" : "Hide Voters"}

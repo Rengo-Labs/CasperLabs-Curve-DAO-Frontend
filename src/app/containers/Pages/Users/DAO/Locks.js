@@ -267,7 +267,7 @@ const Locks = () => {
                                     <Spinner
                                       animation="border"
                                       role="status"
-                                      style={{ color: "rgb(83, 0, 232)" }}
+                                      style={{ color: "#1976d2" }}
                                     ></Spinner>
                                   </div>
                                 </div>
@@ -302,7 +302,7 @@ const Locks = () => {
                                         variant="contained"
                                         size="large"
                                         style={{
-                                          backgroundColor: "#5300e8",
+                                          backgroundColor: "#1976d2",
                                           color: "white",
                                         }}
                                         onClick={() => {
@@ -572,7 +572,7 @@ const Locks = () => {
                                                             role="status"
                                                             style={{
                                                               color:
-                                                                "rgb(83, 0, 232)",
+                                                                "#1976d2",
                                                             }}
                                                           ></Spinner>
                                                         </div>

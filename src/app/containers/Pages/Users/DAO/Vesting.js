@@ -357,7 +357,7 @@ const Vesting = () => {
                                       <Button
                                         variant="contained"
                                         size="large"
-                                        style={{ backgroundColor: "#5300e8", color: "white" }}
+                                        style={{ backgroundColor: "#1976d2", color: "white" }}
                                         onClick={() => { }}
                                       >
                                         Check
@@ -437,7 +437,7 @@ const Vesting = () => {
                                       <span className="font-weight-bold">
                                         Available Tokens:&nbsp;
                                       </span>
-                                      {balanceFormat}
+                                      {0.00}
                                     </ListItemText>
                                   </ListItem>
                                   <ListItem disablePadding>
@@ -481,7 +481,7 @@ const Vesting = () => {
                               <Button
                                 variant="contained"
                                 size="large"
-                                style={{ backgroundColor: "#5300e8", color: "white" }}
+                                style={{ backgroundColor: "#1976d2", color: "white" }}
                                 // onClick={() => { claimMakeDeploy() }}
                                 onClick={() => setOpen(true)}
                               // onClick={() => { claimMakeDeploy(vestingAddress) }}

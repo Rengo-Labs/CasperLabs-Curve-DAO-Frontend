@@ -120,7 +120,7 @@
 //                             <span
 //                               style={{
 //                                 fontSize: "1rem",
-//                                 color: "#5300E8",
+//                                 color: "#1976d2",
 //                                 fontWeight: "bold",
 //                               }}
 //                             >
@@ -193,7 +193,7 @@
 //                             <span
 //                               style={{
 //                                 fontSize: "1rem",
-//                                 color: "#5300E8",
+//                                 color: "#1976d2",
 //                                 fontWeight: "bold",
 //                               }}
 //                             >

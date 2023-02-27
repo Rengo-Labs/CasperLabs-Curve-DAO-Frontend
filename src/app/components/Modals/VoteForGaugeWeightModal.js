@@ -72,7 +72,7 @@ function VoteForGaugeWeightModal(props) {
             <Spinner
               animation="border"
               role="status"
-              style={{ color: "#6476bf" }}
+              style={{ color: "#1976d2" }}
             >
               <span className="sr-only">Loading...</span>
             </Spinner>
@@ -128,7 +128,7 @@ function VoteForGaugeWeightModal(props) {
         <Button
           variant="contained"
           size="large"
-          style={{ backgroundColor: "#5300e8", color: "white", margin: '10px' }}
+          style={{ backgroundColor: "#1976d2", color: "white", margin: '10px' }}
           onClick={() => props.voteForGaugeWeightsMakeDeploy(props.gauge, props.votingPowerPercentage)}
         >
           Submit
@@ -137,7 +137,7 @@ function VoteForGaugeWeightModal(props) {
         <Button
           variant="contained"
           size="large"
-          style={{ backgroundColor: "#5300e8", color: "white", margin: '10px' }}
+          style={{ backgroundColor: "#1976d2", color: "white", margin: '10px' }}
           onClick={() => {
             // props.setSlippage(0.5);
             props.handleClose();

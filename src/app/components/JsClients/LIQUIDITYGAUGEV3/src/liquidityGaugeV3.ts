@@ -608,7 +608,7 @@ class LIQUIDITYGAUGEV3Client {
     );
     console.log("encodeBase16(result.value())", encodeBase16(result.value().data));
 
-    return  encodeBase16(result.value().data);
+    return encodeBase16(result.value().data);
   }
 
   public async controller() {
@@ -708,16 +708,17 @@ class LIQUIDITYGAUGEV3Client {
     return result.value();
   }
 
-  public async workingBalances(owner: string) {
+  public async workingBalances(account: string) {
     try {
-
+      const key = new CLKey(new CLAccountHash(Uint8Array.from(Buffer.from(account, "hex"))));
+      const keyBytes = CLValueParsers.toBytes(key).unwrap();
+      const itemKey = Buffer.from(keyBytes).toString("base64");
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
-        owner,
-        this.namedKeys.workingBalances
+        itemKey,
+        this.namedKeys!.workingBalances
       );
-      const maybeValue = result.value().unwrap();
-      return maybeValue.value().toString();
+      return result.value();
 
     } catch (error) {
       return "0";

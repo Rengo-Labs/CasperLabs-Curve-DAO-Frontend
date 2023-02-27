@@ -711,7 +711,7 @@ const Calc = () => {
                                         variant="contained"
                                         size="large"
                                         style={{
-                                          backgroundColor: "#5300e8",
+                                          backgroundColor: "#1976d2",
                                           color: "white",
                                         }}
                                         type="submit"

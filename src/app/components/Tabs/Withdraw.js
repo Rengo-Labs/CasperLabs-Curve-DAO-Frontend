@@ -46,7 +46,7 @@ const Withdraw = () => {
                     variant="h6"
                     gutterBottom
                     component="div"
-                    sx={{ color: "#5300e8" }}
+                    sx={{ color: "#1976d2" }}
                   >
                     Share Of Liquidity (%)
                   </Typography>
@@ -103,7 +103,7 @@ const Withdraw = () => {
                       variant="h6"
                       gutterBottom
                       component="div"
-                      sx={{ color: "#5300e8" }}
+                      sx={{ color: "#1976d2" }}
                     >
                       Currencies
                     </Typography>
@@ -217,7 +217,7 @@ const Withdraw = () => {
                     variant="h6"
                     gutterBottom
                     component="div"
-                    sx={{ color: "#5300e8" }}
+                    sx={{ color: "#1976d2" }}
                   >
                     Withdraw % in:{" "}
                     <Tooltip title="You can also withdraw in one coin by tapping in a currency field">
@@ -337,7 +337,7 @@ const Withdraw = () => {
                                 <span
                                   style={{
                                     fontSize: "1rem",
-                                    color: "#5300E8",
+                                    color: "#1976d2",
                                     fontWeight: "bold",
                                   }}
                                 >
