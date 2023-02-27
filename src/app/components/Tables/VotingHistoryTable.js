@@ -1,13 +1,13 @@
 import {
   Avatar,
   Table,
-  TableBody,
-  TableCell,
+  tbody,
+  td,
   TableContainer,
   TableFooter,
   TableHead,
   TablePagination,
-  TableRow,
+  tr,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -32,91 +32,89 @@ const VotingHistoryTable = (props) => {
   };
 
   return (
-    <TableContainer>
-      <Table
-        aria-label="Gauge Weight Vote History"
-        style={{ border: "0.6px solid #e0e0e0" }}
-      >
-        <TableHead
-          sx={{
+    // <TableContainer>
+      <table className="table table-bordered table-striped" aria-label="Gauge Weight Vote History">
+        <thead 
+          className="thead-dark"
+          style={{
             backgroundColor: "#e7ebf0",
             paddingLeft: "0.25rem",
           }}
         >
-          <TableRow id="GWVoteHistoryTableSort">
+          <tr id="GWVoteHistoryTableSort">
             {/* {votingHistoryCells.map((cell) => ( */}
-            <TableCell
-              sx={{
+            <th
+              style={{
                 border: 0,
                 fontWeight: "bold",
                 fontSize: "1rem",
                 textAlign: "center",
               }}
             >
-              <Typography>Time</Typography>
-            </TableCell>
-            <TableCell
-              sx={{
+              Time
+            </th>
+            <th
+              style={{
                 border: 0,
                 fontWeight: "bold",
                 fontSize: "1rem",
                 textAlign: "center",
               }}
             >
-              <Typography>Voter</Typography>
-            </TableCell>
-            <TableCell
-              sx={{
+              Voter
+            </th>
+            <th
+              style={{
                 border: 0,
                 fontWeight: "bold",
                 fontSize: "1rem",
                 textAlign: "center",
               }}
             >
-              <Typography>veCRV</Typography>
-            </TableCell>
-            <TableCell
-              sx={{
+              veCRV
+            </th>
+            <th
+              style={{
                 border: 0,
                 fontWeight: "bold",
                 fontSize: "1rem",
                 textAlign: "center",
               }}
             >
-              <Typography>Total veCRV</Typography>
-            </TableCell>
-            <TableCell
-              sx={{
+              Total veCRV
+            </th>
+            <th
+              style={{
                 border: 0,
                 fontWeight: "bold",
                 fontSize: "1rem",
                 textAlign: "center",
               }}
             >
-              <Typography>Gauge</Typography>
-            </TableCell>
-            <TableCell
-              sx={{
+              Gauge
+            </th>
+            <th
+              style={{
                 border: 0,
                 fontWeight: "bold",
                 fontSize: "1rem",
                 textAlign: "center",
               }}
             >
-              <Typography>Weight</Typography>
-            </TableCell>
-            <TableCell
-              sx={{
+              Weight
+            </th>
+            <th
+              style={{
                 border: 0,
                 fontWeight: "bold",
                 fontSize: "1rem",
                 textAlign: "center",
               }}
             >
-              <Typography>Total Weight</Typography>
-            </TableCell>
-            <TableCell
-              sx={{
+              Total Weight
+            </th>
+            <th
+              style={{
                 border: 0,
                 fontWeight: "bold",
                 fontSize: "1rem",
@@ -124,10 +122,10 @@ const VotingHistoryTable = (props) => {
               }}
             >
               <PieChartIcon />
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody id={"GWVoteHistoryTableBody"}>
+            </th>
+          </tr>
+        </thead>
+        <tbody id={"GWVoteHistorytbody"} style={{color:"#1E1E1F"}}>
           {props.showVotes
             ? props.gaugeVoteTime
                 ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -146,17 +144,17 @@ const VotingHistoryTable = (props) => {
                 .map((item, key) => {
                   console.log("In votes by time");
                   return (
-                    <TableRow key={key}>
-                      <TableCell
+                    <tr key={key}>
+                      <td
                         //key={item.index}
-                        sx={{
+                        style={{
                           textAlign: "center",
                           justifyContent: "center",
                         }}
                       >
                         <Tooltip title={item.time}>
                           <Avatar
-                            sx={{
+                            style={{
                               height: "20px",
                               width: "20px",
                             }}
@@ -164,10 +162,10 @@ const VotingHistoryTable = (props) => {
                             aria-label="clock"
                           />
                         </Tooltip>
-                      </TableCell>
-                      <TableCell
+                      </td>
+                      <td
                         //key={item.user}
-                        sx={{
+                        style={{
                           textAlign: "center",
                           border: "0.6px solid #e0e0e0",
                         }}
@@ -177,32 +175,32 @@ const VotingHistoryTable = (props) => {
                             color: "#5300E8",
                           }}
                           to="/"
-                          className="tableCellLink font-weight-bold"
+                          className="tdLink font-weight-bold"
                         >
                           {helpers.shortenAddress(item.user)}
                         </Link>
-                      </TableCell>
-                      <TableCell
+                      </td>
+                      <td
                         //key={item.index}
-                        sx={{
+                        style={{
                           textAlign: "center",
                           border: "0.6px solid #e0e0e0",
                         }}
                       >
                         {(item.veCRV / 1e9).toFixed(2)}
-                      </TableCell>
-                      <TableCell
+                      </td>
+                      <td
                         //key={item.index}
-                        sx={{
+                        style={{
                           textAlign: "center",
                           border: "0.6px solid #e0e0e0",
                         }}
                       >
                         {helpers.formatNumber(item.totalveCRV / 1e9)}
-                      </TableCell>
-                      <TableCell
+                      </td>
+                      <td
                         //key={item.index}
-                        sx={{
+                        style={{
                           textAlign: "center",
                           border: "0.6px solid #e0e0e0",
                         }}
@@ -212,15 +210,15 @@ const VotingHistoryTable = (props) => {
                             color: "#5300E8",
                           }}
                           to="/"
-                          className="tableCellLink font-weight-bold"
+                          className="tdLink font-weight-bold"
                         >
                           {/* {getGaugeAddress(item.gauge)} */}
                           {helpers.shortenAddress(item.gauge)}
                         </Link>
-                      </TableCell>
-                      <TableCell
+                      </td>
+                      <td
                         //key={item.index}
-                        sx={{
+                        style={{
                           textAlign: "center",
                           border: "0.6px solid #e0e0e0",
                         }}
@@ -230,23 +228,23 @@ const VotingHistoryTable = (props) => {
                             color: "#5300E8",
                           }}
                           to="/"
-                          className="tableCellLink"
+                          className="tdLink"
                         >
                           {item.weight / 100}%
                         </Link>
-                      </TableCell>
-                      <TableCell
+                      </td>
+                      <td
                         //key={item.index}
-                        sx={{
+                        style={{
                           textAlign: "center",
                           border: "0.6px solid #e0e0e0",
                         }}
                       >
                         {(item.total_weight / 1e9).toFixed(2)}
-                      </TableCell>
-                      <TableCell
+                      </td>
+                      <td
                         //key={item.index}
-                        sx={{
+                        style={{
                           textAlign: "center",
                         }}
                       >
@@ -258,22 +256,22 @@ const VotingHistoryTable = (props) => {
                             color: "#D29300",
                           }}
                         />
-                      </TableCell>
-                    </TableRow>
+                      </td>
+                    </tr>
                   );
                 })
             : props.gaugeWeightData.map((item, key) => {
                 //filteredVotes?.map((item) => {
                 console.log("this runs!");
                 return (
-                  <TableRow key={key}>
-                    <TableCell
+                  <tr key={key}>
+                    <td
                       //key={item.index}
-                      sx={{ textAlign: "center" }}
+                      style={{ textAlign: "center" }}
                     >
                       <Tooltip title={item.time}>
                         <Avatar
-                          sx={{
+                          style={{
                             height: "20px",
                             width: "20px",
                           }}
@@ -281,10 +279,10 @@ const VotingHistoryTable = (props) => {
                           aria-label="clock"
                         />
                       </Tooltip>
-                    </TableCell>
-                    <TableCell
+                    </td>
+                    <td
                       //key={item.user}
-                      sx={{ textAlign: "center" }}
+                      style={{ textAlign: "center" }}
                     >
                       <Link
                         style={{
@@ -292,32 +290,32 @@ const VotingHistoryTable = (props) => {
                           border: "0.6px solid #e0e0e0",
                         }}
                         to="/"
-                        className="tableCellLink font-weight-bold"
+                        className="tdLink font-weight-bold"
                       >
                         {helpers.shortenAddress(item.user)}
                       </Link>
-                    </TableCell>
-                    <TableCell
+                    </td>
+                    <td
                       //key={item.index}
-                      sx={{
+                      style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
                       }}
                     >
                       {(item.veCRV / 1e9).toFixed(2)}
-                    </TableCell>
-                    <TableCell
+                    </td>
+                    <td
                       //key={item.index}
-                      sx={{
+                      style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
                       }}
                     >
                       {helpers.formatNumber(item.totalveCRV / 1e9)}
-                    </TableCell>
-                    <TableCell
+                    </td>
+                    <td
                       //key={item.index}
-                      sx={{
+                      style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
                       }}
@@ -327,15 +325,15 @@ const VotingHistoryTable = (props) => {
                           color: "#5300E8",
                         }}
                         to="/"
-                        className="tableCellLink font-weight-bold"
+                        className="tdLink font-weight-bold"
                       >
                         {/* {getGaugeAddress(item.gauge)} */}
                         {helpers.shortenAddress(item.gauge)}
                       </Link>
-                    </TableCell>
-                    <TableCell
+                    </td>
+                    <td
                       //key={item.index}
-                      sx={{
+                      style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
                       }}
@@ -345,23 +343,23 @@ const VotingHistoryTable = (props) => {
                           color: "#5300E8",
                         }}
                         to="/"
-                        className="tableCellLink"
+                        className="tdLink"
                       >
                         {item.weight / 100}%
                       </Link>
-                    </TableCell>
-                    <TableCell
+                    </td>
+                    <td
                       //key={item.index}
-                      sx={{
+                      style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
                       }}
                     >
                       {(item.total_weight / 1e9).toFixed(2)}
-                    </TableCell>
-                    <TableCell
+                    </td>
+                    <td
                       //key={item.index}
-                      sx={{ textAlign: "center" }}
+                      style={{ textAlign: "center" }}
                     >
                       <PieChartIcon
                         onClick={() => {
@@ -371,13 +369,13 @@ const VotingHistoryTable = (props) => {
                           color: "#D29300",
                         }}
                       />
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 );
               })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
+        </tbody>
+        <tfoot>
+          <tr>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
               colSpan={12}
@@ -397,10 +395,9 @@ const VotingHistoryTable = (props) => {
                 backgroundColor: "#e7ebf0",
               }}
             />
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>
+          </tr>
+        </tfoot>
+      </table>
   );
 };
 

@@ -1636,6 +1636,7 @@ const GaugeWeightVote = () => {
                                           style={{
                                             backgroundColor: "#5300e8",
                                             color: "white",
+                                            width:"33%"
                                           }}
                                           onClick={() => {
                                             calculateValuesForGraph();
@@ -1778,7 +1779,7 @@ const GaugeWeightVote = () => {
                                             style={{
                                               backgroundColor: "#5300e8",
                                               color: "white",
-                                              width: "100%",
+                                              width: "50%",
                                             }}
                                           >
                                             Show My Votes
@@ -1797,7 +1798,7 @@ const GaugeWeightVote = () => {
                                             style={{
                                               backgroundColor: "#5300e8",
                                               color: "white",
-                                              width: "100%",
+                                              width: "50%",
                                             }}
                                           >
                                             Show All Votes
