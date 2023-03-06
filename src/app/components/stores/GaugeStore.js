@@ -20,6 +20,7 @@ import {
 import { UserCheckpointMakeDeploy } from "../MakeDeployFunctions/UserCheckpointMakeDeploy";
 import * as liquidityGaugeV3Functions from "../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
 import * as gaugeControllerFunctions from "../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
+import * as LiquidityGaugeV3 from "../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
 import * as minterFunctions from "../../components/JsClients/MINTER/minterFunctionsForBackend/functions";
 import axios from "axios";
 
@@ -48,314 +49,281 @@ export let state = {
   synthsUnavailable: false,
 };
 
-export async function getState(activePublicKey) {
-  state.pools = {
-    compound: {
-      swap: "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56",
-      swap_token: "0x845838DF265Dcd2c412A1Dc9e959c7d08537f8a2",
-      name: "compound",
-    },
-    usdt: {
-      swap: "0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C",
-      swap_token: "0x9fC689CCaDa600B6DF723D9E47D84d76664a1F23",
-      name: "usdt",
-    },
-    y: {
-      swap: "0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51",
-      swap_token: "0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8",
-      name: "y",
-    },
-    busd: {
-      swap: "0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27",
-      swap_token: "0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B",
-      name: "busd",
-    },
-    susdv2: {
-      swap: "0xA5407eAE9Ba41422680e2e00537571bcC53efBfD",
-      swap_token: "0xC25a3A3b969415c80451098fa907EC722572917F",
-      name: "susdv2",
-    },
-    pax: {
-      swap: "0x06364f10B501e868329afBc005b3492902d6C763",
-      swap_token: "0xD905e2eaeBe188fc92179b6350807D8bd91Db0D8",
-      name: "pax",
-    },
-    ren: {
-      swap: "0x93054188d876f558f4a66B2EF1d97d16eDf0895B",
-      swap_token: "0x49849C98ae39Fff122806C06791Fa73784FB3675",
-      name: "ren",
-    },
-    sbtc: {
-      swap: "0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714",
-      swap_token: "0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3",
-      name: "sbtc",
-    },
-  };
-
-  // state.gaugeController = new contract.web3.eth.Contract(daoabis.gaugecontroller_abi, '0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB')
-  // state.votingEscrow = new contract.web3.eth.Contract(daoabis.votingescrow_abi, '0x5f3b5DfEb7B28CDbD7FAba78963EE202a494e2A2')
-  // state.minter = new contract.web3.eth.Contract(daoabis.minter_abi, '0xd061D61a4d941c39E5453435B6345Dc261C2fcE0')
-
-  // state.n_gauges = +(await state.gaugeController.methods.n_gauges().call()) //ask about this from contract developer
-  state.n_gauges = +(await gaugeControllerFunctions.n_gauges(
+export async function getState(activePublicKey, setNGauges, setTotalBalance, setTotalGaugeBalance, setMyPools, setPools, setBoosts) {
+  let decodedGauges = []
+  let _decodedGauges = []
+  let n_gauges = await gaugeControllerFunctions.n_gauges(
     GAUGE_CONTROLLER_CONTRACT_HASH
-  ));
-
-  // let swap_token = new contract.web3.eth.Contract(ERC20_abi, state.pools.susdv2.swap_token)
-
-  // let calls = Array.from(Array(state.n_gauges), (_, i) => [state.gaugeController._address, state.gaugeController.methods.gauges(i).encodeABI()])
-  // let decodedGauges = Array.from(Array(state.n_gauges), async (_, i) => [state.gaugeController._address, await gauges(GAUGE_CONTROLLER_CONTRACT_HASH, i)]) //implemented according to casper
-
-  // calls = calls.concat(Object.values(state.pools).map(v => v.swap_token).map(v => [v, swap_token.methods.balanceOf(contract.default_account).encodeABI()]))
-
-  //getting the balance of account key again each swap token address for erc20 abi contract (casper)
-  // calls = calls.concat(Object.values(state.pools).map(v => v.swap_token).map(async v => [v, await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"))]))
-
-  // let aggcalls;
-  // let aggcalls = await contract.multicall.methods.aggregate(calls).call()
-  // let decodedGauges = aggcalls[1].slice(0, state.n_gauges).map(hex => web3.eth.abi.decodeParameter('address', hex))
-  // let decodedBalances = aggcalls[1].slice(state.n_gauges).map((hex, i) => ({swap_token: calls[state.n_gauges + i][0], balance: web3.eth.abi.decodeParameter('uint256', hex)}))  //also ask about this
-
-  let decodedBalances = Object.values(state.pools)
-    .map((v) => v.swap_token)
-    .map(async (pool) => {
-      //confirm about values of n_gauges and swap_token
-      return {
-        swap_token: pool,
-        balance: await balanceOf(
-          ERC20_CRV_CONTRACT_HASH,
-          Buffer.from(
-            CLPublicKey.fromHex(activePublicKey).toAccountHash()
-          ).toString("Hex")
-        ),
-      };
-    });
-  let decodedGauges = state.n_gauges.map(async (gauge) => {
-    await gaugeControllerFunctions.gauges(
-      state.gaugeController._address,
-      gauge
-    );
-  });
-
-  // let example_gauge = new contract.web3.eth.Contract(daoabis.liquiditygauge_abi, decodedGauges[0])
-
-  let gaugeTypes = decodedGauges.map(async (gauge) => {
-    return await gaugeControllerFunctions.gaugeTypes(
+  );
+  console.log("n_gauges", parseFloat(n_gauges[1].data));
+  setNGauges(parseFloat(n_gauges[1].data));
+  for (let i = 0; i < n_gauges[1].data; i++) {
+    let gauge = await gaugeControllerFunctions.gauges(
       GAUGE_CONTROLLER_CONTRACT_HASH,
-      gauge
+      i.toString()
     );
-  });
+    console.log("gauge", gauge);
+    decodedGauges.push({ gauge })
+    _decodedGauges.push(gauge)
+  }
 
-  let gaugeTypesNames = gaugeTypes.map(async (type) => {
-    return await gaugeControllerFunctions.gauge_type_names(
-      GAUGE_CONTROLLER_CONTRACT_HASH,
-      type
+  console.log("decodedGauges", decodedGauges);
+  let params = {
+    packageHashes: _decodedGauges
+  }
+  let res = await axios.post("/getContractHashesAgainstPackageHashes", params)
+  console.log("res", res);
+  let gaugesContractHashes = res.data.contractHashes
+  for (let i = 0; i < decodedGauges.length; i++) {
+    decodedGauges[i].gaugeContractHash = gaugesContractHashes[i]
+  }
+  console.log("gaugesContractHashes", gaugesContractHashes);
+  console.log("decodedGaugesdecodedGaugesdecodedGaugesdecodedGauges", decodedGauges);
+  let pools = []
+  let poolsPackageHash = []
+  let gaugeBalances = []
+  // //WE CAN"T DO CALIMABLE TOKENS PART BECUASE ITS A SETTER THAT RETURNS A VALUE
+  // // let claimableTokens = []
+  await Promise.all(decodedGauges.map(async (gauge, index) => {
+    let pool = await LiquidityGaugeV3.lpToken(
+      gauge.gaugeContractHash
     );
-  });
-
-  let decodedGaugesLP = decodedGauges.map(async (gauge, i) => {
-    return {
-      gauge: decodedGauges[i],
-      swap_token: await liquidityGaugeV3Functions.lpToken(
-        LIQUIDITY_GAUGE_V3_CONTRACT_HASH
-      ),
-      type: gaugeTypes[i],
-      typeName: gaugeTypesNames[i],
-      // claimable_tokens: await liquidityGaugeV3Functions.claimable_tokens()
-      minted: await minterFunctions.minted(
-        MINTER_CONTRACT_HASH,
-        activePublicKey,
-        gauge
-      ),
-    };
-  });
-
-  //CHECK THIS PART
-  Object.values(decodedGaugesLP).forEach((gauge, i) => {
-    let poolgauge = Object.values(state.pools).find(
-      (pool) => pool.swap_token.toLowerCase() == gauge.swap_token.toLowerCase()
+    console.log("pool", pool);
+    pools.push({ swap_token: pool, gauge: gauge.gauge, gaugeContractHash: gauge.gaugeContractHash })
+    poolsPackageHash.push(pool)
+    let gaugeBalance = await LiquidityGaugeV3.balanceOf(
+      gauge.gaugeContractHash,
+      Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")
     );
-    poolgauge.gauge = gauge.gauge;
-    poolgauge.type = gauge.type;
-    poolgauge.typeName = gauge.typeName;
-    poolgauge.claimable_tokens = gauge.claimable_tokens;
-    poolgauge.minted = gauge.minted;
-  });
+    console.log("gaugeBalance", parseFloat(gaugeBalance));
+    gaugeBalances.push({ gauge: gauge.gauge, gaugeContractHash: gauge.gaugeContractHash, balance: parseFloat(gaugeBalance) })
+    // //WE CAN"T DO CALIMABLE TOKENS PART BECUASE ITS A SETTER THAT RETURNS A VALUE
+    // // let claimableToken = await LiquidityGaugeV3.claimableTokens(
+    // //   gauge,
+    // //   Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")
+    // // );
+    // // console.log("claimableToken", claimableToken);
+    // // claimableTokens.push(claimableToken)
 
-  let gaugeBalances = decodedGauges.map(async (gauge, i) => ({
-    gauge: gauge,
-    balance: await liquidityGaugeV3Functions.balanceOf(gauge), //CONFIRM WHOSE BALANCE HAS TO GET
   }));
+  console.log("pools", pools);
+  console.log("gaugeBalances", gaugeBalances);
 
-  //CONFIRM ABOUT THIS PART
-  state.mypools = decodedBalances.map((v) => {
-    let poolInfo = Object.values(state.pools).find(
-      (pool) => pool.swap_token.toLowerCase() == v.swap_token.toLowerCase()
+  // // //WE CAN"T DO CALIMABLE TOKENS PART BECUASE ITS A SETTER THAT RETURNS A VALUE
+  // // // console.log("claimableTokens", claimableTokens);
+
+  let params1 = {
+    packageHashes: poolsPackageHash
+  }
+  let res1 = await axios.post("/getContractHashesAgainstPackageHashes", params1)
+  console.log("res1", res1);
+  let poolsContractHashes = res1.data.contractHashes
+  // console.log("poolsContractHashes", poolsContractHashes);
+  let decodedBalances = []
+  await Promise.all(pools.map(async (pool, i) => {
+    // console.log("poolpoolpool", pool);
+    let poolBalance = await LiquidityGaugeV3.balanceOf(
+      poolsContractHashes[i],
+      Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")
     );
+    console.log("poolBalance", parseFloat(poolBalance));
+    decodedBalances.push({ gauge: pool.gauge, gaugeContractHash: pool.gaugeContractHash, swap_token: pool.swap_token, swapTokenContractHash: poolsContractHashes[i], balance: parseFloat(poolBalance) })
+    pool.swapTokenContractHash = poolsContractHashes[i];
+  }));
+  console.log("decodedBalances", decodedBalances);
+  console.log("poolsss", pools);
+
+  let gaugeTypes = []
+  let typeNames = []
+  await Promise.all(pools.map(async (pool) => {
+    let gaugeType = await gaugeControllerFunctions.gaugeTypes(
+      GAUGE_CONTROLLER_CONTRACT_HASH,
+      pool.gauge
+    );
+    // console.log("gaugeType", gaugeType - 1);
+    pool.type = gaugeType - 1
+    gaugeTypes.push(gaugeType - 1)
+
+
+    let typeName = await gaugeControllerFunctions.gauge_type_names(
+      GAUGE_CONTROLLER_CONTRACT_HASH,
+      pool.type.toString()
+    );
+    // console.log("typeName", typeName);
+    pool.typeName = typeName;
+    typeNames.push(typeName)
+  }));
+  console.log("gaugeTypes", gaugeTypes);
+  console.log("typeNames", typeNames);
+  console.log("pollsss", pools);
+  let decodedGaugeLP = []
+  pools.map((pool, i) => {
+    decodedGaugeLP.push({
+      gauge: pool.gauge,
+      gaugeContractHash: pool.gaugeContractHash,
+      swap_token: pool.swap_token,
+      swapTokenContractHash: pool.swapTokenContractHash,
+      type: pool.type,
+      typeName: pool.typeNames,
+      claimable_tokens: 0,
+      minted: 0,
+    })
+    pool.claimable_tokens = 0;
+    pool.minted = 0;
+  })
+  console.log("decodedGaugeLP", decodedGaugeLP);
+  let mypools = decodedBalances.map((v, i) => {
+    let poolInfo = Object.values(pools).find(pool => pool.swap_token == v.swap_token && pool.gauge == v.gauge)
+    console.log("gaugeBalancesgaugeBalancesgaugeBalances", gaugeBalances);
+    console.log("poolInfopoolInfopoolInfo", poolInfo);
     return {
       ...poolInfo,
       balance: v.balance,
       origBalance: v.balance,
-      gaugeBalance: gaugeBalances.find(
-        (pool) => pool.gauge.toLowerCase() == poolInfo.gauge.toLowerCase()
-      ).balance,
-    };
-  });
-
-  //console.log(decodedGauges, "THE GAUGES")
-
-  let pools = [
-    "compound",
-    "usdt",
-    "iearn",
-    "busd",
-    "susdv2",
-    "pax",
-    "ren",
-    "sbtc",
-  ];
-
-  // this prices work will remain as it is for now and will be updated afterwards
-  let prices = await fetch(
-    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,curve-dao-token&vs_currencies=usd"
-  );
-  prices = await prices.json();
-  let btcPrice = prices.bitcoin.usd;
-  let CRVprice = prices["curve-dao-token"].usd;
-
-  let decodedWeights = decodedGauges.map(async (gauge) => {
-    return await axios
-      .post(
-        `gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
-        { address: gauge }
-      )
-      .then((response) => {
-        console.log("Response from getting gauge Relative weight: ", response);
-        return response.data.gaugeRelativeWeights[0];
-      })
-      .catch((error) => {
-        console.log("Error from getting gauge relative weight: ", error);
-      });
-  });
-
-  let gaugeRates = decodedGauges.map(async (gauge) => {
-    return await liquidityGaugeV3Functions.inflationRate(
-      LIQUIDITY_GAUGE_V3_CONTRACT_HASH
-    );
-  });
-
-  let workingSupplies = decodedGauges(async (gauge) => {
-    return await liquidityGaugeV3Functions.workingSupply(
-      LIQUIDITY_GAUGE_V3_CONTRACT_HASH
-    );
-  });
-
-  let totalSupplies = decodedGauges.map(async (gauge) => {
-    return await liquidityGaugeV3Functions.totalSupplyGauge(
-      LIQUIDITY_GAUGE_V3_CONTRACT_HASH
-    );
-  });
-
-  let workingBalances = decodedGauges.map(async (gauge) => {
-    return await liquidityGaugeV3Functions.workingBalances(
-      LIQUIDITY_GAUGE_V3_CONTRACT_HASH,
-      activePublicKey
-    );
-  });
-
-
-  // let example_pool = new web3.eth.Contract(swap_abi, '0xA5407eAE9Ba41422680e2e00537571bcC53efBfD')
-
-  // let virtualPriceCalls = Object.values(state.pools).map(v => [v.swap, example_pool.methods.get_virtual_price().encodeABI()]) //ask about this
-  //console.log(virtualPriceCalls, "VIRTUAL PRICE CALLS")
-  // let aggVirtualPrices = await contract.multicall.methods.aggregate(virtualPriceCalls).call()
-  // let decodedVirtualPrices = aggVirtualPrices[1].map((hex, i) => [virtualPriceCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18])
-
-  //confirm these calls
-  // let aggVirtualPrices = await contract.multicall.methods.aggregate(virtualPriceCalls).call()
-  // let decodedVirtualPrices = aggVirtualPrices[1].map((hex, i) => [virtualPriceCalls[i][0], web3.eth.abi.decodeParameter('uint256', hex) / 1e18])
-
-  // let decodedWeights = [];
-  let decodedVirtualPrices = [];
-  let weightCalls = [];
-
-  //LETTING IT AS IT IS UNLESS DON'T GETTING DATA
-  window.gauges = {};
-  let weightData = decodedWeights.map((w, i) => {
-    let pool = state.mypools.find(
-      (v) =>
-        v.gauge.toLowerCase() ==
-        "0x" + weightCalls[i][1].slice(34).toLowerCase()
-    ).name;
-    let swap_address = state.pools[pool].swap;
-    
-    //HOTFIX FOR VIRTUAL PRICE 
-    let virtual_price = 20;
-    
-    // decodedVirtualPrices.find(
-    //   (v) => v[0].toLowerCase() == swap_address.toLowerCase()
-    // )[1];
-    let _working_supply = workingSupplies[i];
-    let totalSupply = totalSupplies[i];
-    if (["ren", "sbtc"].includes(pool)) {
-      _working_supply *= btcPrice;
-      totalSupply *= btcPrice;
+      gaugeBalance: gaugeBalances.find(pool => pool.gauge == poolInfo.gauge).balance
     }
-    state.mypools.find((v) => v.name == pool).working_supply = _working_supply;
-    state.mypools.find((v) => v.name == pool).original_supply =
-      totalSupplies[i];
-    state.mypools.find((v) => v.name == pool).currentWorkingBalance =
-      workingBalances[i];
-    //console.log(pool, gaugeRates[i], w[1], 31536000, _working_supply, "RATE")
-    let rate =
-      (((gaugeRates[i] * w[1] * 31536000) / _working_supply) * 0.4) /
-      virtual_price;
-    let apy = rate * CRVprice * 100;
-    if (isNaN(apy)) apy = 0;
-    state.mypools.find((v) => v.name == pool).gauge_relative_weight = w[1];
-    Object.values(state.pools).find(
-      (v) => v.name == pool
-    ).gauge_relative_weight = w[1];
-    // Vue.set(state.APYs, pool, apy)
-    // window.gauges[pool] = new web3.eth.Contract(daoabis.liquiditygauge_abi, '0x' + weightCalls[i][1].slice(34).toLowerCase())
-  });
+  })
+  console.log("mypools", mypools);
+  console.log("poolspoolspoolspoolspools", pools);
+  let prices = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,curve-dao-token&vs_currencies=usd')
+  prices = await prices.json()
+  let btcPrice = prices.bitcoin.usd
+  let CRVprice = prices['curve-dao-token'].usd
+  console.log("CRVprice", CRVprice);
 
-  //console.log(state.mypools, "STATE MY POOLS")
+  let decodedWeights = [];
+  await Promise.all(mypools.map(async (pool) => {
+    let gaugeParams = {
+      address: pool.gauge
+    }
+    console.log("gaugeParams", gaugeParams);
+    console.log(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`);
+    let res2 = await axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`, gaugeParams)
+    console.log("res2", res2);
+    pool.gaugeRelativeWeight = res2.data.gaugeRelativeWeights[0] ? res2.data.gaugeRelativeWeights[0] / 1e9 : 0;
+    decodedWeights.push({ ...pool, gaugeRelativeWeight: res2.data.gaugeRelativeWeights[0] ? res2.data.gaugeRelativeWeights[0] / 1e9 : 0 })
+  }));
+  console.log("decodedWeights,", decodedWeights);
+  let gaugeRates = []
+  let workingSupplies = []
+  let totalSupplies = []
+  let workingBalances = []
+  let names = []
+  await Promise.all(mypools.map(async (pool) => {
+    let inflationRate = await LiquidityGaugeV3.inflationRate(
+      pool.gaugeContractHash
+    );
+    console.log("inflationRate", parseFloat(inflationRate) / 1e9);
+    pool.gaugeRate = parseFloat(parseFloat(inflationRate) / 1e9)
+    gaugeRates.push({ ...pool, gaugeRate: parseFloat(inflationRate) })
 
-  state.totalBalance = state.mypools.reduce((a, b) => +a + +b.balance, 0);
-  state.totalGaugeBalance = state.mypools.reduce(
-    (a, b) => +a + +b.gaugeBalance,
-    0
-  );
+    let workingSupply = await LiquidityGaugeV3.workingSupply(
+      pool.gaugeContractHash
+    );
+    console.log("workingSupply", parseFloat(workingSupply) / 1e9);
+    pool.workingSupply = parseFloat(workingSupply) / 1e9;
+    workingSupplies.push({ ...pool, workingSupply: parseFloat(workingSupply) / 1e9 })
+    let totalSupplyGauge = await LiquidityGaugeV3.totalSupplyGauge(
+      pool.gaugeContractHash
+    );
+    console.log("totalSupplyGauge", parseFloat(totalSupplyGauge));
+    pool.originalSupply = parseFloat(totalSupplyGauge) / 1e9;
+    totalSupplies.push({ ...pool, totalSupply: parseFloat(totalSupplyGauge) / 1e9 })
 
-  console.log(state.mypools, "STATE MY POOLS");
+    let name = await LiquidityGaugeV3.name(
+      pool.gaugeContractHash
+    );
+    console.log("name", name);
+    pool.name = name;
+    names.push({ ...pool, name: name })
 
-  /*let wrapper = new GraphQLWrapper('https://api.thegraph.com/subgraphs/name/pengiundev/curve-gauges-mainnet')
 
-	let QUERY = gql`
-		{
-		  gauges(where: { user: "${contract.default_account.toLowerCase()}"}) {
-		    id
-		    user
-		    gauge
-		    originalBalance
-		    originalSupply
-		    workingBalance
-		    workingSupply
-		  }
-		}
-	`
+    let workingBalance = await LiquidityGaugeV3.workingBalances(
+      pool.gaugeContractHash,
+      Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")
+    );
+    console.log("workingBalances", parseFloat(workingBalance));
+    pool.currentWorkingBalance = workingBalance;
+    workingBalances.push(parseFloat(workingBalance))
 
-	let results = await wrapper.performQuery(QUERY)
-	results = results.data.gauges
-	*/
+    // decodedWeights.map((w, i) => {
+    //   mypools[i].workingSupply = workingSupplies[i];
+    //   mypools[i].originalSupply = totalSupplies[i];
+    //   mypools[i].currentWorkingBalance = workingBalances[i];
+    //   mypools[i].name = names[i];
+    //   mypools[i].claimableTokens = 1000;
 
-  for (let pool of state.mypools) {
-    if (+pool.gaugeBalanace == 0) continue;
-    pool.previousWorkingBalance = pool.currentWorkingBalance;
-    state.boosts[pool.name] =
-      pool.currentWorkingBalance / (0.4 * pool.gaugeBalance);
+    //   // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
+    //   // let rate = (gaugeRates[i] * w[1] * 31536000 / workingSupplies[i] * 0.4) / virtual_price
+    //   // let apy = rate * CRVprice * 100
+    //   // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
+    //   console.log("wwwwww", w);
+    //   mypools[i].gaugeRelativeWeight = w;
+    // })
+
+  }));
+  await Promise.all(pools.map(async (pool) => {
+    let inflationRate = await LiquidityGaugeV3.inflationRate(
+      pool.gaugeContractHash
+    );
+    console.log("poolsinflationRate", parseFloat(inflationRate) / 1e9);
+    pool.gaugeRate = parseFloat(parseFloat(inflationRate) / 1e9)
+    gaugeRates.push({ ...pool, gaugeRate: parseFloat(inflationRate) })
+
+    let workingSupply = await LiquidityGaugeV3.workingSupply(
+      pool.gaugeContractHash
+    );
+    console.log("pools workingSupply", parseFloat(workingSupply) / 1e9);
+    pool.workingSupply = parseFloat(workingSupply) / 1e9;
+    workingSupplies.push({ ...pool, workingSupply: parseFloat(workingSupply) / 1e9 })
+    let totalSupplyGauge = await LiquidityGaugeV3.totalSupplyGauge(
+      pool.gaugeContractHash
+    );
+    console.log("pools totalSupplyGauge", parseFloat(totalSupplyGauge));
+    pool.originalSupply = parseFloat(totalSupplyGauge) / 1e9;
+    totalSupplies.push({ ...pool, totalSupply: parseFloat(totalSupplyGauge) / 1e9 })
+
+    let name = await LiquidityGaugeV3.name(
+      pool.gaugeContractHash
+    );
+    console.log("name", name);
+    pool.name = name;
+    names.push({ ...pool, name: name })
+
+    // decodedWeights.map((w, i) => {
+    //   mypools[i].workingSupply = workingSupplies[i];
+    //   mypools[i].originalSupply = totalSupplies[i];
+    //   mypools[i].currentWorkingBalance = workingBalances[i];
+    //   mypools[i].name = names[i];
+    //   mypools[i].claimableTokens = 1000;
+
+    //   // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
+    //   // let rate = (gaugeRates[i] * w[1] * 31536000 / workingSupplies[i] * 0.4) / virtual_price
+    //   // let apy = rate * CRVprice * 100
+    //   // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
+    //   console.log("wwwwww", w);
+    //   mypools[i].gaugeRelativeWeight = w;
+    // })
+
+  }));
+  console.log("workingBalances", workingBalances);
+  console.log("names", names);
+  console.log("totalSupplies", totalSupplies);
+  console.log("workingSupplies", workingSupplies);
+  console.log("mypoolsmypools", mypools);
+  let _totalBalance = mypools.reduce((a, b) => +a + +b.balance, 0)
+  setTotalBalance(_totalBalance)
+  let _totalGaugeBalance = mypools.reduce((a, b) => +a + +b.gaugeBalance, 0)
+  setTotalGaugeBalance(_totalGaugeBalance)
+  let _boosts = []
+  for (let pool of mypools) {
+    if (+pool.gaugeBalanace == 0) continue
+    pool.previousWorkingBalance = pool.currentWorkingBalance
+    _boosts[pool.name] = pool.currentWorkingBalance / (0.4 * pool.gaugeBalance)
   }
+  setMyPools(mypools);
+  setPools(pools);
+  setBoosts(_boosts);
 }
 
 export async function applyBoostAll(

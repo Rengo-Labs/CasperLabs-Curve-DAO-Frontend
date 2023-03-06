@@ -24,12 +24,21 @@ import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from 'notistack';
 import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
 import { pools } from "../../../../components/Charts/ChartHelper/ChartHelpers";
+import { getState } from "../../../../components/stores/GaugeStore";
 
 // CONTENT
 
 // COMPONENT FUNCTION
 const DaoHome = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const [nGauges, setNGauges] = useState(0);
+  const [pools, setPools] = useState([]);
+  const [myPools, setMyPools] = useState([]);
+  const [boosts, setBoosts] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(0);
+  const [totalGaugeBalance, setTotalGaugeBalance] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
   // States
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
@@ -49,6 +58,26 @@ const DaoHome = () => {
     setOpenSigning(true);
   };
 
+  useEffect(() => {
+    let gauge_relative_weight = 1000000000;
+    console.log("poolspoolspoolspoolspoolspoolspoolspoolspoolspoolspoolspools", pools);
+    let gaugeSum = Object.values(pools).reduce((a, b) => +a + +gauge_relative_weight, 0)
+    console.log("gaugeSum...", gaugeSum);
+    let piegauges = Object.values(pools).map(v => ({ name: v.name, y: gauge_relative_weight / gaugeSum, value: gauge_relative_weight / 1e9 }))
+    console.log("piegauges...", piegauges);
+    if (piegauges.length > 0) {
+      let highest = piegauges.map(data => data.y).indexOf(Math.max(...piegauges.map(data => data.y)))
+      console.log("highest", highest);
+      piegauges[highest].sliced = true;
+      piegauges[highest].selected = true;
+      console.log("piegauges final...", piegauges);
+      setGaugeRelativeWeightChart(piegauges);
+    }
+    // if (!_gauges.error) {
+    //   setMyGauges(_gauges.data?.getGaugesByAddress)
+    // }
+
+  }, [pools])
 
   useEffect(() => {
     if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined)
@@ -79,17 +108,17 @@ const DaoHome = () => {
 
 
   useEffect(() => {
-    let gauge_relative_weight = 100;
-    let gaugeSum = Object.values(pools).reduce((a, b) => +a + +gauge_relative_weight, 0)
-    console.log("gaugeSum...", gaugeSum);
-    let piegauges = Object.values(pools).map(v => ({ name: v.name, y: gauge_relative_weight / gaugeSum }))
-    console.log("piegauges...", piegauges);
-    let highest = piegauges.map(data => data.y).indexOf(Math.max(...piegauges.map(data => data.y)))
-    piegauges[highest].sliced = true;
-    piegauges[highest].selected = true;
-    console.log("piegauges final...", piegauges);
-    setGaugeRelativeWeightChart(piegauges);
-  }, [])
+
+    if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
+      fetchData();
+    }
+  }, [activePublicKey])
+
+  const fetchData = async () => {
+    setIsLoading(true)
+    await getState(activePublicKey, setNGauges, setTotalBalance, setTotalGaugeBalance, setMyPools, setPools, setBoosts)
+    setIsLoading(false)
+  }
   return (
     <>
       <div className="home-section home-full-height">
@@ -115,28 +144,30 @@ const DaoHome = () => {
                   <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-10">
                     <div className="row no-gutters justify-content-center">
                       {/* Donut */}
-                      <Box
-                        sx={{
-                          width: "100%",
-                        }}
-                      >
-                        <Paper elevation={4}>
-                          <div className="py-5 px-4">
-                            <div className="row no-gutters justify-content-center">
-                              <div className="col-12 text-center py-3">
-                                <Typography
-                                  variant="h5"
-                                  gutterBottom
-                                  component="div"
-                                >
-                                  Gauge Relative Weight
-                                </Typography>
+                      {pools.length == 0 ? (null) : (
+                        <Box
+                          sx={{
+                            width: "100%",
+                          }}
+                        >
+                          <Paper elevation={4}>
+                            <div className="py-5 px-4">
+                              <div className="row no-gutters justify-content-center">
+                                <div className="col-12 text-center py-3">
+                                  <Typography
+                                    variant="h5"
+                                    gutterBottom
+                                    component="div"
+                                  >
+                                    Gauge Relative Weight
+                                  </Typography>
+                                </div>
+                                <GaugeRelativeWeight chart={gaugeRelativeWeightChart} />
                               </div>
-                              <GaugeRelativeWeight chart={gaugeRelativeWeightChart} />
                             </div>
-                          </div>
-                        </Paper>
-                      </Box>
+                          </Paper>
+                        </Box>
+                      )}
                       {/* Voting Power */}
                       <Box
                         sx={{
