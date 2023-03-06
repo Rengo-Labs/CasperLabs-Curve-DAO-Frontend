@@ -290,7 +290,7 @@ const Locker = () => {
       });
       console.log("after pushing", votingEscrowData);
       chartData = interpolateVotingPower(chartData)
-
+      console.log("chartDatachartDatsa", chartData);
       setLockerChartData(chartData);
       let finalData = chartData;
       console.log("final chart data:", finalData);
@@ -568,7 +568,6 @@ const Locker = () => {
                               {/* Voting Power Actionables */}
                               <div className="row no-gutters">
                                 <div className="col-12 mt-4">
-                                  {/* <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} withdrawMakeDeploy={withdrawMakeDeploy} increaseUnlockTimeMakeDeploy={increaseUnlockTimeMakeDeploy} increaseAmountMakeDeploy={increaseAmountMakeDeploy} allowance={allowance} userLockedCRVBalance={userLockedCRVBalance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} /> */}
                                   <VotingPowerActionables
                                     userLockedCRVBalance={userLockedCRVBalance}
                                   />

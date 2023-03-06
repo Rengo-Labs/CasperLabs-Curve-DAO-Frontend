@@ -166,7 +166,6 @@ const DaoHome = () => {
                             </div>
                             {/* Voting Power Actionables */}
                             <div className="col-12 mt-4">
-                              {/* <VotingPowerActionables createLockMakeDeploy={createLockMakeDeploy} withdrawMakeDeploy={withdrawMakeDeploy} increaseUnlockTimeMakeDeploy={increaseUnlockTimeMakeDeploy} increaseAmountMakeDeploy={increaseAmountMakeDeploy} allowance={allowance} userLockedCRVBalance={userLockedCRVBalance} increaseAndDecreaseAllowanceMakeDeploy={increaseAndDecreaseAllowanceMakeDeploy} /> */}
                               <VotingPowerActionables userLockedCRVBalance={userLockedCRVBalance} />
                               <div className="w-100 my-3">
                                 <Divider />

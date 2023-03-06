@@ -104,3 +104,15 @@ export const inflationRate = async (contractHash: string) => {
 
 };
 
+export const name = async (contractHash: string) => {
+
+    // We don't need hash- prefix so i'm removing it
+    await liquiditygaugev3.setContractHash(contractHash);
+
+    //name
+    const name = await liquiditygaugev3.name();
+    console.log(contractHash + ` =... name : ${name}`);
+
+    return name;
+
+};
