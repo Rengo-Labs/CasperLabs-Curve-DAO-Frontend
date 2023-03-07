@@ -108,15 +108,16 @@ const Locker = () => {
   let { id } = useParams();
 
   // Queries
-  const { error, loading, data } = useQuery(DAO_POWER);
+  const { error, loading, data } = useQuery(DAO_POWER, { fetchPolicy: "no-cache", });
   console.log("this is data of voting escrow gql: ", data);
   console.log("this is error of voting escrow gql: ", error);
 
   if (data !== undefined) {
-    console.log("daopowerrrr", data.daoPowersByBlock);
+    console.log("daopowerrrr:", data.daoPowersByBlock);
   }
 
   const voting = useQuery(VOTING_POWER, {
+    fetchPolicy: "no-cache", 
     variables: {
       id: activePublicKey && activePublicKey != "null"
         ? Buffer.from(
