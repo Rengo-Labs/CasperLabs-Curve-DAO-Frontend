@@ -93,7 +93,7 @@ const Locker = () => {
   let [votingEscrowData, setVotingEscrowData] = useState([]);
   const [vPower, setVPower] = useState();
   const [lastEvent, setLastEvent] = useState();
-  const [lockerChartData, setLockerChartData] = useState();
+  const [lockerChartData, setLockerChartData] = useState([]);
   const [callsData, setCallsData] = useState();
   const [totalSupply, setTotalSupply] = useState();
   const [daoPowerChart, setDaoPowerChart] = useState([]);
@@ -203,7 +203,8 @@ const Locker = () => {
 
   function interpolateVotingPower(chartData) {
     let origEvents = votingEscrowData.slice();
-    // console.log(origEvents, "ORIG EVENTS")
+    console.log(origEvents, "ORIG EVENTS")
+    console.log("chartDataEVENTS", chartData);
     let newChartData = [];
     // console.log(chartData.slice(), "CHARTDATA LENGTH");
     for (let j = 1; j < chartData.length; j++) {
@@ -211,11 +212,11 @@ const Locker = () => {
       let prev = chartData[j - 1];
       newChartData.push(prev);
       // console.log("newChartData:", newChartData);
-      let startTimestamp = prev[0];
-      let startAmount = prev[1];
-      let endTimestamp = v[0];
-      let endAmount = v[1];
-      let diff = endTimestamp - startTimestamp;
+      let startTimestamp = prev[0] / 1;
+      let startAmount = prev[1] / 1;
+      let endTimestamp = v[0] / 1;
+      let endAmount = v[1] / 1;
+      let diff = endTimestamp / 1000 - startTimestamp / 1000;
       // console.log("diff", diff);
       let diffAmount = endAmount - startAmount;
       let amountLocked = origEvents[j - 1].totalPower;
@@ -225,10 +226,10 @@ const Locker = () => {
       if (chartData.length > 1) {
         for (let i = 0; i < numPoints; i++) {
           //console.log(origEvents[j-1].totalPower, i, "TOTAL POWER")
-          let currentTimestamp = startTimestamp / 1 + i * (diff / numPoints);
+          let currentTimestamp = parseInt((startTimestamp / 1000 + i * (diff / numPoints)) * 1000);
           // console.log("startTimestamp", startTimestamp);
           // console.log("i * (diff / numPoints)", i * (diff / numPoints));
-          // console.log("currentTimestamp", currentTimestamp);
+          console.log("currentTimestamp", currentTimestamp);
           //console.log(amountLocked, currentTimestamp, this.events[j-1].locktime * 1000, "AMOUNTS")
           let amount = helpers.calcVotingPower(
             amountLocked,
@@ -238,7 +239,7 @@ const Locker = () => {
           //console.log(amount, "THE AMOUNT")
           if (
             votingEscrowData.find(
-              (e) => e.timestamp === currentTimestamp
+              (e) => e.timestamp == currentTimestamp
             ) === undefined
           ) {
             votingEscrowData.splice(j, 0, {
@@ -249,6 +250,7 @@ const Locker = () => {
           }
           // console.log("votingEscrowDatavotingEscrowData", votingEscrowData);
           // console.log(amount, "THE AMOUNT")
+          if(newChartData[newChartData.length-1][0]!=parseInt(currentTimestamp))
           newChartData.push([parseInt(currentTimestamp), amount]);
         }
       }
@@ -260,27 +262,30 @@ const Locker = () => {
   }
 
   const charts = async () => {
-    // console.log(
-    //   "votingEscrowDatavotingEscrowDatavotingEscrowDatavotingEscrowData",
-    //   votingEscrowData
-    // );
+    console.log(
+      "votingEscrowDatavotingEscrowDatavotingEscrowDatavotingEscrowData",
+      votingEscrowData
+    );
     let events = votingEscrowData;
     if (events.length > 0) {
       events = addVotingPowerProperty(events);
-      // console.log("eventseventsevents", events);
+      console.log("eventseventsevents", events);
 
       var chartData = events.map((event, i) => [
         event.timestamp / 1,
-        event.votingPower,
+        event.votingPower / 1,
       ]);
-      // console.log("chartDatachartDatachartData", chartData);
+
       let lastEvent = events[events.length - 1];
+      console.log("lastEvent", lastEvent);
       setLastEvent(lastEvent);
       let lastData = [
         lastEvent.locktime / 1,
         0,
       ];
       chartData.push(lastData);
+      console.log("chartDatachartDatachartData", chartData);
+      events.push({ ...events[events.length - 1], value: 0, votingPower: 0 })
       console.log("before pushing", votingEscrowData);
       votingEscrowData = Object.assign([], votingEscrowData);
       votingEscrowData.push({
@@ -289,15 +294,31 @@ const Locker = () => {
         votingPower: 0,
       });
       console.log("after pushing", votingEscrowData);
+      console.log("eventsevents:", events);
       chartData = interpolateVotingPower(chartData)
       console.log("chartDatachartDatsa", chartData);
-      setLockerChartData(chartData);
-      let finalData = chartData;
+      console.log("chartData.slice(0, chartData.length - 11)", chartData.slice(0, chartData.length - 11));
+      let uniquechartData = [
+        ...new Map(chartData.map((item) => [item[0], item])).values(),
+    ];
+     
+    console.log("uniquechartData", uniquechartData);
+    uniquechartData=uniquechartData.slice(0, uniquechartData.length - 11)
+    uniquechartData.push([1802304000000, 0])
+      setLockerChartData(uniquechartData);
+      let finalData = uniquechartData;
       console.log("final chart data:", finalData);
+
+      console.log("daoPowerdaoPower", daoPower);
+      let daopowerdata = daoPower ? daoPower.map(e => [e.timestamp / 1, e.totalPower / 1e9]) : []
+      console.log("daopowerdatadaopowerdata", daopowerdata);
       let lastUnlockTime = parseInt(unlockTime[0]?.unlock_time)
-      console.log("lastUnlockTime", lastUnlockTime);
+      if (isNaN(lastUnlockTime)) {
+        return
+      }
+      console.log("lastUnlockTimelastUnlockTime", lastUnlockTime);
       let now = Date.now()
-      // console.log("now time value", now);
+      let lastUnlockTimeDiff = lastUnlockTime - now
       // let calls = []
       let i = 0
       // console.log("nownow", now);
@@ -305,17 +326,7 @@ const Locker = () => {
       // console.log("lastUnlockTimelastUnlockTime", lastUnlockTime);
       while (now < lastUnlockTime) {
         unlockTimes.push(now);
-        // let data = { unlockTimes: [now] };
-        // let res = await axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, data)
-
-        // // handle the response
-        // console.log("response of unlockTimes totalSupply:...", res.data.totalSupplies);
-
-        // calls.push(res.data.totalSupplies[0])
-        // console.log("now", now);
-        // console.log("i ** 4 * 86400", i ** 4 * 86400);
-        // console.log("i", i);
-        now += i ** 4 * 86400
+        now += i ** 4 * 86400000
         i++
       }
       unlockTimes.push(lastUnlockTime)
@@ -331,8 +342,6 @@ const Locker = () => {
       let calls = res.data.totalSupplies;
       console.log("calls data", calls);
       console.log("unlockTimes", unlockTimes);
-      console.log("daoPower", daoPower);
-      let daopowerdata = daoPower ? daoPower.map(e => [e.timestamp / 1, e.totalPower / 1e9]) : []
       // console.log("totalSupply", totalSupply);
       for (let m = 0; m < calls.length; m++) {
         daopowerdata.push([unlockTimes[m], calls[m] / 1e9]);
@@ -367,9 +376,9 @@ const Locker = () => {
       ...item,
       votingPower:
         helpers.calcVotingPower(
-          item.totalPower,
-          item.timestamp,
-          item.locktime
+          item.totalPower / 1,
+          item.timestamp / 1,
+          item.locktime / 1
         ),
     }));
   };
