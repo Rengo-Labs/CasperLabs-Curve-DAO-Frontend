@@ -265,7 +265,8 @@ const VotingPowerDAO = (props) => {
   const averageLock = () => {
     console.log("CRVLocked", CRVLocked);
     console.log("DAOPower", DAOPower);
-    return DAOPower ? (4 * DAOPower / CRVLocked).toFixed(2) : 0;
+    console.log("4 * DAOPower / CRVLocked).toFixed(2)",( 4 * DAOPower / CRVLocked).toFixed(2));
+    return DAOPower ? ((4 * DAOPower / CRVLocked).toFixed(2) == 'infinity' || (4 * DAOPower / CRVLocked).toFixed(2) == 'Infinity') ? (0) : (4 * DAOPower / CRVLocked).toFixed(2) : 0;
   };
 
   // const myLockedCRVFormat = () => {
