@@ -17,7 +17,6 @@ import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
-import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import List from "@mui/material/List";
@@ -28,7 +27,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, t } from "@mui/material";
 import { CLPublicKey } from "casper-js-sdk";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
@@ -37,6 +36,11 @@ import * as LiquidityGaugeV3 from "../../../../components/JsClients/LIQUIDITYGAU
 import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 import { Button } from "@mui/material";
 import axios from "axios";
+
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 // CONTENT
 const selectGaugeOptionsJSON =
@@ -93,7 +97,7 @@ const Calc = () => {
   const [dateDisplay, setDateDisplay] = useState();
   const [myCRV, setMyCRV] = useState("0.00");
   const [gaugeVeCRV, setGaugeVeCRV] = useState(false);
-  const [myVeCRV, setMyVeCRV] = useState(0);
+  const [myveCRV, setMyveCRV] = useState(0);
   // const [gaugeLock, setGaugeLock] = useState(1 + " Year");
   const [gaugeLock, setGaugeLock] = useState("");
   const [gaugeLockValue, setGaugeLockValue] = useState(0);
@@ -134,35 +138,19 @@ const Calc = () => {
   );
   const [minveCRVperiod, setMinveCRVperiod] = useState(year);
   const [lockedVeCRV, setLockedVeCRV] = useState("0.00");
-  const [totalVeCRV, setTotalVeCRV] = useState(0);
-  const [crvBoost, setCrvBoost] = useState("1.00");
   const [boost, setBoost] = useState("1.00");
-  const [maxBoostPossible, setMaxBoostPossible] = useState(0);
-  const [minVeCRVForBoost, setMinVeCRVForBoost] = useState(2);
-  const [depositForBoost, setDepositForBoost] = useState(10);
-  const [maxDepositPerVeCRV, setMaxDepositPerVeCRV] = useState();
-  const [period, setPeriod] = useState(1 + "Year");
-  const [toLockCRV, setToLockCRV] = useState(0);
+  const [maxBoostPossible, setMaxBoostPossible] = useState(null);
+  const [period, setPeriod] = useState("1 Year");
   const [gauges, setGauges] = useState([]);
   const [gauge, setGauge] = useState();
   const [selectedGauge, setSelectedGauge] = useState();
-  const [minveCRV, setMinveCRV] = useState(null);
+  const [minveCRV, setMinveCRV] = useState(0);
   const [totalveCRV, setTotalveCRV] = useState(0);
 
   const [calcTrigger, setCalcTrigger] = useState(Date.now())
   // Content
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-  let gaugesNames = [
-    { address: "0x7ca5b0a2910B33e9759DC7dDB0413949071D7575", name: "compound" },
-    { address: "0xBC89cd85491d81C6AD2954E6d0362Ee29fCa8F53", name: 'usdt' },
-    { address: "0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1", name: 'y' },
-    { address: "0x69Fb7c45726cfE2baDeE8317005d3F94bE838840", name: 'busd' },
-    { address: "0x64E3C23bfc40722d3B649844055F1D51c1ac041d", name: 'pax' },
-    { address: "0xB1F2cdeC61db658F091671F5f199635aEF202CAC", name: 'ren' },
-    { address: "0xA90996896660DEcC6E997655E065b23788857849", name: 'susdv2' },
-    { address: "0x705350c4BcD35c9441419DdD5d2f097d7a55410F", name: 'sbtc' }
-  ]
 
   //Queries
   const gaugesByAddress = useQuery(GAUGES_BY_ADDRESS);
@@ -188,12 +176,6 @@ const Calc = () => {
     TotalveCRVCalc: "",
   };
   const validationSchema = Yup.object().shape({
-    // SelectGaugeCalc: Yup.string().required("Required"),
-    // CalcDeposits: Yup.number().required("Required"),
-    // PoolLiquidityCalc: Yup.number().required("Required"),
-    // MyCRVCalc: Yup.number().required("Required"),
-    // GaugeLockPeriodCalc: Yup.string().required("Required"),
-    // TotalveCRVCalc: Yup.number().required("Required"),
   });
 
   // Handlers
@@ -221,23 +203,21 @@ const Calc = () => {
     console.log("newValue", newValue.name);
     setLockPeriod(newValue.time)
     setLockPeriodName(newValue.name)
-    // setGaugeLock(newValue);
-    // let val = +newValue.name.split(" ")[0];
-    // console.log("Value: ", val);
-    // if (val > 1) {
-    //   setGaugeLockValue(val * year);
-    // }
-    // else {
-    //   setGaugeLockValue(val / year);
-    // }
   };
+  const handleGaugeLockChangeMinted = (event, newValue) => {
+    console.log("Event: ", event.target.value);
+    console.log("newValue", newValue.name);
+    setPeriod(newValue.name);
+    setMinveCRVperiod(newValue.time)
+  };
+
 
   useEffect(() => {
     async function updateBalance() {
       if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
-        let myCRV = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
-        console.log("myCRV", parseFloat(myCRV));
-        setMyCRV(parseFloat(myCRV) / 1e9);
+        let _myCRV = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+        console.log("_myCRV", parseFloat(_myCRV));
+        setMyCRV(parseFloat(_myCRV) / 1e9);
 
         let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
 
@@ -245,7 +225,7 @@ const Calc = () => {
           .then(response => {
             // handle the response
             console.log("response of balanceOf:...", response.data.balances);
-            setMyVeCRV(response.data.balances[0] / 1e9)
+            setMyveCRV(response.data.balances[0] / 1e9)
           })
           .catch(error => {
             // handle the error
@@ -256,7 +236,6 @@ const Calc = () => {
           .then(response => {
             // handle the response
             console.log("response of totalSupply:...", response.data.totalSupplies);
-            setTotalVeCRV(response.data.totalSupplies[0] / 1e9)
             setTotalveCRV(response.data.totalSupplies[0] / 1e9)
           })
           .catch(error => {
@@ -268,30 +247,14 @@ const Calc = () => {
     updateBalance();
   }, [localStorage.getItem("Address")]);
 
-  // useEffect(() => {
-  //   calculate();
-  //   maxBoost();
-  // }, [gaugeBalance, poolLiquidity, myVeCRV, totalVeCRV, gaugeVeCRV, Date.now() ])
 
-  useEffect(() => {
-    setLockedVeCRV(((myCRV * gaugeLockValue) / (86400 * 365) / 4).toFixed(2));
-  }, [myCRV, gaugeLockValue]);
-
-  const updateLockedVeCRV = async () => {
-    // setLockedVeCRV((this.myCRV * this.lockPeriod) / (86400 * 365) / 4).toFixed(2);
-    console.log("In update function: ");
-    console.log("Gauge lock value: ", gaugeLockValue);
-    console.log("Gauge crv: ", myCRV);
-    setLockedVeCRV(((myCRV * gaugeLockValue) / (86400 * 365) / 4));
-    //calling this function because of watchers
-    // calcTrigger();
-  }
 
 
   const maxBoost = async () => {
     let l = gaugeBalance * 1e9
     let L = poolLiquidity * 1e9 + l
     let _minveCRV = totalveCRV * l / L
+    console.log("_minveCRV", _minveCRV);
     setMinveCRV(_minveCRV)
     let [_, _maxBoostPossible] = await updateLiquidityLimit(null, null, minveCRV);
     setMaxBoostPossible(_maxBoostPossible);
@@ -330,13 +293,13 @@ const Calc = () => {
 
     let lim = l * TOKENLESS_PRODUCTION / 100
     console.log("lim", lim);
-    let veCRV = myVeCRV;
+    let veCRV = myveCRV;
     console.log("veCRV", veCRV);
     if (minveCRV)
       veCRV = minveCRV
     // else if(this.entertype == 0)
     else if (gaugeVeCRV)
-      veCRV = myVeCRV
+      veCRV = myveCRV
     lim += L * veCRV / totalveCRV * (100 - TOKENLESS_PRODUCTION) / 100
     console.log("totalveCRV", totalveCRV);
     console.log("limlim", lim);
@@ -366,7 +329,8 @@ const Calc = () => {
     setGaugeDeposits(parseFloat(liqidityGaugeBalance) / 1e9);
     setGaugeBalance(parseFloat(liqidityGaugeBalance) / 1e9);
     setPoolLiquidity(parseFloat(gaugeTotalSupply) / 1e9);
-    //  console.log("gaugeTotalSupply",gaugeTotalSupply);
+    calc();
+    maxBoost();
   }
 
   const onSubmitCalc = async (values, props) => {
@@ -381,24 +345,21 @@ const Calc = () => {
     setBoost(boost);
   }
 
-  // const calcTrigger = async () => {
-  //   await calc();
-  //   await maxBoost();
-  // }
-
-  const CRVtoLock = () => {
-    let year = 365 * 24 * 60 * 60
-    // return (this.minveCRV / ((this.minveCRVperiod / year) / 4)).toFixed(2)
-    setToLockCRV((minVeCRVForBoost / ((period / year) / 4)).toFixed(2));
-  }
   function veCRV(lock) {
     return ((myCRV * lockPeriod) / (86400 * 365) / 4).toFixed(2)
   }
-  // console.log("selectedGauge",selectedGauge);
+  function CRVtoLock() {
+    console.log("minveCRV", minveCRV);
+    console.log("minveCRVperiod", minveCRVperiod);
+    console.log("year", year);
+    console.log("(minveCRVperiod / year)", (minveCRVperiod / year));
+    console.log("minveCRV / ((minveCRVperiod / year) / 4)", minveCRV / ((minveCRVperiod / year) / 4));
+    return (minveCRV / ((minveCRVperiod / year) / 4)).toFixed(2)
+  }
   useEffect(() => {
     calc();
     maxBoost();
-  }, [calcTrigger]);
+  }, [gaugeBalance, poolLiquidity, myveCRV, totalveCRV, veCRV(), Date.now()])
 
   return (
     <>
@@ -486,12 +447,10 @@ const Calc = () => {
                                         label="Deposit:"
                                         variant="filled"
                                         name="CalcDeposits"
-                                        value={gaugeDeposits}
+                                        value={gaugeBalance}
                                         type="number"
                                         onChange={(e) => {
-                                          console.log("Gauge deposit: ", typeof (+e.target.value));
-                                          console.log("Gauge deposit: ", e.target.value);
-                                          setGaugeDeposits(e.target.value);
+                                          setGaugeBalance(e.target.value);
                                           //calling this function because of watchers
                                           // calcTrigger();
                                         }}
@@ -548,8 +507,6 @@ const Calc = () => {
                                           value={myCRV}
                                           onChange={(e) => {
                                             setMyCRV(e.target.value);
-                                            // veCRV();
-                                            updateLockedVeCRV();
                                           }}
                                         />
                                       </Box>
@@ -563,13 +520,13 @@ const Calc = () => {
                                           id="my-vecrv"
                                           label="My VeCRV:"
                                           variant="filled"
-                                          name="MyVeCRVCalc"
-                                          value={myVeCRV}
+                                          name="myveCRVCalc"
+                                          value={myveCRV}
                                           onChange={(e) => {
                                             if (e.target.value >= 0) {
-                                              setMyVeCRV(e.target.value);
+                                              setMyveCRV(e.target.value);
                                             } else {
-                                              setMyVeCRV(0)
+                                              setMyveCRV(0)
                                             }
                                             //calling this function because of watchers
                                             // calcTrigger();
@@ -618,48 +575,22 @@ const Calc = () => {
                                           label="Total veCRV:"
                                           variant="filled"
                                           name="TotalveCRVCalc"
-                                          value={totalVeCRV}
+                                          value={totalveCRV}
                                           onChange={(e) => {
-                                            setTotalVeCRV(e.target.value);
+                                            setTotalveCRV(e.target.value);
                                             //calling this function because of watchers
                                             // calcTrigger();
                                           }}
                                         />
                                       </Box>
-                                      <div className="row no-gutters">
-                                        <div className="col-12 col-lg-6 text-left p-2 py-3">
-                                          <Typography
-                                            variant="body1"
-                                            component={"div"}
-                                          >
-                                            <span className="font-weight-bold">
-                                              Boost:&nbsp;
-                                            </span>
-                                            {crvBoost}x
-                                          </Typography>
-                                        </div>
-                                      </div>
+
                                     </div>
                                   </div>
                                   {!gaugeVeCRV ? (
                                     <div className="col-6">
                                       <div className="mt-4">
                                         <div className="">
-                                          {/* <SelectInput
-                                              setDate={setDate}
-                                              setDateDisplay={setDateDisplay}
-                                              name="GaugeLockPeriodCalc"
-                                              label="Select Lock Period"
-                                              options={lockTimeOptions.map(
-                                                (item) => item.name
-                                              )}
-                                              value={gaugeLock}
-                                              onChange={(e) => {
-                                                handleGaugeLockChange(e);
-                                                // veCRV();
-                                                updateLockedVeCRV();
-                                              }}
-                                            /> */}
+
                                           <Autocomplete
                                             options={lockPeriods}
                                             getOptionLabel={(option) => {
@@ -715,8 +646,10 @@ const Calc = () => {
                                           color: "white",
                                         }}
                                         type="submit"
-                                        onClick={
-                                          calc
+                                        onClick={() => {
+                                          calc()
+                                          maxBoost()
+                                        }
                                         }
                                       >
                                         Calculate
@@ -774,23 +707,30 @@ const Calc = () => {
                               </div>
                               {gaugeBalance > 0 ? (
                                 <div className="col-12 col-md-6">
-                                  This is {toLockCRV} CRV for a
+                                  This is {CRVtoLock()} CRV for a
                                   <div className="">
 
                                     <Autocomplete
                                       options={lockPeriods}
-                                      getOptionLabel={(option) => option.name}
+                                      getOptionLabel={(option) => {
+                                        // console.log("Option: ", option);
+                                        return option.name
+                                      }}
                                       clearOnEscape
                                       renderInput={(params) => (
-                                        <TextField {...params} label="Select Lock Period" variant="standard" />
+                                        <TextField
+                                          {...params}
+                                          label="Select Lock Period"
+                                          variant="standard"
+                                        />
                                       )}
-                                      onChange={(event, newValue) => {
-                                        setPeriod(newValue);
-                                        CRVtoLock();
+                                      onChange={async (event, newValue) => {
+                                        console.log("New Value: ", newValue);
+                                        handleGaugeLockChangeMinted(event, newValue);
                                       }}
-                                      value={period.name}
-                                    // style={{backgroundColor: "grey"}}
+                                    // value={lockPeriodName}
                                     />
+
                                   </div>
                                 </div>
                               ) : null}
@@ -798,52 +738,6 @@ const Calc = () => {
                             <div className="w-100 my-4 pt-4">
                               <Divider />
                             </div>
-                            {/* Gauge Selection Info Heading*/}
-                            {/* <div className="row no-gutters mt-4">
-                              <div className="col-12 text-center py-3">
-                                <Typography
-                                  variant="h4"
-                                  gutterBottom
-                                  component="div"
-                                >
-                                  <span className="font-weight-bold">
-                                    Gauge Selection Info
-                                  </span>
-                                </Typography>
-                              </div>
-                            </div>
-                            {/* Gauge Selection Info */}
-                            {/* <div className="row no-gutters mt-3">
-                              <div className="col-12 col-md-6">
-                                <List>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Max deposite to have boost:&nbsp;
-                                      </span>
-                                      {depositForBoost ? (
-                                        depositForBoost
-                                      ) : (
-                                        <CircularProgress size={20} />
-                                      )}
-                                    </ListItemText>
-                                  </ListItem>
-                                  <ListItem disablePadding>
-                                    <ListItemText>
-                                      <span className="font-weight-bold">
-                                        Max deposit per veCRV to have max
-                                        boost:&nbsp;
-                                      </span>
-                                      {maxDepositPerVeCRV ? (
-                                        maxDepositPerVeCRV
-                                      ) : (
-                                        <CircularProgress size={20} />
-                                      )}
-                                    </ListItemText>
-                                  </ListItem>
-                                </List>
-                              </div>
-                            </div> */}
                           </div>
                         </Paper>
                       </Box>
@@ -854,7 +748,7 @@ const Calc = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 };

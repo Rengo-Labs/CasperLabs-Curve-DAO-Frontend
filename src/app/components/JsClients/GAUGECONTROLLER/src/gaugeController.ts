@@ -432,7 +432,7 @@ class GaugeControllerClient {
   public async gauge_type_names(owner: string) {
     console.log("this.namedKeys", this.namedKeys);
 
-    // try {
+    try {
 
     const result = await utils.contractDictionaryGetter(
       this.nodeAddress,
@@ -444,9 +444,9 @@ class GaugeControllerClient {
 
     return maybeValue.value().toString();
 
-    // } catch (error) {
-    //   return "0";
-    // }
+    } catch (error) {
+      return "0";
+    }
   }
 
   public async vote_user_slopes(owner: string, spender: string) {

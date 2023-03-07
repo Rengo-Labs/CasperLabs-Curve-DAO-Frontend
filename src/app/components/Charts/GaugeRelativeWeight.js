@@ -15,7 +15,7 @@ const GaugeRelativeWeight = ({ chart }) => {
   let labelData = [];
 
   for (let i = 0; i < chart.length; i++) {
-    seriesY.push(chart[i].y);
+    seriesY.push(chart[i].value);
     labelData.push(chart[i].name);
   }
 
@@ -94,7 +94,7 @@ const GaugeRelativeWeight = ({ chart }) => {
 
   return (
     <>
-      <ApexChart options={options} series={series} type="donut" width={400} />
+      <ApexChart options={options} series={series} type="donut" width={550} />
     </>
   );
 };

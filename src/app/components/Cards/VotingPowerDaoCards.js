@@ -29,7 +29,7 @@ const VotingPowerDaoCards = ({title,value,src}) => {
             borderRadius:"10px"
         }}>
           <CardContent>
-            <Typography sx={{fontWeight:"bold"}}  variant="h6" style={{color: "#000027",}}>
+            <Typography sx={{fontWeight:"bold"}}  variant="h6" style={{color: "#000027"}}>
               {value}
             </Typography>
             <div className="d-flex justify-content-center mt-2">
