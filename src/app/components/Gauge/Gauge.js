@@ -33,8 +33,8 @@ const Gauge = (props) => {
   const [openSigning, setOpenSigning] = useState(false);
   const [swapToken, setSwapToken] = useState(props.gauge.swapTokenContractHash);
   const [allowance, setAllowance] = useState(0);
-  const [value, setValue] = useState(25);
-  const [withdrawValue, setWithdrawValue] = useState(25);
+  const [value, setValue] = useState(100);
+  const [withdrawValue, setWithdrawValue] = useState(100);
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
