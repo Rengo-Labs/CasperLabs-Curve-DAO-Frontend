@@ -205,15 +205,18 @@ const DaoHome = () => {
                               </div>
                             </div>
 
-                            {!isLoading ? (myPools.map((gauge) => (
-                              <Gauge gauge={gauge} fetchData={fetchData} />
 
-                            ))) : (
-                              <CircularProgress style={{ margin: '20px', padding: '20px' }} size={100} />
-                            )}
                           </div>
                         </Paper>
                       </Box>
+                      {!isLoading ? (myPools.map((gauge) => (
+                        <Gauge gauge={gauge} fetchData={fetchData} />
+
+                      ))) : (
+                        <div className="row no-gutters justify-content-center">
+                          <CircularProgress style={{ margin: '20px', padding: '20px' }} size={100} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
