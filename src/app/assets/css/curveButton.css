@@ -34,7 +34,7 @@ Border-Active: #1976d2
 */
 
 .lockerButton{
-    margin-right: 100px;
+    width:35%;
     
 }
 
@@ -44,7 +44,7 @@ Border-Active: #1976d2
 
 @media screen and (max-width: 1000px) {
     .lockerButton {
-        margin-right: 0;
+        width: 50%;
         
         
     }
@@ -52,3 +52,14 @@ Border-Active: #1976d2
         margin-left: 0
     }
   }
+
+  .hoverButtonGlobal{   
+    border:1px solid#1976d2 !important;
+    color: #1976d2 !important;
+    
+}
+.hoverButtonGlobal:hover{
+    background-color: #1976d2 !important;
+    color: white !important;
+}
+

@@ -1,0 +1,13 @@
+.hoverButton{   
+    border:1px solid#1976d2 !important;
+    color: #1976d2 !important;;
+    font-size: 0.6rem !important;;
+    min-width: 100px !important;;
+    margin-left: 15px !important;;
+    height: 20px !important;;
+    
+}
+.hoverButton:hover{
+    background-color: #1976d2 !important;;
+    color: white !important;;
+}
