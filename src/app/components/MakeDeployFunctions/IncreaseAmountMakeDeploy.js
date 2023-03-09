@@ -8,7 +8,7 @@ import { convertToStr } from "../ConvertToString/ConvertToString";
 
 
 
-export async function increaseAmountMakeDeploy(lockedAmount, setOpenSigning, enqueueSnackbar) {
+export async function increaseAmountMakeDeploy(lockedAmount, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData) {
   // CREATING REQUIRED VARIABLES
   let torus;
   const allowance = 0;
@@ -64,6 +64,8 @@ export async function increaseAmountMakeDeploy(lockedAmount, setOpenSigning, enq
         setOpenSigning(false);
         let variant = "success";
         enqueueSnackbar("Amount Increased Successfully", { variant })
+        fetchBalanceData();
+        fetchUserData();
         //   providerRef.current.enqueueSnackbar("Amount Increased Successfully", { variant })
       } catch {
         //   handleCloseSigning();

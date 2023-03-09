@@ -49,6 +49,9 @@ const VotingPowerActionables = (props) => {
   const { createLockMakeDeploy, withdrawMakeDeploy, increaseAndDecreaseAllowanceMakeDeploy, increaseAmountMakeDeploy, increaseUnlockTimeMakeDeploy } = useContext(AppContext);
 
   // States
+  let [activePublicKey, setActivePublicKey] = useState(
+    localStorage.getItem("Address")
+  );
   const [allowance, setAllowance] = useState(0);
   const [userCRVBalance, setUserCRVBalance] = useState(0);
   const [CRVLockedBalance, setCRVLockedBalance] = useState(0);
@@ -57,7 +60,7 @@ const VotingPowerActionables = (props) => {
   const [lockAmount, setLockAmount] = useState(0);
   const [openA, setOpenA] = useState(false);
   const [startingVPower, setStartingVPower] = useState();
-  const [CRVLockedBalanceValue, setCRVLockedBalanceValue] = useState();
+  const [CRVLockedBalanceValue, setCRVLockedBalanceValue] = useState(0);
   const [vecrvBalance, setVecrvBalance] = useState(0);
   const [lockTime, setLockTime] = useState(Date.now())
   const [lockEnd, setLockEnd] = useState(Date.now())
@@ -104,13 +107,11 @@ const VotingPowerActionables = (props) => {
   // };
 
   useEffect(() => {
-    let activePublicKey = localStorage.getItem("Address")
     if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined)
       getAllowance()
   }, []);
 
   const getAllowance = () => {
-    let activePublicKey = localStorage.getItem("Address");
 
     let allowanceParam = {
       contractHash: ERC20_CRV_CONTRACT_HASH,
@@ -139,80 +140,80 @@ const VotingPowerActionables = (props) => {
 
   useEffect(() => {
     let controller = new AbortController();
-    let publicKeyHex = localStorage.getItem("Address");
     if (
-      publicKeyHex !== null &&
-      publicKeyHex !== "null" &&
-      publicKeyHex !== undefined
+      activePublicKey !== null &&
+      activePublicKey !== "null" &&
+      activePublicKey !== undefined
     ) {
-      async function fetchData() {
-        let CRVLockBalance = await votingEscrowFunctions.balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
-        // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString(hex)", Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
-        let CRVBalance = await erc20CrvFunctions.balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
-        console.log("CRV Locked Balance: ", CRVLockBalance);
-        console.log("CRV Balance: ", CRVBalance);
-        setCRVLockedBalanceValue(CRVLockBalance);
-        setUserCRVBalance(CRVBalance / 10 ** 9);
-      }
-      fetchData();
+
+      fetchBalanceData();
     }
     return () => {
       controller.abort();
     }
   }, [localStorage.getItem("Address")]);
 
-
+  async function fetchBalanceData() {
+    let CRVLockBalance = await votingEscrowFunctions.balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    // console.log("Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString(hex)", Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    let CRVBalance = await erc20CrvFunctions.balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    console.log("CRV Locked Balance: ", CRVLockBalance);
+    console.log("CRV Balance: ", CRVBalance);
+    setCRVLockedBalanceValue(CRVLockBalance);
+    setUserCRVBalance(CRVBalance / 10 ** 9);
+  }
 
   useEffect(() => {
     let controller = new AbortController();
 
-    let publicKeyHex = localStorage.getItem("Address");
     if (
-      publicKeyHex !== null &&
-      publicKeyHex !== "null" &&
-      publicKeyHex !== undefined
+      activePublicKey !== null &&
+      activePublicKey !== "null" &&
+      activePublicKey !== undefined
     ) {
-      async function fetchData() {
-        let data = { account: Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex") }
-        console.log("data", data);
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
-          .then(response => {
-            // handle the response
-            console.log("votingEscrow response of balance of:...", response.data);
-            setVecrvBalance(response.data.balances[0])
-          })
-          .catch(error => {
-            // handle the error
-            console.log("error of balance of:...", error);
-          });
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, data)
-          .then(response => {
-            // handle the response
-            console.log("votingEscrow response of lockedEnd:...", response.data);
-            setLockTime(response.data.lockedEnd.end)
-            setLockEnd(response.data.lockedEnd.end)
-          })
-          .catch(error => {
-            // handle the error
-            console.log("error of balance of:...", error);
-          });
-        let CRVBalance = await erc20CrvFunctions.balanceOf(
-          ERC20_CRV_CONTRACT_HASH,
-          Buffer.from(
-            CLPublicKey.fromHex(publicKeyHex).toAccountHash()
-          ).toString("hex")
-        );
-        setCRVBalance(CRVBalance)
-        setDeposit((CRVBalance / 10 ** 9).toFixed(0, 1))
 
-      }
-      fetchData()
+      fetchUserData()
     }
 
     return () => {
       controller.abort();
     };
-  }, [])
+  }, [localStorage.getItem("Address")])
+
+  async function fetchUserData() {
+    let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
+    console.log("data", data);
+    axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+      .then(response => {
+        // handle the response
+        console.log("votingEscrow response of balance of:...", response.data);
+        setVecrvBalance(response.data.balances[0])
+      })
+      .catch(error => {
+        // handle the error
+        console.log("error of balance of:...", error);
+      });
+    axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+      .then(response => {
+        // handle the response
+        console.log("votingEscrow response of lockedEnd:...", response.data);
+        setLockTime(response.data.lockedEnd.end)
+        setLockEnd(response.data.lockedEnd.end)
+      })
+      .catch(error => {
+        // handle the error
+        console.log("error of balance of:...", error);
+      });
+    let CRVBalance = await erc20CrvFunctions.balanceOf(
+      ERC20_CRV_CONTRACT_HASH,
+      Buffer.from(
+        CLPublicKey.fromHex(activePublicKey).toAccountHash()
+      ).toString("hex")
+    );
+    setCRVBalance(CRVBalance)
+    setDeposit((CRVBalance / 10 ** 9).toFixed(0, 1))
+
+  }
   useEffect(() => {
     async function fetchData() {
       let veCRVTotalSupply = await votingEscrowFunctions.totalSupply(ERC20_CRV_CONTRACT_HASH);
@@ -263,7 +264,7 @@ const VotingPowerActionables = (props) => {
       >
         <Form>
           {/* WITHDRAWAL CHECK */}
-          {hasEndedLock() ? (
+          {hasEndedLock() && CRVLockedBalanceValue !== 0 ? (
             <>
               {/* WITHDRAWAL BUTTON */}
               <div className="row no-gutters justify-content-center">
@@ -276,7 +277,7 @@ const VotingPowerActionables = (props) => {
                       onClick={() => {
                         console.log("Action Taken");
                         // props.createLockMakeDeploy(lockAmount, date);
-                        withdrawMakeDeploy(setOpenSigning, enqueueSnackbar);
+                        withdrawMakeDeploy(setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData);
                       }}
                     >
                       Withdraw
@@ -410,7 +411,7 @@ const VotingPowerActionables = (props) => {
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
-                              createLockMakeDeploy(lockAmount, date, setOpenSigning, enqueueSnackbar);
+                              createLockMakeDeploy(lockAmount, date, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData);
                             }}
                           >
                             Create Lock
@@ -500,7 +501,7 @@ const VotingPowerActionables = (props) => {
                               onClick={() => {
                                 console.log("Action Taken");
                                 // props.createLockMakeDeploy(lockAmount, date);
-                                increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar);
+                                increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData);
                               }}
                             >
                               Add Amount
@@ -564,7 +565,7 @@ const VotingPowerActionables = (props) => {
                           onClick={() => {
                             console.log("Action Taken");
                             // props.createLockMakeDeploy(lockAmount, date);
-                            increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar);
+                            increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData);
                           }}
                         >
                           Increase Time
@@ -674,7 +675,7 @@ const VotingPowerActionables = (props) => {
         </div > : null
       }
       {
-        hasEndedLock() ? < div className="no-gutters mt-4 justify-content-center align-items-center" >
+        hasEndedLock() && CRVLockedBalanceValue !== 0 ? < div className="no-gutters mt-4 justify-content-center align-items-center" >
           <Alert severity="info">
             Your lock ended, you can withdraw your CRV
           </Alert>
