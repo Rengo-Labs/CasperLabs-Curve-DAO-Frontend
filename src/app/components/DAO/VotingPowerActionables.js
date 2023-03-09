@@ -268,11 +268,12 @@ const VotingPowerActionables = (props) => {
               {/* WITHDRAWAL BUTTON */}
               <div className="row no-gutters justify-content-center">
                 <div className="col-12 col-md-4">
-                  <div className="btnWrapper my-4 text-center">
+                  <div className=" my-4 text-center">
                     <Button
-                      variant="contained"
+                      className="hoverButtonGlobal"
+                      // variant="contained"
                       size="large"
-                      style={{ backgroundColor: "#1976d2", color: "white" }}
+                      // style={{ backgroundColor: "#1976d2", color: "white" }}
                       onClick={() => {
                         console.log("Action Taken");
                         // props.createLockMakeDeploy(lockAmount, date);
@@ -291,7 +292,67 @@ const VotingPowerActionables = (props) => {
               {userCRVBalance === 0 ? (
                 // TRUE CONDITION WORK
                 <>
-                  <Grid container spacing={0}>
+                  <div className="w-100">
+                    <Typography>
+                      Lock Amount
+                    </Typography>
+                    <div className="d-flex ">
+                    <div style={{width:"35%"}}>
+                    <TextInput
+                      id="daoAmount"
+                      label=""
+                      onChange={(e) => {
+                        // console.log("dam", e.target.value);
+                        console.log("event", e);
+                        console.log("e.srcElement", e.srcElement);
+                        console.log("e.target.value", e.target.value);
+
+                        if (userCRVBalance >= e.target.value)
+                          setLockAmount(e.target.value);
+                        else {
+                          // setLockAmount(userCRVBalance);
+                          setLockAmount(e.target.value);
+                        }
+                      }}
+                      value={Number(lockAmount).toString()}
+                      variant="filled"
+                      type="number"
+                      name="LockAmount"
+                      InputProps={{ style: { height: "45px" } }}
+                      // sx={{  }}
+                    />
+                    </div>
+                    {/* <Grid item sx={12} sm={6}> */}
+                      <div className="d-flex  " >
+                        <Button
+                          // style={buttonStyle}
+                          className="hoverButtonGlobal"
+                          // variant="outlined"
+                          size="medium"
+                          onClick={() => {
+                            setLockAmount(userCRVBalance);
+                          }}
+                        
+                        >
+                          Max
+                        </Button>
+
+                        <div className="align-self-end">
+                          <p className=""
+                            // variant="p"
+                            // gutterBottom
+                            // component="span"
+                            // fontWeight={900}
+                            style={{ fontSize: "0.7rem",color:"gray",marginBottom:"0"}}
+                          >
+                            {`(${userCRVBalance})`}
+                          </p>
+                        </div>
+                      </div>
+                      </div>
+                    {/* </Grid> */}
+                  </div>
+                  {/* <Grid container spacing={0}>
 
                     <Grid item xs={12} sm={6}>
                       <TextInput
@@ -318,7 +379,7 @@ const VotingPowerActionables = (props) => {
                       />
                     </Grid>
                     {/* Max Button */}
-                    <Grid item xs={12} sm={6}>
+                    {/* <Grid item xs={12} sm={6}>
                       <div className="d-flex  justify-content-sm-center align-items-center ">
                         <div className="">
                           <Button
@@ -345,9 +406,47 @@ const VotingPowerActionables = (props) => {
                         </div>
                       </div>
                     </Grid>
-                  </Grid>
+                  </Grid> */}
                   {/* Lock Time */}
-                  <div className="row no-gutters mt-4 align-items-center justify-content-lg-between">
+
+                  <div className="d-flex mt-4">
+                  <div className="" style={{width:"35%"}}>
+                    <div className=" px-0" >
+                      <Typography>
+                      Choose Lock Time
+                      </Typography>
+                      <DateTimePicker
+                         onChange={(e) => {
+                          console.log("e.value", e.target.value);
+                          console.log("new Date(e.target.value)", new Date(e.target.value));
+                          setDate(new Date(e.target.value));
+                          setDateDisplay(e.target.value);
+                        }}
+                        value={dateDisplay}
+                        name="LockTimePicker"
+                        InputProps={{ style: { height: "50px" } }}
+                        // label="Choose Lock Time"
+                        // sx={{ width: "35%" }}
+                      />
+                    </div>
+                  </div>
+                  <div 
+                  // style={{width:"35%"}} 
+                  className="lockerButton">
+                  <LockTimeButtons
+                        date={date}
+                        setDate={setDate}
+                        setDateDisplay={setDateDisplay}
+                        setStartingVPower={setStartingVPower}
+                        lockAmount={lockAmount}
+
+                      />
+                  </div>
+                 
+                  </div>
+
+
+                  {/* <div className="row no-gutters mt-4 align-items-center justify-content-lg-between">
                     <div className="col-xs-12 col-6 px-0">
                       <DateTimePicker
                         onChange={(e) => {
@@ -363,13 +462,13 @@ const VotingPowerActionables = (props) => {
                       />
                     </div>
 
-                  </div>
+                  </div> */}
                   {/* TIME BUTTONS */}
                   {/* <div className=""> */}
 
                   {/* </div> */}
                   {/* CREATE LOCK BUTTON */}
-                  <Grid container spacing={0}>
+                  {/* <Grid container spacing={0}>
                     <Grid item xs={12} sm={6}>
                       <LockTimeButtons
 
@@ -385,14 +484,14 @@ const VotingPowerActionables = (props) => {
                       />
                     </Grid>
                     <Grid item sm={1.4}></Grid>
-                    <Grid item xs={12} sm={3}>
-                      <div className="btnWrapper my-4 text-center">
+                    <Grid item xs={12} sm={3}> */}
+                      <div className=" my-4 ">
                         {lockAmount * 10 ** 9 > allowance ? (
                           <Button
                             // variant="contained"
-                            className="w-100"
+                            className="w-25 hoverButtonGlobal"
                             size="large"
-                            style={{ backgroundColor: "#1976d2", color: "white" }}
+                            // style={{ backgroundColor: "#1976d2", color: "white" }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -404,9 +503,9 @@ const VotingPowerActionables = (props) => {
                         ) : (
                           <Button
                             // variant="contained"
-                            className="w-100"
+                            className="w-25 hoverButtonGlobal"
                             size="large"
-                            style={{ backgroundColor: "#1976d2", color: "white", }}
+                            // style={{ backgroundColor: "#1976d2", color: "white", }}
                             onClick={() => {
                               console.log("Action Taken");
                               // props.createLockMakeDeploy(lockAmount, date);
@@ -417,17 +516,22 @@ const VotingPowerActionables = (props) => {
                           </Button>
                         )}
                       </div>
-                    </Grid>
-                  </Grid>
+                    {/* </Grid>
+                  </Grid> */}
                 </>
               ) : (
                 // FALSE CONDIIION WORK
 
                 <>
-                  <div className="w-50">
+                  <div className="w-100">
+                    <Typography>
+                      Lock Amount
+                    </Typography>
+                    <div className="d-flex ">
+                    <div style={{width:"35%"}}>
                     <TextInput
                       id="daoAmount"
-                      label="Lock Amount"
+                      label=""
                       onChange={(e) => {
                         console.log("dam", e.target.value);
                         if (userCRVBalance >= e.target.value)
@@ -440,19 +544,17 @@ const VotingPowerActionables = (props) => {
                       variant="filled"
                       type="number"
                       name="LockAmount"
-                      sx={{ width: "100%" }}
+                      InputProps={{ style: { height: "45px" } }}
+                      // sx={{  }}
                     />
-                  </div>
-
-
-                  {/* Max Button */}
-                  <Grid container spacing={5}>
-                    <Grid item sx={12} sm={6}>
-                      <div className="d-flex  align-items-center mt-4" >
+                    </div>
+                    {/* <Grid item sx={12} sm={6}> */}
+                      <div className="d-flex  " >
                         <Button
-                          variant="contained"
-                          size="large"
-                          style={{ backgroundColor: "#1976d2", color: "white" }}
+                          // style={buttonStyle}
+                          className="hoverButtonGlobal"
+                          // variant="outlined"
+                          size="medium"
                           onClick={() => {
                             setLockAmount(userCRVBalance);
                           }}
@@ -460,29 +562,33 @@ const VotingPowerActionables = (props) => {
                           Max
                         </Button>
 
-                        <div className="">
-                          <Typography
-                            variant="body1"
-                            gutterBottom
-                            component="span"
-                            fontWeight={900}
-                            sx={{ padding: "10px", fontSize: "1.5rem" }}
+                        <div className="align-self-end">
+                          <p className=""
+                            // variant="p"
+                            // gutterBottom
+                            // component="span"
+                            // fontWeight={900}
+                            style={{ fontSize: "0.7rem",color:"gray",marginBottom:"0"}}
                           >
-                            {userCRVBalance}
-                          </Typography>
+                            {`(${userCRVBalance})`}
+                          </p>
                         </div>
                       </div>
-                    </Grid>
-                    <Grid item sm={1}></Grid>
-                    <Grid item xs={12} sm={3.4}>
-                      <div className="mr-3">
-                        <div className=" my-4 text-center ">
+                      </div>
+                    {/* </Grid> */}
+                  </div>
+
+
+                  {/* Increase Allowance Button */}
+                 
+                      <div className="">
+                        <div className=" my-4 ">
                           {lockAmount * 10 ** 9 > allowance ? (
                             <Button
-                              className="w-100"
-                              variant="contained"
+                              className="w-25 hoverButtonGlobal"
+                              variant="outlined"
                               size="large"
-                              style={{ backgroundColor: "#1976d2", color: "white" }}
+                              // style={{ backgroundColor: "#1976d2", color: "white" }}
                               onClick={() => {
                                 console.log("Action Taken");
                                 // props.createLockMakeDeploy(lockAmount, date);
@@ -493,10 +599,9 @@ const VotingPowerActionables = (props) => {
                             </Button>
                           ) : (
                             <Button
-                              className="w-100"
-                              variant="contained"
+                              className="w-25 hoverButtonGlobal"
+                              variant="outlined"
                               size="large"
-                              style={{ backgroundColor: "#1976d2", color: "white" }}
                               onClick={() => {
                                 console.log("Action Taken");
                                 // props.createLockMakeDeploy(lockAmount, date);
@@ -509,13 +614,15 @@ const VotingPowerActionables = (props) => {
 
                         </div>
                       </div>
-                    </Grid>
-                  </Grid>
                   {/* ADD BUTTON */}
 
                   {/* Lock Time */}
-                  <div className="row no-gutters mt-4 align-items-center justify-content-center justify-content-lg-between">
-                    <div className="col-12 col-lg-6 px-0">
+                  <div className="d-flex">
+                  <div className="" style={{width:"35%"}}>
+                    <div className=" px-0" >
+                      <Typography>
+                      Choose Lock Time
+                      </Typography>
                       <DateTimePicker
                         onChange={(e) => {
                           console.log("e.value", e.target.value);
@@ -525,8 +632,9 @@ const VotingPowerActionables = (props) => {
                         }}
                         value={dateDisplay}
                         name="LockTimePicker"
-                        label="Choose Lock Time"
-                        sx={{ width: "100%" }}
+                        InputProps={{ style: { height: "50px" } }}
+                        // label="Choose Lock Time"
+                        // sx={{ width: "35%" }}
                       />
                     </div>
                     {/* Lock Time Dropdown */}
@@ -542,9 +650,10 @@ const VotingPowerActionables = (props) => {
 
 
                   </div>
-                  <Grid container spacing={0}>
-                    <Grid item xs={12} sm={6}>
-                      <LockTimeButtons
+                  <div 
+                  // style={{width:"35%"}} 
+                  className="lockerButton">
+                  <LockTimeButtons
                         date={date}
                         setDate={setDate}
                         setDateDisplay={setDateDisplay}
@@ -552,15 +661,21 @@ const VotingPowerActionables = (props) => {
                         lockAmount={lockAmount}
 
                       />
+                  </div>
+                 
+                  </div>
+                  {/* <Grid container spacing={0}>
+                    <Grid item xs={12} sm={6}>
+                    
                     </Grid>
                     <Grid item sm={1.2}></Grid>
-                    <Grid item xs={12} sm={3}>
-                      <div className=" my-4 text-center ">
+                    <Grid item xs={12} sm={3}> */}
+                      <div className=" my-4  ">
                         <Button
-                          className="w-100"
-                          variant="contained"
+                          className="w-25 hoverButtonGlobal"
+                          variant="outlined"
                           size="large"
-                          style={{ backgroundColor: "#1976d2", color: "white", }}
+                          // style={{ backgroundColor: "#1976d2", color: "white", }}
                           onClick={() => {
                             console.log("Action Taken");
                             // props.createLockMakeDeploy(lockAmount, date);
@@ -570,9 +685,9 @@ const VotingPowerActionables = (props) => {
                           Increase Time
                         </Button>
                       </div>
-                    </Grid>
+                    {/* </Grid>
 
-                  </Grid>
+                  </Grid> */}
                 </>
 
               )}
