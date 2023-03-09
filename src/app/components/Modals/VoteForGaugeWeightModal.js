@@ -19,7 +19,7 @@ function VoteForGaugeWeightModal(props) {
         color: '#000027',
         fontWeight: '600'
       }}>
-        <Typography style={{ fontSize: '20px' }} gutterBottom >
+        {/* <Typography style={{ fontSize: '20px' }} gutterBottom >
           <strong>
             Calculated outcome of your weight
           </strong>
@@ -36,8 +36,8 @@ function VoteForGaugeWeightModal(props) {
               width="15"
             />
           </span>
-        </Typography>
-        <FutureAPYTable cells={props.cells} gaugeWeightVoteData={props.gaugeWeightVoteData} />
+        </Typography> */}
+        {/* <FutureAPYTable cells={props.cells} gaugeWeightVoteData={props.gaugeWeightVoteData} /> */}
         <div className="row no-gutters justify-content-center mt-4">
           <Box
             sx={{

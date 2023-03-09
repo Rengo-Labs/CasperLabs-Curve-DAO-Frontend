@@ -111,9 +111,8 @@ const DaoHome = () => {
 
   useEffect(() => {
 
-    if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
+    if (activePublicKey && activePublicKey != null && activePublicKey != 'null' && activePublicKey != undefined)
       fetchData();
-    }
   }, [activePublicKey])
 
   const fetchData = async () => {
