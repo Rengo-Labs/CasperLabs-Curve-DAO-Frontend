@@ -215,7 +215,7 @@ const Gauge = (props) => {
               />{" "}
               Infinite Approval? */}
 
-              <Button variant="contained" onClick={async () => {
+              <Button className="hoverButtonGlobal" onClick={async () => {
                 let ret = true;
                 if (allowance / 10 ** 9 < selectedDepositAmount)
                   ret = await increaseAndDecreaseAllowanceGaugeMakeDeploy(selectedDepositAmount - allowance / 10 ** 9, setOpenSigning, enqueueSnackbar, getAllowance, props.gauge.gauge, props.gauge.swapTokenContractHash,)
@@ -263,7 +263,7 @@ const Gauge = (props) => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <div style={{ padding: "50px" }}>
-                <Button variant="contained" onClick={() => {
+                <Button className="hoverButtonGlobal" onClick={() => {
                   withdrawGaugeMakeDeploy(selectedWithdrawAmount, setOpenSigning, enqueueSnackbar, props.gauge.gaugeContractHash, gaugeBalanceFormat(), props.fetchData)
                 }} fullWidth>
                   Withdraw
