@@ -1,0 +1,37 @@
+.MuiOutlinedInput-notchedOutline {
+    border-color: #1976D2 !important;
+  }
+  
+  .MuiFilledInput-root {
+    border-bottom: 1px solid #1976D2 !important;
+  }
+  
+  .MuiInput-root {
+    border-bottom: 1px solid #1976D2 !important;
+  }
+
+  .MuiOutlinedInput-notchedOutline:hover{
+    border-bottom: 1px solid #1976D2 !important;
+  }
+
+  .MuiFilledInput-root:hover {
+    border-bottom: 1px solid #1976D2 !important;
+  }
+  
+  .MuiInput-root:hover {
+    border-bottom: 1px solid #1976D2 !important;
+  }
+
+
+  .MuiOutlinedInput-notchedOutline:focus{
+    border-bottom: 1px solid #1976D2 !important;
+  }
+
+  .MuiFilledInput-root:focus {
+    border-bottom: 1px solid #1976D2 !important;
+  }
+  
+  .MuiInput-root:focus {
+    border-bottom: 1px solid #1976D2 !important;
+  }
+ 

@@ -153,13 +153,25 @@ const LockTimeButtons = ({
   return (
     <>
       {/* <div className="btnWrapper my-4 text-center d-flex justify-content-between mr-5"> */}
-      <Grid container columnSpacing={1} rowSpacing={1} style={{ marginTop: "15px", }} >
+      <Grid container columnSpacing={1} rowSpacing={1} 
+        style={{ 
+          // marginTop: "5px",
+          
+          // fontFamily: 'Poppins',
+          // fontStyle: 'normal',
+          // fontWeight: '500',
+          // fontSize: '12px',
+          // lineHeight: '18px', 
+        }} 
+        >
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
-          <Button
+          <button
+            // style={{width: '37px',
+            // height: '125px'}}
             className="hoverButton"
             // sx={{fontSize:"0.6rem",minWidth:"90px"}}
             // variant="outlined"
-            size="small"
+            // size="small"
             // style={{
             //   backgroundColor: "#1976d2",
             //   color: "white",
@@ -169,18 +181,19 @@ const LockTimeButtons = ({
               setbuttonValue(1);
             }}
           >
-            1 week
-          </Button>
+            <p style={{marginBottom:0}} className="hoverButtonText">1 week</p>
+            
+          </button>
         </Grid>
 
         {/* </div> */}
 
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
-          <Button
+          <button
             className="hoverButton"
             // sx={{fontSize:"0.6rem",minWidth:"90px"}}
             // variant="outlined"
-            size="small"
+            // size="small"
             // style={{
             //   backgroundColor: "#1976d2",
             //   color: "white",
@@ -190,15 +203,15 @@ const LockTimeButtons = ({
               setbuttonValue(2);
             }}
           >
-            1 month
-          </Button>
+             <p style={{marginBottom:0}} className="hoverButtonText">1 month</p>
+          </button>
         </Grid>
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
-          <Button
+          <button
             className="hoverButton"
             // sx={{fontSize:"0.6rem",minWidth:"90px"}}
             // variant="outlined"
-            size="small"
+            // size="small"
             // style={{
             //   backgroundColor: "#1976d2",
             //   color: "white",
@@ -208,15 +221,15 @@ const LockTimeButtons = ({
               setbuttonValue(3);
             }}
           >
-            3 months
-          </Button>
+             <p style={{marginBottom:0}} className="hoverButtonText">3 months</p>
+          </button>
         </Grid>
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
-          <Button
+          <button
             className="hoverButton"
             // sx={{fontSize:"0.6rem",minWidth:"90px"}}
             // variant="outlined"
-            size="small"
+            // size="small"
             // style={{
             //   backgroundColor: "#1976d2",
             //   color: "white",
@@ -226,15 +239,15 @@ const LockTimeButtons = ({
               setbuttonValue(4);
             }}
           >
-            6 months
-          </Button>
+             <p style={{marginBottom:0}} className="hoverButtonText">6 months</p>
+          </button>
         </Grid>
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
-          <Button
+          <button
             className="hoverButton"
             // sx={{fontSize:"0.6rem",minWidth:"90px"}}
             // variant="outlined"
-            size="small"
+            // size="small"
             // style={{
             //   backgroundColor: "#1976d2",
             //   color: "white",
@@ -244,15 +257,15 @@ const LockTimeButtons = ({
               setbuttonValue(5);
             }}
           >
-            1 year
-          </Button>
+             <p style={{marginBottom:0}} className="hoverButtonText">1 year</p>
+          </button>
         </Grid>
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
-          <Button
+          <button
             className="hoverButton"
             // sx={{fontSize:"0.6rem",minWidth:"90px"}}
             // variant="outlined"
-            size="small"
+            // size="small"
             // style={{
             //   backgroundColor: "#1976d2",
             //   color: "white",
@@ -263,8 +276,8 @@ const LockTimeButtons = ({
               console.log("setbuttonValue", buttonValue);
             }}
           >
-            4 years
-          </Button>
+             <p style={{marginBottom:0}} className="hoverButtonText">4 years</p>
+          </button>
         </Grid>
       </Grid>
 

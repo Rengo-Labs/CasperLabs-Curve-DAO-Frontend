@@ -25,6 +25,8 @@ import { useSnackbar } from 'notistack';
 import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
 import { pools } from "../../../../components/Charts/ChartHelper/ChartHelpers";
 import { getState } from "../../../../components/stores/GaugeStore";
+import Gauge from "../../../../components/Gauge/Gauge";
+import { CircularProgress } from "@mui/material";
 
 // CONTENT
 
@@ -109,9 +111,8 @@ const DaoHome = () => {
 
   useEffect(() => {
 
-    if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
+    if (activePublicKey && activePublicKey != null && activePublicKey != 'null' && activePublicKey != undefined)
       fetchData();
-    }
   }, [activePublicKey])
 
   const fetchData = async () => {
@@ -202,13 +203,19 @@ const DaoHome = () => {
                                 <Divider />
                               </div>
                             </div>
-                            {/* Info Message */}
-                            <div className="col-12 mt-4">
-                              <DaoInfoMessage />
-                            </div>
+
+
                           </div>
                         </Paper>
                       </Box>
+                      {!isLoading ? (myPools.map((gauge) => (
+                        <Gauge gauge={gauge} fetchData={fetchData} />
+
+                      ))) : (
+                        <div className="row no-gutters justify-content-center">
+                          <CircularProgress style={{ margin: '20px', padding: '20px' }} size={100} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

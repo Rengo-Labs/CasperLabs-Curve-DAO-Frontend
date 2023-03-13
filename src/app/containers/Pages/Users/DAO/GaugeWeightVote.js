@@ -58,7 +58,7 @@ import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUG
 import * as votingEscrowFunctions from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
 import SigningModal from "../../../../components/Modals/SigningModal";
 import VoteForGaugeWeightModal from "../../../../components/Modals/VoteForGaugeWeightModal";
-import * as statsStore from "../../../../components/stores/StatsStore";
+// import * as statsStore from "../../../../components/stores/StatsStore";
 import FutureAPYTable from "../../../../components/Tables/FutureAPYTable";
 import VotingHistoryTable from "../../../../components/Tables/VotingHistoryTable";
 
@@ -112,20 +112,6 @@ const GAUGES_BY_ADDRESS = gql`
   }
 `;
 
-const selectGaugeOptions = [
-  {
-    name: "CSPR",
-    icon: cspr,
-  },
-  {
-    name: "wBTC",
-    icon: wbtc,
-  },
-  {
-    name: "USDT",
-    icon: usdt,
-  },
-];
 
 const cells = ["", "Pool", "Current CRV APY", "Future CRV APY"];
 const weightCells = ["Gauge", "Weight", "Reset"];
@@ -157,9 +143,9 @@ try {
   console.log("an exception has occured!", expecption);
 }
 
-const WEEK = 604800
+const WEEK = 604800000
 
-const WEIGHT_VOTE_DELAY = 10 * 86400
+const WEIGHT_VOTE_DELAY = 10 * 86400000
 // COMPONENT FUNCTION
 const GaugeWeightVote = () => {
   // States
@@ -215,61 +201,9 @@ const GaugeWeightVote = () => {
   const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const WEEK = 604800;
   let pointsSum = [[]];
 
-  //TEMPORARY VARIABLE TO AVOID ERRORS
-  const poolInfo = {
-    compound: {
-      swap: "0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56",
-      swap_token: "0x845838DF265Dcd2c412A1Dc9e959c7d08537f8a2",
-      name: "compound",
-      gauge: "0x7ca5b0a2910B33e9759DC7dDB0413949071D7575",
-    },
-    usdt: {
-      swap: "0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C",
-      swap_token: "0x9fC689CCaDa600B6DF723D9E47D84d76664a1F23",
-      name: "usdt",
-      gauge: "0xBC89cd85491d81C6AD2954E6d0362Ee29fCa8F53",
-    },
-    y: {
-      swap: "0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51",
-      swap_token: "0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8",
-      name: "y",
-      gauge: "0xFA712EE4788C042e2B7BB55E6cb8ec569C4530c1",
-    },
-    busd: {
-      swap: "0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27",
-      swap_token: "0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B",
-      name: "busd",
-      gauge: "0x69Fb7c45726cfE2baDeE8317005d3F94bE838840",
-    },
-    susdv2: {
-      swap: "0xA5407eAE9Ba41422680e2e00537571bcC53efBfD",
-      swap_token: "0xC25a3A3b969415c80451098fa907EC722572917F",
-      name: "susdv2",
-      gauge: "0xA90996896660DEcC6E997655E065b23788857849",
-    },
-    pax: {
-      swap: "0x06364f10B501e868329afBc005b3492902d6C763",
-      swap_token: "0xD905e2eaeBe188fc92179b6350807D8bd91Db0D8",
-      name: "pax",
-      gauge: "0x64E3C23bfc40722d3B649844055F1D51c1ac041d",
-    },
-    ren: {
-      swap: "0x93054188d876f558f4a66B2EF1d97d16eDf0895B",
-      swap_token: "0x49849C98ae39Fff122806C06791Fa73784FB3675",
-      name: "ren",
-      gauge: "0xB1F2cdeC61db658F091671F5f199635aEF202CAC",
-    },
-    sbtc: {
-      swap: "0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714",
-      swap_token: "0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3",
-      name: "sbtc",
-      gauge: "0x705350c4BcD35c9441419DdD5d2f097d7a55410F",
-    },
-  };
-
+  
   // States
   const [openSigning, setOpenSigning] = useState(false);
   const handleCloseSigning = () => {
@@ -361,34 +295,49 @@ const GaugeWeightVote = () => {
   // }
 
   useEffect(() => {
-    let balance = votingEscrowFunctions.balanceOf(VOTING_ESCROW_CONTRACT_HASH);
-    axios
-      .post(`/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, {
-        account: activePublicKey,
+    let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
+
+    axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+      .then(response => {
+        // handle the response
+        console.log("votingEscrow response of balance of:...", response.data);
+        setBalance(response.data.balance)
       })
-      .then((response) => {
-        console.log("Response from getting locked end: ", response);
-      })
-      .catch((error) => {
-        console.log("Error from getting locked end: ", error);
+      .catch(error => {
+        // handle the error
+        console.log("error of balance of:...", error);
       });
 
-    let powerUsed = gaugeControllerFunctions.vote_user_power(
+    axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+      .then(response => {
+        // handle the response
+        console.log("votingEscrow response of lockedEnd:...", response.data);
+        setLockEnd(response.data.lockedEnd.end)
+      })
+      .catch(error => {
+        // handle the error
+        console.log("error of lockedEnd:...", error);
+      });
+
+
+    let _powerUsed = gaugeControllerFunctions.vote_user_power(
       GAUGE_CONTROLLER_CONTRACT_HASH,
       activePublicKey
     );
-    let totalVeCRV;
-    axios
-      .post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`)
-      .then((response) => {
-        console.log("Response from getting total supply: ", response);
-        totalVeCRV = response.data?.totalSupplies[0];
-        setTotalVeCRV(totalVeCRV);
-      })
-      .catch((error) => {
-        console.log("Error from getting total supply: ", error);
-      });
+    console.log("_powerUsed", _powerUsed);
+    setPowerUsed(_powerUsed);
+    setNextTime(((Date.now()) + WEEK) / WEEK * WEEK)
+    let totalSupply = axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`).then(response => {
+      // handle the response
+      console.log("votingEscrow response of totalSupply:...", response.data);
+      setTotalVeCRV(response.data.totalSupply[0])
+    })
+    .catch(error => {
+      // handle the error
+      console.log("error of totalSupply:...", error);
+    });
 
+    // getVotes()
     // getVotes();  //check for its logic
     //WORKING FOR GETVOTES FUNCTION AFTER REMOVING QUERIES
 
@@ -547,17 +496,17 @@ const GaugeWeightVote = () => {
 
       //SETTING DATA FOR TABLE
       getCRVAPY();
-      for (let pool of Object.keys(currentCRVAPYs)) {
-        let change = futureWeights[pool] / currentWeights[pool];
-        if (!isFinite(change)) change = 0;
-        // Vue.set(futureCRVAPYs, pool, currentCRVAPYs[pool] * change);
-        let tempFutureCRV = futureCRVAPYs;
-        tempFutureCRV[pool] = currentCRVAPYs[pool] * change;
-        setFutureCRVAPYs(tempFutureCRV);
-        statsStore.state.currentCRVAPYs[
-          Object.values(poolInfo).find((v) => v.name == pool).gauge
-        ] = currentCRVAPYs[pool] * change;
-      }
+      // for (let pool of Object.keys(currentCRVAPYs)) {
+      //   let change = futureWeights[pool] / currentWeights[pool];
+      //   if (!isFinite(change)) change = 0;
+      //   // Vue.set(futureCRVAPYs, pool, currentCRVAPYs[pool] * change);
+      //   let tempFutureCRV = futureCRVAPYs;
+      //   tempFutureCRV[pool] = currentCRVAPYs[pool] * change;
+      //   setFutureCRVAPYs(tempFutureCRV);
+      //   statsStore.state.currentCRVAPYs[
+      //     Object.values(poolInfo).find((v) => v.name == pool).gauge
+      //   ] = currentCRVAPYs[pool] * change;
+      // }
     };
 
     fetchData();
@@ -653,63 +602,7 @@ const GaugeWeightVote = () => {
     console.log("decoded rates: ", decodedRate);
     // let decodedRate = [];
 
-    let gaugeRates = decodedRate
-      .filter((_, i) => i % 2 == 0)
-      .map((v) => v / 1e18);
-    let workingSupplies = decodedRate
-      .filter((_, i) => i % 2 == 1)
-      .map((v) => v / 1e18);
 
-    // let virtualPriceCalls = Object.values(this.poolInfo).map((v) => [
-    //   v.swap,
-    //   "0xbb7b8b80",
-    // ]);
-    // let aggVirtualPrices = await contract.multicall.methods
-    //   .aggregate(virtualPriceCalls)
-    //   .call();
-    // let decodedVirtualPrices = aggVirtualPrices[1].map((hex, i) => [
-    //   virtualPriceCalls[i][0],
-    //   web3.eth.abi.decodeParameter("uint256", hex) / 1e18,
-    // ]);
-
-    let decodedVirtualPrices = [];
-    // let decodedWeights = [];
-
-    let weightData = decodedWeights.map((w, i) => {
-      let pool;
-      // let pool = Object.values(this.poolInfo).find(
-      //   (v) =>
-      //     v.gauge.toLowerCase() ==
-      //     "0x" + weightCalls[i][1].slice(34).toLowerCase()
-      // ).name;
-      let swap_address = poolInfo[pool].swap;
-      let virtual_price = decodedVirtualPrices.find(
-        (v) => v[0].toLowerCase() == swap_address.toLowerCase()
-      )[1];
-      let _working_supply = workingSupplies[i];
-      if (["ren", "sbtc"].includes(pool)) _working_supply *= btcPrice;
-      let rate =
-        (((gaugeRates[i] * w[1] * 31536000) / _working_supply) * 0.4) /
-        virtual_price;
-      let apy = rate * CRVprice * 100;
-      if (isNaN(apy)) apy = 0;
-      Object.values(this.poolInfo).find(
-        (v) => v.name == pool
-      ).gauge_relative_weight = w[1];
-
-      // Vue.set(this.currentWeights, pool, w[1] * 100);
-      let tempCurrentWeights = currentWeights;
-      tempCurrentWeights[pool] = w[1] * 100;
-      setCurrentWeights(tempCurrentWeights);
-      console.log("Current weights: ", currentWeights);
-
-      // Vue.set(this.currentCRVAPYs, pool, apy);
-      let tempCurrentCRV = currentCRVAPYs;
-      tempCurrentCRV[pool] = apy;
-      setCurrentCRVAPYs(tempCurrentCRV);
-      console.log("Current crv apys: ", currentCRVAPYs);
-      //Vue.set(this.CRVAPYs, pool, apy)
-    });
   };
 
   const handleTableGraph = (vote) => {
@@ -946,25 +839,25 @@ const GaugeWeightVote = () => {
     //NEW WORK ADDED
     let point_bias = Math.max(oldWeightBias + new_bias, old_bias) - old_bias;
 
-    statsStore.state.calculatedWeights[selectedGauge] = point_bias;
+    // statsStore.state.calculatedWeights[selectedGauge] = point_bias;
 
     // this.piechart = this.$refs.piecharts.chart;
     // this.piechart.showLoading();
 
-    let total_outcome_weight = Object.values(
-      statsStore.state.calculatedWeights
-    ).reduce((a, b) => +a + +b, 0);
+    // let total_outcome_weight = Object.values(
+    //   statsStore.state.calculatedWeights
+    // ).reduce((a, b) => +a + +b, 0);
 
-    let outcome_weights = Object.entries(
-      statsStore.state.calculatedWeights
-    ).map(([k, v]) => ({
-      id: k,
-      name: statsStore.state.gaugesNames[k],
-      y: (v * 100) / total_outcome_weight,
-    }));
+    // let outcome_weights = Object.entries(
+    //   statsStore.state.calculatedWeights
+    // ).map(([k, v]) => ({
+    //   id: k,
+    //   name: statsStore.state.gaugesNames[k],
+    //   y: (v * 100) / total_outcome_weight,
+    // }));
 
     // this.outcomeWeights = outcome_weights;
-    setOutcomeWeights(outcome_weights);
+    // setOutcomeWeights(outcome_weights);
 
     // while (this.piechart.series[0])
     //   this.piechart.series[0].remove(false, false);
@@ -976,19 +869,19 @@ const GaugeWeightVote = () => {
 
     // this.piechart.hideLoading();
 
-    let currentWeight = statsStore.state.gaugesWeights[selectedGauge];
+    // let currentWeight = statsStore.state.gaugesWeights[selectedGauge];
     let calculatedWeight = point_bias;
 
-    let change =
-      outcome_weights.find(
-        (v) => v.id.toLowerCase() == selectedGauge.toLowerCase()
-      ).y / statsStore.state.pieGaugeWeights[selectedGauge];
+    // let change =
+    //   outcome_weights.find(
+    //     (v) => v.id.toLowerCase() == selectedGauge.toLowerCase()
+    //   ).y / statsStore.state.pieGaugeWeights[selectedGauge];
 
-    let old_APY = statsStore.state.currentCRVAPYs[selectedGauge];
-    setOldAPY(old_APY);
+    // let old_APY = statsStore.state.currentCRVAPYs[selectedGauge];
+    // setOldAPY(old_APY);
 
-    let new_APY = old_APY * change;
-    setNewAPY(new_APY);
+    // let new_APY = old_APY * change;
+    // setNewAPY(new_APY);
 
     // this.isCalculating = false;
   };
@@ -1186,156 +1079,7 @@ const GaugeWeightVote = () => {
                       >
                         <Paper elevation={4}>
                           <div className="py-5 px-4">
-                            <div className="row no-gutters mt-3">
-                              <div className="col-12 text-center py-3">
-                                <Typography
-                                  variant="h6"
-                                  gutterBottom
-                                  component="div"
-                                  style={{
-                                    marginLeft: "20%",
-                                    marginRight: "20%",
-                                  }}
-                                >
-                                  <span className="font-weight-bold">
-                                    Proposed future CRV APYs taking effect on{" "}
-                                    {effectiveDate} UTC
-                                  </span>
-                                </Typography>
-                              </div>
-                            </div>
-                            <div className="row no-gutters justify-content-center">
-                              <Container>
-                                <FutureAPYTable
-                                  cells={cells}
-                                  gaugeWeightVoteData={gaugeWeightVoteData}
-                                  futureCRVAPYs={futureCRVAPYs}
-                                  currentCRVAPYs={currentCRVAPYs}
-                                ></FutureAPYTable>
-                              </Container>
-                              {/* <TableContainer sx={{ p: 3 }}>
-                                <Table aria-label="Gauge Weight Vote">
-                                  <TableHead
-                                    sx={{
-                                      backgroundColor: "#e7ebf0",
-                                      paddingLeft: "0.25rem",
-                                    }}
-                                  >
-                                    <TableRow id="GWVoteTableSort">
-                                      {cells.map((cell) => (
-                                        <TableCell
-                                          sx={{
-                                            border: 0,
-                                            fontWeight: "bold",
-                                            fontSize: "1.25rem",
-                                            textAlign: "center",
-                                          }}
-                                        >
-                                          {cell}
-                                        </TableCell>
-                                      ))}
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody id={"GWVoteTableBody"}>
-                                    {(rowsPerPage > 0
-                                      ? gaugeWeightVoteData.slice(
-                                          page * rowsPerPage,
-                                          page * rowsPerPage + rowsPerPage
-                                        )
-                                      : gaugeWeightVoteData
-                                    ).map((item) => {
-                                      return (
-                                        <TableRow>
-                                          <TableCell
-                                            key={item.index}
-                                            sx={{ textAlign: "center" }}
-                                          >
-                                            {item.indexNo}
-                                          </TableCell>
-                                          <TableCell
-                                            key={item.index}
-                                            sx={{ textAlign: "center" }}
-                                          >
-                                            <Link
-                                              to="/pool/buy-and-sell"
-                                              className="tableCellLink"
-                                            >
-                                              {item.pool}
-                                            </Link>
-                                          </TableCell>
-                                          <TableCell
-                                            key={item.index}
-                                            sx={{ textAlign: "center" }}
-                                          >
-                                            <Link
-                                              to="/pool/buy-and-sell"
-                                              className="tableCellLink"
-                                            >
-                                              {item.currentCrv}
-                                            </Link>
-                                          </TableCell>
-                                          <TableCell
-                                            key={item.index}
-                                            sx={{ textAlign: "center" }}
-                                          >
-                                            <Link
-                                              to="/pool/buy-and-sell"
-                                              className="tableCellLink"
-                                            >
-                                              {item.futureCrv}
-                                            </Link>
-                                          </TableCell>
-                                        </TableRow>
-                                      );
-                                    })}
-                                    {emptyRows > 0 && (
-                                      <TableRow
-                                        style={{ height: 53 * emptyRows }}
-                                      >
-                                        <TableCell colSpan={6} />
-                                      </TableRow>
-                                    )}
-                                  </TableBody>
-                                  <TableFooter>
-                                    <TableRow>
-                                      <TablePagination
-                                        rowsPerPageOptions={[
-                                          5,
-                                          10,
-                                          25,
-                                          { label: "All", value: -1 },
-                                        ]}
-                                        colSpan={12}
-                                        count={gaugeWeightVoteData.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        SelectProps={{
-                                          inputProps: {
-                                            "aria-label": "rows per page",
-                                          },
-                                          native: true,
-                                        }}
-                                        onPageChange={handleChangePage}
-                                        onRowsPerPageChange={
-                                          handleChangeRowsPerPage
-                                        }
-                                        ActionsComponent={
-                                          TablePaginationActions
-                                        }
-                                        sx={{
-                                          backgroundColor: "#e7ebf0",
-                                        }}
-                                      />
-                                    </TableRow>
-                                  </TableFooter>
-                                </Table>
-                              </TableContainer> */}
-                            </div>
-                            <div className="row no-gutters">
-                              <div className="w-100 my-3">
-                                <Divider />
-                              </div>
-                            </div>
+
                             {/* Select gauge and Vote Weight % */}
                             <Container>
                               <Formik
@@ -1384,7 +1128,7 @@ const GaugeWeightVote = () => {
                                         <InputLabel id="select-gauge-label">
                                           Select a Gauge
                                         </InputLabel>
-                                        
+
                                         <Select
                                           labelId="select-gauge-label"
                                           id="gauge-select"
@@ -1635,9 +1379,9 @@ const GaugeWeightVote = () => {
                                           // variant="contained"
                                           size="large"
                                           style={{
-                                            // backgroundColor: "#1976d2",
-                                            // color: "white",
-                                            width:"33%"
+                                            backgroundColor: "#1976d2",
+                                            color: "white",
+                                            width: "33%"
                                           }}
                                           onClick={() => {
                                             calculateValuesForGraph();
@@ -2325,8 +2069,8 @@ const GaugeWeightVote = () => {
         <VoteForGaugeWeightModal
           show={openVoteForGaugeWeightModal}
           handleClose={handleCloseVoteForGaugeWeightModal}
-          cells={cells} //table headings
-          gaugeWeightVoteData={gaugeWeightVoteData} //table data
+          // cells={cells} //table headings
+          // gaugeWeightVoteData={gaugeWeightVoteData} //table data
           voteForGaugeWeightsMakeDeploy={voteForGaugeWeightsMakeDeploy}
           gauge={gauge}
           votingPowerPercentage={votingPowerPercentage}

@@ -290,7 +290,7 @@ const Minter = () => {
                             <div className="col-12 mt-4">
                               <VotingPowerActionables userLockedCRVBalance={userLockedCRVBalance} />
                               <div className="w-100 my-3">
-                                <Divider />
+                                {/* <Divider /> */}
                               </div>
                             </div>
                             {/* Info Message */}

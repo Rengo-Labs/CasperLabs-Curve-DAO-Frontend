@@ -86,3 +86,10 @@ code {
   text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #08209e,
     0 0 82px #08209e, 0 0 92px #08209e, 0 0 102px #08209e, 0 0 151px #08209e;
 }
+
+::-webkit-calendar-picker-indicator {
+  filter: brightness(0) saturate(100%) invert(56%) sepia(88%) saturate(5059%) hue-rotate(193deg) brightness(86%) contrast(89%);
+  height: 21px;
+  width: 20px;
+        /* color: rgba(25, 118, 210, 0.5) !important; */
+}

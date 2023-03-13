@@ -6,7 +6,7 @@ import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes
 import { checkpoint } from "../checkpoint/Checkpoint";
 
 
-export async function increaseUnlockTimeMakeDeploy(unlockTime, setOpenSigning, enqueueSnackbar) {
+export async function increaseUnlockTimeMakeDeploy(unlockTime, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData) {
   // CREATING REQUIRED VARIABLES
   let torus;
   const allowance = 0;
@@ -62,6 +62,8 @@ export async function increaseUnlockTimeMakeDeploy(unlockTime, setOpenSigning, e
         setOpenSigning(false);
         let variant = "success";
         enqueueSnackbar("Amount Increased Successfully", { variant })
+        fetchBalanceData();
+        fetchUserData();
         //   providerRef.current.enqueueSnackbar("Amount Increased Successfully", { variant })
       } catch {
         //   handleCloseSigning();

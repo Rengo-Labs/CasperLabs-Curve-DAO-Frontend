@@ -6,7 +6,7 @@ import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes
 import { checkpoint } from "../checkpoint/Checkpoint";
 
 
-export async function withdrawMakeDeploy(setOpenSigning, enqueueSnackbar) {
+export async function withdrawMakeDeploy(setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData) {
   // CREATING REQUIRED VARIABLES
   let torus;
   const allowance = 0;
@@ -57,6 +57,8 @@ export async function withdrawMakeDeploy(setOpenSigning, enqueueSnackbar) {
         setOpenSigning(false);
         let variant = "success";
         enqueueSnackbar("Funds Withdrawed Successfully", { variant })
+        fetchBalanceData();
+        fetchUserData();
         //   providerRef.current.enqueueSnackbar("Funds Withdrawed Successfully", { variant })
       } catch {
         //   handleCloseSigning();

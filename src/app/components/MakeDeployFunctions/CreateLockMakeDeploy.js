@@ -7,7 +7,7 @@ import { checkpoint } from "../checkpoint/Checkpoint";
 import { convertToStr } from "../ConvertToString/ConvertToString";
 
 
-export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSigning, enqueueSnackbar) {
+export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData) {
   // CREATING REQUIRED VARIABLES
   let torus;
   const allowance = 0;
@@ -71,6 +71,8 @@ export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSign
         setOpenSigning(false);
         let variant = "success";
         enqueueSnackbar("Funds Locked Successfully", { variant })
+        fetchBalanceData();
+        fetchUserData();
         //   providerRef.current.enqueueSnackbar("Funds Locked Successfully", { variant })
 
 
