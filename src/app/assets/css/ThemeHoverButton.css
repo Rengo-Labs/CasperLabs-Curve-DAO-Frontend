@@ -1,13 +1,49 @@
 .hoverButton{   
-    border:1px solid#1976d2 !important;
-    color: #1976d2 !important;;
-    font-size: 0.6rem !important;;
-    min-width: 100px !important;;
-    margin-left: 15px !important;;
-    height: 20px !important;;
+    /* border:1px solid#1976d2 !important; */
+    padding: 2.5px 4px !important;
+    color: rgba(25, 118, 210, 0.5) !important;;
+    /* font-size: 0.6rem !important;; */
+    width: 128px !important;;
+    /* margin-left: 15px !important;; */
+    height: 23px !important;;
+    /* font-family: 'Poppins'!important;
+font-style: normal !important;
+font-weight: 500 !important;
+font-size: 12px !important;
+line-height: 18px !important; */
+border: 1px solid rgba(25, 118, 210, 0.5) !important;
+border-radius: 4px !important;
+box-sizing: border-box !important;
+display: flex !important;
+flex-direction: row !important;
+justify-content: center !important;
+align-items: center !important;
+background-color: white;
     
 }
 .hoverButton:hover{
     background-color: #1976d2 !important;;
     color: white !important;;
+}
+
+.hoverButtonText{
+    width: 62px;
+height: 18px;
+
+font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 18px;
+/* identical to box height */
+
+
+/* color: rgba(25, 118, 210, 0.5); */
+
+
+/* Inside auto layout */
+
+/* flex: none;
+order: 0;
+flex-grow: 0; */
 }
