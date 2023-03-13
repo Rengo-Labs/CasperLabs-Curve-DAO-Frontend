@@ -637,14 +637,15 @@ const Calc = () => {
                                 <div className="row no-gutters justify-content-center">
 
                                   <div className="col-12 col-md-6 text-center my-3">
-                                    <div className="btnWrapper">
+                                    <div className="">
                                       <Button
-                                        variant="contained"
+                                        className="hoverButtonGlobal"
+                                        // variant="contained"
                                         size="large"
-                                        style={{
-                                          backgroundColor: "#1976d2",
-                                          color: "white",
-                                        }}
+                                        // style={{
+                                        //   backgroundColor: "#1976d2",
+                                        //   color: "white",
+                                        // }}
                                         type="submit"
                                         onClick={() => {
                                           calc()

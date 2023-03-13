@@ -126,18 +126,27 @@ function VoteForGaugeWeightModal(props) {
       </Modal.Body>
       <Modal.Footer>
         <Button
-          variant="contained"
+          className="hoverButtonGlobal"
+          // variant="contained"
           size="large"
-          style={{ backgroundColor: "#1976d2", color: "white", margin: '10px' }}
+          style={{ 
+            // backgroundColor: "#1976d2", 
+            // color: "white", 
+            margin: '10px' }}
           onClick={() => props.voteForGaugeWeightsMakeDeploy(props.gauge, props.votingPowerPercentage)}
         >
           Submit
         </Button>
 
         <Button
-          variant="contained"
+          className="hoverButtonGlobal"
+          // variant="contained"
           size="large"
-          style={{ backgroundColor: "#1976d2", color: "white", margin: '10px' }}
+          style={{ 
+            // backgroundColor: "#1976d2", 
+            // color: "white", 
+            margin: '10px' 
+          }}
           onClick={() => {
             // props.setSlippage(0.5);
             props.handleClose();

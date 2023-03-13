@@ -354,11 +354,12 @@ const Vesting = () => {
                                     />
                                   </div>
                                   <div className="col-12 col-lg-2 text-center mt-3 mt-lg-0">
-                                    <div className="btnWrapper">
+                                    <div className="">
                                       <Button
-                                        variant="contained"
+                                       className="hoverButtonGlobal"
+                                        // variant="contained"
                                         size="large"
-                                        style={{ backgroundColor: "#1976d2", color: "white" }}
+                                        // style={{ backgroundColor: "#1976d2", color: "white" }}
                                         onClick={() => { }}
                                       >
                                         Check
@@ -480,9 +481,10 @@ const Vesting = () => {
                             <div className="row no-gutters justify-content-center">
                               {/* <div className="col-12"> */}
                               <Button
-                                variant="contained"
+                                className="hoverButtonGlobal"
+                                // variant="contained"
                                 size="large"
-                                style={{ backgroundColor: "#1976d2", color: "white" }}
+                                // style={{ backgroundColor: "#1976d2", color: "white" }}
                                 // onClick={() => { claimMakeDeploy() }}
                                 onClick={() => setOpen(true)}
                               // onClick={() => { claimMakeDeploy(vestingAddress) }}
