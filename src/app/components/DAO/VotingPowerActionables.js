@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
 import "../../assets/css/style.css";
+import "../../assets/css/votingActionablesTextField.css";
 // BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
 // COMPONENTS
@@ -16,6 +17,7 @@ import TextInput from "../FormsUI/TextInput";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { Grid } from "@mui/material";
+import InputAdornment from '@mui/material/InputAdornment';
 // FORMIK AND YUP
 import { Form, Formik } from "formik";
 import AllowanceModal from "../Modals/AllowanceModal";
@@ -294,7 +296,17 @@ const VotingPowerActionables = (props) => {
                 // TRUE CONDITION WORK
                 <>
                   <div className="w-100">
-                    <Typography>
+                    <Typography
+                      style={{
+                        // fontFamily: 'Roboto',
+                        fontStyle: 'normal',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        lineHeight: '14px',
+                        letterSpacing: '0.01em',
+                        color: '#000000'
+                      }}
+                    >
                       Lock Amount
                     </Typography>
                     <div className="d-flex ">
@@ -319,13 +331,45 @@ const VotingPowerActionables = (props) => {
                       variant="filled"
                       type="number"
                       name="LockAmount"
-                      InputProps={{ style: { height: "45px" } }}
+                      sx={{borderRadius: "4px 0px 0px 0px"}}
+                      disableUnderline
+                      InputProps={{ 
+                        style: { height: "54px"},
+                        endAdornment: (
+                          <InputAdornment  >
+                            <button
+                          style={{
+                            fontFamily:"Poppins",
+                            // marginRight:"50",
+                            // borderRadius: "0px 4px 0px 0px",
+                            background:"none",
+                            border:"none",
+                            color:"#1976D2",
+                            // backgroundColor:"#E8E8E8"
+                          }}
+                          // className="hoverButtonGlobal"
+                          // variant="outlined"
+                          size="medium"
+                          onClick={() => {
+                            setLockAmount(userCRVBalance);
+                          }}
+                        >
+                          Max
+                        </button>
+                          </InputAdornment>
+                        )
+                       }}
                       // sx={{  }}
                     />
                     </div>
                     {/* <Grid item sx={12} sm={6}> */}
                       <div className="d-flex  " >
-                        <Button
+                        {/* <Button
+                          style={{
+                            fontFamily:"Poppins",
+                            marginRight:"50",
+                            borderRadius: "0px 4px 0px 0px"
+                          }}
                           // style={buttonStyle}
                           className="hoverButtonGlobal"
                           // variant="outlined"
@@ -336,7 +380,7 @@ const VotingPowerActionables = (props) => {
                         
                         >
                           Max
-                        </Button>
+                        </Button> */}
 
                         <div className="align-self-end">
                           <p className=""
@@ -344,7 +388,17 @@ const VotingPowerActionables = (props) => {
                             // gutterBottom
                             // component="span"
                             // fontWeight={900}
-                            style={{ fontSize: "0.7rem",color:"gray",marginBottom:"0"}}
+                            style={{ 
+                              marginBottom:"0",
+                              marginLeft:"12px",
+                              // fontFamily: 'Roboto',
+                              fontStyle: "italic",
+                              fontWeight: "500",
+                              fontSize: '14px',
+                              lineHeight: '16px',
+                              letterSpacing: '0.01em',
+                              color: 'rgba(0, 0, 0, 0.5)'
+                            }}
                           >
                             {`(${userCRVBalance})`}
                           </p>
@@ -413,10 +467,21 @@ const VotingPowerActionables = (props) => {
                   <div className="d-flex mt-4">
                   <div className="" style={{width:"35%"}}>
                     <div className=" px-0" >
-                      <Typography>
-                      Choose Lock Time
+                      <Typography
+                        style={{
+                          // fontFamily: 'Roboto',
+                          fontStyle: 'normal',
+                          fontWeight: '400',
+                          fontSize: '12px',
+                          lineHeight: '14px',
+                          letterSpacing: '0.01em',
+                          color: '#000000'
+                        }}
+                      >
+                      Choose Lock Times
                       </Typography>
                       <DateTimePicker
+                         variant="filled"
                          onChange={(e) => {
                           console.log("e.value", e.target.value);
                           console.log("new Date(e.target.value)", new Date(e.target.value));
@@ -425,7 +490,9 @@ const VotingPowerActionables = (props) => {
                         }}
                         value={dateDisplay}
                         name="LockTimePicker"
-                        InputProps={{ style: { height: "50px" } }}
+                        // sx={{borderBottom: '1px solid #1976d2', borderRadius: "4px 0px 0px 0px"}}
+                        // disableUnderline
+                        InputProps={{ style: { height: "54px",  } }}
                         // label="Choose Lock Time"
                         // sx={{ width: "35%" }}
                       />
@@ -488,9 +555,9 @@ const VotingPowerActionables = (props) => {
                     <Grid item xs={12} sm={3}> */}
                       <div className=" my-4 ">
                         {lockAmount * 10 ** 9 > allowance ? (
-                          <Button
+                          <button
                             // variant="contained"
-                            className="w-25 hoverButtonGlobal"
+                            className="w-25 hoverButtonGlobal votingActionablesButton increaseTime"
                             size="large"
                             // style={{ backgroundColor: "#1976d2", color: "white" }}
                             onClick={() => {
@@ -499,12 +566,14 @@ const VotingPowerActionables = (props) => {
                               handleShowAllowance();
                             }}
                           >
-                            Increase Allowance
-                          </Button>
+                            <p className="increaseAllowanceButton">
+                              Increase Allowance
+                            </p>
+                          </button>
                         ) : (
-                          <Button
+                          <button
                             // variant="contained"
-                            className="w-25 hoverButtonGlobal"
+                            className="w-25 hoverButtonGlobal votingActionablesButton increaseTime"
                             size="large"
                             // style={{ backgroundColor: "#1976d2", color: "white", }}
                             onClick={() => {
@@ -513,8 +582,10 @@ const VotingPowerActionables = (props) => {
                               createLockMakeDeploy(lockAmount, date, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData);
                             }}
                           >
-                            Create Lock
-                          </Button>
+                            <p className="increaseAllowanceButton">
+                              Create Lock
+                            </p>
+                          </button>
                         )}
                       </div>
                     {/* </Grid>
@@ -525,7 +596,17 @@ const VotingPowerActionables = (props) => {
 
                 <>
                   <div className="w-100">
-                    <Typography>
+                    <Typography className="" 
+                    style={{
+                      // fontFamily: 'Roboto',
+                      fontStyle: 'normal',
+                      fontWeight: '400',
+                      fontSize: '12px',
+                      lineHeight: '14px',
+                      letterSpacing: '0.01em',
+                      color: '#000000'
+                    }}
+                    >
                       Lock Amount
                     </Typography>
                     <div className="d-flex ">
@@ -543,16 +624,47 @@ const VotingPowerActionables = (props) => {
                       }}
                       value={lockAmount}
                       variant="filled"
-                      type="number"
+                      type="text"
                       name="LockAmount"
-                      InputProps={{ style: { height: "45px" } }}
+                      sx={{ borderRadius: "4px 0px 0px 0px"}}
+                      disableUnderline
+                      InputProps={{ 
+                        style: { height: "54px"  } ,
+                        endAdornment: (
+                          <InputAdornment  >
+                            <button
+                          style={{
+                            fontFamily:"Poppins",
+                            // marginRight:"50",
+                            // borderRadius: "0px 4px 0px 0px",
+                            background:"none",
+                            border:"none",
+                            color:"#1976D2",
+                            // backgroundColor:"#E8E8E8"
+                          }}
+                          // className="hoverButtonGlobal"
+                          // variant="outlined"
+                          size="medium"
+                          onClick={() => {
+                            setLockAmount(userCRVBalance);
+                          }}
+                        >
+                          Max
+                        </button>
+                          </InputAdornment>
+                        )
+                      }}
                       // sx={{  }}
                     />
                     </div>
                     {/* <Grid item sx={12} sm={6}> */}
-                      <div className="d-flex  " >
-                        <Button
-                          // style={buttonStyle}
+                      <div className="d-flex  ml-0" >
+                        {/* <Button
+                          style={{
+                            fontFamily:"Poppins",
+                            marginRight:"50",
+                            borderRadius: "0px 4px 0px 0px"
+                          }}
                           className="hoverButtonGlobal"
                           // variant="outlined"
                           size="medium"
@@ -561,7 +673,7 @@ const VotingPowerActionables = (props) => {
                           }}
                         >
                           Max
-                        </Button>
+                        </Button> */}
 
                         <div className="align-self-end">
                           <p className=""
@@ -569,7 +681,17 @@ const VotingPowerActionables = (props) => {
                             // gutterBottom
                             // component="span"
                             // fontWeight={900}
-                            style={{ fontSize: "0.7rem",color:"gray",marginBottom:"0"}}
+                            style={{ 
+                              marginBottom:"0",
+                              marginLeft:"12px",
+                              // fontFamily: "Roboto",
+                              fontStyle: "italic",
+                              fontWeight: "500",
+                              fontSize: '14px',
+                              lineHeight: '16px',
+                              letterSpacing: '0.01em',
+                              color: 'rgba(0, 0, 0, 0.5)'
+                            }}
                           >
                             {`(${userCRVBalance})`}
                           </p>
@@ -585,10 +707,10 @@ const VotingPowerActionables = (props) => {
                       <div className="">
                         <div className=" my-4 ">
                           {lockAmount * 10 ** 9 > allowance ? (
-                            <Button
-                              className="w-25 hoverButtonGlobal"
-                              variant="outlined"
-                              size="large"
+                            <button
+                              className="w-25 hoverButtonGlobal votingActionablesButton"
+                              // variant="outlined"
+                              // size="large"
                               // style={{ backgroundColor: "#1976d2", color: "white" }}
                               onClick={() => {
                                 console.log("Action Taken");
@@ -596,21 +718,25 @@ const VotingPowerActionables = (props) => {
                                 handleShowAllowance();
                               }}
                             >
+                              <p className="increaseAllowanceButton">
                               Increase Allowance
-                            </Button>
+                              </p>
+                            </button>
                           ) : (
-                            <Button
-                              className="w-25 hoverButtonGlobal"
-                              variant="outlined"
-                              size="large"
+                            <button
+                              className="w-25 hoverButtonGlobal votingActionablesButton"
+                              // variant="outlined"
+                              // size="large"
                               onClick={() => {
                                 console.log("Action Taken");
                                 // props.createLockMakeDeploy(lockAmount, date);
                                 increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData);
                               }}
                             >
+                              <p className="increaseAllowanceButton">
                               Add Amount
-                            </Button>
+                              </p>
+                            </button>
                           )}
 
                         </div>
@@ -621,10 +747,22 @@ const VotingPowerActionables = (props) => {
                   <div className="d-flex">
                   <div className="" style={{width:"35%"}}>
                     <div className=" px-0" >
-                      <Typography>
+                      <Typography
+                        style={{
+                          // fontFamily: 'Roboto',
+                          fontStyle: 'normal',
+                          fontWeight: '400',
+                          fontSize: '12px',
+                          lineHeight: '14px',
+                          letterSpacing: '0.01em',
+                          color: '#000000'
+                        }}
+                      >
                       Choose Lock Time
                       </Typography>
                       <DateTimePicker
+                      
+                        variant="filled"
                         onChange={(e) => {
                           console.log("e.value", e.target.value);
                           console.log("new Date(e.target.value)", new Date(e.target.value));
@@ -633,7 +771,9 @@ const VotingPowerActionables = (props) => {
                         }}
                         value={dateDisplay}
                         name="LockTimePicker"
-                        InputProps={{ style: { height: "50px" } }}
+                        sx={{ borderRadius: "4px 0px 0px 0px"}}
+                        disableUnderline
+                        InputProps={{ style: { height: "54px" } }}
                         // label="Choose Lock Time"
                         // sx={{ width: "35%" }}
                       />
@@ -672,19 +812,18 @@ const VotingPowerActionables = (props) => {
                     <Grid item sm={1.2}></Grid>
                     <Grid item xs={12} sm={3}> */}
                       <div className=" my-4  ">
-                        <Button
-                          className="w-25 hoverButtonGlobal"
-                          variant="outlined"
-                          size="large"
-                          // style={{ backgroundColor: "#1976d2", color: "white", }}
+                        <button
+                          className="w-25 hoverButtonGlobal votingActionablesButton increaseTime"
                           onClick={() => {
                             console.log("Action Taken");
                             // props.createLockMakeDeploy(lockAmount, date);
                             increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData);
                           }}
                         >
+                          <p className="increaseAllowanceButton">
                           Increase Time
-                        </Button>
+                          </p>
+                        </button>
                       </div>
                     {/* </Grid>
 
@@ -767,7 +906,7 @@ const VotingPowerActionables = (props) => {
       {/* Starting Voting Power */}
       < div className="row no-gutters mt-4 justify-content-center align-items-center" >
         <div className="col-12">
-          <Paper elevation={10} style={{ padding: "20px" }}>
+          <Paper elevation={3} style={{ padding: "20px" }}>
             Your starting voting power will be: &nbsp;
             <strong>{startingVPower} veCRV</strong>
           </Paper>
