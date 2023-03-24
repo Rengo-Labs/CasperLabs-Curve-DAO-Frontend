@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { Alert, Button } from "@mui/material";
+import InputAdornment from '@mui/material/InputAdornment';
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { default as Axios, default as axios } from "axios";
@@ -12,6 +13,7 @@ import "../../assets/css/bootstrap.min.css";
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
 import "../../assets/css/style.css";
+import "../../assets/css/votingActionablesTextField.css";
 import * as helpers from "../../assets/js/helpers";
 import { AppContext } from "../../containers/App/Application";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
@@ -24,15 +26,6 @@ import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/fu
 import AllowanceModal from "../Modals/AllowanceModal";
 import SigningModal from "../Modals/SigningModal";
 
-const lockTimeOptionsJSON =
-  '[{"name": "1 Week"},{"name": "1 Month"},{"name": "3 Months"},{"name": "6 Months"},{"name": "1 Year"},{"name": "4 Years"}]';
-
-let lockTimeOptions = [];
-try {
-  lockTimeOptions = JSON.parse(lockTimeOptionsJSON);
-} catch (expecption) {
-  console.log("an exception has occured!", expecption);
-}
 const GAUGES = gql`
 query gauges($user: String) {
     gauges(user: $user) {
@@ -43,10 +36,10 @@ query gauges($user: String) {
   }
 }
 `;
-
 const VotingPowerActionables = (props) => {
   const { enqueueSnackbar } = useSnackbar();
   const { createLockMakeDeploy, withdrawMakeDeploy, increaseAndDecreaseAllowanceMakeDeploy, increaseAmountMakeDeploy, increaseUnlockTimeMakeDeploy } = useContext(AppContext);
+
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
@@ -80,6 +73,7 @@ const VotingPowerActionables = (props) => {
   };
   console.log("props for actionables: ", props, lockAmount, startingVPower);
   const [openSigning, setOpenSigning] = useState(false);
+  // Content
   const initialValues = {
     LockAmount: "",
     LockTimeSelect: "",
@@ -136,6 +130,8 @@ const VotingPowerActionables = (props) => {
   async function fetchBalanceData() {
     let CRVLockBalance = await votingEscrowFunctions.balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
     let CRVBalance = await erc20CrvFunctions.balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
+    console.log("CRV Locked Balance: ", CRVLockBalance);
+    console.log("CRV Balance: ", CRVBalance);
     setCRVLockedBalanceValue(CRVLockBalance);
     setUserCRVBalance(CRVBalance / 10 ** 9);
   }
@@ -156,7 +152,6 @@ const VotingPowerActionables = (props) => {
       controller.abort();
     };
   }, [localStorage.getItem("Address")])
-
 
   async function fetchUserData() {
     let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
@@ -192,6 +187,7 @@ const VotingPowerActionables = (props) => {
     async function fetchData() {
       let veCRVTotalSupply = await votingEscrowFunctions.totalSupply(ERC20_CRV_CONTRACT_HASH);
       setDaoPower(parseFloat(veCRVTotalSupply))
+      console.log("veCRVTotalSupply", parseFloat(veCRVTotalSupply));
     }
     fetchData();
   }, [])
@@ -224,14 +220,6 @@ const VotingPowerActionables = (props) => {
   function hasEndedLock() {
     return lockEnd > 0 && Date.now() > lockEnd
   }
-  function gaugesNeedCheckpointText() {
-    if (!gaugesNeedCheckpoint || gaugesNeedCheckpoint.length == 0) return ''
-    return Object.keys(this.gaugesNames)
-      .filter(gauge => this.gaugesNeedCheckpoint.map(address => address.toLowerCase()).includes(gauge.toLowerCase()))
-      .map(gauge => this.gaugesNames[gauge]).join(',')
-  }
-
-
   const gauges = useQuery(GAUGES, {
     fetchPolicy: "no-cache",
     variables: {
@@ -265,7 +253,7 @@ const VotingPowerActionables = (props) => {
                       className="hoverButtonGlobal"
                       size="large"
                       onClick={() => {
-                        withdrawMakeDeploy(setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData);
+                        withdrawMakeDeploy(setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData,);
                       }}
                     >
                       Withdraw
@@ -279,7 +267,16 @@ const VotingPowerActionables = (props) => {
               {userCRVBalance === 0 ? (
                 <>
                   <div className="w-100">
-                    <Typography>
+                    <Typography
+                      style={{
+                        fontStyle: 'normal',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        lineHeight: '14px',
+                        letterSpacing: '0.01em',
+                        color: '#000000'
+                      }}
+                    >
                       Lock Amount
                     </Typography>
                     <div className="d-flex ">
@@ -288,10 +285,6 @@ const VotingPowerActionables = (props) => {
                           id="daoAmount"
                           label=""
                           onChange={(e) => {
-                            console.log("event", e);
-                            console.log("e.srcElement", e.srcElement);
-                            console.log("e.target.value", e.target.value);
-
                             if (userCRVBalance >= e.target.value)
                               setLockAmount(e.target.value);
                             else {
@@ -302,36 +295,68 @@ const VotingPowerActionables = (props) => {
                           variant="filled"
                           type="number"
                           name="LockAmount"
-                          InputProps={{ style: { height: "45px" } }}
+                          sx={{ borderRadius: "4px 0px 0px 0px" }}
+                          disableUnderline
+                          InputProps={{
+                            style: { height: "54px" },
+                            endAdornment: (
+                              <InputAdornment  >
+                                <button
+                                  style={{
+                                    fontFamily: "Poppins",
+                                    background: "none",
+                                    border: "none",
+                                    color: "#1976D2",
+                                  }}
+                                  size="medium"
+                                  onClick={() => {
+                                    setLockAmount(userCRVBalance);
+                                  }}
+                                >
+                                  Max
+                                </button>
+                              </InputAdornment>
+                            )
+                          }}
                         />
                       </div>
                       <div className="d-flex  " >
-                        <Button
-                          className="hoverButtonGlobal"
-                          size="medium"
-                          onClick={() => {
-                            setLockAmount(userCRVBalance);
-                          }}
-
-                        >
-                          Max
-                        </Button>
                         <div className="align-self-end">
-                          <p style={{ fontSize: "0.7rem", color: "gray", marginBottom: "0" }}>
+                          <p
+                            style={{
+                              marginBottom: "0",
+                              marginLeft: "12px",
+                              fontStyle: "italic",
+                              fontWeight: "500",
+                              fontSize: '14px',
+                              lineHeight: '16px',
+                              letterSpacing: '0.01em',
+                              color: 'rgba(0, 0, 0, 0.5)'
+                            }}
+                          >
                             {`(${userCRVBalance})`}
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
-
                   <div className="d-flex mt-4">
                     <div className="" style={{ width: "35%" }}>
                       <div className=" px-0" >
-                        <Typography>
-                          Choose Lock Time
+                        <Typography
+                          style={{
+                            fontStyle: 'normal',
+                            fontWeight: '400',
+                            fontSize: '12px',
+                            lineHeight: '14px',
+                            letterSpacing: '0.01em',
+                            color: '#000000'
+                          }}
+                        >
+                          Choose Lock Times
                         </Typography>
                         <DateTimePicker
+                          variant="filled"
                           onChange={(e) => {
                             console.log("e.value", e.target.value);
                             console.log("new Date(e.target.value)", new Date(e.target.value));
@@ -340,7 +365,7 @@ const VotingPowerActionables = (props) => {
                           }}
                           value={dateDisplay}
                           name="LockTimePicker"
-                          InputProps={{ style: { height: "50px" } }}
+                          InputProps={{ style: { height: "54px", } }}
                         />
                       </div>
                     </div>
@@ -357,33 +382,46 @@ const VotingPowerActionables = (props) => {
                   </div>
                   <div className=" my-4 ">
                     {lockAmount * 10 ** 9 > allowance ? (
-                      <Button
-                        className="w-25 hoverButtonGlobal"
+                      <button
+                        className="w-25 hoverButtonGlobal votingActionablesButton increaseTime"
                         size="large"
                         onClick={() => {
                           handleShowAllowance();
                         }}
                       >
-                        Increase Allowance
-                      </Button>
+                        <p className="increaseAllowanceButton">
+                          Increase Allowance
+                        </p>
+                      </button>
                     ) : (
-                      <Button
-                        className="w-25 hoverButtonGlobal"
+                      <button
+                        className="w-25 hoverButtonGlobal votingActionablesButton increaseTime"
                         size="large"
                         onClick={() => {
                           console.log("Action Taken");
                           createLockMakeDeploy(lockAmount, date, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData,gaugesQueryData);
                         }}
                       >
-                        Create Lock
-                      </Button>
+                        <p className="increaseAllowanceButton">
+                          Create Lock
+                        </p>
+                      </button>
                     )}
                   </div>
                 </>
               ) : (
                 <>
                   <div className="w-100">
-                    <Typography>
+                    <Typography className=""
+                      style={{
+                        fontStyle: 'normal',
+                        fontWeight: '400',
+                        fontSize: '12px',
+                        lineHeight: '14px',
+                        letterSpacing: '0.01em',
+                        color: '#000000'
+                      }}
+                    >
                       Lock Amount
                     </Typography>
                     <div className="d-flex ">
@@ -401,25 +439,46 @@ const VotingPowerActionables = (props) => {
                           }}
                           value={lockAmount}
                           variant="filled"
-                          type="number"
+                          type="text"
                           name="LockAmount"
-                          InputProps={{ style: { height: "45px" } }}
+                          sx={{ borderRadius: "4px 0px 0px 0px" }}
+                          disableUnderline
+                          InputProps={{
+                            style: { height: "54px" },
+                            endAdornment: (
+                              <InputAdornment  >
+                                <button
+                                  style={{
+                                    fontFamily: "Poppins",
+                                    background: "none",
+                                    border: "none",
+                                    color: "#1976D2",
+                                  }}
+                                  size="medium"
+                                  onClick={() => {
+                                    setLockAmount(userCRVBalance);
+                                  }}
+                                >
+                                  Max
+                                </button>
+                              </InputAdornment>
+                            )
+                          }}
                         />
                       </div>
-                      <div className="d-flex  " >
-                        <Button
-                          className="hoverButtonGlobal"
-                          size="medium"
-                          onClick={() => {
-                            setLockAmount(userCRVBalance);
-                          }}
-                        >
-                          Max
-                        </Button>
-
+                      <div className="d-flex  ml-0" >
                         <div className="align-self-end">
-                          <p className=""
-                            style={{ fontSize: "0.7rem", color: "gray", marginBottom: "0" }}
+                          <p
+                            style={{
+                              marginBottom: "0",
+                              marginLeft: "12px",
+                              fontStyle: "italic",
+                              fontWeight: "500",
+                              fontSize: '14px',
+                              lineHeight: '16px',
+                              letterSpacing: '0.01em',
+                              color: 'rgba(0, 0, 0, 0.5)'
+                            }}
                           >
                             {`(${userCRVBalance})`}
                           </p>
@@ -430,39 +489,50 @@ const VotingPowerActionables = (props) => {
                   <div className="">
                     <div className=" my-4 ">
                       {lockAmount * 10 ** 9 > allowance ? (
-                        <Button
-                          className="w-25 hoverButtonGlobal"
-                          variant="outlined"
-                          size="large"
+                        <button
+                          className="w-25 hoverButtonGlobal votingActionablesButton"
                           onClick={() => {
-                            console.log("Action Taken");
                             handleShowAllowance();
                           }}
                         >
-                          Increase Allowance
-                        </Button>
+                          <p className="increaseAllowanceButton">
+                            Increase Allowance
+                          </p>
+                        </button>
                       ) : (
-                        <Button
-                          className="w-25 hoverButtonGlobal"
-                          variant="outlined"
-                          size="large"
+                        <button
+                          className="w-25 hoverButtonGlobal votingActionablesButton"
                           onClick={() => {
                             console.log("Action Taken");
-                            increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData, gaugesQueryData);
+                            increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData,gaugesQueryData);
                           }}
                         >
-                          Add Amount
-                        </Button>
+                          <p className="increaseAllowanceButton">
+                            Add Amount
+                          </p>
+                        </button>
                       )}
+
                     </div>
                   </div>
                   <div className="d-flex">
                     <div className="" style={{ width: "35%" }}>
                       <div className=" px-0" >
-                        <Typography>
+                        <Typography
+                          style={{
+                            fontStyle: 'normal',
+                            fontWeight: '400',
+                            fontSize: '12px',
+                            lineHeight: '14px',
+                            letterSpacing: '0.01em',
+                            color: '#000000'
+                          }}
+                        >
                           Choose Lock Time
                         </Typography>
                         <DateTimePicker
+
+                          variant="filled"
                           onChange={(e) => {
                             console.log("e.value", e.target.value);
                             console.log("new Date(e.target.value)", new Date(e.target.value));
@@ -471,9 +541,13 @@ const VotingPowerActionables = (props) => {
                           }}
                           value={dateDisplay}
                           name="LockTimePicker"
-                          InputProps={{ style: { height: "50px" } }}
+                          sx={{ borderRadius: "4px 0px 0px 0px" }}
+                          disableUnderline
+                          InputProps={{ style: { height: "54px" } }}
                         />
                       </div>
+
+
                     </div>
                     <div
                       className="lockerButton">
@@ -483,30 +557,35 @@ const VotingPowerActionables = (props) => {
                         setDateDisplay={setDateDisplay}
                         setStartingVPower={setStartingVPower}
                         lockAmount={lockAmount}
+
                       />
                     </div>
+
                   </div>
                   <div className=" my-4  ">
-                    <Button
-                      className="w-25 hoverButtonGlobal"
-                      variant="outlined"
-                      size="large"
+                    <button
+                      className="w-25 hoverButtonGlobal votingActionablesButton increaseTime"
                       onClick={() => {
-                        increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData, gaugesQueryData);
+                        console.log("Action Taken");
+                        increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData,gaugesQueryData);
                       }}
                     >
-                      Increase Time
-                    </Button>
+                      <p className="increaseAllowanceButton">
+                        Increase Time
+                      </p>
+                    </button>
                   </div>
                 </>
+
               )}
             </div>
           )}
+
         </Form>
       </Formik >
       < div className="row no-gutters mt-4 justify-content-center align-items-center" >
         <div className="col-12">
-          <Paper elevation={10} style={{ padding: "20px" }}>
+          <Paper elevation={3} style={{ padding: "20px" }}>
             Your starting voting power will be: &nbsp;
             <strong>{startingVPower} veCRV</strong>
           </Paper>

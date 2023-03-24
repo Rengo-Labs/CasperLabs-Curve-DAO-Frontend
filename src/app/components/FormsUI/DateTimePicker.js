@@ -4,7 +4,6 @@ import React from "react";
 
 const DateTimePicker = ({ name, ...otherProps }) => {
   const [field, meta] = useField(name);
-
   const configDateTimePicker = {
     ...field,
     ...otherProps,
@@ -21,7 +20,9 @@ const DateTimePicker = ({ name, ...otherProps }) => {
     configDateTimePicker.helperText = meta.error;
   }
 
-  return <TextField {...configDateTimePicker} />;
+  return( 
+    <TextField {...configDateTimePicker}/>
+  );
 };
 
 export default DateTimePicker;

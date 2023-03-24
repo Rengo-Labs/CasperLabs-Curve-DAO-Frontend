@@ -34,27 +34,40 @@ Border-Active: #1976d2
 */
 
 .lockerButton{
-    width:35%;
-    
+    width:43%;
+    height: 54px;
+    margin-top: 15px;
+    box-sizing: border-box;
+    margin-left: 12px;
 }
 
 .increaseTime{
-    margin-left: 15%
+    margin-top: 0px
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1300px) {
     .lockerButton {
         width: 50%;
         
         
     }
+  }
+
+  @media screen and (max-width: 800px) {
     .increaseTime{
-        margin-left: 0
+        margin-top: 30px
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .increaseTime{
+        margin-top: 120px
     }
   }
 
   .hoverButtonGlobal{   
     border:1px solid#1976d2 !important;
+    background-color: white !important;
     color: #1976d2 !important;
     
 }
@@ -62,4 +75,33 @@ Border-Active: #1976d2
     background-color: #1976d2 !important;
     color: white !important;
 }
+
+.increaseAllowanceButton{
+    font-family: 'Poppins';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+/* width: 106px;
+height: 24px; */
+/* flex: none;
+order: 0;
+flex-grow: 0; */
+}
+
+.votingActionablesButton{
+    padding: 12px 10px !important;
+    gap: 12px;
+    min-width: 216px;
+    height: 48px;
+    border: 1px solid #1976D2;
+    border-radius: 4px;
+    box-sizing: 'border-box';
+    background-color:white;
+    /* display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center; */
+}
+
 

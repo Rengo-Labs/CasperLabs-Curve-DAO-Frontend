@@ -68,8 +68,8 @@ const WeightVotingHistory = ({ data, show, close, setOpen }) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <ApexChart options={options} series={series} type="donut" width={550} style={{ marginLeft: 40 }} />
-          <Button onClick={() => setOpen(false)} variant="contained" style={{ backgroundColor: "#1976d2" }} fullWidth>Hide</Button>
+            <ApexChart options={options} series={series} type="donut" width={400} style={{marginLeft:40}} />
+            <Button onClick={()=>setOpen(false)} className="hoverButtonGlobal" fullWidth>Hide</Button>
         </Box>
       </Modal>
 

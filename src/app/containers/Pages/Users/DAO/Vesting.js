@@ -221,7 +221,6 @@ const Vesting = () => {
                       >
                         <Paper elevation={4}>
                           <div className="py-5 px-4">
-                            {/* Main Heading */}
                             <div className="row no-gutters justify-content-center">
                               <div className="col-12 text-center py-3">
                                 <Typography
@@ -257,11 +256,10 @@ const Vesting = () => {
                                     />
                                   </div>
                                   <div className="col-12 col-lg-2 text-center mt-3 mt-lg-0">
-                                    <div className="btnWrapper">
+                                    <div className="">
                                       <Button
-                                        variant="contained"
+                                       className="hoverButtonGlobal"
                                         size="large"
-                                        style={{ backgroundColor: "#1976d2", color: "white" }}
                                         onClick={() => { }}
                                       >
                                         Check
@@ -293,7 +291,6 @@ const Vesting = () => {
                                           <span className="font-weight-bold">
                                             Start Lock Time:&nbsp;
                                           </span>
-                                          {/* {startLockTime} */}
                                           {startTimeFormat === "NaN/NaN/NaN NaN:NaN:NaN" ? 0 : startTimeFormat}
                                         </ListItemText>
                                       </ListItem>
@@ -358,7 +355,6 @@ const Vesting = () => {
                             <div className="w-100 my-4">
                               <Divider />
                             </div>
-                            {/* Chart */}
                             <div className="row no-gutters w-100">
                               <div className="col-12 text-center pt-3">
                                 <Typography
@@ -376,9 +372,8 @@ const Vesting = () => {
 
                             <div className="row no-gutters justify-content-center">
                               <Button
-                                variant="contained"
+                                className="hoverButtonGlobal"
                                 size="large"
-                                style={{ backgroundColor: "#1976d2", color: "white" }}
                                 onClick={() => setOpen(true)}
                               >
                                 Claim

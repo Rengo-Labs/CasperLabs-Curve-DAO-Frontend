@@ -855,9 +855,10 @@ const GaugeWeightVote = () => {
                                   </div>
                                   <div className="row no-gutters mt-3 justify-content-center">
                                     <div className="col-12">
-                                      <div className="btnWrapper text-center">
+                                      <div className=" text-center">
                                         <Button
-                                          variant="contained"
+                                          className="hoverButtonGlobal"
+                                          // variant="contained"
                                           size="large"
                                           style={{
                                             backgroundColor: "#1976d2",
@@ -942,17 +943,18 @@ const GaugeWeightVote = () => {
                                 <div className="col-12 col-md-8">
                                   <div className="row no-gutters w-100">
                                     <div className="col-12 col-md-12 col-lg-12 text-center w-100 px-2">
-                                      <div className="btnWrapper">
+                                      <div className="">
                                         {!showVotes ? (
                                           <Button
+                                            className="hoverButtonGlobal"
                                             onClick={() => {
                                               showMyVotes()
                                             }}
-                                            variant="contained"
+                                            // variant="contained"
                                             size="large"
                                             style={{
-                                              backgroundColor: "#1976d2",
-                                              color: "white",
+                                              // backgroundColor: "#1976d2",
+                                              // color: "white",
                                               width: "50%",
                                             }}
                                           >
@@ -960,15 +962,16 @@ const GaugeWeightVote = () => {
                                           </Button>
                                         ) : (
                                           <Button
+                                            className="hoverButtonGlobal"
                                             onClick={() => {
                                               setShowVotes(false);
                                               getVotes()
                                             }}
-                                            variant="contained"
+                                            // variant="contained"
                                             size="large"
                                             style={{
-                                              backgroundColor: "#1976d2",
-                                              color: "white",
+                                              // backgroundColor: "#1976d2",
+                                              // color: "white",
                                               width: "50%",
                                             }}
                                           >
