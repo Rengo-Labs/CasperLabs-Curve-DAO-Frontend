@@ -34,9 +34,9 @@ class GaugeControllerClient {
   private namedKeys: {
     gaugeTypes_: string,
     gaugeTypeNames: string,
-    vote_user_slopes: string,
-    vote_user_power: string,
-    last_user_vote: string,
+    voteUserSlopes: string,
+    voteUserPower: string,
+    lastUserVote: string,
     points_weight: string,
     changes_weight: string,
     time_weight: string,
@@ -64,9 +64,9 @@ class GaugeControllerClient {
     this.namedKeys = {
       gaugeTypes_: "null",
       gaugeTypeNames: "null",
-      vote_user_slopes: "null",
-      vote_user_power: "null",
-      last_user_vote: "null",
+      voteUserSlopes: "null",
+      voteUserPower: "null",
+      lastUserVote: "null",
       points_weight: "null",
       changes_weight: "null",
       time_weight: "null",
@@ -92,7 +92,6 @@ class GaugeControllerClient {
 
     const { contractPackageHash, namedKeys } = contractData.Contract!;
     this.contractHash = hash;
-    // console.log("namedKeys", namedKeys);
 
     this.contractPackageHash = contractPackageHash.replace(
       "contract-package-wasm",
@@ -412,14 +411,12 @@ class GaugeControllerClient {
     console.log("owner", owner);
 
     try {
-      // console.log("namedKeys", this.namedKeys);
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
         this.namedKeys.gaugeTypes_
       );
       const maybeValue = result.value().unwrap();
-      // console.log("maybeValue", maybeValue.value());
 
       return parseFloat(maybeValue.value()[1].data);
 
@@ -434,15 +431,14 @@ class GaugeControllerClient {
 
     try {
 
-    const result = await utils.contractDictionaryGetter(
-      this.nodeAddress,
-      owner,
-      this.namedKeys.gaugeTypeNames
-    );
-    const maybeValue = result.value().unwrap();
-    // console.log("maybeValue", maybeValue);
+      const result = await utils.contractDictionaryGetter(
+        this.nodeAddress,
+        owner,
+        this.namedKeys.gaugeTypeNames
+      );
+      const maybeValue = result.value().unwrap();
 
-    return maybeValue.value().toString();
+      return maybeValue.value().toString();
 
     } catch (error) {
       return "0";
@@ -464,7 +460,7 @@ class GaugeControllerClient {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         encodedBytes,
-        this.namedKeys.vote_user_slopes
+        this.namedKeys.voteUserSlopes
       );
 
       const maybeValue = result.value().unwrap();
@@ -481,7 +477,7 @@ class GaugeControllerClient {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         owner,
-        this.namedKeys.vote_user_power
+        this.namedKeys.voteUserPower
       );
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -506,8 +502,10 @@ class GaugeControllerClient {
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
         encodedBytes,
-        this.namedKeys.last_user_vote
+        this.namedKeys.lastUserVote
       );
+
+      console.log("result:", result);
 
       const maybeValue = result.value().unwrap();
       return maybeValue.value().toString();
@@ -590,8 +588,6 @@ class GaugeControllerClient {
         this.namedKeys.gauges
       );
       const maybeValue = result.value().unwrap();
-      // console.log("maybeValue", maybeValue.value());
-      // console.log("maybeValue", encodeBase16(maybeValue.value().data));
 
       return encodeBase16(maybeValue.value().data);
 

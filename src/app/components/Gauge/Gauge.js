@@ -1,13 +1,11 @@
 import {
   Box,
-  Button,
-  Checkbox,
-  Divider,
+  Button, Divider,
   Grid,
   Paper,
   Slider,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import axios from "axios";
 import { CLPublicKey } from "casper-js-sdk";
@@ -66,7 +64,6 @@ const Gauge = (props) => {
     setMinted(props.gauge.minted)
     setClaimableTokens(props.gauge.claimableToken)
     setDepositAmount(poolBalanceFormat());
-    // console.log("poolBalanceFormat()",props.gauge.name, poolBalanceFormat());
     setSelectedDepositAmount(props.gauge.balance / 1e9);
     setSelectedWithdrawAmount(props.gauge.gaugeBalance / 1e9)
     setWithdrawAmount(gaugeBalanceFormat())
@@ -101,13 +98,11 @@ const Gauge = (props) => {
     console.log('value', e.target.value);
     setSelectedDepositAmount(depositAmount * e.target.value / 100)
     setValue(`${e.target.value}`)
-    // return `${value}%`;
   }
   function withdrawValueText(e) {
     console.log('value', e.target.value);
     setSelectedWithdrawAmount(withdrawAmount * e.target.value / 100)
     setWithdrawValue(`${e.target.value}`)
-    // return `${value}%`;
   }
   useEffect(() => {
     if (
@@ -174,7 +169,6 @@ const Gauge = (props) => {
               fontWeight={900}
             >
               {props.gauge.name}  {props.gauge.typeName} gauge
-              {/* CRV APY: "Some value" */}
             </Typography>
           </div>
           <Grid item xs={12} sm={6} md={4}>
@@ -193,10 +187,8 @@ const Gauge = (props) => {
               }} />
               <Slider
                 aria-label="Custom marks"
-                // defaultValue={25}
                 onChange={valuetext}
                 value={value}
-                // getAriaValueText={valuetext}
                 step={1}
                 valueLabelDisplay="auto"
                 marks={marks}
@@ -205,16 +197,6 @@ const Gauge = (props) => {
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <div style={{ padding: "50px" }}>
-              {/* <Checkbox
-                checked={infiniteApproval}
-                onChange={(e) => {
-                  console.log("Infinite approval value: ", e.target.checked);
-                  setInfiniteApproval(e.target.checked);
-                }}
-                color="success"
-              />{" "}
-              Infinite Approval? */}
-
               <Button variant="contained" onClick={async () => {
                 let ret = true;
                 if (allowance / 10 ** 9 < selectedDepositAmount)
@@ -247,10 +229,8 @@ const Gauge = (props) => {
                 }} />
                 <Slider
                   aria-label="Custom marks"
-                  // defaultValue={25}
                   onChange={withdrawValueText}
                   value={withdrawValue}
-                  // getAriaValueText={valuetext}
                   step={1}
                   valueLabelDisplay="auto"
                   marks={marks}
@@ -273,11 +253,6 @@ const Gauge = (props) => {
           </Grid>
         ) : (null)}
         <div className="py-5 px-4" style={{ margin: "20px" }}>
-          {/* Heading */}
-
-
-
-          {/* //CLAIM BUTTON */}
           {props.gauge.claimableToken ? (
             <div>
               <Button>

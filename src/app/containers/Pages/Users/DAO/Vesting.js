@@ -1,8 +1,4 @@
-// REACT
-import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
-// CHARTS
-// CUSTOM STYLING
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
@@ -10,36 +6,26 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { CasperServiceByJsonRPC, CLPublicKey, RuntimeArgs, CLOption } from "casper-js-sdk";
+import axios from "axios";
+import { CLPublicKey } from "casper-js-sdk";
 import { Form, Formik } from "formik";
 import { useSnackbar } from "notistack";
+import React, { useEffect, useMemo, useState } from "react";
 import * as Yup from "yup";
 import "../../../../assets/css/bootstrap.min.css";
 import "../../../../assets/css/common.css";
 import "../../../../assets/css/curveButton.css";
 import "../../../../assets/css/style.css";
 import { VESTING_ESCROW_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
-import { getDeploy } from "../../../../components/blockchain/GetDeploy/GetDeploy";
-import { makeDeploy } from "../../../../components/blockchain/MakeDeploy/MakeDeploy";
-import { NODE_ADDRESS } from "../../../../components/blockchain/NodeAddress/NodeAddress";
-import { putdeploy } from "../../../../components/blockchain/PutDeploy/PutDeploy";
-import { signdeploywithcaspersigner } from "../../../../components/blockchain/SignDeploy/SignDeploy";
 import VestingTokens from "../../../../components/Charts/VestingTokens";
 import TextInput from "../../../../components/FormsUI/TextInput";
-import HeaderDAO, { CHAINS, SUPPORTED_NETWORKS } from "../../../../components/Headers/HeaderDAO";
-import SigningModal from "../../../../components/Modals/SigningModal";
+import HeaderDAO from "../../../../components/Headers/HeaderDAO";
+import { endTime, initialLocked, startTime, totalClaimed } from '../../../../components/JsClients/VESTINGESCROW/vestingEscrowFunctionsForBackend/functions';
 import ClaimConfirmModal from "../../../../components/Modals/ClaimConfirmModal";
-import HomeBanner from "../Home/HomeBanner";
-import { Button } from "@mui/material";
 import * as helpers from "../../../../components/Utils/Helpers";
-import { endTime, initialLocked, startTime, totalClaimed } from '../../../../components/JsClients/VESTINGESCROW/vestingEscrowFunctionsForBackend/functions'
+import HomeBanner from "../Home/HomeBanner";
 window.Buffer = window.Buffer || require("buffer").Buffer;
-
-// CONTENT
-
-// COMPONENT FUNCTION
 const Vesting = () => {
-  // States
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
@@ -47,16 +33,8 @@ const Vesting = () => {
     localStorage.getItem("selectedWallet")
   );
   const [vestingAddress, setVestingAddress] = useState(
-    // "493fc8e66c2f1049b28fa661c65a2668c4e9e9e023447349fc9145c82304a65a"
     localStorage.getItem("Address")
   );
-  const [initialLock, setInitialLock] = useState("0.00");
-  const [startLockTime, setStartLockTime] = useState("13/08/2021 22:17:28");
-  const [endLockTime, setEndLockTime] = useState("13/08/2022 22:17:28");
-  const [claimedTokens, setClaimedTokens] = useState("0.00");
-  const [claimAvailTokens, setClaimAvailTokens] = useState("0.00");
-  const [availableTokens, setAvailableTokens] = useState("0.00");
-  const [lockedTokens, setLockedTokens] = useState("0.00");
   const [vestedOf, setVestedOf] = useState(0);
   const [balanceOf, setBalanceOf] = useState(0);
   const [lockedOf, setLockedOf] = useState(0);
@@ -70,8 +48,6 @@ const Vesting = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { enqueueSnackbar } = useSnackbar();
-
-  // Content
   const initialValues = {
     CheckVestingAddress: "",
   };
@@ -79,51 +55,15 @@ const Vesting = () => {
     CheckVestingAddress: Yup.number().required("Required"),
   });
 
-  // Handlers
   const onSubmitVestingAddress = (values, props) => {
     console.log("Vesting Address Checking", values);
   };
-
-
-
-
-  // USE EFFECT
   useEffect(() => {
     setVestingAddress(localStorage.getItem("Address"));
   }, [localStorage.getItem("Address")]);
 
   useEffect(() => {
-    // this.chart = this.$refs.highcharts.chart
-    // while(this.chart.series.length) {
-    //   this.chart.series[0].remove()
-    // }
-    // this.chart.showLoading()
 
-    // this.vesting = new web3.eth.Contract(daoabis.vesting_abi, this.address)
-
-    // let calls = [
-    //   [this.vesting._address, this.vesting.methods.vestedOf(contract.default_account).encodeABI()],
-    //   [this.vesting._address, this.vesting.methods.balanceOf(contract.default_account).encodeABI()],
-    //   [this.vesting._address, this.vesting.methods.lockedOf(contract.default_account).encodeABI()],
-    //   [this.vesting._address, this.vesting.methods.initial_locked(contract.default_account).encodeABI()],
-    //   [this.vesting._address, this.vesting.methods.start_time().encodeABI()],
-    //   [this.vesting._address, this.vesting.methods.end_time().encodeABI()],
-    //   [this.vesting._address, this.vesting.methods.total_claimed(contract.default_account).encodeABI()],
-    // ]
-
-    // let aggcalls = await contract.multicall.methods.aggregate(calls).call()
-
-    // let decoded = aggcalls[1].map(hex => web3.eth.abi.decodeParameter('uint256', hex))
-
-    // console.log(decoded, "DECODED")
-
-    // this.vestedOf = decoded[0]
-    // this.balanceOf = decoded[1]
-    // this.lockedOf = decoded[2]
-    // this.initial_locked = decoded[3]
-    // this.start_time = decoded[4]
-    // this.end_time = decoded[5]
-    // this.total_claimed = decoded[6]
 
     let publicKey = localStorage.getItem("Address");
     const getTimes = async () => {
@@ -137,44 +77,35 @@ const Vesting = () => {
       publicKey !== "null"
     ) {
 
-      const getValues = async () => { //needs to import all of these functions
-        // setVestedOf(await vestedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-        // setBalanceOf(await balanceOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
-        // setLockedOf(await lockedOf(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")));
+      const getValues = async () => {
         let account = Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex");
         console.log("accountHash.......", account);
         let data = { account: Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex") }
 
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
-            // handle the response
             console.log("votingEscrow response of balance of:...", response.data);
             setBalanceOf(response.data.balance)
           })
           .catch(error => {
-            // handle the error
             console.log("error of balance of:...", error);
           });
 
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/vestedOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`/vestingEscrow/vestedOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
-            // handle the response
             console.log("response of vested of:...", response.data);
             setVestedOf(response.data.vestedOf)
           })
           .catch(error => {
-            // handle the error
             console.log("error of balance of:...", error);
           });
 
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/vestingEscrow/lockedOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`/vestingEscrow/lockedOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
-            // handle the response
             console.log("response of locked of:...", response.data);
             setLockedOf(response.data.lockedOf)
           })
           .catch(error => {
-            // handle the error
             console.log("error of balance of:...", error);
           });
 
@@ -232,58 +163,30 @@ const Vesting = () => {
     setVestedData(vested);
   }, [startTimeVal, endTimeVal]);
 
-
-  //COMPUTED
-  // vestedFormat() {
-  //   return (this.vestedOf / 1e18).toFixed(2)
-  // },
   const vestedFormat = useMemo(() => {
     return (vestedOf / 1e9).toFixed(2);
   }, [vestedOf]);
-  // balanceFormat() {
-  //   return (this.balanceOf / 1e18).toFixed(2)
-  // },
   const balanceFormat = useMemo(() => {
     return (balanceOf / 1e9).toFixed(2);
   }, [balanceOf]);
-  // lockedFormat() {
-  //   return (this.lockedOf / 1e18).toFixed(2)
-  // },
   const lockedFormat = useMemo(() => {
     return (lockedOf / 1e9).toFixed(2);
   }, [lockedOf]);
-  // initialLockedFormat() {
-  //   return (this.initial_locked / 1e18).toFixed(2)
-  // },
   const initialLockedFormat = useMemo(() => {
     return (initialLockedval / 1e9).toFixed(2);
   }, [initialLockedval]);
-  // totalClaimedFormat() {
-  //   return (this.total_claimed / 1e18).toFixed(2)
-  // },
+
   const totalClaimedFormat = useMemo(() => {
     return (totalClaimedVal / 1e9).toFixed(2);
   }, [totalClaimedVal]);
-  // startTimeFormat() {
-  //   return helpers.formatDateToHuman(this.start_time)
-  // },
   const startTimeFormat = useMemo(() => {
     console.log("StartTime value....", startTimeVal);
     return helpers.formatDateToHuman(startTimeVal);
   }, [startTimeVal]);
   console.log("StartTime value format....", startTimeFormat);
-  // endTimeFormat() {
-  //   return helpers.formatDateToHuman(this.end_time)
-  // },
   const endTimeFormat = useMemo(() => {
     return helpers.formatDateToHuman(endTimeVal);
   }, [endTimeVal]);
-  // gasPrice() {
-  //     return gasPriceStore.state.gasPrice
-  // },
-  // gasPriceWei() {
-  //     return gasPriceStore.state.gasPriceWei
-  // },
   console.log("initial locked values:...", initialLockedval);
   console.log("total cl values:...", totalClaimedVal);
 
@@ -391,7 +294,7 @@ const Vesting = () => {
                                             Start Lock Time:&nbsp;
                                           </span>
                                           {/* {startLockTime} */}
-                                          {startTimeFormat=== "NaN/NaN/NaN NaN:NaN:NaN"? 0:startTimeFormat}
+                                          {startTimeFormat === "NaN/NaN/NaN NaN:NaN:NaN" ? 0 : startTimeFormat}
                                         </ListItemText>
                                       </ListItem>
                                       : null
@@ -403,7 +306,7 @@ const Vesting = () => {
                                           <span className="font-weight-bold">
                                             End Lock Time:&nbsp;
                                           </span>
-                                          {endTimeFormat==="NaN/NaN/NaN NaN:NaN:NaN"?0:endTimeFormat}
+                                          {endTimeFormat === "NaN/NaN/NaN NaN:NaN:NaN" ? 0 : endTimeFormat}
                                         </ListItemText>
                                       </ListItem>
                                       : null
@@ -470,26 +373,16 @@ const Vesting = () => {
                               </div>
                               <VestingTokens vested={vestedData} unvested={unVestedData} />
                             </div>
-                            {/* Gas Fee */}
-                            {/* <div className="row no-gutters w-100">
-                              <div className="col-12">
-                                <GasPriorityFee />
-                              </div>
-                            </div> */}
 
                             <div className="row no-gutters justify-content-center">
-                              {/* <div className="col-12"> */}
                               <Button
                                 variant="contained"
                                 size="large"
                                 style={{ backgroundColor: "#1976d2", color: "white" }}
-                                // onClick={() => { claimMakeDeploy() }}
                                 onClick={() => setOpen(true)}
-                              // onClick={() => { claimMakeDeploy(vestingAddress) }}
                               >
                                 Claim
                               </Button>
-                              {/* </div> */}
                             </div>
 
                           </div>

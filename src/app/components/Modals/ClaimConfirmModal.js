@@ -1,18 +1,17 @@
-import React, {useState } from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import SigningModal from "./SigningModal";
-//blockchain
-import { CasperServiceByJsonRPC, CLPublicKey, RuntimeArgs,CLOption } from "casper-js-sdk";
-import { createRecipientAddress } from "../JsClients/VESTINGESCROW/src/utils";
-import { VESTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
-import { Some } from "ts-results";
-import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
-import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
-import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
+import Typography from '@mui/material/Typography';
+import { CLOption, CLPublicKey, RuntimeArgs } from "casper-js-sdk";
 import { useSnackbar } from "notistack";
+import React, { useState } from "react";
+import { Some } from "ts-results";
+import { VESTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
+import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
+import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
+import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
+import { createRecipientAddress } from "../JsClients/VESTINGESCROW/src/utils";
+import SigningModal from "./SigningModal";
 
 const style = {
   position: 'absolute',
@@ -20,31 +19,27 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 500,
-  height:150,
+  height: 150,
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
-  borderRadius:4
+  borderRadius: 4
 };
 
-export default function ClaimConfirmModal({show,hide,setOpen,balance}) {
-//   const [open, setOpen] = useState(false);
-//   const handleOpen = () => setOpen(true);
-//    const handleClose = () => setOpen(false);
-const [openSigning, setOpenSigning] = useState(false);
-const handleCloseSigning = () => {
-  setOpenSigning(false);
-};
-const handleShowSigning = () => {
-  setOpenSigning(true);
-};
-const { enqueueSnackbar } = useSnackbar();
+export default function ClaimConfirmModal({ show, hide, setOpen, balance }) {
+  const [openSigning, setOpenSigning] = useState(false);
+  const handleCloseSigning = () => {
+    setOpenSigning(false);
+  };
+  const handleShowSigning = () => {
+    setOpenSigning(true);
+  };
+  const { enqueueSnackbar } = useSnackbar();
 
-async function claimMakeDeploy() {
+  async function claimMakeDeploy() {
     setOpen(false);
     handleShowSigning();
     const publicKeyHex = localStorage.getItem("Address");
-    // const publicKeyHex = activePublicKey;
     console.log("Public key: ", publicKeyHex);
     if (
       publicKeyHex !== null &&
@@ -56,10 +51,6 @@ async function claimMakeDeploy() {
       const paymentAmount = 5000000000;
       try {
         console.log("In try block");
-        // const runtimeArgs = RuntimeArgs.fromMap({
-        //   value: CLValueBuilder.u256(convertToStr(lockedAmount)),
-        //   unlock_time: CLValueBuilder.u256(unlockTime.getTime()),
-        // });
         const runtimeArgs = RuntimeArgs.fromMap({
           owner: new CLOption(Some(key)),
         });
@@ -68,7 +59,6 @@ async function claimMakeDeploy() {
         );
         console.log("contract hash byte array: ", contractHashAsByteArray);
         let entryPoint = "claim";
-        // Set contract installation deploy (unsigned).
         let deploy = await makeDeploy(
           publicKey,
           contractHashAsByteArray,
@@ -91,8 +81,8 @@ async function claimMakeDeploy() {
           enqueueSnackbar("Funds Claimed Successfully", { variant })
 
 
-        } catch(error) {
-          console.log("claim make deploy error",error);
+        } catch (error) {
+          console.log("claim make deploy error", error);
           handleCloseSigning();
           let variant = "Error";
           enqueueSnackbar("Unable to Claim Funds", { variant })
@@ -118,10 +108,10 @@ async function claimMakeDeploy() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h5" style={{color:"black",fontWeight:"bold"}} component="h2">
+          <Typography id="modal-modal-title" variant="h5" style={{ color: "black", fontWeight: "bold" }} component="h2">
             Confirm claiming {balance} tokens
           </Typography>
-          <Button  onClick={() => { claimMakeDeploy() }} variant="contained" style={{backgroundColor:"#1976d2", fontSize:20}} fullWidth>confirm</Button>
+          <Button onClick={() => { claimMakeDeploy() }} variant="contained" style={{ backgroundColor: "#1976d2", fontSize: 20 }} fullWidth>confirm</Button>
         </Box>
       </Modal>
       <SigningModal show={openSigning} />

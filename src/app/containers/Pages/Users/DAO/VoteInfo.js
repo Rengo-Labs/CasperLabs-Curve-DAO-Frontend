@@ -1,35 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
-// BOOTSTRAP
-import "../../../../assets/css/bootstrap.min.css";
-// CUSTOM CSS
-import "../../../../assets/css/style.css";
-import "../../../../assets/css/common.css";
-// FONT AWESOME
-import "../../../../assets/plugins/fontawesome/css/all.min.css";
-import "../../../../assets/plugins/fontawesome/css/fontawesome.min.css";
-// COMPONENTS
-import HomeBanner from "../Home/HomeBanner";
-import HeaderDAO from "../../../../components/Headers/HeaderDAO";
-import VoteInfoProgressBar from "../../../../components/Progress bar/VoteInfoProgressBar";
+import { gql, useQuery } from "@apollo/client";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import ShowVoters from "../../../../components/Show Voters/ShowVoters";
-// MATERIAL UI
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
-// GRAPHQL
-import { useQuery, gql } from "@apollo/client";
-// UTILS
-import * as voteStore from "../../../../assets/js/voteStore";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import "../../../../assets/css/bootstrap.min.css";
+import "../../../../assets/css/common.css";
+import "../../../../assets/css/style.css";
 import {
-  shortenAddress,
-  formatDateToHuman,
+  formatDateToHuman, shortenAddress
 } from "../../../../assets/js/helpers";
-import { Spinner } from "react-bootstrap";
+import * as voteStore from "../../../../assets/js/voteStore";
+import "../../../../assets/plugins/fontawesome/css/all.min.css";
+import "../../../../assets/plugins/fontawesome/css/fontawesome.min.css";
+import HeaderDAO from "../../../../components/Headers/HeaderDAO";
+import VoteInfoProgressBar from "../../../../components/Progress bar/VoteInfoProgressBar";
+import ShowVoters from "../../../../components/Show Voters/ShowVoters";
+import HomeBanner from "../Home/HomeBanner";
 
-// QUERIES
+
 const GET_VOTE = gql`
   query getVoteById($id: String) {
     votesByVoteId(voteId: $id) {
@@ -70,7 +60,6 @@ function VoteInfo(props) {
   let { id } = useParams();
   const VOTE_TIME = 604800;
 
-  // Queries
   const { error, loading, data } = useQuery(GET_VOTE, {
     variables: {
       id,
@@ -93,7 +82,6 @@ function VoteInfo(props) {
     }
   };
 
-  // Computations
   var support = voteStore.getSupportRequiredPct(voteById);
   var quo = voteStore.getMinAcceptQuorum(voteById);
 
@@ -120,19 +108,15 @@ function VoteInfo(props) {
     voteByIdObj = { ...voteObj };
     console.log("vote created on: ", voteByIdObj.support);
   }
-
   const startDateFormat = () => {
     if (voteById !== undefined) {
       return formatDateToHuman(voteByIdObj.voteCreatedOn);
     }
     return "";
   };
-
   const endDateFormat = () => {
     return formatDateToHuman(voteByIdObj.voteCreatedOn + VOTE_TIME);
   };
-
-  // Side Effects
   useEffect(() => {
     resolveData();
   }, [data]);
@@ -146,7 +130,6 @@ function VoteInfo(props) {
             setSelectedWallet={setSelectedWallet}
             selectedWallet={selectedWallet}
             setTorus={setTorus}
-            // selectedNav={"Locker"}
           />
           <div
             className="content"

@@ -1,40 +1,28 @@
-// REACT
-import React, { useState } from "react";
-// CUSTOM STYLING
-import "../../assets/css/SwapUsingCurvePools.css";
-import "../../assets/css/curveButton.css";
-import "../../assets/css/common.css";
-//BOOTSTRAP
-import "../../assets/css/bootstrap.min.css";
-//COMPONENTS
-import CreateVoteModal from "../Modals/CreateVoteModal";
-import { CHAINS, SUPPORTED_NETWORKS } from "../Headers/HeaderDAO";
-// MATERIAL UI
-import TextField from "@mui/material/TextField";
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { CasperServiceByJsonRPC, CLByteArray, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
-import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
+import TextField from "@mui/material/TextField";
+import Typography from '@mui/material/Typography';
+import { CLPublicKey, RuntimeArgs } from "casper-js-sdk";
+import { useSnackbar } from 'notistack';
+import React, { useState } from "react";
+import "../../assets/css/bootstrap.min.css";
+import "../../assets/css/common.css";
+import "../../assets/css/curveButton.css";
+import "../../assets/css/SwapUsingCurvePools.css";
+import { CREATE_VOTE_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
+import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
-import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
-import { CREATE_VOTE_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
-import { useSnackbar } from 'notistack';
-import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
-
-// COMPONENT FUNCTION
+import CreateVoteModal from "../Modals/CreateVoteModal";
 const PoolVote = () => {
 
   const { enqueueSnackbar } = useSnackbar();
-  // States
   const [commitFeeOpen, setCommitFeeOpen] = useState(false);
   const [commitNewFee, setCommitNewFee] = useState("");
   const [commitAdminFee, setCommitAdminFee] = useState("");
@@ -60,8 +48,6 @@ const PoolVote = () => {
 
   const [entryPoint, setEntryPoint] = useState("");
   const [runTimeArgs, setRunTimeArgs] = useState([]);
-
-  //   Event Handlers
   const handleCommitFeeOpen = () => { setCommitFeeOpen(true); setEntryPoint("commit_new_fee"); setRunTimeArgs([commitNewFee, commitAdminFee]) }
   const handleCommitFeeClose = () => setCommitFeeOpen(false);
   const handleRampAOpen = () => { setRampAOpen(true); setEntryPoint("ramp_A"); setRunTimeArgs([rampFutureA, rampFutureTime]) }
@@ -113,7 +99,6 @@ const PoolVote = () => {
           Buffer.from(CREATE_VOTE_CONTRACT_HASH, "hex")
         );
         let entryPoint = "create_vote";
-        // Set contract installation deploy (unsigned).
         let deploy = await makeDeploy(
           publicKey,
           contractHashAsByteArray,

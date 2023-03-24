@@ -1,23 +1,14 @@
-// REACT
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { Link } from "react-router-dom";
-// MATERIAL UI
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-// MATERIAL UI ICONS
-import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import VoteInfoProgressBar from "../Progress bar/VoteInfoProgressBar";
+import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import { Paper } from "@mui/material";
-
-// CONTENT
+import Box from "@mui/material/Box";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import VoteInfoProgressBar from "../Progress bar/VoteInfoProgressBar";
 const bull = (
   <Box
     component="span"
@@ -44,14 +35,8 @@ const CountDownTimer = () => {
   return timeLeft;
 };
 
-// COMPONENT FUNCTION
 const DaoVotes = (props) => {
-  // States
   const [timeLeft, setTimeLeft] = useState(CountDownTimer());
-
-  // Handlers
-
-  // Life Cycle
   useEffect(() => {
     const timer = setTimeout(() => {
       setTimeLeft(CountDownTimer());
@@ -80,7 +65,6 @@ const DaoVotes = (props) => {
         sx={{ minHeight: "585px", backgroundColor: "rgb(231, 235, 240)" }}
       >
         <CardContent>
-          {/* Legend */}
           <div className="row no-gutters justify-content-center w-100 mb-0">
             <Typography variant="h5" component={"div"}>
               <span style={{ fontWeight: "" }}>{props.legend}</span>
@@ -97,7 +81,6 @@ const DaoVotes = (props) => {
               ({props.legendStatus})
             </Typography>
           </div>
-          {/* Title */}
           <div className="row no-gutters w-100">
             <Typography variant="h6" component={"div"}>
               <a
@@ -114,7 +97,6 @@ const DaoVotes = (props) => {
               </a>
             </Typography>
           </div>
-          {/* Description */}
           <div className="row no-gutters mb-3" role="button">
             <section style={{ width: "220px", fontSize: "0.75rem" }}>
               <Link
@@ -125,7 +107,6 @@ const DaoVotes = (props) => {
               </Link>
             </section>
           </div>
-          {/* Time Elapsed - if vote is open */}
           {timerComponents.length ? (
             <>
               <div className="row no-gutters w-100 mb-3">
@@ -152,15 +133,12 @@ const DaoVotes = (props) => {
               </Typography>
             </div>
           )}
-          {/* Progress Bars */}
-          {/* Yes */}
           <VoteInfoProgressBar
             width="w-100"
             polarQestion="Yes"
             percent={props.yes}
             color="#1976d2"
           />
-          {/* No */}
           <div className="mb-3">
             <VoteInfoProgressBar
               width="w-100"
@@ -169,7 +147,6 @@ const DaoVotes = (props) => {
               color="#9fade6"
             />
           </div>
-          {/* Time and Date vote Created */}
           <div className="row no-gutters w-100 mb-3">
             <div className="col-12">
               <Typography variant="body2" component={"div"}>
@@ -185,7 +162,6 @@ const DaoVotes = (props) => {
               </Typography>
             </div>
           </div>
-          {/* Enaction */}
           {props.enaction ? (
             <div className="row no-gutters w-100 mb-3">
               <div className="col-12" style={{ color: "#019267" }}>
@@ -209,9 +185,7 @@ const DaoVotes = (props) => {
               </div>
             </div>
           )}
-          {/* Support and Quorum*/}
           <div className="row no-gutters w-100 mb-3">
-            {/* Support */}
             <div className="col-12">
               {props.support ? (
                 <div className="row no-gutters">
@@ -247,7 +221,6 @@ const DaoVotes = (props) => {
                 </div>
               )}
             </div>
-            {/* Quorum */}
             <div className="col-12">
               {props.quorum ? (
                 <div className="row no-gutters">
@@ -285,8 +258,6 @@ const DaoVotes = (props) => {
             </div>
           </div>
         </CardContent>
-        {/* <CardActions>
-        </CardActions> */}
       </Paper>
     </>
   );

@@ -1,12 +1,7 @@
-// REACT
 import React, { useState } from "react";
-// CUSTOM STYLING
 import "../../assets/css/SelectInput.css";
-// BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
-// MATERIAL UI
 import { StyledEngineProvider } from "@mui/styled-engine";
-// FORMIK
 import { useField, useFormikContext } from "formik";
 import { Avatar, MenuItem, TextField } from "@mui/material";
 
@@ -19,15 +14,8 @@ const SelectInput = ({
   avatar,
   ...otherProps
 }) => {
-  //console.log("raw data: ", options.dai[1]);
-  console.log("values: ", options);
-  console.log("icons as props: ", icon);
-  // States
   const { setFieldValue } = useFormikContext() ?? {};
   const [field, meta] = useField(name);
-  console.log("Name: ", name);
-  console.log("Field: ", field);
-  console.log("Meta: ", meta);
   const [currentDate, setCurrentDate] = useState(new Date());
 
   function padTo2Digits(num) {
@@ -41,7 +29,6 @@ const SelectInput = ({
       padTo2Digits(date.getDate()),
     ].join("-");
   }
-  // Handlers
   const handleChange = (evt) => {
     const { value } = evt.target;
     console.log("evt.target", evt.target);

@@ -1,15 +1,12 @@
-// REACT
-import React, { useState } from "react";
-// MATERIAL UI
-import { useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-// MATERIA UI ICONS
-import IconButton from "@mui/material/IconButton";
-import LastPageIcon from "@mui/icons-material/LastPage";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import LastPageIcon from "@mui/icons-material/LastPage";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import { useTheme } from "@mui/material/styles";
 import PropTypes from "prop-types";
+import React from "react";
 
 TablePaginationActions.propTypes = {
   count: PropTypes.number.isRequired,
@@ -17,8 +14,6 @@ TablePaginationActions.propTypes = {
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
 };
-
-// FUNCTIONAL COMPONENT
 function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;

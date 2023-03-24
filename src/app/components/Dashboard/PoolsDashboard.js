@@ -41,15 +41,10 @@ const totalsCells = [
   "Total Claimable Tokens",
 ];
 
-//COMPONENT FUNCTION
 const PoolsDashboard = () => {
-  //States
-  //Handlers
-
   return (
     <>
       <div className="pb-5 px-4">
-        {/* VIEW ADDRESS */}
         <div className="col-12 p-0">
           <StyledEngineProvider injectFirst>
             <TextField
@@ -58,7 +53,6 @@ const PoolsDashboard = () => {
               variant="filled"
               className="w-100"
               sx={{ margin: "1.25rem 0" }}
-              // onKeyUp={searchTable}
             />
           </StyledEngineProvider>
         </div>
@@ -92,20 +86,6 @@ const PoolsDashboard = () => {
               <CircularProgress />
             </Box>
           </div>
-          {/* {rows.map((row) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
-                </TableRow>
-              ))} */}
         </TableContainer>
         <div className="my-5">
           <Divider />
@@ -138,20 +118,6 @@ const PoolsDashboard = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {/* {rows.map((row) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
-                </TableRow>
-              ))} */}
                   </TableBody>
                 </Table>
 

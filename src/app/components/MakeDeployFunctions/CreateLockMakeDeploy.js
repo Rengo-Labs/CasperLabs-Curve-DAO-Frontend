@@ -7,31 +7,19 @@ import { checkpoint } from "../checkpoint/Checkpoint";
 import { convertToStr } from "../ConvertToString/ConvertToString";
 
 
-export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSigning, enqueueSnackbar,fetchBalanceData,fetchUserData) {
-  // CREATING REQUIRED VARIABLES
-  let torus;
-  const allowance = 0;
-
-  let selectedWallet = localStorage.getItem("selectedWallet")
-  let activePublicKey = localStorage.getItem("Address")
-
-
+export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData, gaugesQueryData) {
   if (lockedAmount == 0) {
     let variant = "Error";
-    //   providerRef.current.enqueueSnackbar("Locked amount cannot be Zero", { variant })
     enqueueSnackbar("Locked amount cannot be Zero", { variant })
     return
   }
   if (unlockTime == undefined) {
     let variant = "Error";
     enqueueSnackbar("Please select Unlock Time", { variant })
-    //   providerRef.current.enqueueSnackbar("Please select Unlock Time", { variant })
     return
   }
   console.log("unlockTime", unlockTime.getTime());
-  // handleShowSigning();
   setOpenSigning(true);
-  // const publicKeyHex = activePublicKey;
   const publicKeyHex = localStorage.getItem("Address");
   if (
     publicKeyHex !== null &&
@@ -49,7 +37,6 @@ export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSign
         Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
       );
       let entryPoint = "create_lock";
-      // Set contract installation deploy (unsigned).
       let deploy = await makeDeploy(
         publicKey,
         contractHashAsByteArray,
@@ -64,37 +51,27 @@ export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSign
           publicKeyHex
         );
         let result = await putdeploy(signedDeploy, enqueueSnackbar);
-        // let result = await putdeploy(signedDeploy, providerRef.current.enqueueSnackbar);
         console.log("result", result);
-        //   handleCloseSigning();
-        checkpoint(true, setOpenSigning, enqueueSnackbar);
+        checkpoint(true, setOpenSigning, enqueueSnackbar, gaugesQueryData);
         setOpenSigning(false);
         let variant = "success";
         enqueueSnackbar("Funds Locked Successfully", { variant })
+
         fetchBalanceData();
         fetchUserData();
-        //   providerRef.current.enqueueSnackbar("Funds Locked Successfully", { variant })
-
-
       } catch {
-        //   handleCloseSigning();
         setOpenSigning(false);
         let variant = "Error";
         enqueueSnackbar("Unable to Lock Funds", { variant })
-        //   providerRef.current.enqueueSnackbar("Unable to Lock Funds", { variant })
       }
     } catch {
-      // handleCloseSigning();
       setOpenSigning(false);
       let variant = "Error";
       enqueueSnackbar("Something Went Wrong", { variant });
-      // providerRef.current.enqueueSnackbar("Something Went Wrong", { variant });
     }
   } else {
-    //   handleCloseSigning();
     setOpenSigning(false);
     let variant = "error";
     enqueueSnackbar("Connect to Wallet Please", { variant });
-    //   providerRef.current.enqueueSnackbar("Connect to Wallet Please", { variant });
   }
 }

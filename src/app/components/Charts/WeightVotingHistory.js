@@ -1,51 +1,32 @@
-// REACT
-import React, { Component, useState } from "react";
-// CHARTS
-import ApexChart from "react-apexcharts";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-//style
+import React from "react";
+import ApexChart from "react-apexcharts";
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 500,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 700,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+const WeightVotingHistory = ({ data, show, close, setOpen }) => {
+  let seriesY = [];
+  let labelData = [];
 
+  if (data) {
+    data.map((object) => {
+      seriesY.push(object?.y)
+      console.log("seriesY", seriesY);
+      labelData.push(object?.name)
+    })
+  }
 
-
-// CONTENTseriesY
-
-// COMPONENT FUNCTION
-const WeightVotingHistory = ({data,show,close,setOpen}) => {
-    //const [open, setOpen] = React.useState(false);
-    //const handleOpen = () => setOpen(true);
-    const handleClose = () => show =false;
-
-
-
-  console.log("data in weight voting history:",data);
-  // States
-  let seriesY=[];
-  let labelData=[];
-
- if(data){
-  data.map((object) => {
-    seriesY.push(object?.y)
-    console.log("seriesY",seriesY);
-    labelData.push(object?.name)
-  })
- }
-
-console.log("seriesY",seriesY);
-  // Content
+  console.log("seriesY", seriesY);
   const options = {
     chart: {
       type: "donut",
@@ -57,46 +38,11 @@ console.log("seriesY",seriesY);
         enabled: true,
       },
     },
-    series: 
-    // [
-    //   5, 4, 5, 2, 1, 6, 3, 4, 2, 1, 3, 5, 6, 1, 2, 4, 1, 3, 5, 1, 1, 2, 1, 3, 2,
-    //   1, 4, 2, 1, 5,
-    // ]
-    seriesY
+    series:
+      seriesY
     ,
     labels: labelData,
-    //[
-    //   "CSPR",
-    //   "USDT",
-    //   "BTC",
-    //   "USDC",
-    //   "wETH",
-    //   "ETH",
-    //   "wBTC",
-    //   "nypd",
-    //   "dpt",
-    //   "xyz",
-    //   "temp",
-    //   "rich",
-    //   "post",
-    //   "angry",
-    //   "bread",
-    //   "rem",
-    //   "ford",
-    //   "grass",
-    //   "tyu",
-    //   "sre",
-    //   "icu",
-    //   "ssg",
-    //   "tlp",
-    //   "poo",
-    //   "foo",
-    //   "tint",
-    //   "gear",
-    //   "rock",
-    //   "google",
-    //   "tip",
-    // ],
+
     plotOptions: {
       donut: {
         size: "15px",
@@ -107,30 +53,26 @@ console.log("seriesY",seriesY);
     },
   };
 
-  const series = 
-  // [
-  //   5, 4, 5, 2, 1, 6, 3, 4, 2, 1, 3, 5, 6, 1, 2, 4, 1, 3, 5, 1, 1, 2, 1, 3, 2,
-  //   1, 4, 2, 1, 5,
-  // ];
-  seriesY;
+  const series =
 
-  // Handlers
-console.log("open:",show);
-console.log("close:",close);
+    seriesY;
+
+  console.log("open:", show);
+  console.log("close:", close);
   return (
     <>
       <Modal
         open={show}
         onClose={close}
-         aria-labelledby="modal-modal-title"
-         aria-describedby="modal-modal-description"
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-            <ApexChart options={options} series={series} type="donut" width={400} style={{marginLeft:40}} />
-            <Button onClick={()=>setOpen(false)} variant="contained" style={{backgroundColor:"#1976d2"}} fullWidth>Hide</Button>
+          <ApexChart options={options} series={series} type="donut" width={550} style={{ marginLeft: 40 }} />
+          <Button onClick={() => setOpen(false)} variant="contained" style={{ backgroundColor: "#1976d2" }} fullWidth>Hide</Button>
         </Box>
       </Modal>
-     
+
     </>
   );
 };

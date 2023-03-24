@@ -1,40 +1,29 @@
-// REACT
-import React, { useState } from "react";
-// CUSTOM STYLING
-import "../../assets/css/SwapUsingCurvePools.css";
-import "../../assets/css/curveButton.css";
-import "../../assets/css/common.css";
-//BOOTSTRAP
-import "../../assets/css/bootstrap.min.css";
-//COMPONENTS
-import CreateVoteModal from "../Modals/CreateVoteModal";
-import { CHAINS, SUPPORTED_NETWORKS } from "../Headers/HeaderDAO";
-// MATERIAL UI
-import TextField from "@mui/material/TextField";
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { CasperServiceByJsonRPC, CLByteArray, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
-import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
+import TextField from "@mui/material/TextField";
+import Typography from '@mui/material/Typography';
+import { CLPublicKey, RuntimeArgs } from "casper-js-sdk";
+import { useSnackbar } from 'notistack';
+import React, { useState } from "react";
+import "../../assets/css/bootstrap.min.css";
+import "../../assets/css/common.css";
+import "../../assets/css/curveButton.css";
+import "../../assets/css/SwapUsingCurvePools.css";
+import { CREATE_VOTE_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
+import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
-import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
-import { CREATE_VOTE_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
-import { useSnackbar } from 'notistack';
-import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
-
-// COMPONENT FUNCTION
+import CreateVoteModal from "../Modals/CreateVoteModal";
 const GaugeVote = () => {
 
   const { enqueueSnackbar } = useSnackbar();
-  // States
   const [commitOpen, setCommitOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [gaugeOpen, setGaugeOpen] = useState(false);
@@ -59,12 +48,8 @@ const GaugeVote = () => {
     localStorage.getItem("selectedWallet")
   );
 
-
   const [entryPoint, setEntryPoint] = useState("");
   const [runTimeArgs, setRunTimeArgs] = useState([]);
-
-
-  //   Event Handlers
   const handleCommitOpen = () => { setCommitOpen(true); setEntryPoint("commit_transfer_ownership"); setRunTimeArgs([commitAddr]) }
   const handleCommitClose = () => setCommitOpen(false);
   const handleAddOpen = () => { setAddOpen(true); setEntryPoint("add_type"); setRunTimeArgs([addName, addWeight]) }
@@ -85,10 +70,6 @@ const GaugeVote = () => {
   };
   console.log(entryPoint);
   console.log(runTimeArgs);
-
-  //STYLES
-
-  //MAKE DEPLOY
   async function createVoteMakeDeploy(entrypoint, runtimeargs) {
     handleShowSigning();
     const publicKeyHex = activePublicKey;
@@ -112,7 +93,6 @@ const GaugeVote = () => {
           Buffer.from(CREATE_VOTE_CONTRACT_HASH, "hex")
         );
         let entryPoint = "create_vote";
-        // Set contract installation deploy (unsigned).
         let deploy = await makeDeploy(
           publicKey,
           contractHashAsByteArray,
@@ -131,8 +111,6 @@ const GaugeVote = () => {
           handleCloseSigning();
           let variant = "success";
           enqueueSnackbar("Created Vote Successfully", { variant })
-
-
         } catch {
           handleCloseSigning();
           let variant = "Error";

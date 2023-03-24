@@ -2,12 +2,6 @@ import { GaugeControllerClient } from "../src";
 import { NODE_ADDRESS } from "../../../blockchain/NodeAddress/NodeAddress";
 import { parseJsonBody } from "@apollo/client/link/http/parseAndCheckHttpResponse";
 
-// const {
-//   NODE_ADDRESS,
-//   EVENT_STREAM_ADDRESS,
-//   CHAIN_NAME,
-//   GAUGE_CONTROLLER_CONTRACT
-// } = process.env;
 
 const gaugeController = new GaugeControllerClient(
   NODE_ADDRESS,
@@ -138,6 +132,34 @@ export const vote_user_power = async (contractHash: string, owner: string) => {
   // console.log(GAUGE_CONTROLLER_CONTRACT +` =... Points total: ${gaugeTypeNames}`);
 
   return voteUserPower;
+}
+
+export const last_user_vote = async (contractHash: string, owner: string, spender: string) => {
+
+  console.log("contractHash:",contractHash);
+  console.log("owner",owner);
+  console.log("spender",spender);
+
+  
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+  //timeWeight
+  const lastUserVote = await gaugeController.last_user_vote(owner, spender);
+  console.log(contractHash + ` =... lastUserVote: ${lastUserVote}`);
+
+  return lastUserVote;
+}
+export const vote_user_slopes = async (contractHash: string, owner: string, spender: string) => {
+
+  // We don't need hash- prefix so i'm removing it
+  await gaugeController.setContractHash(contractHash);
+
+  //timeWeight
+  const voteUserSlopes = await gaugeController.vote_user_slopes(owner, spender);
+  console.log(contractHash + ` =... voteUserSlopes: ${voteUserSlopes}`);
+
+  return voteUserSlopes;
 }
 
 export const gaugeTypes = async (contractHash: string, owner: string) => {

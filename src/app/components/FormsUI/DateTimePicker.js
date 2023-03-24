@@ -1,10 +1,6 @@
-// REACT
-import React from "react";
-// MATERIAL UI
 import TextField from '@mui/material/TextField';
-
-// FORMIK
 import { useField } from "formik";
+import React from "react";
 
 const DateTimePicker = ({ name, ...otherProps }) => {
   const [field, meta] = useField(name);

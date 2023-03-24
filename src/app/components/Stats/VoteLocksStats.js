@@ -1,30 +1,14 @@
-// REACT
+import { Accordion, AccordionSummary, Avatar, CardHeader } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import React from "react";
-// CUSTOM STYLES
+import { Spinner } from "react-bootstrap";
+import "../../assets/css/bootstrap.min.css";
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
 import "../../assets/css/style.css";
-// BOOTSTRAP
-import "../../assets/css/bootstrap.min.css";
-import { Spinner } from "react-bootstrap";
-// COMPONENTS
-// MATERIAL UI ICONS
-// MATERIAL UI
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
-// LOGOS
 import curveLogo from "../../assets/img/Logo.png";
-import { Accordion, AccordionSummary, Avatar, CardHeader } from "@mui/material";
-
-// CONTENT
-
-// COMPONENT FUNCTION
 const VoteLocksStats = (props) => {
-  // States
 
-  // Handlers
-
-  // Content
   props
     ? console.log("props for voteLocksStats: ", props)
     : console.log("There are no props for voteLocksStats");
@@ -72,7 +56,6 @@ const VoteLocksStats = (props) => {
                     <Avatar src={curveLogo} aria-label="curve-logo-avatar" />
                   }
                   title={"Total CRV vote-locked (veCRV/CRV):"}
-                  // subheader={tokenB.symbol}
                 />
               </AccordionSummary>
             </Accordion>

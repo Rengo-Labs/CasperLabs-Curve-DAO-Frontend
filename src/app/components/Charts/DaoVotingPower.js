@@ -1,7 +1,5 @@
-// REACT
 import React, { useState } from "react";
 import * as helpers from "../../components/Utils/Helpers";
-// CHARTS
 import ApexChart from "react-apexcharts";
 
 let seriesDataX = [];
@@ -9,22 +7,10 @@ let seriesDataY = [];
 let daoPowerX = [];
 let daoPowerY = [];
 
-
-
-// COMPONENT CLASS
 const DaoVotingPower = ({ chart, daoPower }) => {
-  // States
-
-  // Content
-
-  console.log("chart:", chart);
-  console.log("daoPower:", daoPower);
     if (chart !== undefined) {
       let chartData = chart.splice(0, chart.length - 11)
-      // console.log("chartDatachartDatachartDatachartDatachartDatachartData", chartData);
       for (let i = 0; i < chartData.length; i++) {
-
-        // console.log("chart at i", chartData[i][0]);
         seriesDataX.push(chartData[i][0])
         if (isNaN(chartData[i][1])) {
           seriesDataY.push(50)
@@ -32,13 +18,8 @@ const DaoVotingPower = ({ chart, daoPower }) => {
         else {
           seriesDataY.push(chartData[i][1])
         }
-
       }
     }
-
-    // console.log("dataX:", seriesDataX);
-    // console.log("dataY:", seriesDataY);
-
     const fixed = seriesDataY.map((i) => {
       return i.toFixed(3)
     })
@@ -53,25 +34,15 @@ const DaoVotingPower = ({ chart, daoPower }) => {
         y: seriesDataY[i],
       };
     }
-    // console.log("axisData", axisData);
-
-
     if (daoPower !== undefined) {
-
       for (let i = 0; i < daoPower.length; i++) {
         daoPowerX.push(daoPower[i][0])
         daoPowerY.push(daoPower[i][1])
       }
     }
-
-    // console.log("dataXdao:", daoPowerX);
-    // console.log("dataYdao:", daoPowerY);
-
     const daoTime = daoPowerX.map((i) => {
       return helpers.formatDateToHumanChart(i);
     })
-
-
     let daoPowerData = [];
     for (var i = 0; i < daoPower.length; i++) {
       daoPowerData[i] = {
@@ -79,8 +50,6 @@ const DaoVotingPower = ({ chart, daoPower }) => {
         y: daoPowerY[i],
       };
     }
-    // console.log("daoPowerData", daoPowerData, daoPowerY.length);
-
     let series = [
       {
         name: "My Voting Power",
@@ -128,7 +97,6 @@ const DaoVotingPower = ({ chart, daoPower }) => {
       yaxis: {
         title: {
           text: "Amount Locked",
-          //categories: [seriesDataY]
         },
       },
     };
@@ -165,13 +133,6 @@ const DaoVotingPower = ({ chart, daoPower }) => {
             max: new Date(daoPowerData.length > 0 ? daoPowerData[daoPowerData.length - 1].x : "1 jan 2023 11:41:14").getTime(),
           },
         },
-        // toolbar: {
-        //   autoSelected: "pan",
-        //   show: true,
-        // },
-        // zoom: {
-        //   enabled: true,
-        // },
       },
       colors: ["#00cc52", "#1976d2"],
       fill: {
@@ -186,14 +147,11 @@ const DaoVotingPower = ({ chart, daoPower }) => {
         tooltip: {
           enabled: false,
         },
-        //categories: [seriesDataY]
       },
       yaxis: {
         tickAmount: 2,
       },
     };
-  console.log("seriesLine",seriesLine);
-  console.log("series",series);
 
   return (
     <>

@@ -1,17 +1,8 @@
-// REACT
 import React from "react";
-// CHARTS
 import ApexChart from "react-apexcharts";
-
-// CONTENT
-
-// COMPONENT FUNCTION
 const FutureGaugeWeight = ({ futureWeight }) => {
-  // console.log("futureWeight in chart file:", futureWeight);
-  // States
   let seriesY = [];
   let labelData = [];
-
   if (futureWeight) {
     futureWeight?.map((weight) => {
       seriesY.push(weight.y);
@@ -21,7 +12,6 @@ const FutureGaugeWeight = ({ futureWeight }) => {
 
   console.log("seriesY", seriesY);
   console.log("label data", labelData);
-  // Content
   const options = {
     chart: {
       type: "donut",
@@ -44,14 +34,9 @@ const FutureGaugeWeight = ({ futureWeight }) => {
       },
     },
   };
-
   const series = seriesY;
-
   return (
-    <>
-      <ApexChart options={options} series={series} type="donut" width={400} />
-    </>
+      <ApexChart options={options} series={series} type="donut" width={550} />
   );
 };
-
 export default FutureGaugeWeight;

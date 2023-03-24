@@ -1,273 +1,130 @@
+import PieChartIcon from "@mui/icons-material/PieChart";
 import {
-  Avatar,
-  Table,
-  tbody,
-  td,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  tr,
-  Tooltip,
-  Typography,
+  Avatar, TablePagination, Tooltip
 } from "@mui/material";
 import React, { useState } from "react";
-import PieChartIcon from "@mui/icons-material/PieChart";
-import clock from "../../assets/img/clock.png";
 import { Link } from "react-router-dom";
+import clock from "../../assets/img/clock.png";
 import * as helpers from "../../assets/js/helpers";
 import TablePaginationActions from "../pagination/TablePaginationActions";
 
 const VotingHistoryTable = (props) => {
+  console.log("props.vote", props.vote);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event, newPage) => {
-    //setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    //setPage(0);
   };
 
   return (
-    // <TableContainer>
-      <table className="table table-bordered table-striped" aria-label="Gauge Weight Vote History">
-        <thead 
-          className="thead-light"
-          style={{
-            backgroundColor: "#e7ebf0",
-            paddingLeft: "0.25rem",
-          }}
-        >
-          <tr id="GWVoteHistoryTableSort">
-            {/* {votingHistoryCells.map((cell) => ( */}
-            <th
-              style={{
-                border: 0,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                textAlign: "center",
-              }}
-            >
-              Time
-            </th>
-            <th
-              style={{
-                border: 0,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                textAlign: "center",
-              }}
-            >
-              Voter
-            </th>
-            <th
-              style={{
-                border: 0,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                textAlign: "center",
-              }}
-            >
-              veCRV
-            </th>
-            <th
-              style={{
-                border: 0,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                textAlign: "center",
-              }}
-            >
-              Total veCRV
-            </th>
-            <th
-              style={{
-                border: 0,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                textAlign: "center",
-              }}
-            >
-              Gauge
-            </th>
-            <th
-              style={{
-                border: 0,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                textAlign: "center",
-              }}
-            >
-              Weight
-            </th>
-            <th
-              style={{
-                border: 0,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                textAlign: "center",
-              }}
-            >
-              Total Weight
-            </th>
-            <th
-              style={{
-                border: 0,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                textAlign: "center",
-              }}
-            >
-              <PieChartIcon />
-            </th>
-          </tr>
-        </thead>
-        <tbody id={"GWVoteHistorytbody"} style={{color:"#1E1E1F"}}>
-          {props.showVotes
-            ? props.gaugeVoteTime
-                ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .filter((value) => {
-                  if (
-                    props.selectedGauge !== "Select a Gauge" &&
-                    props.selectedGauge !== " "
-                  ) {
-                    if (props.selectedGauge === value.gauge) {
-                      return value;
-                    }
-                  } else {
-                    return value;
-                  }
-                })
-                .map((item, key) => {
-                  console.log("In votes by time");
-                  return (
-                    <tr key={key}>
-                      <td
-                        //key={item.index}
-                        style={{
-                          textAlign: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Tooltip title={item.time}>
-                          <Avatar
-                            style={{
-                              height: "20px",
-                              width: "20px",
-                            }}
-                            src={clock}
-                            aria-label="clock"
-                          />
-                        </Tooltip>
-                      </td>
-                      <td
-                        //key={item.user}
-                        style={{
-                          textAlign: "center",
-                          border: "0.6px solid #e0e0e0",
-                        }}
-                      >
-                        <Link
-                          style={{
-                            color: "#1976d2",
-                          }}
-                          to="/"
-                          className="tdLink font-weight-bold"
-                        >
-                          {helpers.shortenAddress(item.user)}
-                        </Link>
-                      </td>
-                      <td
-                        //key={item.index}
-                        style={{
-                          textAlign: "center",
-                          border: "0.6px solid #e0e0e0",
-                        }}
-                      >
-                        {(item.veCRV / 1e9).toFixed(2)}
-                      </td>
-                      <td
-                        //key={item.index}
-                        style={{
-                          textAlign: "center",
-                          border: "0.6px solid #e0e0e0",
-                        }}
-                      >
-                        {helpers.formatNumber(item.totalveCRV / 1e9)}
-                      </td>
-                      <td
-                        //key={item.index}
-                        style={{
-                          textAlign: "center",
-                          border: "0.6px solid #e0e0e0",
-                        }}
-                      >
-                        <Link
-                          style={{
-                            color: "#1976d2",
-                          }}
-                          to="/"
-                          className="tdLink font-weight-bold"
-                        >
-                          {/* {getGaugeAddress(item.gauge)} */}
-                          {helpers.shortenAddress(item.gauge)}
-                        </Link>
-                      </td>
-                      <td
-                        //key={item.index}
-                        style={{
-                          textAlign: "center",
-                          border: "0.6px solid #e0e0e0",
-                        }}
-                      >
-                        <Link
-                          style={{
-                            color: "#1976d2",
-                          }}
-                          to="/"
-                          className="tdLink"
-                        >
-                          {item.weight / 100}%
-                        </Link>
-                      </td>
-                      <td
-                        //key={item.index}
-                        style={{
-                          textAlign: "center",
-                          border: "0.6px solid #e0e0e0",
-                        }}
-                      >
-                        {(item.total_weight / 1e9).toFixed(2)}
-                      </td>
-                      <td
-                        //key={item.index}
-                        style={{
-                          textAlign: "center",
-                        }}
-                      >
-                        <PieChartIcon
-                          onClick={() => {
-                            props.handleTableGraph(item);
-                          }}
-                          style={{
-                            color: "#D29300",
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })
-            : props.gaugeWeightData.map((item, key) => {
-                //filteredVotes?.map((item) => {
-                console.log("this runs!");
+    <table className="table table-bordered table-striped" aria-label="Gauge Weight Vote History">
+      <thead
+        className="thead-light"
+        style={{
+          backgroundColor: "#e7ebf0",
+          paddingLeft: "0.25rem",
+        }}
+      >
+        <tr id="GWVoteHistoryTableSort">
+          <th
+            style={{
+              border: 0,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            Time
+          </th>
+          <th
+            style={{
+              border: 0,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            Voter
+          </th>
+          <th
+            style={{
+              border: 0,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            veCRV
+          </th>
+          <th
+            style={{
+              border: 0,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            Total veCRV
+          </th>
+          <th
+            style={{
+              border: 0,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            Gauge
+          </th>
+          <th
+            style={{
+              border: 0,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            Weight
+          </th>
+          <th
+            style={{
+              border: 0,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            Total Weight
+          </th>
+          <th
+            style={{
+              border: 0,
+              fontWeight: "bold",
+              fontSize: "1rem",
+              textAlign: "center",
+            }}
+          >
+            <PieChartIcon />
+          </th>
+        </tr>
+      </thead>
+      <tbody id={"GWVoteHistorytbody"} style={{ color: "#1E1E1F" }}>
+        {props.vote?.myVotes && props.vote?.gaugeVotes ? (
+          props.showVotes
+            ? props.vote?.myVotes
+              .map((item, key) => {
+                console.log("In votes by time");
                 return (
                   <tr key={key}>
                     <td
-                      //key={item.index}
-                      style={{ textAlign: "center" }}
+                      style={{
+                        textAlign: "center",
+                        justifyContent: "center",
+                      }}
                     >
                       <Tooltip title={item.time}>
                         <Avatar
@@ -281,13 +138,14 @@ const VotingHistoryTable = (props) => {
                       </Tooltip>
                     </td>
                     <td
-                      //key={item.user}
-                      style={{ textAlign: "center" }}
+                      style={{
+                        textAlign: "center",
+                        border: "0.6px solid #e0e0e0",
+                      }}
                     >
                       <Link
                         style={{
                           color: "#1976d2",
-                          border: "0.6px solid #e0e0e0",
                         }}
                         to="/"
                         className="tdLink font-weight-bold"
@@ -296,7 +154,6 @@ const VotingHistoryTable = (props) => {
                       </Link>
                     </td>
                     <td
-                      //key={item.index}
                       style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
@@ -305,7 +162,6 @@ const VotingHistoryTable = (props) => {
                       {(item.veCRV / 1e9).toFixed(2)}
                     </td>
                     <td
-                      //key={item.index}
                       style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
@@ -314,7 +170,6 @@ const VotingHistoryTable = (props) => {
                       {helpers.formatNumber(item.totalveCRV / 1e9)}
                     </td>
                     <td
-                      //key={item.index}
                       style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
@@ -327,12 +182,10 @@ const VotingHistoryTable = (props) => {
                         to="/"
                         className="tdLink font-weight-bold"
                       >
-                        {/* {getGaugeAddress(item.gauge)} */}
                         {helpers.shortenAddress(item.gauge)}
                       </Link>
                     </td>
                     <td
-                      //key={item.index}
                       style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
@@ -349,7 +202,6 @@ const VotingHistoryTable = (props) => {
                       </Link>
                     </td>
                     <td
-                      //key={item.index}
                       style={{
                         textAlign: "center",
                         border: "0.6px solid #e0e0e0",
@@ -358,8 +210,9 @@ const VotingHistoryTable = (props) => {
                       {(item.total_weight / 1e9).toFixed(2)}
                     </td>
                     <td
-                      //key={item.index}
-                      style={{ textAlign: "center" }}
+                      style={{
+                        textAlign: "center",
+                      }}
                     >
                       <PieChartIcon
                         onClick={() => {
@@ -372,32 +225,139 @@ const VotingHistoryTable = (props) => {
                     </td>
                   </tr>
                 );
-              })}
-        </tbody>
-        <tfoot>
-          <tr>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-              colSpan={12}
-              count={props.gaugeWeightVoteData.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              SelectProps={{
-                inputProps: {
-                  "aria-label": "rows per page",
-                },
-                native: true,
-              }}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-              sx={{
-                backgroundColor: "#e7ebf0",
-              }}
-            />
-          </tr>
-        </tfoot>
-      </table>
+              })
+            : props.vote?.gaugeVotes.map((item, key) => {
+              console.log("this runs!");
+              return (
+                <tr key={key}>
+                  <td
+                    style={{ textAlign: "center" }}
+                  >
+                    <Tooltip title={item.time}>
+                      <Avatar
+                        style={{
+                          height: "20px",
+                          width: "20px",
+                        }}
+                        src={clock}
+                        aria-label="clock"
+                      />
+                    </Tooltip>
+                  </td>
+                  <td
+                    style={{ textAlign: "center" }}
+                  >
+                    <Link
+                      style={{
+                        color: "#1976d2",
+                        border: "0.6px solid #e0e0e0",
+                      }}
+                      to="/"
+                      className="tdLink font-weight-bold"
+                    >
+                      {helpers.shortenAddress(item.user)}
+                    </Link>
+                  </td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      border: "0.6px solid #e0e0e0",
+                    }}
+                  >
+                    {(item.veCRV / 1e9).toFixed(2)}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      border: "0.6px solid #e0e0e0",
+                    }}
+                  >
+                    {helpers.formatNumber(item.totalveCRV / 1e9)}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      border: "0.6px solid #e0e0e0",
+                    }}
+                  >
+                    <Link
+                      style={{
+                        color: "#1976d2",
+                      }}
+                      to="/"
+                      className="tdLink font-weight-bold"
+                    >
+                      {helpers.shortenAddress(item.gauge)}
+                    </Link>
+                  </td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      border: "0.6px solid #e0e0e0",
+                    }}
+                  >
+                    <Link
+                      style={{
+                        color: "#1976d2",
+                      }}
+                      to="/"
+                      className="tdLink"
+                    >
+                      {item.weight / 100}%
+                    </Link>
+                  </td>
+                  <td
+                    style={{
+                      textAlign: "center",
+                      border: "0.6px solid #e0e0e0",
+                    }}
+                  >
+                    {(item.total_weight / 1e9).toFixed(2)}
+                  </td>
+                  <td
+                    style={{ textAlign: "center" }}
+                  >
+                    <PieChartIcon
+                      onClick={() => {
+                        props.handleTableGraph(item);
+                      }}
+                      style={{
+                        color: "#D29300",
+                      }}
+                    />
+                  </td>
+                </tr>
+              );
+            })
+        ) : (
+          null
+        )}
+      </tbody>
+      <tfoot>
+        <tr>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+            colSpan={12}
+            count={props.vote?.myVotes && props.vote?.gaugeVotes ?
+              props.showVotes ? props.vote?.myVotes.length : props.vote?.gaugeVotes.length : 0}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            SelectProps={{
+              inputProps: {
+                "aria-label": "rows per page",
+              },
+              native: true,
+            }}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            ActionsComponent={TablePaginationActions}
+            sx={{
+              backgroundColor: "#e7ebf0",
+            }}
+          />
+        </tr>
+      </tfoot>
+    </table>
   );
 };
 

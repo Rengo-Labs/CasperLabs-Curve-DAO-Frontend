@@ -1,13 +1,9 @@
 import React from "react";
 import ApexChart from "react-apexcharts";
-
-// MATERIAL UI
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { Typography } from "@mui/material";
-
-//STYLES
 const style = {
   position: "absolute",
   top: "50%",
@@ -21,7 +17,6 @@ const style = {
 };
 
 function VoteDistributionModal(props) {
-  // Content
   const options = {
     chart: {
       type: "donut",
@@ -44,9 +39,6 @@ function VoteDistributionModal(props) {
       },
     },
   };
-
-  // const series = props.series;
-
   return (
     <>
       <Modal

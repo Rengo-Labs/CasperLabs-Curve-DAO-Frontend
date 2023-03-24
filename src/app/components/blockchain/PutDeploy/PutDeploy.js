@@ -3,7 +3,6 @@ import { getDeploy } from "../GetDeploy/GetDeploy";
 import { NODE_ADDRESS } from "../NodeAddress/NodeAddress";
 
 export async function putdeploy(signedDeploy,enqueueSnackbar) {
-    // Dispatch deploy to node.
     const client = new CasperClient(NODE_ADDRESS);
     const installDeployHash = await client.putDeploy(signedDeploy);
     console.log(`... Contract installation deployHash: ${installDeployHash}`);
