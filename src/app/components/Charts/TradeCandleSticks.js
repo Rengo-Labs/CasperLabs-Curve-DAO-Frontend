@@ -1,10 +1,5 @@
-// REACT
-import React, { Component, useState } from "react";
-// CHARTS
+import React, { useState } from "react";
 import ApexChart from "react-apexcharts";
-// COMPONENTS
-
-// CONTENT
 let seriesDate = [
   {
     x: new Date("2022-05-01"),
@@ -132,15 +127,6 @@ var optionsData = {
   },
   xaxis: {
     type: "datetime",
-    // categories: [
-    //   "Sunday",
-    //   "Monday",
-    //   "Tuesday",
-    //   "Wednesday",
-    //   "Thursday",
-    //   "Friday",
-    //   "Saturday",
-    // ],
   },
   yaxis: {
     tooltip: {
@@ -175,13 +161,6 @@ var optionsDataBar = {
         color: "#0D47A1",
       },
     },
-    // toolbar: {
-    //   autoSelected: "pan",
-    //   show: true,
-    // },
-    // zoom: {
-    //   enabled: true,
-    // },
   },
   series: [
     {

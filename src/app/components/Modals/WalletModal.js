@@ -11,11 +11,8 @@ import Exit from "../../assets/img/exit.svg";
 import { Avatar, Card, CardHeader, Typography } from "@mui/material";
 
 function WalletModal(props) {
-  // console.log("props", props);
   return (
     <Modal centered show={props.show} onHide={props.handleClose}>
-      {/* <Modal.Header style={{ textAlign: 'center' }}>
-      </Modal.Header> */}
       <Modal.Body style={{ textAlign: 'center' }} >
         <Typography variant="h5" style={{ color: '#000027' }} gutterBottom >
           <strong>

@@ -1,27 +1,21 @@
-// REACT
-import React, { useEffect, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { Grid } from "@mui/material";
 import axios from "axios";
-// CUSTOM STYLES
+import { CLPublicKey } from "casper-js-sdk";
+import React, { useEffect, useState } from "react";
+import "../../assets/css/bootstrap.min.css";
 import "../../assets/css/common.css";
 import "../../assets/css/curveButton.css";
 import "../../assets/css/style.css";
-// BOOTSTRAP
-import "../../assets/css/bootstrap.min.css";
-// COMPONENTS
-import { gql, useQuery } from "@apollo/client";
-import { Grid } from "@mui/material";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
-import { CLPublicKey } from "casper-js-sdk";
 import curveLogo from "../../assets/img/Logo.png";
 import * as helpers from "../../assets/js/helpers";
 import {
   ERC20_CRV_CONTRACT_HASH,
-  VOTING_ESCROW_CONTRACT_HASH,
+  VOTING_ESCROW_CONTRACT_HASH
 } from "../blockchain/Hashes/ContractHashes";
-import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/functions";
-import * as erc20CrvFunctions from "../JsClients/ERC20CRV/erc20crvFunctions/functions";
 import VotingPowerDaoCards from "../Cards/VotingPowerDaoCards";
+import * as erc20CrvFunctions from "../JsClients/ERC20CRV/erc20crvFunctions/functions";
+import * as votingEscrowFunctions from "../JsClients/VOTINGESCROW/QueryHelper/functions";
 
 const DAO_POWER = gql`
   query {
@@ -39,10 +33,8 @@ const VOTING_POWER = gql`
   }
 `;
 
-// COMPONENT FUNCTION
 const VotingPowerDAO = (props) => {
 
-  // States
   const [CRVLockedBalance, setCRVLockedBalance] = useState();
   const [CRVBalance, setCRVBalance] = useState(0);
   const [DAOPower, setDaoPower] = useState(0);
@@ -66,11 +58,7 @@ const VotingPowerDAO = (props) => {
   const [lockEnd, setLockEnd] = useState(Date.now())
   const [increaseLock, setIncreaseLock] = useState(0)
   const [deposit, setDeposit] = useState(0)
-  // localStorage.removeItem("Address")
 
-  // Handlers
-
-  // Queries
   const { error, loading, data } = useQuery(DAO_POWER);
   console.log("this is data of voting escrow gql: ", data);
   console.log("this is error of voting escrow gql: ", error);
@@ -78,9 +66,6 @@ const VotingPowerDAO = (props) => {
   if (data !== undefined) {
     console.log("daopowerrrr", data?.daoPowersByTimestamp);
   }
-  // console.log("activePublicKeyactivePublicKey", Buffer.from(
-  //   CLPublicKey.fromHex(activePublicKey).toAccountHash()
-  // ).toString("hex"));
   const voting = useQuery(VOTING_POWER, {
     variables: {
       id:
@@ -91,15 +76,8 @@ const VotingPowerDAO = (props) => {
           : null,
     },
   })
-  // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString()", Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"), voting);
-  // if (voting.data !== undefined) {
-  //   // console.log("votingPOWER", voting.data?.votingPower[0]?.power);
-  // }
 
   useEffect(() => {
-    // resolveData();
-    // console.log("datadata", data);
-    // console.log("votingvoting", voting);
     if (voting.data) {
       console.log("voting.data?.votingPower", voting.data?.votingPower);
       setMyLockedCRV(voting.data?.votingPower ? voting.data?.votingPower?.power : 0)
@@ -128,14 +106,11 @@ const VotingPowerDAO = (props) => {
       async function fetchData() {
         let data = { account: Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex") }
         console.log("data", data);
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
-            // handle the response
             console.log("votingEscrow response of balance of:...", response.data);
-            // setBalanceOf(response.data.balance)
           })
           .catch(error => {
-            // handle the error
             console.log("error of balance of:...", error);
           });
 
@@ -145,20 +120,16 @@ const VotingPowerDAO = (props) => {
             CLPublicKey.fromHex(publicKeyHex).toAccountHash()
           ).toString("hex")
         );
-        // console.log("Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString(hex)", Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("hex"));
         let CRVBalance = await erc20CrvFunctions.balanceOf(
           ERC20_CRV_CONTRACT_HASH,
           Buffer.from(
             CLPublicKey.fromHex(publicKeyHex).toAccountHash()
           ).toString("hex")
         );
-        // console.log("CRV Locked Balance: ", CRVLockBalance);
         console.log("CRV Balanceee: ", CRVBalance);
         console.log("My crv locked: ", CRVLockBalance);
         setCRVLockedBalance(CRVLockBalance);
         setCRVBalance(CRVBalance);
-
-        //FOR CRV STATS
         loadChart(publicKeyHex);
       }
       fetchData();
@@ -181,7 +152,6 @@ const VotingPowerDAO = (props) => {
       let accountHash = Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex");
       axios.post(`votingEscrow/CRVStats/${VOTING_ESCROW_CONTRACT_HASH}/${accountHash}`,)
         .then(response => {
-          // handle the response
           console.log("response of crvStats:...", response.data.data);
           setCrvStats(response.data.data)
           setCrvLocked(response.data.data.CRVLOCKED)
@@ -190,7 +160,6 @@ const VotingPowerDAO = (props) => {
 
         })
         .catch(error => {
-          // handle the error
           console.log("error of crvStats:...", error);
         });
     }
@@ -209,25 +178,21 @@ const VotingPowerDAO = (props) => {
       async function fetchData() {
         let data = { account: Buffer.from(CLPublicKey.fromHex(publicKeyHex).toAccountHash()).toString("Hex") }
         console.log("data", data);
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
-            // handle the response
             console.log("votingEscrow response of balance of:...", response.data);
             setVecrvBalance(response.data.balances[0])
           })
           .catch(error => {
-            // handle the error
             console.log("error of balance of:...", error);
           });
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
-            // handle the response
             console.log("votingEscrow response of lockedEnd:...", response.data);
             setLockTime(response.data.lockedEnd.end)
             setLockEnd(response.data.lockedEnd.end)
           })
           .catch(error => {
-            // handle the error
             console.log("error of balance of:...", error);
           });
         let CRVBalance = await erc20CrvFunctions.balanceOf(
@@ -265,13 +230,10 @@ const VotingPowerDAO = (props) => {
   const averageLock = () => {
     console.log("CRVLocked", CRVLocked);
     console.log("DAOPower", DAOPower);
-    console.log("4 * DAOPower / CRVLocked).toFixed(2)",( 4 * DAOPower / CRVLocked).toFixed(2));
+    console.log("4 * DAOPower / CRVLocked).toFixed(2)", (4 * DAOPower / CRVLocked).toFixed(2));
     return DAOPower ? ((4 * DAOPower / CRVLocked).toFixed(2) == 'infinity' || (4 * DAOPower / CRVLocked).toFixed(2) == 'Infinity') ? (0) : (4 * DAOPower / CRVLocked).toFixed(2) : 0;
   };
 
-  // const myLockedCRVFormat = () => {
-  //   return votingPower ? helpers.formatNumber(votingPower[0].power / 1e9) : 0;
-  // };
 
   const loadChart = async (activePublicKey) => {
     console.log("Active public ket in load charts: ", activePublicKey);
@@ -299,7 +261,6 @@ const VotingPowerDAO = (props) => {
     return helpers.formatNumber(myLockedCRV / 1e9)
   }
   console.log("CRVLockedFormat", CRVLockedFormat());
-  // let CRVLockedPercentage = isNaN((crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)) ? 0 : (crvStats?.CRVLOCKED * 100 / crvStats?.supply).toFixed(2)
   console.log("CRVLockedPercentage", CRVLockedPercentage);
   function newVotingPower() {
     let lockTime = Date.parse(increaseLock)

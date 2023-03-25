@@ -1,13 +1,10 @@
 import React,{useState} from 'react'
-
-// MATERIAL UI
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import CreateVoteRootModal from './CreateVoteRootModal';
-//STYLES
    const style = {
     position: 'absolute',
     top: '50%',

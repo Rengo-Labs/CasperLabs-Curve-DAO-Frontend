@@ -6,8 +6,8 @@ import React, { useEffect, useState } from "react";
 import { Button, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "../../assets/css/bootstrap.min.css";
-import "../../assets/css/style.css";
 import "../../assets/css/dropDownMenu.css";
+import "../../assets/css/style.css";
 import Logo from "../../assets/img/Logo.png";
 import "../../assets/plugins/fontawesome/css/all.min.css";
 import "../../assets/plugins/fontawesome/css/fontawesome.min.css";
@@ -130,24 +130,6 @@ function HeaderDAO(props) {
     // eslint-disable-next-line
   }, [props.selectedWallet]);
 
-
-  // const changeProvider = async () => {
-  //   const providerRes = await torus?.setProvider(SUPPORTED_NETWORKS[CHAINS.CASPER_MAINNET]);
-  //   console.log("provider res", providerRes);
-  // };
-
-  // const getLatestBlock = async () => {
-  //   const casperService = new CasperServiceByJsonRPC(torus?.provider);
-  //   const latestBlock = await casperService.getLatestBlockInfo();
-  //   console.log("latest block", latestBlock);
-  // };
-
-  // const getUserInfo = async () => {
-  //   const userInfo = await torus?.getUserInfo();
-  //   console.log("userInfo", userInfo);
-  // };
-
-
   async function checkConnection() {
     try {
       return await Signer.isConnected();
@@ -180,7 +162,6 @@ function HeaderDAO(props) {
   const selectedStyling = {
     border: "2px solid '#1976d2'",
     padding: "0.625rem 1rem",
-    // borderRadius: "5px",
     color: "#FFF",
     backgroundColor: "#1976d2",
   };
@@ -215,17 +196,6 @@ function HeaderDAO(props) {
     window.location.reload();
   };
 
-  const setClassNames = (num) => {
-    const classArr = ["menuSubitem"];
-    if (openMenu) classArr.push(` openItem-${num}`);
-    console.log(classArr.join(""));
-    return classArr.join("");
-  };
-
-  const setDisplay = () => {
-    let subMenu = document.getElementById("factorySubMenuMd");
-    subMenu.classList.toggle("subMenuDisplay");
-  };
 
   return (
     <header className={`header ${menuOpenedClass}`}>
@@ -233,7 +203,6 @@ function HeaderDAO(props) {
         className="navbar navbar-expand-xl header-nav"
         style={{
           width: "100%",
-          // padding: "0.5rem 1rem",
           backgroundColor: "#e7ebf0",
         }}
       >
@@ -285,13 +254,6 @@ function HeaderDAO(props) {
           >
             {isLoading ? (
               <div className="text-center">
-                {/* <Spinner
-                  animation="border"
-                  role="status"
-                  style={{ color: "e84646" }}
-                >
-                  <span className="sr-only">Loading...</span>
-                </Spinner> */}
               </div>
             ) : localStorage.getItem("Address") &&
               localStorage.getItem("Address") !== null &&
@@ -316,8 +278,6 @@ function HeaderDAO(props) {
               <li
                 onClick={() => {
                   handleShowWalletModal();
-                  // async () => {
-                  // await connectToSigner();
                 }}
                 className="login-link "
               >
@@ -333,8 +293,6 @@ function HeaderDAO(props) {
               <li
                 onClick={() => {
                   handleShowWalletModal();
-                  // async () => {
-                  // await connectToSigner()
                 }}
                 className="login-link "
               >
@@ -366,7 +324,6 @@ function HeaderDAO(props) {
                 </a>
               ) : null}
             </li>
-            {/* Menu */}
             <li>
               <Link
                 to="/dao-home"
@@ -467,9 +424,6 @@ function HeaderDAO(props) {
                     () => {
                       handleShowWalletModal();
                     }
-                    //   async () => {
-                    //   await connectToSigner();
-                    // }
                   }
                 >
                   Connect to Wallet
@@ -487,8 +441,6 @@ function HeaderDAO(props) {
                   className="fade-in-text"
                   onClick={() => {
                     handleShowWalletModal();
-                    // async () => {
-                    // await connectToSigner()
                   }}
                 >
                   Connect to Wallet

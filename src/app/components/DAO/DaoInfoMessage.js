@@ -1,12 +1,7 @@
-// REACT
+import Typography from "@mui/material/Typography";
 import React from "react";
 import { Link } from "react-router-dom";
-// BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
-// MATERIAL UI
-import Typography from "@mui/material/Typography";
-
-// COMPONENT FUNCTION
 const DaoInfoMessage = () => {
   return (
     <>

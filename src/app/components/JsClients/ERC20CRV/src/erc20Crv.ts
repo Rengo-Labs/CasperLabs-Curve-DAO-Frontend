@@ -1,28 +1,18 @@
+import { concat } from "@ethersproject/bytes";
+import * as blake from "blakejs";
 import {
-  CasperClient,
-  CLPublicKey,
-  CLAccountHash,
+  CasperClient, CLAccountHash,
   CLByteArray,
   CLKey,
   CLString,
   CLTypeBuilder,
   CLValue,
   CLValueBuilder,
-  CLValueParsers,
-  CLMap,
-  DeployUtil,
-  EventName,
-  EventStream,
-  Keys,
-  RuntimeArgs,
-  CLOption,
-  ToBytes,
+  CLValueParsers, DeployUtil, Keys,
+  RuntimeArgs
 } from "casper-js-sdk";
-import { Some, None } from "ts-results";
-import * as blake from "blakejs";
-import { concat } from "@ethersproject/bytes";
+import { IPendingDeploy, RecipientType } from "./types";
 import * as utils from "./utils";
-import { RecipientType, IPendingDeploy } from "./types";
 import { createRecipientAddress } from "./utils";
 
 class ERC20CRVClient {

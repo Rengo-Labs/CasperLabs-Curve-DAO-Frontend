@@ -1,27 +1,14 @@
-// REACT
 import React, { useState } from "react";
-// CUSTOM STYLING
 import "../../assets/css/curveButton.css";
 import "../../assets/css/common.css";
 import "../../assets/css/curveAllPools.css";
-// BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
-// COMPONENTS
 import PoolsTabs from "../Tabs/PoolsTabs";
-// MATERIAL UI
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { StyledEngineProvider } from "@mui/styled-engine";
-
-// Content
-
-// COMPONENT FUNCTION
 const AllPools = () => {
-  //States
-
-  //Event Handlers
-
   const searchTable = (term) => {
     let filter = term.target.value.toUpperCase();
     let TableBody = document.getElementById("curveTableBody");

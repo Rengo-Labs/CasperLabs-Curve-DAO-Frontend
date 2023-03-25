@@ -2,12 +2,6 @@ import { Keys } from "casper-js-sdk";
 import { NODE_ADDRESS } from "../../../blockchain/NodeAddress/NodeAddress";
 import { MINTERClient} from "../src";
 
-// const {
-//   NODE_ADDRESS,
-//   EVENT_STREAM_ADDRESS,
-//   CHAIN_NAME,
-//   MINTER_CONTRACT
-// } = process.env;
 
 const minter = new MINTERClient(
   NODE_ADDRESS,

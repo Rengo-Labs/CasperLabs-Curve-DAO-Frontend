@@ -19,10 +19,8 @@ export function formatDateToHuman(timestamp) {
 }
 
 export function formatDateToHumanChart(timestamp) {
-    //convert to UTC
-    // console.log("timestamp value...", timestamp);
+
     let d = new Date(timestamp / 1 + (new Date()).getTimezoneOffset() * 60 * 1000)
-    // console.log("ddddd", d);
     return [
         d.getFullYear(),
         `${(d.getMonth() + 1).toString().padStart(2, '0')}`,

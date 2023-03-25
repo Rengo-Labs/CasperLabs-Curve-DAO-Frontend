@@ -1,13 +1,9 @@
 import React from "react";
-// BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
-// CUSTOM CSS
 import "../../assets/css/style.css";
 import "../../assets/css/common.css";
-// FONT AWESOME
 import "../../assets/plugins/fontawesome/css/all.min.css";
 import "../../assets/plugins/fontawesome/css/fontawesome.min.css";
-// COMPONENTS
 
 function VoteInfoProgressBar(props) {
   return (

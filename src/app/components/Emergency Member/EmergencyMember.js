@@ -1,14 +1,9 @@
-// REACT
 import React, { useState } from "react";
-// CUSTOM STYLING
 import "../../assets/css/SwapUsingCurvePools.css";
 import "../../assets/css/curveButton.css";
 import "../../assets/css/common.css";
-//BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
-//COMPONENTS
 import CreateVoteModal from "../Modals/CreateVoteModal";
-// MATERIAL UI
 import TextField from "@mui/material/TextField";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -19,21 +14,13 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-// COMPONENT FUNCTION
 const EmergencyMember = () => {
-  // States
   const [mintOpen, setMintOpen] = useState(false);
   const [burnOpen, setBurnOpen] = useState(false);
-
-  //   Event Handlers
   const handleMintOpen = () => setMintOpen(true);
   const handleMintClose = () => setMintOpen(false);
   const handleBurnOpen = () => setBurnOpen(true);
   const handleBurnClose = () => setBurnOpen(false);
-  
-
-  //STYLES
-
   return (
     <>
       <div className="curve-container">

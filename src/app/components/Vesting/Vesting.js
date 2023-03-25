@@ -1,46 +1,31 @@
-// REACT
-import React, { useState } from "react";
-// CUSTOM STYLING
-import "../../assets/css/SwapUsingCurvePools.css";
-import "../../assets/css/curveButton.css";
-import "../../assets/css/common.css";
-//BOOTSTRAP
-import "../../assets/css/bootstrap.min.css";
-//COMPONENTS
-import CreateVoteModal from "../Modals/CreateVoteModal";
-import { useSnackbar } from "notistack";
-import {
-  CREATE_VOTE_CONTRACT_HASH,
-} from "../blockchain/Hashes/ContractHashes";
-import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
-// MATERIAL UI
-import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 import Switch from "@mui/material/Switch";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import {
-  CasperServiceByJsonRPC,
-  CLByteArray,
-  CLPublicKey,
-  CLValueBuilder,
-  RuntimeArgs,
+  CLPublicKey, RuntimeArgs
 } from "casper-js-sdk";
-import { CHAINS, SUPPORTED_NETWORKS } from "../Headers/HeaderDAO";
-import { NODE_ADDRESS } from "../blockchain/NodeAddress/NodeAddress";
-import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
-import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
-import { getDeploy } from "../blockchain/GetDeploy/GetDeploy";
-import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
-import SigningModal from "../Modals/SigningModal";
+import { useSnackbar } from "notistack";
+import React, { useState } from "react";
+import "../../assets/css/bootstrap.min.css";
+import "../../assets/css/common.css";
+import "../../assets/css/curveButton.css";
+import "../../assets/css/SwapUsingCurvePools.css";
+import {
+  CREATE_VOTE_CONTRACT_HASH
+} from "../blockchain/Hashes/ContractHashes";
 import { GAUGE_CONTROLLER_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
-
-// COMPONENT FUNCTION
+import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
+import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
+import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
+import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
+import CreateVoteModal from "../Modals/CreateVoteModal";
+import SigningModal from "../Modals/SigningModal";
 const Vesting = () => {
-  // States
   const [commitOpen, setCommitOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [gaugeOpen, setGaugeOpen] = useState(false);
@@ -64,8 +49,6 @@ const Vesting = () => {
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
   );
-
-  //   Event Handlers
   const handleCommitOpen = () => {
     setCommitOpen(true);
     setEntryPoint("fund_individual");
@@ -115,9 +98,6 @@ const Vesting = () => {
     ) {
       const publicKey = CLPublicKey.fromHex(publicKeyHex);
       const paymentAmount = 5000000000;
-      // const addrByteArray = new CLByteArray(
-      //   Uint8Array.from(Buffer.from(addr, "hex"))
-      // );
       try {
         let gaugeControllerpackageHash = Uint8Array.from(
           Buffer.from(GAUGE_CONTROLLER_PACKAGE_HASH, "hex")
@@ -133,7 +113,6 @@ const Vesting = () => {
           Buffer.from(CREATE_VOTE_CONTRACT_HASH, "hex")
         );
         let entryPoint = "create_vote";
-        // Set contract installation deploy (unsigned).
         let deploy = await makeDeploy(
           publicKey,
           contractHashAsByteArray,

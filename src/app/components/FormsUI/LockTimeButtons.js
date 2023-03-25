@@ -1,15 +1,9 @@
-// REACT
-import React, { useState, useEffect } from "react";
-// CUSTOM STYLING
+import { Button, Grid } from "@mui/material";
+import { useField, useFormikContext } from "formik";
+import React, { useEffect, useState } from "react";
+import "../../assets/css/bootstrap.min.css";
 import "../../assets/css/SelectInput.css";
 import "../../assets/css/ThemeHoverButton.css";
-// BOOTSTRAP
-import "../../assets/css/bootstrap.min.css";
-// MATERIAL UI
-import { StyledEngineProvider } from "@mui/styled-engine";
-// FORMIK
-import { useField, useFormikContext } from "formik";
-import { Avatar, MenuItem, TextField, Button, Grid } from "@mui/material";
 
 const LockTimeButtons = ({
   icon,
@@ -22,12 +16,8 @@ const LockTimeButtons = ({
   setStartingVPower,
   lockAmount
 }) => {
-  // States
   const { setFieldValue } = useFormikContext() ?? {};
   const [field, meta] = useField(name);
-  console.log("Name: ", name);
-  console.log("Field: ", field);
-  console.log("Meta: ", meta);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [buttonValue, setbuttonValue] = useState();
 
@@ -45,7 +35,6 @@ const LockTimeButtons = ({
 
   useEffect(() => {
     if (buttonValue === 1) {
-      //   console.log("evt.target", evt.target.value);
       console.log(
         "currentDate.getTime()",
         formatDate(new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000))
@@ -152,31 +141,14 @@ const LockTimeButtons = ({
 
   return (
     <>
-      {/* <div className="btnWrapper my-4 text-center d-flex justify-content-between mr-5"> */}
       <Grid container columnSpacing={1} rowSpacing={1} 
         style={{ 
-          // marginTop: "5px",
-          
-          // fontFamily: 'Poppins',
-          // fontStyle: 'normal',
-          // fontWeight: '500',
-          // fontSize: '12px',
-          // lineHeight: '18px', 
         }} 
         >
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
           <button
-            // style={{width: '37px',
-            // height: '125px'}}
+
             className="hoverButton"
-            // sx={{fontSize:"0.6rem",minWidth:"90px"}}
-            // variant="outlined"
-            // size="small"
-            // style={{
-            //   backgroundColor: "#1976d2",
-            //   color: "white",
-            //   // minWidth: "75%",
-            // }}
             onClick={() => {
               setbuttonValue(1);
             }}
@@ -185,20 +157,9 @@ const LockTimeButtons = ({
             
           </button>
         </Grid>
-
-        {/* </div> */}
-
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
           <button
             className="hoverButton"
-            // sx={{fontSize:"0.6rem",minWidth:"90px"}}
-            // variant="outlined"
-            // size="small"
-            // style={{
-            //   backgroundColor: "#1976d2",
-            //   color: "white",
-            //   // minWidth: "75%",
-            // }}
             onClick={() => {
               setbuttonValue(2);
             }}
@@ -209,14 +170,6 @@ const LockTimeButtons = ({
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
           <button
             className="hoverButton"
-            // sx={{fontSize:"0.6rem",minWidth:"90px"}}
-            // variant="outlined"
-            // size="small"
-            // style={{
-            //   backgroundColor: "#1976d2",
-            //   color: "white",
-            //   minWidth: "75%",
-            // }}
             onClick={() => {
               setbuttonValue(3);
             }}
@@ -227,14 +180,6 @@ const LockTimeButtons = ({
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
           <button
             className="hoverButton"
-            // sx={{fontSize:"0.6rem",minWidth:"90px"}}
-            // variant="outlined"
-            // size="small"
-            // style={{
-            //   backgroundColor: "#1976d2",
-            //   color: "white",
-            //   minWidth: "75%",
-            // }}
             onClick={() => {
               setbuttonValue(4);
             }}
@@ -245,14 +190,6 @@ const LockTimeButtons = ({
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
           <button
             className="hoverButton"
-            // sx={{fontSize:"0.6rem",minWidth:"90px"}}
-            // variant="outlined"
-            // size="small"
-            // style={{
-            //   backgroundColor: "#1976d2",
-            //   color: "white",
-            //   minWidth: "75%",
-            // }}
             onClick={() => {
               setbuttonValue(5);
             }}
@@ -263,14 +200,6 @@ const LockTimeButtons = ({
         <Grid item xl={4} lg={4} md={6} sm={6} xs={12}>
           <button
             className="hoverButton"
-            // sx={{fontSize:"0.6rem",minWidth:"90px"}}
-            // variant="outlined"
-            // size="small"
-            // style={{
-            //   backgroundColor: "#1976d2",
-            //   color: "white",
-            //   minWidth: "75%",
-            // }}
             onClick={() => {
               setbuttonValue(6);
               console.log("setbuttonValue", buttonValue);
@@ -280,8 +209,6 @@ const LockTimeButtons = ({
           </button>
         </Grid>
       </Grid>
-
-      {/* </div> */}
     </>
   );
 };

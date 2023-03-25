@@ -1,21 +1,7 @@
-// REACT
-import React, { useEffect, useState } from "react";
-// CUSTOM STYLING
-import "../../../../assets/css/common.css";
-import "../../../../assets/css/curveButton.css";
-import "../../../../assets/css/style.css";
-// BOOTSTRAP
-import "../../../../assets/css/bootstrap.min.css";
-//GraphQl
 import { gql, useQuery } from "@apollo/client";
-// COMPONENTS
-import TextInput from "../../../../components/FormsUI/TextInput";
-import HeaderDAO from "../../../../components/Headers/HeaderDAO";
-import HomeBanner from "../Home/HomeBanner";
-// MATERIAL UI
+import { Autocomplete, Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
-import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
@@ -27,46 +13,24 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Autocomplete, t } from "@mui/material";
+import axios from "axios";
 import { CLPublicKey } from "casper-js-sdk";
 import { Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
+import "../../../../assets/css/bootstrap.min.css";
+import "../../../../assets/css/common.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/style.css";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../../../../components/blockchain/Hashes/ContractHashes";
+import TextInput from "../../../../components/FormsUI/TextInput";
+import HeaderDAO from "../../../../components/Headers/HeaderDAO";
 import * as LiquidityGaugeV3 from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
-import { balanceOf, totalSupply } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
-import { Button } from "@mui/material";
-import axios from "axios";
+import { balanceOf } from "../../../../components/JsClients/VOTINGESCROW/QueryHelper/functions";
+import HomeBanner from "../Home/HomeBanner";
 
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 
-// CONTENT
-const selectGaugeOptionsJSON =
-  '[{"name": "CSPR","icon": "https://cryptologos.cc/logos/casper-cspr-logo.svg?v=023"},{"name": "wBTC","icon": "https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.svg?v=023"},{"name": "USDT","icon": "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=023"}]';
-
-let selectGaugeOptions = [];
-try {
-  selectGaugeOptions = JSON.parse(selectGaugeOptionsJSON);
-} catch (expecption) {
-  console.log("an exception has occured!", expecption);
-}
-
-console.log(
-  "mapping icons in main",
-  selectGaugeOptions.map((item) => item.icon)
-);
-
-const lockTimeOptionsJSON =
-  '[{"name": "1 Week"},{"name": "1 Month"},{"name": "3 Months"},{"name": "6 Months"},{"name": "1 Year"},{"name": "4 Years"}]';
-let lockTimeOptions = [];
-try {
-  lockTimeOptions = JSON.parse(lockTimeOptionsJSON);
-  console.log("Lock time options after converting it into json parse.", lockTimeOptions);
-} catch (exception) {
-  console.log("an exception has occured!", exception);
-}
 
 const year = 365 * 24 * 60 * 60;
 
@@ -78,9 +42,7 @@ query{
 }
 `;
 
-// COMPONENT FUNCTION
 const Calc = () => {
-  // States
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
@@ -91,14 +53,12 @@ const Calc = () => {
   const [boostGauge, setBoostGauge] = useState();
   const [gaugeDeposits, setGaugeDeposits] = useState(0);
   const [gaugeBalance, setGaugeBalance] = useState(0);
-  // always provide gaugeDeposits as a number or convert it into a number
   const [poolLiquidity, setPoolLiquidity] = useState(0);
   const [date, setDate] = useState();
   const [dateDisplay, setDateDisplay] = useState();
   const [myCRV, setMyCRV] = useState("0.00");
   const [gaugeVeCRV, setGaugeVeCRV] = useState(false);
   const [myveCRV, setMyveCRV] = useState(0);
-  // const [gaugeLock, setGaugeLock] = useState(1 + " Year");
   const [gaugeLock, setGaugeLock] = useState("");
   const [gaugeLockValue, setGaugeLockValue] = useState(0);
   const [lockPeriod, setLockPeriod] = useState(year);
@@ -146,19 +106,14 @@ const Calc = () => {
   const [selectedGauge, setSelectedGauge] = useState();
   const [minveCRV, setMinveCRV] = useState(0);
   const [totalveCRV, setTotalveCRV] = useState(0);
-
   const [calcTrigger, setCalcTrigger] = useState(Date.now())
-  // Content
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-
-  //Queries
   const gaugesByAddress = useQuery(GAUGES_BY_ADDRESS);
   console.log("this is gaugesByAddress: ", gaugesByAddress.data?.getGaugesByAddress);
   console.log("this is error of gaugesByAddress: ", gaugesByAddress.error);
 
   useEffect(() => {
-    // resolveData();
     if (gaugesByAddress) {
       console.log("gaugesByAddress.data?.getGaugesByAddress", gaugesByAddress.data?.getGaugesByAddress);
       setGauges(gaugesByAddress.data?.getGaugesByAddress)
@@ -171,14 +126,11 @@ const Calc = () => {
     SelectGaugeCalc: "",
     CalcDeposits: "",
     PoolLiquidityCalc: "",
-    // MyCRVCalc: "",
     GaugeLockPeriodCalc: "",
     TotalveCRVCalc: "",
   };
   const validationSchema = Yup.object().shape({
   });
-
-  // Handlers
   const handleGaugeChange = (event) => {
     setBoostGauge(event.target.value);
     if (selectedGauge !== "0000000000000000000000000000000000000000" && selectedGauge !== "" && selectedGauge !== null && selectedGauge !== undefined) {
@@ -188,14 +140,10 @@ const Calc = () => {
 
   const handleVeCRVSelect = () => {
     setGaugeVeCRV(true);
-    //calling this function because of watchers
-    // calcTrigger();
   };
 
   const handleCRVSelect = () => {
     setGaugeVeCRV(false);
-    //calling this function because of watchers
-    // calcTrigger();
   };
 
   const handleGaugeLockChange = (event, newValue) => {
@@ -218,28 +166,22 @@ const Calc = () => {
         let _myCRV = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
         console.log("_myCRV", parseFloat(_myCRV));
         setMyCRV(parseFloat(_myCRV) / 1e9);
-
         let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
-
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
-            // handle the response
             console.log("response of balanceOf:...", response.data.balances);
             setMyveCRV(response.data.balances[0] / 1e9)
           })
           .catch(error => {
-            // handle the error
             console.log("error of balances:...", error);
           });
 
-        axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, data)
+        axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
-            // handle the response
             console.log("response of totalSupply:...", response.data.totalSupplies);
             setTotalveCRV(response.data.totalSupplies[0] / 1e9)
           })
           .catch(error => {
-            // handle the error
             console.log("error of totalSupply:...", error);
           });
       }
@@ -266,22 +208,14 @@ const Calc = () => {
 
     let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
 
-    let votingBalance = await axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data);
-    let totalSupply = await axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`);
-    console.log("totalSupply", totalSupply);
-    console.log("votingBalance", votingBalance);
+    let votingBalance = await axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data);
+    let totalSupply = await axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`);
     let votingTotal = totalSupply.data.totalSupplies[0] - votingBalance.data.balances[0]
     let periodTimestamp = parseFloat(await LiquidityGaugeV3.periodTimestamp(selectedGauge, 0));
     let workingBalances = parseFloat(await LiquidityGaugeV3.workingBalances(selectedGauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
     let workingSupply = parseFloat(await LiquidityGaugeV3.workingSupply(selectedGauge));
     let totalSupplyGauge = parseFloat(await LiquidityGaugeV3.totalSupplyGauge(selectedGauge));
-
-    console.log("workingBalance", workingBalances);
-    console.log("workingSupply", workingSupply);
-    console.log("totalSupplyGauge", totalSupplyGauge);
     let L = poolLiquidity * 1e9 + l
-    console.log("L", L);
-    console.log("newVotingBalance", newVotingBalance);
     if (newVotingBalance) {
       votingBalance = newVotingBalance * 1e9
     }
@@ -297,7 +231,6 @@ const Calc = () => {
     console.log("veCRV", veCRV);
     if (minveCRV)
       veCRV = minveCRV
-    // else if(this.entertype == 0)
     else if (gaugeVeCRV)
       veCRV = myveCRV
     lim += L * veCRV / totalveCRV * (100 - TOKENLESS_PRODUCTION) / 100
@@ -309,18 +242,12 @@ const Calc = () => {
     let noboostLim = TOKENLESS_PRODUCTION * l / 100
     let noboostSupply = workingSupply + noboostLim - oldBal
     let _workingSupply = workingSupply + lim - oldBal
-
-    // let limCalc = (l * TOKENLESS_PRODUCTION / 100 + (this.poolLiquidity + l) * veCRV / this.totalveCRV * (100 - TOKENLESS_PRODUCTION) / 100)
-    // boost = limCalc
-    // 		/ (working_supply + limCalc - old_bal)
     console.log("allVariables", (lim / _workingSupply) / (noboostLim / noboostSupply));
 
     return [_workingSupply, (lim / _workingSupply) / (noboostLim / noboostSupply)]
   }
 
   const updateGaugeBalanceAndPoolLiquidity = async () => {
-    // setGaugeDeposits(await balanceOf(boostGauge.address, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
-    //  setPoolLiquidity(await totalSupplyGauge(selectedGauge));
     let liqidityGaugeBalance = await LiquidityGaugeV3.balanceOf(selectedGauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
     console.log("liqidityGaugeBalance", parseFloat(liqidityGaugeBalance));
     let gaugeTotalSupply = await LiquidityGaugeV3.totalSupplyGauge(selectedGauge)
@@ -339,7 +266,6 @@ const Calc = () => {
   };
 
   const calc = async () => {
-    // IMPLEMENTING SAME AS IN CURVE REPO
     let [_, boost] = await updateLiquidityLimit();
     console.log("boost here", boost);
     setBoost(boost);
@@ -378,7 +304,6 @@ const Calc = () => {
         >
           <HomeBanner />
         </div>
-        {/* Main Content */}
         <div className="container-fluid">
           <div className="curve-container">
             <div className="curve-content-banks">
@@ -386,16 +311,9 @@ const Calc = () => {
                 <div className="row no-gutters justify-content-center">
                   <div className="curve-content-wrapper mui-form-width col-12 col-lg-12 col-xl-10">
                     <div className="row no-gutters justify-content-center">
-                      {/* Voting Power */}
-                      <Box
-                        sx={{
-                          width: "100%",
-                        }}
-                        className="mt-4"
-                      >
+                      <Box sx={{ width: "100%", }} className="mt-4">
                         <Paper elevation={4}>
                           <div className="py-5 px-4">
-                            {/* Heading */}
                             <div className="row no-gutters">
                               <div className="col-12 text-center py-3">
                                 <Typography
@@ -409,16 +327,13 @@ const Calc = () => {
                                 </Typography>
                               </div>
                             </div>
-                            {/* Formik */}
                             <Formik
                               initialValues={initialValues}
                               validationSchema={validationSchema}
                               onSubmit={onSubmitCalc}
                             >
                               <Form>
-                                {/* Gauge Selector & Deposit */}
                                 <div className="row no-gutters">
-                                  {/* Gauge Selector */}
                                   <div className="col-12 col-md-6">
 
                                     <Autocomplete
@@ -432,10 +347,8 @@ const Calc = () => {
                                         handleGaugeChange(event);
                                       }}
                                       value={boostGauge}
-                                    // style={{backgroundColor: "grey"}}
                                     />
                                   </div>
-                                  {/* Deposit */}
                                   <div className="col-12 col-md-6 mt-3 mt-md-0">
                                     <Box
                                       component="form"
@@ -451,8 +364,6 @@ const Calc = () => {
                                         type="number"
                                         onChange={(e) => {
                                           setGaugeBalance(e.target.value);
-                                          //calling this function because of watchers
-                                          // calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -468,9 +379,7 @@ const Calc = () => {
                                     </div>
                                   </div>
                                 </div>
-                                {/* Pool Liquidity & CRV */}
                                 <div className="row no-gutters mt-3">
-                                  {/* Pool Liquidity */}
                                   <div className="col-12 col-md-6">
                                     <Box
                                       component="form"
@@ -485,8 +394,6 @@ const Calc = () => {
                                         value={poolLiquidity}
                                         onChange={(e) => {
                                           setPoolLiquidity(e.target.value);
-                                          //calling this function because of watchers
-                                          // calcTrigger();
                                         }}
                                       />
                                     </Box>
@@ -528,15 +435,12 @@ const Calc = () => {
                                             } else {
                                               setMyveCRV(0)
                                             }
-                                            //calling this function because of watchers
-                                            // calcTrigger();
                                           }}
                                         />
                                       </Box>
                                     )}
                                     <div className="col-12">
                                       <FormControl>
-                                        {/* <FormLabel id="gauge-crv-radio">Gender</FormLabel> */}
                                         <RadioGroup
                                           row
                                           aria-labelledby="gauge-crv-radio"
@@ -559,10 +463,8 @@ const Calc = () => {
                                       </FormControl>
                                     </div>
                                   </div>
-
                                 </div>
                                 <div className="row no-gutters mt-2 ">
-                                  {/* Total veCRV */}
                                   <div className="col-6 mt-3 align-items-center">
                                     <div className="">
                                       <Box
@@ -578,8 +480,6 @@ const Calc = () => {
                                           value={totalveCRV}
                                           onChange={(e) => {
                                             setTotalveCRV(e.target.value);
-                                            //calling this function because of watchers
-                                            // calcTrigger();
                                           }}
                                         />
                                       </Box>
@@ -590,11 +490,9 @@ const Calc = () => {
                                     <div className="col-6">
                                       <div className="mt-4">
                                         <div className="">
-
                                           <Autocomplete
                                             options={lockPeriods}
                                             getOptionLabel={(option) => {
-                                              // console.log("Option: ", option);
                                               return option.name
                                             }}
                                             clearOnEscape
@@ -609,7 +507,6 @@ const Calc = () => {
                                               console.log("New Value: ", newValue);
                                               handleGaugeLockChange(event, newValue);
                                             }}
-                                          // value={lockPeriodName}
                                           />
                                         </div>
                                       </div>
@@ -620,7 +517,6 @@ const Calc = () => {
                                             component={"div"}
                                           >
                                             <span className="font-weight-bold">
-                                              {/* {lockedVeCRV}&nbsp; */}
                                               {veCRV()}&nbsp;
                                             </span>
                                             veCRV
@@ -631,9 +527,6 @@ const Calc = () => {
 
                                   ) : null}
                                 </div>
-
-                                {/* Button */}
-
                                 <div className="row no-gutters justify-content-center">
 
                                   <div className="col-12 col-md-6 text-center my-3">
@@ -714,7 +607,6 @@ const Calc = () => {
                                     <Autocomplete
                                       options={lockPeriods}
                                       getOptionLabel={(option) => {
-                                        // console.log("Option: ", option);
                                         return option.name
                                       }}
                                       clearOnEscape
@@ -729,7 +621,6 @@ const Calc = () => {
                                         console.log("New Value: ", newValue);
                                         handleGaugeLockChangeMinted(event, newValue);
                                       }}
-                                    // value={lockPeriodName}
                                     />
 
                                   </div>

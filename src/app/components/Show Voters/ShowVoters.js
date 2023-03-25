@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-// BOOTSTRAP
 import "../../assets/css/bootstrap.min.css";
-// CUSTOM CSS
 import "../../assets/css/style.css";
 import "../../assets/css/common.css";
-// ICONS
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-// MATERIAL UI
 import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Table from "@mui/material/Table";
@@ -18,14 +14,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import VoteDistributionModal from "../Modals/VoteDistributionModal";
-// COMPONENTS
-// GRAPHQL
 import { useQuery, gql } from "@apollo/client";
 import { Spinner } from "react-bootstrap";
-// UTILS
 import { shortenAddress } from "../../assets/js/helpers";
 
-// QUERIES
 const getCasts = gql`
   query castById($id: String) {
     castsByVoteId(voteId: $id) {
@@ -51,8 +43,6 @@ function ShowVoters(props) {
 
   console.log("id from props: ", props.voteId);
   let id = props.voteId;
-
-  // Queries
   const { error, loading, data } = useQuery(getCasts, {
     variables: {
       id,
@@ -73,15 +63,11 @@ function ShowVoters(props) {
       console.log("this is promise error: ", error);
     }
   };
-
-  //   Event Handlers
   const handleOpenFor = () => setOpenFor(true);
   const handleCloseFor = () => setOpenFor(false);
   const handleOpenAgainst = () => setOpenAgainst(true);
   const handleCloseAgainst = () => setOpenAgainst(false);
-
-  // Computations
-  let rows = [];
+let rows = [];
   let rowsAgainst = [];
   let optionsForLabels = [];
   let optionsAgainstLabels = [];
@@ -117,8 +103,6 @@ function ShowVoters(props) {
     optionsForLabels = rows.map((row) => row.address);
     optionsForSeries = rows.map((row) => row.stakes);
   }
-
-  // Side Effects
   useEffect(() => {
     resolveData();
   }, [data]);
@@ -160,7 +144,6 @@ function ShowVoters(props) {
             click={handleCloseFor}
             title="For Vote Distribution"
             labels={optionsForLabels}
-            // series={optionsForSeries}
             series={[30, 70]}
             options={rows}
           />
@@ -283,7 +266,6 @@ function ShowVoters(props) {
             click={handleCloseAgainst}
             title="Against Vote Distribution"
             labels={optionsAgainstLabels}
-            // series={optionsAgainstSeries}
             series={[60, 40]}
             options={rowsAgainst}
           />

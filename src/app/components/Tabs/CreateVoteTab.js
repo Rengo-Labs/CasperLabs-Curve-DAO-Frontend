@@ -1,22 +1,16 @@
-// REACT
-import React, { useState } from "react";
-// CUSTOM CSS
-import "../../assets/css/curveTabs.css";
-// BOOTSTRAP
-import "../../assets/css/bootstrap.min.css";
-// COMPONENTS
-import GaugeVote from "../Gauge/GaugeVote";
-// import EmergencyMember from "../Emergency Member/EmergencyMember";
-import VotingEscrow from "../VotingEscrow/VotingEscrow";
-import Vesting from "../Vesting/Vesting";
-import PoolVote from "../Pools/PoolVote";
-// MATERIAL UI
-import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import Typography from "@mui/material/Typography";
 import { StyledEngineProvider } from "@mui/styled-engine";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import "../../assets/css/bootstrap.min.css";
+import "../../assets/css/curveTabs.css";
+import GaugeVote from "../Gauge/GaugeVote";
+import PoolVote from "../Pools/PoolVote";
+import Vesting from "../Vesting/Vesting";
+import VotingEscrow from "../VotingEscrow/VotingEscrow";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -50,13 +44,9 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-
-// COMPONENT FUNCTION
 const CreateVoteTabs = () => {
-  // States
   const [value, setValue] = useState(0);
 
-  //   Handlers
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -88,10 +78,6 @@ const CreateVoteTabs = () => {
                   label="Gauge Vote"
                   {...a11yProps(1)}
                 />
-                {/* <Tab
-                  label="Emergency Member"
-                  {...a11yProps(2)}
-                /> */}
                 <Tab
                   label="Voting Escrow"
                   {...a11yProps(2)}
@@ -109,14 +95,11 @@ const CreateVoteTabs = () => {
           <TabPanel value={value} index={1} className="MuiBox-root">
             <GaugeVote />
           </TabPanel>
-          {/* <TabPanel value={value} index={2} className="MuiBox-root">
-            <EmergencyMember/>
-          </TabPanel> */}
           <TabPanel value={value} index={2} className="MuiBox-root">
-            <VotingEscrow/>
+            <VotingEscrow />
           </TabPanel>
           <TabPanel value={value} index={3} className="MuiBox-root">
-            <Vesting/>
+            <Vesting />
           </TabPanel>
         </Box>
       </div>

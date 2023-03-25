@@ -11,13 +11,13 @@ import * as serviceWorker from "./serviceWorker";
 const client = new ApolloClient({
 uri: process.env.REACT_APP_BACKEND_SERVER_ADDRESS
 ? process.env.REACT_APP_BACKEND_SERVER_ADDRESS
-: "http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/graphql",
+: "http://localhost:3000/graphql",
 cache: new InMemoryCache(),
 });
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_SERVER_ADDRESS
 ? process.env.REACT_APP_BACKEND_SERVER_ADDRESS
-: "http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/";
+: "http://localhost:3000/";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

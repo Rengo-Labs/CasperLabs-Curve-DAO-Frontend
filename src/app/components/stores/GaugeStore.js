@@ -1,36 +1,18 @@
 import { CLPublicKey } from "casper-js-sdk";
 import {
-  ERC20_CRV_CONTRACT_HASH,
-  LIQUIDITY_GAUGE_V3_CONTRACT_HASH,
-  GAUGE_CONTROLLER_CONTRACT_HASH,
-  MINTER_CONTRACT_HASH,
+  GAUGE_CONTROLLER_CONTRACT_HASH
 } from "../blockchain/Hashes/ContractHashes";
-import {
-  gauges,
-  n_gauges,
-  gaugeTypes,
-  gauge_type_names,
-} from "../JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
 
-import { getMinted } from "../JsClients/MINTER/minterFunctionsForBackend/functions";
-import {
-  balanceOf,
-  totalSupply,
-} from "../JsClients/VOTINGESCROW/QueryHelper/functions";
-import { UserCheckpointMakeDeploy } from "../MakeDeployFunctions/UserCheckpointMakeDeploy";
-import * as liquidityGaugeV3Functions from "../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
+import axios from "axios";
 import * as gaugeControllerFunctions from "../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
 import * as LiquidityGaugeV3 from "../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
-import * as minterFunctions from "../../components/JsClients/MINTER/minterFunctionsForBackend/functions";
-import axios from "axios";
+import { UserCheckpointMakeDeploy } from "../MakeDeployFunctions/UserCheckpointMakeDeploy";
 
 export let state = {
   gaugeController: null,
   n_gauges: 0,
   pools: [],
   mypools: [],
-
-  // FOR CONTRACT INSTANCES
   votingEscrow: null,
   minter: null,
 
@@ -118,10 +100,8 @@ export async function getState(activePublicKey, setNGauges, setTotalBalance, set
   let res1 = await axios.post("/getContractHashesAgainstPackageHashes", params1)
   console.log("res1", res1);
   let poolsContractHashes = res1.data.contractHashes
-  // console.log("poolsContractHashes", poolsContractHashes);
   let decodedBalances = []
   await Promise.all(pools.map(async (pool, i) => {
-    // console.log("poolpoolpool", pool);
     let poolBalance = await LiquidityGaugeV3.balanceOf(
       poolsContractHashes[i],
       Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")
@@ -140,7 +120,6 @@ export async function getState(activePublicKey, setNGauges, setTotalBalance, set
       GAUGE_CONTROLLER_CONTRACT_HASH,
       pool.gauge
     );
-    // console.log("gaugeType", gaugeType - 1);
     pool.type = gaugeType - 1
     gaugeTypes.push(gaugeType - 1)
 
@@ -149,7 +128,6 @@ export async function getState(activePublicKey, setNGauges, setTotalBalance, set
       GAUGE_CONTROLLER_CONTRACT_HASH,
       pool.type.toString()
     );
-    // console.log("typeName", typeName);
     pool.typeName = typeName;
     typeNames.push(typeName)
   }));
@@ -192,16 +170,19 @@ export async function getState(activePublicKey, setNGauges, setTotalBalance, set
   console.log("CRVprice", CRVprice);
 
   let decodedWeights = [];
-  await Promise.all(mypools.map(async (pool) => {
+
+  await Promise.all(decodedGauges.map(async (gauge) => {
     let gaugeParams = {
-      address: pool.gauge
+      address: gauge.gauge,
+      timestamps:["1678924800000"],
     }
     console.log("gaugeParams", gaugeParams);
-    console.log(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`);
-    let res2 = await axios.post(`http://curvegraphqlbackendfinalized-env.eba-fn2jdxgn.us-east-1.elasticbeanstalk.com/gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`, gaugeParams)
+    let res2 = await axios.post(`/gaugeController/gaugeRelativeWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`, gaugeParams)
     console.log("res2", res2);
-    pool.gaugeRelativeWeight = res2.data.gaugeRelativeWeights[0] ? res2.data.gaugeRelativeWeights[0] / 1e9 : 0;
-    decodedWeights.push({ ...pool, gaugeRelativeWeight: res2.data.gaugeRelativeWeights[0] ? res2.data.gaugeRelativeWeights[0] / 1e9 : 0 })
+    Object.values(pools).find(pool => pool.gauge == gauge.gauge).gaugeRelativeWeight=res2.data.gaugeRelativeWeights[0] ? res2.data.gaugeRelativeWeights[0] : 0;
+    Object.values(mypools).find(pool => pool.gauge == gauge.gauge).gaugeRelativeWeight=res2.data.gaugeRelativeWeights[0] ? res2.data.gaugeRelativeWeights[0] : 0;
+    gauge.gaugeRelativeWeight = res2.data.gaugeRelativeWeights[0] ? res2.data.gaugeRelativeWeights[0] : 0;
+    decodedWeights.push({ ...gauge, gaugeRelativeWeight: res2.data.gaugeRelativeWeights[0] ? res2.data.gaugeRelativeWeights[0] : 0 })
   }));
   console.log("decodedWeights,", decodedWeights);
   let gaugeRates = []
@@ -246,20 +227,6 @@ export async function getState(activePublicKey, setNGauges, setTotalBalance, set
     pool.currentWorkingBalance = workingBalance;
     workingBalances.push(parseFloat(workingBalance))
 
-    // decodedWeights.map((w, i) => {
-    //   mypools[i].workingSupply = workingSupplies[i];
-    //   mypools[i].originalSupply = totalSupplies[i];
-    //   mypools[i].currentWorkingBalance = workingBalances[i];
-    //   mypools[i].name = names[i];
-    //   mypools[i].claimableTokens = 1000;
-
-    //   // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
-    //   // let rate = (gaugeRates[i] * w[1] * 31536000 / workingSupplies[i] * 0.4) / virtual_price
-    //   // let apy = rate * CRVprice * 100
-    //   // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
-    //   console.log("wwwwww", w);
-    //   mypools[i].gaugeRelativeWeight = w;
-    // })
 
   }));
   await Promise.all(pools.map(async (pool) => {
@@ -290,20 +257,6 @@ export async function getState(activePublicKey, setNGauges, setTotalBalance, set
     pool.name = name;
     names.push({ ...pool, name: name })
 
-    // decodedWeights.map((w, i) => {
-    //   mypools[i].workingSupply = workingSupplies[i];
-    //   mypools[i].originalSupply = totalSupplies[i];
-    //   mypools[i].currentWorkingBalance = workingBalances[i];
-    //   mypools[i].name = names[i];
-    //   mypools[i].claimableTokens = 1000;
-
-    //   // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
-    //   // let rate = (gaugeRates[i] * w[1] * 31536000 / workingSupplies[i] * 0.4) / virtual_price
-    //   // let apy = rate * CRVprice * 100
-    //   // WE DON"T HAVE VIRTUAL PRICE THATS WHY WE CANT DO THIS PART
-    //   console.log("wwwwww", w);
-    //   mypools[i].gaugeRelativeWeight = w;
-    // })
 
   }));
   console.log("workingBalances", workingBalances);
@@ -332,34 +285,8 @@ export async function applyBoostAll(
   enqueueSnackbar
 ) {
   for (let gauge of state.gaugesNeedApply) {
-    // let gaugeContract = new contract.web3.eth.Contract(daoabis.liquiditygauge_abi, gauge)
-    // let gas = 600000
-    // try {
-    // 	gas = await gaugeContract.methods.user_checkpoint(contract.default_account).estimateGas()
-    // }
-    // catch(err) {
-    // 	console.error(err)
-    // } we are not suppose to estimate gas in casper
-
     let poolName = state.mypools.find((pool) => pool.gauge == gauge).name;
-    // var { dismiss } = notifyNotification(`Please confirm applying boost for gauge ${poolName}`) //use enqueue snackbar here
 
-    // await new Promise((resolve, reject) => {
-    // 	gaugeContract.methods.user_checkpoint(contract.default_account).send({
-    // 		from: contract.default_account,
-    // 		gasPrice: gasPriceStore.state.gasPriceWei,
-    // 		gas: gas,
-    // 	})
-    // 	.once('transactionHash', hash => {
-    // 		dismiss()
-    // 		notifyHandler(hash)
-    // 		resolve()
-    // 	})
-    // 	.on('error', err => {
-    // 		console.error(err)
-    // 		reject(err)
-    // 	})
-    // })
 
     UserCheckpointMakeDeploy(activePublicKey, setOpenSigning, enqueueSnackbar);
   }

@@ -1,19 +1,12 @@
-// REACT
-import React from "react";
-// CUSTOM STYLES
-import "../../assets/css/common.css";
-import "../../assets/css/curveButton.css";
-import "../../assets/css/style.css";
-// BOOTSTRAP
-import "../../assets/css/bootstrap.min.css";
-// COMPONENTS
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from "@mui/material/Typography";
-import { fontSize } from "@mui/system";
+import React from "react";
+import "../../assets/css/bootstrap.min.css";
+import "../../assets/css/common.css";
+import "../../assets/css/curveButton.css";
+import "../../assets/css/style.css";
 
-
-// COMPONENT FUNCTION
 const VotingPowerDaoCards = ({title,value,src}) => {
   return (
     <>

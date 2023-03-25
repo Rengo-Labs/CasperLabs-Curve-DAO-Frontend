@@ -1,5 +1,4 @@
 import { CLByteArray, CLPublicKey, CLValueBuilder, RuntimeArgs } from "casper-js-sdk";
-import { makeERC20CRVDeployWasm } from "../../components/blockchain/MakeDeploy/MakeDeployWasm";
 import { putdeploy } from "../../components/blockchain/PutDeploy/PutDeploy";
 import { createRecipientAddress } from "../../components/blockchain/RecipientAddress/RecipientAddress";
 import { signdeploywithcaspersigner } from "../../components/blockchain/SignDeploy/SignDeploy";
@@ -11,11 +10,7 @@ window.Buffer = window.Buffer || require("buffer").Buffer;
 
 
 export async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleCloseAllowance, setOpenSigning, enqueueSnackbar, getAllowance) {
-  // CREATING REQUIRED VARIABLES
   let activePublicKey = localStorage.getItem("Address")
-
-
-  // handleShowSigning();
   setOpenSigning(true);
   const publicKeyHex = activePublicKey;
   if (
@@ -40,7 +35,6 @@ export async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleClose
       amount: CLValueBuilder.u256(convertToStr(amount)),
     });
     let entryPoint = "increase_allowance";
-    // Set contract installation deploy (unsigned).
     let deploy = await makeDeploy(
       publicKey,
       contractHashAsByteArray,
@@ -55,31 +49,24 @@ export async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleClose
         publicKeyHex
       );
       let result = await putdeploy(signedDeploy, enqueueSnackbar);
-      //   let result = await putdeploy(signedDeploy, providerRef.current.enqueueSnackbar);
       console.log("result", result);
 
       handleCloseAllowance();
-      // handleCloseSigning();
       setOpenSigning(false);
       getAllowance();
 
       let variant = "success";
       enqueueSnackbar("Allowance Increased Successfully", { variant })
-      // providerRef.current.enqueueSnackbar("Allowance Increased Successfully", { variant })
 
     } catch {
-      // handleCloseSigning();
       setOpenSigning(false);
       let variant = "Error";
       enqueueSnackbar("Unable to Increase Allowance", { variant })
-      // providerRef.current.enqueueSnackbar("Unable to Increase Allowance", { variant })
     }
   } else {
-    //   handleCloseSigning();
     setOpenSigning(false);
     let variant = "error";
     enqueueSnackbar("Connect to Wallet Please", { variant });
-    //   providerRef.current.enqueueSnackbar("Connect to Wallet Please", { variant });
   }
 
 }

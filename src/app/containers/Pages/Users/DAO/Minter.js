@@ -1,37 +1,22 @@
-// REACT
-import React, { useEffect, useState } from "react";
-// CUSTOM STYLING
-import "../../../../assets/css/common.css";
-import "../../../../assets/css/curveButton.css";
-import "../../../../assets/css/style.css";
-// BOOTSTRAP
-import "../../../../assets/css/bootstrap.min.css";
-// COMPONENTS
-import { default as GaugeAllocationChart, default as GaugeRelativeWeight } from "../../../../components/Charts/GaugeRelativeWeight";
-import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
-import HeaderDAO from "../../../../components/Headers/HeaderDAO";
-import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
-import HomeBanner from "../Home/HomeBanner";
-// MATERIAL UI
+import { gql } from "@apollo/client";
+import { Alert, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, Grid } from "@mui/material";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-// CASPER SDK
-import { gql } from "@apollo/client";
-import { Alert, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, Grid } from "@mui/material";
-import { default as Axios, default as axios } from "axios";
-import { CLPublicKey } from "casper-js-sdk";
 import { useSnackbar } from 'notistack';
-import { ERC20_CRV_CONTRACT_HASH, GAUGE_CONTROLLER_CONTRACT_HASH } from '../../../../components/blockchain/Hashes/ContractHashes';
-import { VOTING_ESCROW_PACKAGE_HASH } from "../../../../components/blockchain/Hashes/PackageHashes";
-import { gauges } from "../../../../components/Charts/ChartHelper/ChartHelpers";
+import React, { useEffect, useState } from "react";
+import "../../../../assets/css/bootstrap.min.css";
+import "../../../../assets/css/common.css";
+import "../../../../assets/css/curveButton.css";
+import "../../../../assets/css/style.css";
+import { default as GaugeAllocationChart, default as GaugeRelativeWeight } from "../../../../components/Charts/GaugeRelativeWeight";
+import VotingPowerActionables from "../../../../components/DAO/VotingPowerActionables";
 import Gauge from "../../../../components/Gauge/Gauge";
-import * as gaugeControllerFunctions from "../../../../components/JsClients/GAUGECONTROLLER/gaugeControllerFunctionsForBackend/functions";
-import * as LiquidityGaugeV3 from "../../../../components/JsClients/LIQUIDITYGAUGEV3/liquidityGaugeV3FunctionsForBackend/functions";
+import HeaderDAO from "../../../../components/Headers/HeaderDAO";
+import VotingPowerDAO from "../../../../components/Stats/VotingPowerDAO";
 import { getState } from "../../../../components/stores/GaugeStore";
-// import {math} from 'mathjs'
-// CONTENT
+import HomeBanner from "../Home/HomeBanner";
 
 const GAUGES_BY_ADDRESS = gql`
   query getGaugesByAddress($gaugeAddress: String) {
@@ -45,17 +30,13 @@ const GAUGES_BY_ADDRESS = gql`
   }
 `;
 
-
-// COMPONENT FUNCTION
 const Minter = () => {
-  // States
   const { enqueueSnackbar } = useSnackbar();
   const [totalClaimableCRV, setTotalClaimableCRV] = useState(0);
   const [totalMintedCRV, setTotalMintedCRV] = useState(0);
   const [userLockedCRVBalance, setUserLockedCRVBalance] = useState(0);
   const [gaugeRelativeWeightChart, setGaugeRelativeWeightChart] = useState([]);
   const [gaugeAllocationChart, setGaugeAllocationChart] = useState([]);
-  // const [myGauges, setMyGauges] = useState([]);
   const [claimFromGauges, setClaimFromGauges] = useState([]);
   const [gaugesNeedApply, setGaugesNeedApply] = useState([]);
   const [nGauges, setNGauges] = useState(0);
@@ -85,60 +66,24 @@ const Minter = () => {
 
   console.log("gauge pools", pools);
 
-  //Gauge Relative Weight Chart
-  //dummy data of gauge_relative_weight
-
-  // const _gauges = useQuery(GAUGES_BY_ADDRESS, {
-  //   variables: {
-  //     gaugeAddress: "",
-  //   },
-  // });
-
-  // console.log("Error from gauges by address: ", _gauges.error);
-  // console.log("Data from gauges by address: ", _gauges.data?.getGaugesByAddress);
-
   useEffect(() => {
-    let gauge_relative_weight = 1000000000;
-    console.log("poolspoolspoolspoolspoolspoolspoolspoolspoolspoolspoolspools", pools);
-    let gaugeSum = Object.values(pools).reduce((a, b) => +a + +gauge_relative_weight, 0)
-    console.log("gaugeSum...", gaugeSum);
-    let piegauges = Object.values(pools).map(v => ({ name: v.name, y: gauge_relative_weight / gaugeSum, value: gauge_relative_weight / 1e9 }))
-    console.log("piegauges...", piegauges);
+    let gaugeSum = Object.values(pools).reduce((a, b) => +a + +b.gaugeRelativeWeight, 0)
+    let piegauges = Object.values(pools).map(v => ({ name: v.name, y: v.gaugeRelativeWeight / gaugeSum, value: v.gaugeRelativeWeight / 1e9 }))
     if (piegauges.length > 0) {
       let highest = piegauges.map(data => data.y).indexOf(Math.max(...piegauges.map(data => data.y)))
-      console.log("highest", highest);
       piegauges[highest].sliced = true;
       piegauges[highest].selected = true;
-      console.log("piegauges final...", piegauges);
       setGaugeRelativeWeightChart(piegauges);
     }
-    // if (!_gauges.error) {
-    //   setMyGauges(_gauges.data?.getGaugesByAddress)
-    // }
 
   }, [pools])
 
   useEffect(() => {
-
-    console.log("mypoolsmypoolsmypoolsmypoolsmypoolsmypoolsmypools", myPools);
     let total = Object.values(myPools).reduce((a, b) => +a + +b.gaugeBalance, 0)
-    console.log("total", total);
     let piedata = Object.values(myPools).map(v => ({ name: v.name, y: v.gaugeBalance / total, value: v.gaugeBalance / 1e9 }))
-    // let piedata = myPools.map(pool => {
-    //   let balance = pool.gaugeBalance
-    //   return {
-    //     name: pool.name,
-    //     y: total == 0 ? 0 : balance / total
-    //   }
-    // })
-    console.log("piedatapiedata", piedata);
     piedata = piedata.filter(pool => pool.y > 0)
-    console.log("piedata", piedata);
 
     setGaugeAllocationChart(piedata);
-    // if (!_gauges.error) {
-    //   setMyGauges(_gauges.data?.getGaugesByAddress)
-    // }
 
   }, [myPools])
 
@@ -154,9 +99,6 @@ const Minter = () => {
     await getState(activePublicKey, setNGauges, setTotalBalance, setTotalGaugeBalance, setMyPools, setPools, setBoosts)
     setIsLoading(false)
   }
- 
-
-
 
   function totalClaimableCRVFormat() {
     return (totalClaimableCRV / 1e9).toFixed(2)
@@ -199,7 +141,6 @@ const Minter = () => {
         >
           <HomeBanner />
         </div>
-        {/* Main Content */}
         <div className="container-fluid">
           <div className="curve-container">
             <div className="curve-content-banks">
@@ -256,10 +197,6 @@ const Minter = () => {
                           </Paper>
                         </Box>
                       )}
-
-
-
-                      {/* Voting Power */}
                       <Box
                         sx={{
                           width: "100%",
@@ -279,28 +216,21 @@ const Minter = () => {
                                 Voting Power in DAO
                               </Typography>
                             </div>
-                            {/* Voting Power Stats */}
                             <div className="col-12">
                               <VotingPowerDAO />
                               <div className="w-100 my-3">
                                 <Divider />
                               </div>
                             </div>
-                            {/* Voting Power Actionables */}
                             <div className="col-12 mt-4">
                               <VotingPowerActionables userLockedCRVBalance={userLockedCRVBalance} />
                               <div className="w-100 my-3">
                                 {/* <Divider /> */}
                               </div>
                             </div>
-                            {/* Info Message */}
-                            {/* <div className="col-12 mt-4">
-                              <DaoInfoMessage />
-                            </div> */}
                           </div>
                         </Paper>
                       </Box>
-                      {/* GAUGE */}
                       {totalClaimableCRV > 0 || totalMintedCRV > 0 ? (
                         <Box
                           sx={{
@@ -366,9 +296,7 @@ const Minter = () => {
                             </div>
                           </Paper>
                         </Box>
-
                       ) : (null)}
-
                       {!isLoading ? (myPools.map((gauge) => (
                         <Gauge gauge={gauge} fetchData={fetchData} />
 
@@ -382,7 +310,6 @@ const Minter = () => {
             </div>
           </div>
         </div>
-        {/* <SigningModal show={openSigning} /> */}
       </div >
     </>
   );
