@@ -7,7 +7,7 @@ import { checkpoint } from "../checkpoint/Checkpoint";
 import { convertToStr } from "../ConvertToString/ConvertToString";
 
 
-export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData, gaugesQueryData) {
+export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData) {
   if (lockedAmount == 0) {
     let variant = "Error";
     enqueueSnackbar("Locked amount cannot be Zero", { variant })
@@ -52,11 +52,9 @@ export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSign
         );
         let result = await putdeploy(signedDeploy, enqueueSnackbar);
         console.log("result", result);
-        checkpoint(true, setOpenSigning, enqueueSnackbar, gaugesQueryData);
         setOpenSigning(false);
         let variant = "success";
         enqueueSnackbar("Funds Locked Successfully", { variant })
-
         fetchBalanceData();
         fetchUserData();
       } catch {

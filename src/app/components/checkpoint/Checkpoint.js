@@ -64,22 +64,22 @@ export async function checkpoint(doCheckpoint = false, setOpenSigning, enqueueSn
     let lastCheckpointed = gaugesQueryData.gauges;
     if (lastCheckpointed.length) {
         lastCheckpointed.forEach(v => {
-            console.log(v.gauge, "GAUGE")
-            console.log(gaugesNeedCheckpoint[v.gauge.toLowerCase()].toString(), "BALANCE NOW")
-            console.log(v.originalBalance.toString(), "ORIGINAL BALANCE")
+            console.log("GAUGE", v.gauge)
+            console.log("BALANCE NOW", gaugesNeedCheckpoint[v.gauge.toLowerCase()].toString())
+            console.log("ORIGINAL BALANCE", v.originalBalance.toString())
             gaugesNeedCheckpoint[v.gauge.toLowerCase()] = gaugesNeedCheckpoint[v.gauge.toLowerCase()] - (v.originalBalance)
         })
     }
     console.log("lastCheckpointed", lastCheckpointed);
-    gaugesNeedCheckpoint = Object.keys(gaugesNeedCheckpoint).filter(k => gaugesNeedCheckpoint[k] > 0);
     console.log("gaugesNeedCheckpoint", gaugesNeedCheckpoint);
+    gaugesNeedCheckpoint = Object.keys(gaugesNeedCheckpoint).filter(k => gaugesNeedCheckpoint[k] > 0);
+
 
 
     if (doCheckpoint) {
         for (let gauge of gaugesNeedCheckpoint) {
-            let gaugeAddress = Object.keys(gaugeBalances).find(address => address.gauge.toLowerCase() == gauge.toLowerCase()); //this gauge address is used for notification only
-
-            await UserCheckpointMakeDeploy(gaugeAddress, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"), setOpenSigning, enqueueSnackbar);
+            console.log("gauge:", gauge);
+            await UserCheckpointMakeDeploy(gauge, activePublicKey, setOpenSigning, enqueueSnackbar);
         }
     }
 }

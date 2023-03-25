@@ -53,11 +53,9 @@ export async function increaseAmountMakeDeploy(lockedAmount, setOpenSigning, enq
         );
         let result = await putdeploy(signedDeploy, enqueueSnackbar);
         console.log("result", result);
-        checkpoint(true, setOpenSigning, enqueueSnackbar, gaugesQueryData);
         setOpenSigning(false);
         let variant = "success";
         enqueueSnackbar("Amount Increased Successfully", { variant })
-
         fetchBalanceData();
         fetchUserData();
       } catch {

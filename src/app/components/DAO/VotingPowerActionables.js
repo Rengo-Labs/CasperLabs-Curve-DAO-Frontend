@@ -18,6 +18,7 @@ import * as helpers from "../../assets/js/helpers";
 import { AppContext } from "../../containers/App/Application";
 import { ERC20_CRV_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { VOTING_ESCROW_PACKAGE_HASH } from "../blockchain/Hashes/PackageHashes";
+import { checkpoint } from "../checkpoint/Checkpoint";
 import DateTimePicker from "../FormsUI/DateTimePicker";
 import LockTimeButtons from "../FormsUI/LockTimeButtons";
 import TextInput from "../FormsUI/TextInput";
@@ -252,8 +253,9 @@ const VotingPowerActionables = (props) => {
                     <Button
                       className="hoverButtonGlobal"
                       size="large"
-                      onClick={() => {
-                        withdrawMakeDeploy(setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData,);
+                      onClick={async () => {
+                        await withdrawMakeDeploy(setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData);
+                        await checkpoint(true, setOpenSigning, enqueueSnackbar, gaugesQueryData);
                       }}
                     >
                       Withdraw
@@ -397,9 +399,9 @@ const VotingPowerActionables = (props) => {
                       <button
                         className="w-25 hoverButtonGlobal votingActionablesButton increaseTime"
                         size="large"
-                        onClick={() => {
-                          console.log("Action Taken");
-                          createLockMakeDeploy(lockAmount, date, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData,gaugesQueryData);
+                        onClick={async () => {
+                          await createLockMakeDeploy(lockAmount, date, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData);
+                          await checkpoint(true, setOpenSigning, enqueueSnackbar, gaugesQueryData);
                         }}
                       >
                         <p className="increaseAllowanceButton">
@@ -502,9 +504,9 @@ const VotingPowerActionables = (props) => {
                       ) : (
                         <button
                           className="w-25 hoverButtonGlobal votingActionablesButton"
-                          onClick={() => {
-                            console.log("Action Taken");
-                            increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData,gaugesQueryData);
+                          onClick={async () => {
+                            await increaseAmountMakeDeploy(lockAmount, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData);
+                            await checkpoint(true, setOpenSigning, enqueueSnackbar, gaugesQueryData);
                           }}
                         >
                           <p className="increaseAllowanceButton">
@@ -565,9 +567,9 @@ const VotingPowerActionables = (props) => {
                   <div className=" my-4  ">
                     <button
                       className="w-25 hoverButtonGlobal votingActionablesButton increaseTime"
-                      onClick={() => {
-                        console.log("Action Taken");
-                        increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData,gaugesQueryData);
+                      onClick={async () => {
+                        await increaseUnlockTimeMakeDeploy(date, setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData);
+                        await checkpoint(true, setOpenSigning, enqueueSnackbar, gaugesQueryData);
                       }}
                     >
                       <p className="increaseAllowanceButton">

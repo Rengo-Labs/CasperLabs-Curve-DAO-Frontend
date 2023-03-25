@@ -136,9 +136,9 @@ export const vote_user_power = async (contractHash: string, owner: string) => {
 
 export const last_user_vote = async (contractHash: string, owner: string, spender: string) => {
 
-  console.log("contractHash:",contractHash);
-  console.log("owner",owner);
-  console.log("spender",spender);
+  // console.log("contractHash:",contractHash);
+  // console.log("owner",owner);
+  // console.log("spender",spender);
 
   
   // We don't need hash- prefix so i'm removing it

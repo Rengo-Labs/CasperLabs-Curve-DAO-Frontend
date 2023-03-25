@@ -408,7 +408,7 @@ class GaugeControllerClient {
   }
 
   public async gauge_types_(owner: string) {
-    console.log("owner", owner);
+    // console.log("owner", owner);
 
     try {
       const result = await utils.contractDictionaryGetter(
@@ -580,7 +580,7 @@ class GaugeControllerClient {
 
   public async gauges(owner: string) {
     try {
-      console.log("owner", owner);
+      // console.log("owner", owner);
 
       const result = await utils.contractDictionaryGetter(
         this.nodeAddress,
