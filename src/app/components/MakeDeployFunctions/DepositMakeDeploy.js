@@ -14,6 +14,7 @@ export async function depositMakeDeploy(depositAmount, gaugeContractHash, setOpe
     return
   }
   setOpenSigning(true);
+  // get the address of user logged in
   const publicKeyHex = localStorage.getItem("Address");
   if (
     publicKeyHex !== null &&

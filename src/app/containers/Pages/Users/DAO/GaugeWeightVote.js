@@ -130,7 +130,7 @@ const WEEK = 604800000
 const WEIGHT_VOTE_DELAY = 10 * 86400000
 const GaugeWeightVote = () => {
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
@@ -195,6 +195,7 @@ const GaugeWeightVote = () => {
   console.log("Error from gauges by address: ", gauges.error);
   console.log("Data from gauges by address: ", gauges.data?.getGaugesByAddress);
   console.log("activePublicKeyactivePublicKey", activePublicKey);
+  // gauge votes by user
   const gaugeVotesByUser = useQuery(GAUGE_VOTES_BY_USER, {
     variables: {
       user: activePublicKey && activePublicKey != null && activePublicKey != 'null' && activePublicKey != undefined ? Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") : "",
@@ -202,6 +203,7 @@ const GaugeWeightVote = () => {
   });
   console.log("this is data of gauge weight: ", gaugeVotesByUser.data);
   console.log("this is error of gauge weight: ", gaugeVotesByUser.error);
+  // gauge votes by gauge
   const gaugeVotesByGauge = useQuery(GAUGE_VOTES_BY_USER, {
     variables: {
       user: gaugeAddress ? gaugeAddress : "",
@@ -210,7 +212,7 @@ const GaugeWeightVote = () => {
 
   console.log("this is data of gaugeVotesByGauge: ", gaugeAddress, gaugeVotesByGauge.data);
   console.log("this is error of gaugeVotesByGauge: ", gaugeVotesByGauge.error);
-
+  // gauge votes by timestamp
   const gaugeVotesByTime = useQuery(GAUGE_VOTES_BY_TIME, {
     variables: {
       time: "1598486400000",
@@ -220,6 +222,7 @@ const GaugeWeightVote = () => {
   console.log("this is error of gauge weight: ", gaugeVotesByTime.error);
 
   let voteUserPower = async () => {
+    // power used by user in gauge controller
     let _powerUsed = await gaugeControllerFunctions.vote_user_power(
       GAUGE_CONTROLLER_CONTRACT_HASH,
       Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex")
@@ -236,7 +239,7 @@ const GaugeWeightVote = () => {
       activePublicKey !== undefined
     ) {
       let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
-
+      // balance of user in voting escrow
       axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
         .then(response => {
           console.log("votingEscrow response of balance of:...", response.data);
@@ -245,7 +248,7 @@ const GaugeWeightVote = () => {
         .catch(error => {
           console.log("error of balance of:...", error);
         });
-
+      // locked end in voting escrow from backend
       axios.post(`/votingEscrow/lockedEnd/${VOTING_ESCROW_CONTRACT_HASH}`, data)
         .then(response => {
           console.log("votingEscrow response of lockedEnd:...", response.data);
@@ -258,6 +261,7 @@ const GaugeWeightVote = () => {
       voteUserPower()
       console.log("(Number((Date.now()) + WEEK) / WEEK)", (Math.floor(((Date.now()) + WEEK) / WEEK)));
       setNextTime(Math.floor(((Date.now()) + WEEK) / WEEK) * WEEK)
+      // get total supply of voting escrow
       axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`).then(response => {
         console.log("votingEscrow response of totalSupply:...", response.data);
         setTotalveCRV(response.data.totalSupplies[0])
@@ -274,27 +278,30 @@ const GaugeWeightVote = () => {
   async function getVotes() {
 
     let query = "type1"
+    // if user logged in
     if (activePublicKey) {
       query = "type2"
     }
+    // if user slected any gauge
     if (gaugeAddress) {
       query = "type3"
     }
     let _votes;
     if (query === 'type1') {
+      // returns gauge votes by time
       _votes = { gaugeVotes: gaugeVotesByTime.data?.gaugeVotesByTime }
     } else if (query === 'type2') {
+      // returns gauge votes by user and time
       let data = gaugeVotesByUser.data?.gaugeVotesByUser;
       let data1 = gaugeVotesByTime.data?.gaugeVotesByTime;
       _votes = { myVotes: data, gaugeVotes: data1 };
-
-
     } else {
+      // returns gauge votes by user
       _votes = { gaugeVotes: gaugeVotesByGauge.data?.gaugeVotesByUser }
     }
     setVotes(_votes)
 
-
+    // total ve CRV votes
     let _totalveCRVvote = _votes.gaugeVotes.filter((v, i, a) => a.findIndex(t => (t.user === v.user)) === i).reduce((a, b) => +a + +b.veCRV, 0)
     setTotalveCRVvote(_totalveCRVvote)
     let _myVoteWeightUsed;
@@ -324,6 +331,7 @@ const GaugeWeightVote = () => {
 
   const handleTableGraph = (vote) => {
     let total_weight = vote?.total_weight;
+    // set data for graph
     let future_weights = vote.gaugeWeights?.map((v, i) => ({
       id: gauges.data?.getGaugesByAddress[gauges.data?.getGaugesByAddress?.findIndex(t => (t.id === v.gauge))].name, name: gauges.data?.getGaugesByAddress[gauges.data?.getGaugesByAddress?.findIndex(t => (t.id === v.gauge))].name, y: (+v.weight * 1e9 * 100) / total_weight
     }))
@@ -344,10 +352,12 @@ const GaugeWeightVote = () => {
   const handleWeightGaugeChange = async (event) => {
     console.log("event.target.value", event.target.value);
     setSelectedGauge(event.target.value.address);
+    // will get last user vote on selceted gauge and the user who logged in
     let lastUserVote = await gaugeControllerFunctions.last_user_vote(GAUGE_CONTROLLER_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex"), event.target.value.address);
     console.log("lastUserVote", lastUserVote);
     setLastUserVote(lastUserVote);
     console.log("{ owner: Buffer.from(CLPubdress }", { owner: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex"), spender: event.target.value.address });
+    // will get vote User Slopes on selceted gauge and the user who logged in
     let response = await axios
       .post(
         `/gaugeController/voteUserSlopes/${GAUGE_CONTROLLER_CONTRACT_HASH}`,
@@ -387,20 +397,27 @@ const GaugeWeightVote = () => {
       publicKeyHex !== "null" &&
       publicKeyHex !== undefined
     ) {
+      // convert public key into hex
       const publicKey = CLPublicKey.fromHex(publicKeyHex);
+      // payment amount for transaction
       const paymentAmount = 150000000000;
+      // convert into byte array
       const gaugeByteArray = new CLByteArray(
         Uint8Array.from(Buffer.from(gauge, "hex"))
       );
       try {
+        // runtime arguments for calling the blockchain method
         const runtimeArgs = RuntimeArgs.fromMap({
           gauge_addr: createRecipientAddress(gaugeByteArray),
           user_weight: CLValueBuilder.u256(weight * 100),
         });
+        // convert gauge controller contract hash in to byte array
         let contractHashAsByteArray = Uint8Array.from(
           Buffer.from(GAUGE_CONTROLLER_CONTRACT_HASH, "hex")
         );
+        // entry point 
         let entryPoint = "vote_for_gauge_weights";
+        // make deploy form calling blockchain method
         let deploy = await makeDeploy(
           publicKey,
           contractHashAsByteArray,
@@ -438,8 +455,11 @@ const GaugeWeightVote = () => {
   }
 
   const getWeight = async () => {
+    // get time wight of selected gauge from gauge controller
     let t = gaugeControllerFunctions.time_weight(selectedGauge);
     let pt;
+    // get points wight of selected gauge and time we got from time_weight from gauge controller
+
     await axios
       .post(`/gaugeController/pointsWeight/${GAUGE_CONTROLLER_CONTRACT_HASH}`, {
         owner: selectedGauge,
@@ -472,35 +492,44 @@ const GaugeWeightVote = () => {
     return pt.bias;
   };
 
+  // this will return true if the lock expires soon 
   function lockExpiresSoon() {
     console.log("nextTime", nextTime);
     console.log("lockEnd", lockEnd);
     return lockEnd <= nextTime
   }
+  // to check if user voted ofenly without the Delay
   function voteIsOften() {
     return lastUserVote > 0 && lastUserVote + WEIGHT_VOTE_DELAY < Date.now() / 1000
   }
+  // format of balace of user
   function balanceFormat() {
     return (balance / 1e9).toFixed(2)
   }
+  // to check if weight added by user is invalid or not
   function isInvalidWeight() {
     return weight <= 0 || weight > 100 || isNaN(weight)
   }
+  // will return allocated weight
   function weightAllocated() {
     return (weight / 100 * balance / 1e9).toFixed(8)
   }
+  // will return if user used too much voting power
   function tooMuchPower() {
     if (oldSlope === null) return false
     let _powerUsed = powerUsed / 1
     _powerUsed = _powerUsed + (weight * 100) - oldSlope.power
     return !(_powerUsed >= 0 && _powerUsed <= 10000)
   }
+  // format for total ve CRV vote
   function totalveCRVvoteFormat() {
     return helpers.formatNumber(totalveCRVvote / 1e9)
   }
+  // format for total ve CRV
   function totalveCRVFormat() {
     return helpers.formatNumber(totalveCRV / 1e9)
   }
+  // this will show users vote who logged in
   function showMyVotes() {
     setShowVotes(true);
     getVotes();

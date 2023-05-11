@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import VotingPowerDaoCards from "../Cards/VotingPowerDaoCards";
 import { depositMakeDeploy } from "../MakeDeployFunctions/DepositMakeDeploy";
 import { increaseAndDecreaseAllowanceGaugeMakeDeploy } from "../MakeDeployFunctions/IncreaseAndDecreaseAllowanceGauge";
+import { mintMakeDeploy } from "../MakeDeployFunctions/MintMakeDeploy";
 import { withdrawGaugeMakeDeploy } from "../MakeDeployFunctions/WithdrawGaugeMakeDeploy";
 import SigningModal from "../Modals/SigningModal";
 
@@ -33,6 +34,7 @@ const Gauge = (props) => {
   const [allowance, setAllowance] = useState(0);
   const [value, setValue] = useState(100);
   const [withdrawValue, setWithdrawValue] = useState(100);
+  // get the address of user logged in
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
@@ -50,9 +52,10 @@ const Gauge = (props) => {
     return (props.gauge.gaugeBalance / 1e9).toFixed(2)
   }
   function claimableTokensFormat() {
-    return (claimableTokens / 1e9).toFixed(2)
+    return (claimableTokens / 1e9)
   }
 
+  console.log("claimableTokensclaimableTokens", claimableTokens);
   // function claimableRewardFormat() {
   //   return this.toFixed(claimableReward / 1e9)
   // }
@@ -114,20 +117,7 @@ const Gauge = (props) => {
   }, [activePublicKey]);
 
   const getAllowance = () => {
-    let allowanceParam = {
-      contractHash: swapToken,
-      owner: CLPublicKey.fromHex(activePublicKey).toAccountHashStr().slice(13),
-      spender: props.gauge.gauge,
-    };
-    console.log("allowanceParam0", allowanceParam);
-    axios
-      .get(
-        `/allowanceagainstownerandspender/${swapToken}/${CLPublicKey.fromHex(
-          activePublicKey
-        )
-          .toAccountHashStr()
-          .slice(13)}/${props.gauge.gauge}`
-      )
+    axios.get(`/allowanceagainstownerandspender/${swapToken}/${CLPublicKey.fromHex(activePublicKey).toAccountHashStr().slice(13)}/${props.gauge.gauge}`)
       .then((res) => {
         console.log("allowanceagainstownerandspender", res);
         console.log(res.data);
@@ -252,14 +242,32 @@ const Gauge = (props) => {
             </Grid>
           </Grid>
         ) : (null)}
-        <div className="py-5 px-4" style={{ margin: "20px" }}>
-          {props.gauge.claimableToken ? (
-            <div>
-              <Button>
-                Claim {props.gauge.claimableToken ? props.claimableToken : null}{" "}
-                CRV
-              </Button>
-            </div>
+        <div className="" style={{ margin: "20px" }}>
+          {claimableTokens > 0 ? (
+            <Grid
+              className="mt-2 mb-5"
+              container
+              spacing={2}
+              justify="center"
+              columnSpacing={3}
+              rowSpacing={3}
+            >
+
+              <Grid item xs={12} sm={12} md={4}>
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={4}>
+                <div style={{ padding: "50px" }}>
+                  <Button onClick={async () => {
+                    await mintMakeDeploy(props.gauge.gauge, setOpenSigning, enqueueSnackbar,)
+                  }} className="hoverButtonGlobal votingActionablesButton" fullWidth>
+                    Claim {claimableTokensFormat()} CRV
+                  </Button>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={12} md={4}>
+              </Grid>
+            </Grid>
           ) : null}
           <div className="w-100 my-3">
             <Divider />

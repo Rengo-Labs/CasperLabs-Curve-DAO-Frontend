@@ -47,7 +47,7 @@ const GET_VOTE = gql`
 function VoteInfo(props) {
   // eslint-disable-next-line
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
@@ -108,12 +108,14 @@ function VoteInfo(props) {
     voteByIdObj = { ...voteObj };
     console.log("vote created on: ", voteByIdObj.support);
   }
+  // format start date
   const startDateFormat = () => {
     if (voteById !== undefined) {
       return formatDateToHuman(voteByIdObj.voteCreatedOn);
     }
     return "";
   };
+  // format end date
   const endDateFormat = () => {
     return formatDateToHuman(voteByIdObj.voteCreatedOn + VOTE_TIME);
   };

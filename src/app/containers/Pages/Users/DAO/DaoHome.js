@@ -24,7 +24,7 @@ const DaoHome = () => {
   const [, setTotalGaugeBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   const [gaugeRelativeWeightChart, setGaugeRelativeWeightChart] = useState([]);
   let [selectedWallet, setSelectedWallet] = useState(
@@ -33,7 +33,9 @@ const DaoHome = () => {
   const [userLockedCRVBalance, setUserLockedCRVBalance] = useState(0);
 
   useEffect(() => {
+    //calculate the total gauge relative weight
     let gaugeSum = Object.values(pools).reduce((a, b) => +a + +b.gaugeRelativeWeight, 0)
+    //distribute the percentages for pie chart for gauge relative weight against the pool
     let piegauges = Object.values(pools).map(v => ({ name: v.name, y: v.gaugeRelativeWeight / gaugeSum, value: v.gaugeRelativeWeight / 1e9 }))
     if (piegauges.length > 0) {
       let highest = piegauges.map(data => data.y).indexOf(Math.max(...piegauges.map(data => data.y)))
@@ -52,6 +54,7 @@ const DaoHome = () => {
 
   const fetchData = async () => {
     setIsLoading(true)
+    // this will call the get state method and set all the values got form blockchain and backend after formatting
     await getState(activePublicKey, setNGauges, setTotalBalance, setTotalGaugeBalance, setMyPools, setPools, setBoosts)
     setIsLoading(false)
   }

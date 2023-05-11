@@ -65,7 +65,7 @@ const USER_BALANCES_BY_UNLOCK_TIME = gql`
 const Locker = () => {
   const { enqueueSnackbar } = useSnackbar();
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
@@ -90,12 +90,14 @@ const Locker = () => {
     setOpenSigning(true);
   };
   let { id } = useParams();
+  //fetch dao power from backend
   const { error, loading, data } = useQuery(DAO_POWER, { fetchPolicy: "no-cache", });
   console.log("this is data of voting escrow gql: ", data);
   console.log("this is error of voting escrow gql: ", error);
   if (data !== undefined) {
     console.log("daopowerrrr:", data.daoPowersByBlock);
   }
+  //fetch Voting power from backend
   const voting = useQuery(VOTING_POWER, {
     fetchPolicy: "no-cache",
     variables: {
@@ -110,7 +112,7 @@ const Locker = () => {
   if (voting.data !== undefined) {
     console.log("votingPOWER", voting?.data);
   }
-
+  //fetch Voting Escrow from backend
   const votingEscrow = useQuery(VOTING_ESCROW, { fetchPolicy: "no-cache", });
   console.log("this is chartData: ", votingEscrow);
   console.log("this is error of voting escrow gql: ", votingEscrow.error);
@@ -118,12 +120,14 @@ const Locker = () => {
   if (votingEscrow.data !== undefined) {
     console.log("votingEscrows", votingEscrow.data.votingEscrows);
   }
+  //fetch User Balances by unlock time from backend
   const userBalances = useQuery(USER_BALANCES_BY_UNLOCK_TIME);
   console.log("this is unlockTime: ", userBalances.data);
   console.log("this is error of unlock time gql: ", userBalances.error);
-  let param = { unlockTimes: callsData };
 
   useEffect(() => {
+    let param = { unlockTimes: callsData };
+    //fetch list of total Supply from backend
     axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, param)
       .then(response => {
         console.log("response of totalSupply:...", response.data.totalSupplies);
@@ -165,7 +169,9 @@ const Locker = () => {
     let origEvents = votingEscrowData.slice();
     let newChartData = [];
     for (let j = 1; j < chartData.length; j++) {
+      // get jth index of chart data
       let v = chartData[j];
+      // get jth - 1 index of chart data for comparison
       let prev = chartData[j - 1];
       newChartData.push(prev);
       let startTimestamp = prev[0] / 1;
@@ -174,6 +180,7 @@ const Locker = () => {
       let endAmount = v[1] / 1;
       let diff = endTimestamp / 1000 - startTimestamp / 1000;
       let diffAmount = endAmount - startAmount;
+      // get amount locked value
       let amountLocked = origEvents[j - 1].totalPower;
       let numPoints = 10;
       if (chartData.length > 1) {
@@ -208,7 +215,9 @@ const Locker = () => {
   const charts = async () => {
     let events = votingEscrowData;
     if (events.length > 0) {
+      // this will add the Voting Power Property in Voting Escrows Data
       events = addVotingPowerProperty(events);
+      // converted to chart data
       var chartData = events.map((event, i) => [
         event.timestamp / 1,
         event.votingPower / 1,
@@ -220,6 +229,7 @@ const Locker = () => {
         lastEvent.locktime / 1,
         0,
       ];
+      // added last event in chart data
       chartData.push(lastData);
       events.push({ ...events[events.length - 1], value: 0, votingPower: 0 })
       votingEscrowData = Object.assign([], votingEscrowData);
@@ -228,16 +238,23 @@ const Locker = () => {
         value: 0,
         votingPower: 0,
       });
+      // interpolate voting power on chartData
       chartData = interpolateVotingPower(chartData)
+      // get unique chart data after interpolating
+
       let uniquechartData = [
         ...new Map(chartData.map((item) => [item[0], item])).values(),
       ];
 
+      // slice extra indexes as in their curve dao repo
       uniquechartData = uniquechartData.slice(0, uniquechartData.length - 11)
+
       uniquechartData.push([1802304000000, 0])
       setLockerChartData(uniquechartData);
       let finalData = uniquechartData;
+      // get dao power data with time stamp and total power
       let daopowerdata = daoPower ? daoPower.map(e => [e.timestamp / 1, e.totalPower / 1e9]) : []
+      // get last unlock time
       let lastUnlockTime = parseInt(unlockTime[0]?.unlock_time)
       if (isNaN(lastUnlockTime)) {
         return
@@ -246,6 +263,7 @@ const Locker = () => {
       let lastUnlockTimeDiff = lastUnlockTime - now
       let i = 0
       let unlockTimes = []
+      // create time stamps till last unlock timestamp
       while (now < lastUnlockTime) {
         unlockTimes.push(now);
         now += i ** 4 * 86400000
@@ -253,9 +271,11 @@ const Locker = () => {
       }
       unlockTimes.push(lastUnlockTime)
       let data = { unlockTimes };
+      //get total supply against unlock timestamps
       let res = await axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, data)
       setCallsData(res.data.totalSupplies);
       let calls = res.data.totalSupplies;
+      // create data for Dao Power chart with timestamps and totalSupplies on that timestamp
       for (let m = 0; m < calls.length; m++) {
         daopowerdata.push([unlockTimes[m], calls[m] / 1e9]);
       }
@@ -274,8 +294,6 @@ const Locker = () => {
         ),
     }));
   };
-
-
 
   return (
     <>

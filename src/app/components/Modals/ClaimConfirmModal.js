@@ -39,7 +39,7 @@ export default function ClaimConfirmModal({ show, hide, setOpen, balance }) {
   async function claimMakeDeploy() {
     setOpen(false);
     handleShowSigning();
-    const publicKeyHex = localStorage.getItem("Address");
+    const publicKeyHex = localStorage.getItem("Address");// get the address of user logged in
     console.log("Public key: ", publicKeyHex);
     if (
       publicKeyHex !== null &&

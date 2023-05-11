@@ -8,6 +8,7 @@ window.Buffer = window.Buffer || require("buffer").Buffer;
 
 
 export async function increaseAndDecreaseAllowanceGaugeMakeDeploy(amount, setOpenSigning, enqueueSnackbar, getAllowance, gaugeSpender, swapTokenContractHash) {
+   // get the address of user logged in
     let activePublicKey = localStorage.getItem("Address")
     setOpenSigning(true);
     const publicKeyHex = activePublicKey;

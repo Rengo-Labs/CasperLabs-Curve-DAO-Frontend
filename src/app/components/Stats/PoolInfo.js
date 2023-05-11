@@ -77,7 +77,7 @@ const PrettoSlider = styled(Slider)({
 
 const PoolInfo = (props) => {
     const { enqueueSnackbar } = useSnackbar();
-    const [activePublicKey, setActivePublicKey] = useState(localStorage.getItem("Address"));
+    const [activePublicKey, setActivePublicKey] = useState(localStorage.getItem("Address"));// get the address of user logged in
     const [claimableTokens, setClaimableTokens] = useState(10);
     const [claimedRewards, setClaimedRewards] = useState(0);
     const [boost, setBoost] = useState(0);

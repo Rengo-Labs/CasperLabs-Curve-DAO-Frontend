@@ -40,7 +40,7 @@ const PoolVote = () => {
   const [revertParametersOpen, setRevertParametersOpen] = useState(false);
   const [openSigning, setOpenSigning] = useState(false);
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")

@@ -41,6 +41,7 @@ const GaugeVote = () => {
   const [changeGaugeAddr, setChangeGaugeAddr] = useState("");
   const [changeGaugeWeight, setChangeGaugeWeight] = useState("");
   const [openSigning, setOpenSigning] = useState(false);
+  // get the address of user logged in
   let [activePublicKey, setActivePublicKey] = useState(
     localStorage.getItem("Address")
   );
