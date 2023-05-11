@@ -1,7 +1,8 @@
-import { CLPublicKey, RuntimeArgs } from "casper-js-sdk";
-import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
+import { CLByteArray, CLPublicKey, RuntimeArgs } from "casper-js-sdk";
+import { MINTER_CONTRACT_HASH, VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes";
 import { makeDeploy } from "../blockchain/MakeDeploy/MakeDeploy";
 import { putdeploy } from "../blockchain/PutDeploy/PutDeploy";
+import { createRecipientAddress } from "../blockchain/RecipientAddress/RecipientAddress";
 import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy";
 
 
@@ -13,6 +14,7 @@ export async function mintMakeDeploy(gauge, setOpenSigning, enqueueSnackbar) {
       return
     }
     setOpenSigning(true);
+    // get the address of user logged in
     const publicKeyHex = localStorage.getItem("Address");
     if (
       publicKeyHex !== null &&
@@ -20,13 +22,16 @@ export async function mintMakeDeploy(gauge, setOpenSigning, enqueueSnackbar) {
       publicKeyHex !== undefined
     ) {
       const publicKey = CLPublicKey.fromHex(publicKeyHex);
-      const paymentAmount = 5000000000;
+      const paymentAmount = 100000000000;
+      const gaugeByteArray = new CLByteArray(
+        Uint8Array.from(Buffer.from(gauge, "hex"))
+      );
       try {
         const runtimeArgs = RuntimeArgs.fromMap({
-          gauge: gauge
+          gauge_addr: createRecipientAddress(gaugeByteArray),
         });
         let contractHashAsByteArray = Uint8Array.from(
-          Buffer.from(VOTING_ESCROW_CONTRACT_HASH, "hex")
+          Buffer.from(MINTER_CONTRACT_HASH, "hex")
         );
         let entryPoint = "mint";
         let deploy = await makeDeploy(

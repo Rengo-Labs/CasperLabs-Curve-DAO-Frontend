@@ -44,7 +44,7 @@ query{
 
 const Calc = () => {
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
@@ -63,6 +63,7 @@ const Calc = () => {
   const [gaugeLockValue, setGaugeLockValue] = useState(0);
   const [lockPeriod, setLockPeriod] = useState(year);
   const [lockPeriodName, setLockPeriodName] = useState("");
+  // lock periods 
   const [lockPeriods, setLockPeriods] = useState(
     [
       {
@@ -109,6 +110,7 @@ const Calc = () => {
   const [calcTrigger, setCalcTrigger] = useState(Date.now())
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
+  // get all gauges
   const gaugesByAddress = useQuery(GAUGES_BY_ADDRESS);
   console.log("this is gaugesByAddress: ", gaugesByAddress.data?.getGaugesByAddress);
   console.log("this is error of gaugesByAddress: ", gaugesByAddress.error);
@@ -116,10 +118,9 @@ const Calc = () => {
   useEffect(() => {
     if (gaugesByAddress) {
       console.log("gaugesByAddress.data?.getGaugesByAddress", gaugesByAddress.data?.getGaugesByAddress);
-      setGauges(gaugesByAddress.data?.getGaugesByAddress)
+      setGauges(gaugesByAddress.data?.getGaugesByAddress ? gaugesByAddress.data?.getGaugesByAddress : [])
 
     }
-
   }, [gaugesByAddress]);
 
   const initialValues = {
@@ -163,10 +164,12 @@ const Calc = () => {
   useEffect(() => {
     async function updateBalance() {
       if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
+        // get balance of user in ERC20 CRV as users CRV
         let _myCRV = await balanceOf(ERC20_CRV_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
         console.log("_myCRV", parseFloat(_myCRV));
         setMyCRV(parseFloat(_myCRV) / 1e9);
         let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
+        // get balance of user in voting escrow as users veCRV
         axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             console.log("response of balanceOf:...", response.data.balances);
@@ -175,7 +178,7 @@ const Calc = () => {
           .catch(error => {
             console.log("error of balances:...", error);
           });
-
+        // get total supply in voting escrow 
         axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             console.log("response of totalSupply:...", response.data.totalSupplies);
@@ -187,7 +190,7 @@ const Calc = () => {
       }
     }
     updateBalance();
-  }, [localStorage.getItem("Address")]);
+  }, [localStorage.getItem("Address")]);// get the address of user logged in
 
 
 
@@ -195,25 +198,33 @@ const Calc = () => {
   const maxBoost = async () => {
     let l = gaugeBalance * 1e9
     let L = poolLiquidity * 1e9 + l
+    // get minimum ve CRV
     let _minveCRV = totalveCRV * l / L
     console.log("_minveCRV", _minveCRV);
     setMinveCRV(_minveCRV)
+    // get max boots possible 
     let [_, _maxBoostPossible] = await updateLiquidityLimit(null, null, minveCRV);
     setMaxBoostPossible(_maxBoostPossible);
   }
 
   const updateLiquidityLimit = async (new_l = null, newVotingBalance = null, _minveCRV = null) => {
+    // get gauge Balance
     let l = gaugeBalance * 1e9
-
-
     let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }
 
+    // get balanceOf voting escrow from backend
     let votingBalance = await axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data);
+    // get total supply voting escrow from backend
     let totalSupply = await axios.post(`/votingEscrow/totalSupply/${VOTING_ESCROW_CONTRACT_HASH}`);
+    // subtractcted balance from total supply to get remaining voting total
     let votingTotal = totalSupply.data.totalSupplies[0] - votingBalance.data.balances[0]
+    // get period Timestamp of selected gauge from contract 
     let periodTimestamp = parseFloat(await LiquidityGaugeV3.periodTimestamp(selectedGauge, 0));
+    // get working balances of selected gauge from contract 
     let workingBalances = parseFloat(await LiquidityGaugeV3.workingBalances(selectedGauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex")));
+    // get working supply of selected gauge from contract 
     let workingSupply = parseFloat(await LiquidityGaugeV3.workingSupply(selectedGauge));
+    // get total supply of selected gauge from contract 
     let totalSupplyGauge = parseFloat(await LiquidityGaugeV3.totalSupplyGauge(selectedGauge));
     let L = poolLiquidity * 1e9 + l
     if (newVotingBalance) {
@@ -248,8 +259,10 @@ const Calc = () => {
   }
 
   const updateGaugeBalanceAndPoolLiquidity = async () => {
+    // get balance of user in selected gauge
     let liqidityGaugeBalance = await LiquidityGaugeV3.balanceOf(selectedGauge, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
     console.log("liqidityGaugeBalance", parseFloat(liqidityGaugeBalance));
+    // get totel supply in selected gauge
     let gaugeTotalSupply = await LiquidityGaugeV3.totalSupplyGauge(selectedGauge)
     console.log("gaugeTotalSupply", parseFloat(gaugeTotalSupply));
     setGauge(selectedGauge)
@@ -270,10 +283,11 @@ const Calc = () => {
     console.log("boost here", boost);
     setBoost(boost);
   }
-
+  // will return ve CRV
   function veCRV(lock) {
     return ((myCRV * lockPeriod) / (86400 * 365) / 4).toFixed(2)
   }
+  // will return CRV to Lock
   function CRVtoLock() {
     console.log("minveCRV", minveCRV);
     console.log("minveCRVperiod", minveCRVperiod);

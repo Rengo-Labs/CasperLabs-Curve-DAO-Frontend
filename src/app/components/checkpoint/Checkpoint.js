@@ -10,7 +10,7 @@ import { gql, useQuery } from "@apollo/client";
 
 
 
-let activePublicKey = localStorage.getItem("Address");
+let activePublicKey = localStorage.getItem("Address");// get the address of user logged in
 
 export async function checkpoint(doCheckpoint = false, setOpenSigning, enqueueSnackbar, gaugesQueryData) {
 
@@ -18,10 +18,12 @@ export async function checkpoint(doCheckpoint = false, setOpenSigning, enqueueSn
     console.log("gaugesQueryData", gaugesQueryData);
     let decodedGauges = []
     let _decodedGauges = []
+    // get n gauges from gauge controller
     let n_gauges = await gaugeControllerFunctions.n_gauges(
         GAUGE_CONTROLLER_CONTRACT_HASH
     );
     console.log("n_gauges", parseFloat(n_gauges[1].data));
+    // get package hashes of gauges from gauge controller through the n gauges
     for (let i = 0; i < n_gauges[1].data; i++) {
         let gauge = await gaugeControllerFunctions.gauges(
             GAUGE_CONTROLLER_CONTRACT_HASH,
@@ -36,6 +38,7 @@ export async function checkpoint(doCheckpoint = false, setOpenSigning, enqueueSn
     let params = {
         packageHashes: _decodedGauges
     }
+    // get contract hashes against the package hashes from backend
     let res = await axios.post("/getContractHashesAgainstPackageHashes", params)
     console.log("res", res);
     let gaugesContractHashes = res.data.contractHashes
@@ -46,6 +49,7 @@ export async function checkpoint(doCheckpoint = false, setOpenSigning, enqueueSn
     console.log("decodedGaugesdecodedGaugesdecodedGaugesdecodedGauges", decodedGauges);
     let gaugeBalances = []
 
+    // get balance of gauge against the user logged in liquidity gauge v3
     await Promise.all(decodedGauges.map(async (gauge, index) => {
         let gaugeBalance = await LiquidityGaugeV3.balanceOf(
             gauge.gaugeContractHash,
@@ -59,6 +63,7 @@ export async function checkpoint(doCheckpoint = false, setOpenSigning, enqueueSn
 
 
     let gaugesNeedCheckpoint = {};
+    // set gaugesNeedCheckpoint array with index of gauges package hashes and their balances
     gaugeBalances.forEach((gauge, i) => gaugesNeedCheckpoint[gauge.gauge.toLowerCase()] = gauge.balance);
 
     let lastCheckpointed = gaugesQueryData.gauges;
@@ -72,6 +77,7 @@ export async function checkpoint(doCheckpoint = false, setOpenSigning, enqueueSn
     }
     console.log("lastCheckpointed", lastCheckpointed);
     console.log("gaugesNeedCheckpoint", gaugesNeedCheckpoint);
+    // update the array if the balace is grater than 0 to call userCheckPoint method on it
     gaugesNeedCheckpoint = Object.keys(gaugesNeedCheckpoint).filter(k => gaugesNeedCheckpoint[k] > 0);
 
 

@@ -26,7 +26,7 @@ function App() {
     localStorage.getItem("selectedWallet")
   );
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
 
   const [openSigning, setOpenSigning] = useState(false);

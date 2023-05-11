@@ -27,13 +27,13 @@ import HomeBanner from "../Home/HomeBanner";
 window.Buffer = window.Buffer || require("buffer").Buffer;
 const Vesting = () => {
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
   );
   const [vestingAddress, setVestingAddress] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   const [vestedOf, setVestedOf] = useState(0);
   const [balanceOf, setBalanceOf] = useState(0);
@@ -59,12 +59,12 @@ const Vesting = () => {
     console.log("Vesting Address Checking", values);
   };
   useEffect(() => {
-    setVestingAddress(localStorage.getItem("Address"));
-  }, [localStorage.getItem("Address")]);
+    setVestingAddress(localStorage.getItem("Address"));// get the address of user logged in
+  }, [localStorage.getItem("Address")]);// get the address of user logged in
 
   useEffect(() => {
 
-
+        // get the address of user logged in
     let publicKey = localStorage.getItem("Address");
     const getTimes = async () => {
       setStartTimeVal(await startTime(VESTING_ESCROW_CONTRACT_HASH));
@@ -82,6 +82,7 @@ const Vesting = () => {
         console.log("accountHash.......", account);
         let data = { account: Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex") }
 
+        // to get balance of a user in Voting Escrow
         axios.post(`/votingEscrow/balanceOf/${VOTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             console.log("votingEscrow response of balance of:...", response.data);
@@ -90,7 +91,7 @@ const Vesting = () => {
           .catch(error => {
             console.log("error of balance of:...", error);
           });
-
+        // to get Vested of a user in Voting Escrow
         axios.post(`/vestingEscrow/vestedOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             console.log("response of vested of:...", response.data);
@@ -100,6 +101,7 @@ const Vesting = () => {
             console.log("error of balance of:...", error);
           });
 
+        // to get Locked of a user in Voting Escrow
         axios.post(`/vestingEscrow/lockedOf/${VESTING_ESCROW_CONTRACT_HASH}`, data)
           .then(response => {
             console.log("response of locked of:...", response.data);
@@ -108,23 +110,13 @@ const Vesting = () => {
           .catch(error => {
             console.log("error of balance of:...", error);
           });
-
+        // to get Initial Locked a user in Voting Escrow
         let initialLockValues = await initialLocked(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex"));
+        // to get Total Claimed Value a user in Voting Escrow
         let totalClaimedValue = await totalClaimed(VESTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(publicKey).toAccountHash()).toString("Hex"));
 
-
-        if (initialLockValues == 0) {
-          setInitialLockedval(10000000000000)
-        }
-        else {
-          setInitialLockedval(initialLockValues);
-        }
-        if (totalClaimedValue == 0) {
-          setTotalClaimedVal(20000000000000)
-        }
-        else {
-          setTotalClaimedVal(totalClaimedValue);
-        }
+        setInitialLockedval(initialLockValues);
+        setTotalClaimedVal(totalClaimedValue);
         console.log("initial locked:...", initialLockedval);
         console.log("starttime value:...", startTimeVal);
         console.log("end time value:...", endTimeVal);
@@ -143,19 +135,25 @@ const Vesting = () => {
 
     }
     getTimes()
-  }, [localStorage.getItem("Address")]);
+  }, [localStorage.getItem("Address")]);// get the address of user logged in
 
+  // renders every time when start time and end time updated
   useEffect(() => {
     console.log("start and end time before vested", parseInt(startTimeVal), parseInt(endTimeVal));
+    // get vested time by subtracting end time with start time
     let vestedTime = +parseInt(endTimeVal) - +parseInt(startTimeVal)
 
     console.log("vested time...", vestedTime);
     let vested = []
+
+    // to separate data for vested and unvested graph
     let releasedAmount = initialLockedval / 1e9 / (vestedTime / 86400)
     for (let i = 0; i < (vestedTime) / 86400; i += 1000) {
+      
       let time = (+startTimeVal + i * 86400) * 1;
       vested.push([time, i * releasedAmount])
     }
+    // get unvested data by subtracting the vested value from initial locked value
     let unvested = vested.map(([k, v]) => [k, initialLockedval / 1e9 - v]);
     console.log("vestedData....", vested.length);
     console.log("unvestedData....", unvested);
@@ -163,27 +161,33 @@ const Vesting = () => {
     setVestedData(vested);
   }, [startTimeVal, endTimeVal]);
 
+  // format of vested of 
   const vestedFormat = useMemo(() => {
     return (vestedOf / 1e9).toFixed(2);
   }, [vestedOf]);
+  // format of balance of 
   const balanceFormat = useMemo(() => {
     return (balanceOf / 1e9).toFixed(2);
   }, [balanceOf]);
+  // format of locked of 
   const lockedFormat = useMemo(() => {
     return (lockedOf / 1e9).toFixed(2);
   }, [lockedOf]);
+  // format of initial locked
   const initialLockedFormat = useMemo(() => {
     return (initialLockedval / 1e9).toFixed(2);
   }, [initialLockedval]);
-
+// format of total claimed
   const totalClaimedFormat = useMemo(() => {
     return (totalClaimedVal / 1e9).toFixed(2);
   }, [totalClaimedVal]);
+  // format of start Time to human readable date
   const startTimeFormat = useMemo(() => {
     console.log("StartTime value....", startTimeVal);
     return helpers.formatDateToHuman(startTimeVal);
   }, [startTimeVal]);
   console.log("StartTime value format....", startTimeFormat);
+  // format of end Time to human readable date
   const endTimeFormat = useMemo(() => {
     return helpers.formatDateToHuman(endTimeVal);
   }, [endTimeVal]);
@@ -258,7 +262,7 @@ const Vesting = () => {
                                   <div className="col-12 col-lg-2 text-center mt-3 mt-lg-0">
                                     <div className="">
                                       <Button
-                                       className="hoverButtonGlobal"
+                                        className="hoverButtonGlobal"
                                         size="large"
                                         onClick={() => { }}
                                       >
@@ -338,7 +342,7 @@ const Vesting = () => {
                                       <span className="font-weight-bold">
                                         Available Tokens:&nbsp;
                                       </span>
-                                      {0.00}
+                                      {balanceFormat}
                                     </ListItemText>
                                   </ListItem>
                                   <ListItem disablePadding>

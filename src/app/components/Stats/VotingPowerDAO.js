@@ -47,7 +47,7 @@ const VotingPowerDAO = (props) => {
   });
   const [crvLocked, setCrvLocked] = useState(0);
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   const [totalCRVLocked, setTotalCRVLocked] = useState(0);
   const [CRVLocked, setCRVLocked] = useState(0);
@@ -97,7 +97,7 @@ const VotingPowerDAO = (props) => {
   }, [])
   useEffect(() => {
     let controller = new AbortController();
-    let publicKeyHex = localStorage.getItem("Address");
+    let publicKeyHex = localStorage.getItem("Address");// get the address of user logged in
     if (
       publicKeyHex !== null &&
       publicKeyHex !== "null" &&
@@ -137,12 +137,12 @@ const VotingPowerDAO = (props) => {
     return () => {
       controller.abort();
     };
-  }, [localStorage.getItem("Address")]);
+  }, [localStorage.getItem("Address")]);// get the address of user logged in
 
 
   useEffect(() => {
 
-    let publicKeyHex = localStorage.getItem("Address");
+    let publicKeyHex = localStorage.getItem("Address");// get the address of user logged in
 
     if (
       publicKeyHex !== null &&
@@ -163,12 +163,12 @@ const VotingPowerDAO = (props) => {
           console.log("error of crvStats:...", error);
         });
     }
-  }, [localStorage.getItem("Address")])
+  }, [localStorage.getItem("Address")])// get the address of user logged in
 
 
   useEffect(() => {
     let controller = new AbortController();
-
+// get the address of user logged in
     let publicKeyHex = localStorage.getItem("Address");
     if (
       publicKeyHex !== null &&

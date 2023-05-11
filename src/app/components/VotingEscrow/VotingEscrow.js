@@ -24,7 +24,7 @@ import CreateVoteModal from "../Modals/CreateVoteModal";
 import SigningModal from "../Modals/SigningModal";
 const VotingEscrow = () => {
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")

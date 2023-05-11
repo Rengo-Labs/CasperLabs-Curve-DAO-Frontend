@@ -44,7 +44,7 @@ const Vesting = () => {
   const [openSigning, setOpenSigning] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")

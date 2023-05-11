@@ -15,6 +15,7 @@ export async function withdrawGaugeMakeDeploy(amount, setOpenSigning, enqueueSna
     return
   }
   setOpenSigning(true);
+  // get the address of user logged in
   const publicKeyHex = localStorage.getItem("Address");
   console.log("Withdraw function public keys: ", publicKeyHex);
   if (

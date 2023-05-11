@@ -13,6 +13,7 @@ export async function increaseAmountMakeDeploy(lockedAmount, setOpenSigning, enq
   const allowance = 0;
 
   let selectedWallet = localStorage.getItem("selectedWallet")
+  // get the address of user logged in
   let activePublicKey = localStorage.getItem("Address")
 
 

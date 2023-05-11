@@ -10,6 +10,7 @@ window.Buffer = window.Buffer || require("buffer").Buffer;
 
 
 export async function increaseAndDecreaseAllowanceMakeDeploy(amount, handleCloseAllowance, setOpenSigning, enqueueSnackbar, getAllowance) {
+ // get the address of user logged in
   let activePublicKey = localStorage.getItem("Address")
   setOpenSigning(true);
   const publicKeyHex = activePublicKey;

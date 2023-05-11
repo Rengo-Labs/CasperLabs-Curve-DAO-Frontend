@@ -50,7 +50,7 @@ const Minter = () => {
 
 
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   let [selectedWallet, setSelectedWallet] = useState(
     localStorage.getItem("selectedWallet")
@@ -67,7 +67,9 @@ const Minter = () => {
   console.log("gauge pools", pools);
 
   useEffect(() => {
+    //calculate the total gauge relative weight
     let gaugeSum = Object.values(pools).reduce((a, b) => +a + +b.gaugeRelativeWeight, 0)
+    //distribute the percentages for pie chart for gauge relative weight against the pool
     let piegauges = Object.values(pools).map(v => ({ name: v.name, y: v.gaugeRelativeWeight / gaugeSum, value: v.gaugeRelativeWeight / 1e9 }))
     if (piegauges.length > 0) {
       let highest = piegauges.map(data => data.y).indexOf(Math.max(...piegauges.map(data => data.y)))
@@ -79,7 +81,10 @@ const Minter = () => {
   }, [pools])
 
   useEffect(() => {
+    // get the total gauge balance
     let total = Object.values(myPools).reduce((a, b) => +a + +b.gaugeBalance, 0)
+    //distribute the percentages for pie chart for gauge balance against the pool
+
     let piedata = Object.values(myPools).map(v => ({ name: v.name, y: v.gaugeBalance / total, value: v.gaugeBalance / 1e9 }))
     piedata = piedata.filter(pool => pool.y > 0)
 
@@ -88,7 +93,7 @@ const Minter = () => {
   }, [myPools])
 
   useEffect(() => {
-
+    //fetch data when user is changed
     if (activePublicKey && activePublicKey != 'null' && activePublicKey != undefined) {
       fetchData();
     }
@@ -96,22 +101,27 @@ const Minter = () => {
 
   const fetchData = async () => {
     setIsLoading(true)
+    // this will call the get state method and set all the values got form blockchain and backend after formatting
     await getState(activePublicKey, setNGauges, setTotalBalance, setTotalGaugeBalance, setMyPools, setPools, setBoosts)
     setIsLoading(false)
   }
 
+  // return fomatted value for total Claimable CRV
   function totalClaimableCRVFormat() {
     return (totalClaimableCRV / 1e9).toFixed(2)
   }
+  // return fomatted value for total Minted CRV
   function totalMintedCRVFormat() {
     return (totalMintedCRV / 1e9).toFixed(2)
   }
   function showApplyBoostAll() {
     return gaugesNeedApply.length > 0
   }
+  // return my gauges in which claimable tokens are greater than 0
   function myGauges() {
     return myPools.filter(pool => +pool.claimableTokens > 0)
   }
+  // handle check boxes for claiming claimable tokens
   const handleChangeCheckbox = (event, _gauge) => {
     console.log(
       `Checked value: ${_gauge.gauge} and check is: ${event.target.checked}`

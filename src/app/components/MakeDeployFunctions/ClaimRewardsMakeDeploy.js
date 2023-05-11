@@ -7,6 +7,7 @@ import { signdeploywithcaspersigner } from "../blockchain/SignDeploy/SignDeploy"
 
 export async function claimRewardsMakeDeploy(setOpenSigning, enqueueSnackbar) {
   setOpenSigning(true);
+  // get the address of user logged in
   const publicKeyHex = localStorage.getItem("Address");
   if (
     publicKeyHex !== null &&

@@ -42,7 +42,7 @@ const VotingPowerActionables = (props) => {
   const { createLockMakeDeploy, withdrawMakeDeploy, increaseAndDecreaseAllowanceMakeDeploy, increaseAmountMakeDeploy, increaseUnlockTimeMakeDeploy } = useContext(AppContext);
 
   let [activePublicKey, setActivePublicKey] = useState(
-    localStorage.getItem("Address")
+    localStorage.getItem("Address")// get the address of user logged in
   );
   const [allowance, setAllowance] = useState(0);
   const [userCRVBalance, setUserCRVBalance] = useState(0);
@@ -93,7 +93,6 @@ const VotingPowerActionables = (props) => {
       owner: CLPublicKey.fromHex(activePublicKey).toAccountHashStr().slice(13),
       spender: VOTING_ESCROW_PACKAGE_HASH
     }
-    console.log('allowanceParam0', allowanceParam);
     Axios
       .get(`/allowanceagainstownerandspender/${ERC20_CRV_CONTRACT_HASH}/${CLPublicKey.fromHex(activePublicKey).toAccountHashStr().slice(13)}/${VOTING_ESCROW_PACKAGE_HASH}`)
       .then((res) => {
@@ -126,7 +125,7 @@ const VotingPowerActionables = (props) => {
     return () => {
       controller.abort();
     }
-  }, [localStorage.getItem("Address")]);
+  }, [localStorage.getItem("Address")]);// get the address of user logged in
 
   async function fetchBalanceData() {
     let CRVLockBalance = await votingEscrowFunctions.balanceOf(VOTING_ESCROW_CONTRACT_HASH, Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("hex"));
@@ -152,7 +151,7 @@ const VotingPowerActionables = (props) => {
     return () => {
       controller.abort();
     };
-  }, [localStorage.getItem("Address")])
+  }, [localStorage.getItem("Address")])// get the address of user logged in
 
   async function fetchUserData() {
     let data = { account: Buffer.from(CLPublicKey.fromHex(activePublicKey).toAccountHash()).toString("Hex") }

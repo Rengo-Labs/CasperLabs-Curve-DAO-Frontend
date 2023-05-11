@@ -20,6 +20,7 @@ export async function createLockMakeDeploy(lockedAmount, unlockTime, setOpenSign
   }
   console.log("unlockTime", unlockTime.getTime());
   setOpenSigning(true);
+  // get the address of user logged in
   const publicKeyHex = localStorage.getItem("Address");
   if (
     publicKeyHex !== null &&

@@ -6,7 +6,7 @@ import { VOTING_ESCROW_CONTRACT_HASH } from "../blockchain/Hashes/ContractHashes
 
 export async function withdrawMakeDeploy(setOpenSigning, enqueueSnackbar, fetchBalanceData, fetchUserData) {
   setOpenSigning(true);
-  const publicKeyHex = localStorage.getItem("Address");
+  const publicKeyHex = localStorage.getItem("Address");// get the address of user logged in
   console.log("Withdraw function public keys: ", publicKeyHex);
   if (
     publicKeyHex !== null &&

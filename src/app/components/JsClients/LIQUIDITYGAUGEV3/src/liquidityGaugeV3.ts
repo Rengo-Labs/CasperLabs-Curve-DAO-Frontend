@@ -156,7 +156,6 @@ class LIQUIDITYGAUGEV3Client {
       this.contractHash,
       ["lp_token"]
     );
-    console.log("encodeBase16(result.value())", encodeBase16(result.value().data));
 
     return encodeBase16(result.value().data);
   }
